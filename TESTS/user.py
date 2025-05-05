@@ -1,5 +1,5 @@
 import unittest
-from qrbug.user import User, user_del, user_add
+from qrbug.user import User, user_remove, user_add
 
 
 class TestUser(unittest.TestCase):
@@ -35,5 +35,5 @@ class TestUser(unittest.TestCase):
         user_add("0", "1")
 
         # Tests that after deleting the link from 0 to 1, 0 is no longer the parent of 1
-        user_del("0", "1")
+        user_remove("0", "1")
         self.assertEqual(len(User.instances["0"].children_ids), 0)
