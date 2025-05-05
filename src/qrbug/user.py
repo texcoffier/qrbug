@@ -29,6 +29,15 @@ class User:
         assert child.user_id != self.user_id, f"Cannot make {child.user_id} a child of itself !"
         self.children_ids.append(child.user_id)
 
+    def user_del(self, child: "User") -> None:
+        """
+        Removes a child from this user's children.
+        :param child: Another user.
+        """
+        assert child.user_id in self.children_ids, f"{child.user_id} is not a child of {self.user_id}"
+        assert child.user_id != self.user_id, f"{child.user_id} cannot be a child of itself"
+        self.children_ids.remove(child.user_id)
+
     @classmethod
     def get(cls, user: UserId) -> "User":
         """
@@ -56,3 +65,12 @@ def user_add(parent: UserId, child: UserId) -> None:
     :param child: The ID of the child to add to the parent.
     """
     User.get(parent).user_add(User.get(child))
+
+
+def user_del(parent: UserId, child: UserId) -> None:
+    """
+    Removes the parenting link from a user to another.
+    :param parent: The ID of the user to remove the child from.
+    :param child: The ID of the user to be removed.
+    """
+    User.get(parent).user_del(User.get(child))
