@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # Gets the wanted name of the virtual environment
 VENV_FOLDER=".venv/"
 if [ -n "$1" ]; then
@@ -13,7 +13,7 @@ fi
 echo "New virtual environment created !"
 
 # Selects the current virtual environment
-source "$VENV_FOLDER/bin/activate"
+. "$VENV_FOLDER/bin/activate"
 
 # Installs the package in editable mode
 echo "Installing package into virtual environment..."
