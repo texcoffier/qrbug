@@ -2,8 +2,16 @@
 Defines all kinds of failures that can happen on a thing.
 """
 from typing import Optional, TypeAlias
+import enum
 
 FailureId: TypeAlias = str
+
+
+class DisplayTypes(enum.Enum):
+    text = enum.auto()
+    button = enum.auto()
+    redirect = enum.auto()
+    input = enum.auto()
 
 
 class Failure:
@@ -12,16 +20,18 @@ class Failure:
     """
     instances: dict[FailureId, "Failure"] = {}  # Maps every failure ID to a failure instance
 
+    # Default values
+    value: Optional[str] = "VALEUR_NON_DEFINIE"
+    display_type: Optional[DisplayTypes] = DisplayTypes.text
+    ask_confirm: Optional[bool] = True
+    restricted_to_group_id: Optional[str] = None
+
     def __init__(self, failure_id: FailureId):
         """
         Creates a new failure type.
         :param failure_id: The ID of this failure type.
         """
         self.failure_id = failure_id
-        self.title = title
-        self.display_type = display_type
-        self.ask_confirm = ask_confirm
-        self.restricted_to_group_id = restricted_to_group_id
         self.child_failures: list[FailureId] = []  # the IDs of the children of this failure
 
     def add_child(self, child: "Failure") -> None:
@@ -46,31 +56,27 @@ class Failure:
         return Failure.instances[failure_id]
 
 
-def failure(failure_id: FailureId, title: Optional[str] = None, display_type: Optional[str] = None,
-            ask_confirm: Optional[bool] = None, restricted_to_group_id: Optional[str] = None) -> Failure:
+def failure_update(
+    failure_id: FailureId,
+    **kwargs
+) -> Failure:
     """
     Creates a new failure type, or modifies an existing one.
     :param failure_id: The ID of this failure type.
-    :param title: The title of this failure (short).
+    :param value: The value of this failure.
     :param display_type: How to display this failure ? Text, button, message box... ?
     :param ask_confirm: Whether the user will have to confirm when pressing the button.
     :param restricted_to_group_id: If only a single group can report this failure type.
     """
     # Gets the failure the user asked for (or creates one with the corresponding ID if it did not exist)
-    given_failure = Failure.get(failure_id)
+    failure = Failure.get(failure_id)
 
     # Sets the new data of the failure if it is set
-    # TODO: Better way ?
-    if title is not None:
-        given_failure.title = title
-    if display_type is not None:
-        given_failure.display_type = display_type
-    if ask_confirm is not None:
-        given_failure.ask_confirm = ask_confirm
-    if restricted_to_group_id is not None:
-        given_failure.restricted_to_group_id = restricted_to_group_id
+    for arg, value in kwargs.items():
+        if hasattr(Failure, arg) and arg != "instances":
+            setattr(failure, arg, value)
 
-    return given_failure
+    return failure
 
 
 def failure_add(failure_id: FailureId, child_failure_id: FailureId) -> None:
