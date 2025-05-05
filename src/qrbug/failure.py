@@ -4,14 +4,16 @@ Defines all kinds of failures that can happen on a thing.
 from typing import Optional, TypeAlias
 import enum
 
+from qrbug.user import UserId
+
 FailureId: TypeAlias = str
 
 
 class DisplayTypes(enum.Enum):
-    text = enum.auto()
-    button = enum.auto()
+    text     = enum.auto()
+    button   = enum.auto()
     redirect = enum.auto()
-    input = enum.auto()
+    input    = enum.auto()
 
 
 class Failure:
@@ -21,10 +23,10 @@ class Failure:
     instances: dict[FailureId, "Failure"] = {}  # Maps every failure ID to a failure instance
 
     # Default values
-    value: Optional[str] = "VALEUR_NON_DEFINIE"
-    display_type: Optional[DisplayTypes] = DisplayTypes.text
-    ask_confirm: Optional[bool] = True
-    restricted_to_group_id: Optional[str] = None
+    value                  : Optional[str]          = "VALEUR_NON_DEFINIE"
+    display_type           : Optional[DisplayTypes] = DisplayTypes.text
+    ask_confirm            : Optional[bool]         = True
+    restricted_to_group_id : Optional[UserId]       = None
 
     def __init__(self, failure_id: FailureId):
         """
