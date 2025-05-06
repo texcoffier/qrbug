@@ -4,6 +4,7 @@ from qrbug.failure import Failure, failure_update, failure_add, failure_remove
 
 class TestFailure(unittest.TestCase):
     creation_test_passed = False
+    parenting_test_passed = False
 
     def setUp(self):
         Failure.instances.clear()
@@ -40,7 +41,7 @@ class TestFailure(unittest.TestCase):
     def test_parenting(self):
         if TestFailure.creation_test_passed is False:
             raise unittest.SkipTest(
-                "Creation test did not succeed, deletion test cannot work without creation test passing"
+                "Creation test did not succeed, parenting test cannot work without creation test passing"
             )
 
         self.assertEqual(len(Failure.instances), 0)  # Checks that there are no failures created yet
@@ -58,3 +59,27 @@ class TestFailure(unittest.TestCase):
         self.assertEqual(len(a.child_failures), 1)
         self.assertEqual(len(b.child_failures), 0)
         self.assertEqual(a.child_failures[0], b.failure_id)
+
+        TestFailure.parenting_test_passed = True
+
+    def test_unparenting(self):
+        if TestFailure.creation_test_passed is False:
+            raise unittest.SkipTest(
+                "Creation test did not succeed, unparenting test cannot work without creation test passing"
+            )
+        if TestFailure.parenting_test_passed is False:
+            raise unittest.SkipTest(
+                "Parenting test did not succeed, unparenting test cannot work without parenting test passing"
+            )
+
+        self.assertEqual(len(Failure.instances), 0)  # Checks that there are no failures created yet
+
+        # Creates two failures and parents them
+        a = failure_update("0")
+        b = failure_update("1")
+        failure_add(a.failure_id, b.failure_id)
+
+        # Tests that both failures, if unparented, have no children anymore
+        failure_remove(a.failure_id, b.failure_id)
+        for failure in (a, b):
+            self.assertEqual(len(failure.child_failures), 0)
