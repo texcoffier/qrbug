@@ -34,25 +34,25 @@ class Failure:
         :param failure_id: The ID of this failure type.
         """
         self.failure_id = failure_id
-        self.child_failures: list[FailureId] = []  # the IDs of the children of this failure
+        self.children_ids: list[FailureId] = []  # the IDs of the children of this failure
 
     def add_child(self, child: "Failure") -> None:
         """
         Adds a new child to this failure.
         :param child: Another failure.
         """
-        assert child.failure_id not in self.child_failures, f"{child.failure_id} is already a child of {self.failure_id}"
+        assert child.failure_id not in self.children_ids, f"{child.failure_id} is already a child of {self.failure_id}"
         assert child.failure_id != self.failure_id, f"Cannot make {child.failure_id} a child of itself !"
-        self.child_failures.append(child.failure_id)
+        self.children_ids.append(child.failure_id)
 
     def failure_remove(self, child: "Failure") -> None:
         """
         Removes a child from this failure's children list.
         :param child: Another failure.
         """
-        assert child.failure_id in self.child_failures, f"{child.failure_id} is not a child of {self.failure_id}"
+        assert child.failure_id in self.children_ids, f"{child.failure_id} is not a child of {self.failure_id}"
         assert child.failure_id != self.failure_id, f"{child.failure_id} cannot be a child of itself"
-        self.child_failures.remove(child.failure_id)
+        self.children_ids.remove(child.failure_id)
 
     @classmethod
     def get(cls, failure_id: FailureId) -> "Failure":

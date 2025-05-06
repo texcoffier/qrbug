@@ -20,7 +20,7 @@ class TestFailure(unittest.TestCase):
 
         # Checks that the new failure has the correct ID and no children
         self.assertEqual(failure.failure_id, "0")
-        self.assertEqual(len(failure.child_failures), 0)
+        self.assertEqual(len(failure.children_ids), 0)
 
         # Checks that updating an attribute of the failure class works
         new_value = "There is a new value"
@@ -52,13 +52,13 @@ class TestFailure(unittest.TestCase):
 
         # Checks that those two failures have no children
         for failure in (a, b):
-            self.assertEqual(len(failure.child_failures), 0)
+            self.assertEqual(len(failure.children_ids), 0)
 
         # Parents 0 to 1 (adds 1 as the child of 0)
         failure_add(a.failure_id, b.failure_id)
-        self.assertEqual(len(a.child_failures), 1)
-        self.assertEqual(len(b.child_failures), 0)
-        self.assertEqual(a.child_failures[0], b.failure_id)
+        self.assertEqual(len(a.children_ids), 1)
+        self.assertEqual(len(b.children_ids), 0)
+        self.assertEqual(a.children_ids[0], b.failure_id)
 
         TestFailure.parenting_test_passed = True
 
@@ -82,4 +82,4 @@ class TestFailure(unittest.TestCase):
         # Tests that both failures, if unparented, have no children anymore
         failure_remove(a.failure_id, b.failure_id)
         for failure in (a, b):
-            self.assertEqual(len(failure.child_failures), 0)
+            self.assertEqual(len(failure.children_ids), 0)
