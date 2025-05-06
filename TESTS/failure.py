@@ -35,4 +35,26 @@ class TestFailure(unittest.TestCase):
         self.assertRaises(AssertionError, failure_update, "0", instances={})
 
         # Makes sure the other tests know that the creation of failures works
-        creation_test_passed = True
+        TestFailure.creation_test_passed = True
+
+    def test_parenting(self):
+        if TestFailure.creation_test_passed is False:
+            raise unittest.SkipTest(
+                "Creation test did not succeed, deletion test cannot work without creation test passing"
+            )
+
+        self.assertEqual(len(Failure.instances), 0)  # Checks that there are no failures created yet
+
+        # Creates two failures
+        a = failure_update("0")
+        b = failure_update("1")
+
+        # Checks that those two failures have no children
+        for failure in (a, b):
+            self.assertEqual(len(failure.child_failures), 0)
+
+        # Parents 0 to 1 (adds 1 as the child of 0)
+        failure_add(a.failure_id, b.failure_id)
+        self.assertEqual(len(a.child_failures), 1)
+        self.assertEqual(len(b.child_failures), 0)
+        self.assertEqual(a.child_failures[0], b.failure_id)
