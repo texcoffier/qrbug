@@ -5,6 +5,7 @@ from typing import Optional, TypeAlias
 import enum
 
 from qrbug.user import UserId
+from qrbug.tree import Tree
 
 FailureId: TypeAlias = str
 
@@ -16,12 +17,10 @@ class DisplayTypes(enum.Enum):
     input    = enum.auto()
 
 
-class Failure:
+class Failure(Tree):
     """
     A failure of a thing.
     """
-    instances: dict[FailureId, "Failure"] = {}  # Maps every failure ID to a failure instance
-
     # Default values
     value                  : Optional[str]          = "VALEUR_NON_DEFINIE"
     display_type           : Optional[DisplayTypes] = DisplayTypes.text
@@ -33,38 +32,7 @@ class Failure:
         Creates a new failure type.
         :param failure_id: The ID of this failure type.
         """
-        self.failure_id = failure_id
-        self.children_ids: list[FailureId] = []  # the IDs of the children of this failure
-
-    def add_child(self, child: "Failure") -> None:
-        """
-        Adds a new child to this failure.
-        :param child: Another failure.
-        """
-        assert child.failure_id not in self.children_ids, f"{child.failure_id} is already a child of {self.failure_id}"
-        assert child.failure_id != self.failure_id, f"Cannot make {child.failure_id} a child of itself !"
-        self.children_ids.append(child.failure_id)
-
-    def failure_remove(self, child: "Failure") -> None:
-        """
-        Removes a child from this failure's children list.
-        :param child: Another failure.
-        """
-        assert child.failure_id in self.children_ids, f"{child.failure_id} is not a child of {self.failure_id}"
-        assert child.failure_id != self.failure_id, f"{child.failure_id} cannot be a child of itself"
-        self.children_ids.remove(child.failure_id)
-
-    @classmethod
-    def get(cls, failure_id: FailureId) -> "Failure":
-        """
-        Returns the failure at the given ID.
-        **Warning :** If the failure doesn't exist, a brand new one is created.
-        :param failure_id: The ID of this failure.
-        :return: The failure at the given ID.
-        """
-        if failure_id not in Failure.instances:
-            Failure.instances[failure_id] = Failure(failure_id)
-        return Failure.instances[failure_id]
+        super().__init__(failure_id)
 
 
 def failure_update(failure_id: FailureId, **kwargs) -> Failure:
@@ -103,4 +71,4 @@ def failure_remove(parent: FailureId, child: FailureId) -> None:
     :param parent: The ID of the failure to remove the child from.
     :param child: The ID of the failure to be removed.
     """
-    Failure.get(parent).failure_remove(Failure.get(child))
+    Failure.get(parent).remove_child(Failure.get(child))
