@@ -2,3 +2,6 @@
 .idea/
 .vscode/
 *.egg-info/
+
+JOURNALS/db.py
+JOURNALS/failures.py
