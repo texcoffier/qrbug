@@ -72,3 +72,16 @@ class Tree:
     @classmethod
     def check_all(cls) -> Generator[TreeHealth, None, None]:
         yield from (TreeHealth(instance.children_ids, instance.id) for instance in Tree.instances.values())
+
+    @classmethod
+    def update_tree(cls, tree_id: str, **kwargs):
+        # Gets the tree the user asked for (or creates one with the corresponding ID if it did not exist)
+        tree = cls.get(tree_id)
+
+        # Sets the new data of the tree
+        for arg, value in kwargs.items():
+            assert hasattr(cls, arg), f"Class {cls.__name__} has no attribute '{arg}', do not attempt to update it"
+            assert arg != "instances", f"Cannot update instances of {cls.__name__} class, please do not attempt"
+            setattr(tree, arg, value)
+
+        return tree

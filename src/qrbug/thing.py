@@ -35,16 +35,7 @@ def thing_update(thing_id: ThingId, **kwargs) -> Thing:
     :param failure_id: Which is the root failure for this thing ?
     :param comment: Any comment on the thing.
     """
-    # Gets the thing the user asked for (or creates one with the corresponding ID if it did not exist)
-    thing = Thing.get(thing_id)
-
-    # Sets the new data of the thing
-    for arg, value in kwargs.items():
-        assert hasattr(Thing, arg), f"Class {Thing.__class__.__name__} has no attribute '{arg}', do not attempt to update it"
-        assert arg != "instances", f"Cannot update instances of {Thing.__class__.__name__} class, please do not attempt"
-        setattr(thing, arg, value)
-
-    return thing
+    return Thing.update_tree(thing_id, **kwargs)
 
 
 def thing_del(thing_id: ThingId) -> None:

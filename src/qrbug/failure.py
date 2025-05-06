@@ -44,16 +44,7 @@ def failure_update(failure_id: FailureId, **kwargs) -> Failure:
     :param ask_confirm: Whether the user will have to confirm when pressing the button.
     :param restricted_to_group_id: If only a single group can report this failure type.
     """
-    # Gets the failure the user asked for (or creates one with the corresponding ID if it did not exist)
-    failure = Failure.get(failure_id)
-
-    # Sets the new data of the failure if it is set
-    for arg, value in kwargs.items():
-        assert hasattr(Failure, arg), f"Class Failure has no attribute '{arg}', do not attempt to update it"
-        assert arg != "instances", f"Cannot update instances of Failure class, please do not attempt"
-        setattr(failure, arg, value)
-
-    return failure
+    return Failure.update_tree(failure_id, **kwargs)
 
 
 def failure_add(failure_id: FailureId, child_failure_id: FailureId) -> None:
