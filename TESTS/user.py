@@ -5,6 +5,12 @@ from qrbug.user import User, user_remove, user_add
 class TestUser(unittest.TestCase):
     creation_test_passed = False
 
+    def setUp(self):
+        User.instances.clear()
+
+    def tearDown(self):
+        User.instances.clear()
+
     def test_creation(self):
         # Tests whether adding two users grows the instances count accordingly
         self.assertEqual(len(User.instances), 0)
@@ -22,8 +28,7 @@ class TestUser(unittest.TestCase):
         # Tests that 0 has 1 as child
         self.assertEqual(User.instances["0"].children_ids[0], "1")
 
-        # Clears these two users (just in case)
-        User.instances.clear()
+        # Makes sure the deletion test knows this test is valid, in order to be able to run
         TestUser.creation_test_passed = True
 
     def test_deletion(self):
