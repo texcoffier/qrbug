@@ -45,6 +45,15 @@ class Failure:
         assert child.failure_id != self.failure_id, f"Cannot make {child.failure_id} a child of itself !"
         self.child_failures.append(child.failure_id)
 
+    def failure_remove(self, child: "Failure") -> None:
+        """
+        Removes a child from this failure's children list.
+        :param child: Another failure.
+        """
+        assert child.failure_id in self.child_failures, f"{child.failure_id} is not a child of {self.failure_id}"
+        assert child.failure_id != self.failure_id, f"{child.failure_id} cannot be a child of itself"
+        self.child_failures.remove(child.failure_id)
+
     @classmethod
     def get(cls, failure_id: FailureId) -> "Failure":
         """
@@ -85,3 +94,12 @@ def failure_add(failure_id: FailureId, child_failure_id: FailureId) -> None:
     :param child_failure_id: The ID of the child failure.
     """
     Failure.get(failure_id).add_child(Failure.get(child_failure_id))
+
+
+def failure_remove(parent: FailureId, child: FailureId) -> None:
+    """
+    Removes the parenting link from a failure to another.
+    :param parent: The ID of the failure to remove the child from.
+    :param child: The ID of the failure to be removed.
+    """
+    Failure.get(parent).failure_remove(Failure.get(child))
