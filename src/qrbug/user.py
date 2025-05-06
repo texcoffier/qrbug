@@ -26,7 +26,7 @@ def user_add(parent: UserId, child: UserId) -> None:
     :param parent: The ID of the user to parent the new child to.
     :param child: The ID of the child to add to the parent.
     """
-    User.get(parent).add_child(User.get(child))
+    User.add_parenting_link(parent, child)
 
 
 def user_remove(parent: UserId, child: UserId) -> None:
@@ -35,4 +35,4 @@ def user_remove(parent: UserId, child: UserId) -> None:
     :param parent: The ID of the user to remove the child from.
     :param child: The ID of the user to be removed.
     """
-    User.get(parent).remove_child(User.get(child))
+    User.remove_parenting_link(parent, child)

@@ -85,3 +85,11 @@ class Tree:
             setattr(tree, arg, value)
 
         return tree
+
+    @classmethod
+    def add_parenting_link(cls, parent_id: str, child_id: str):
+        cls.get(parent_id).add_child(cls.get(child_id))
+
+    @classmethod
+    def remove_parenting_link(cls, parent_id: str, child_id: str):
+        cls.get(parent_id).remove_child(cls.get(child_id))

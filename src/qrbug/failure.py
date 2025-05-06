@@ -47,13 +47,13 @@ def failure_update(failure_id: FailureId, **kwargs) -> Failure:
     return Failure.update_tree(failure_id, **kwargs)
 
 
-def failure_add(failure_id: FailureId, child_failure_id: FailureId) -> None:
+def failure_add(parent: FailureId, child: FailureId) -> None:
     """
     Adds a new child to an existing failure.
-    :param failure_id: The ID of the failure to add the child to.
-    :param child_failure_id: The ID of the child failure.
+    :param parent: The ID of the failure to add the child to.
+    :param child: The ID of the child failure.
     """
-    Failure.get(failure_id).add_child(Failure.get(child_failure_id))
+    Failure.add_parenting_link(parent, child)
 
 
 def failure_remove(parent: FailureId, child: FailureId) -> None:
@@ -62,4 +62,4 @@ def failure_remove(parent: FailureId, child: FailureId) -> None:
     :param parent: The ID of the failure to remove the child from.
     :param child: The ID of the failure to be removed.
     """
-    Failure.get(parent).remove_child(Failure.get(child))
+    Failure.remove_parenting_link(parent, child)
