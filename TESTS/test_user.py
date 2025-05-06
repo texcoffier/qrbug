@@ -16,8 +16,7 @@ class TestUser(unittest.TestCase):
         self.assertEqual(len(User.instances), 2)
 
         # Tests whether both IDs are in the list of instances
-        self.assertIn("0", User.instances)
-        self.assertIn("1", User.instances)
+        self.assertEqual(sorted(User.instances), ['0', '1'])
 
         # Tests the amount of children
         self.assertEqual(len(User.instances["0"].children_ids), 1)
