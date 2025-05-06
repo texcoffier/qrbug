@@ -81,8 +81,9 @@ def failure_update(failure_id: FailureId, **kwargs) -> Failure:
 
     # Sets the new data of the failure if it is set
     for arg, value in kwargs.items():
-        if hasattr(Failure, arg) and arg != "instances":
-            setattr(failure, arg, value)
+        assert hasattr(Failure, arg), f"Class Failure has no attribute '{arg}', do not attempt to update it"
+        assert arg != "instances", f"Cannot update instances of Failure class, please do not attempt"
+        setattr(failure, arg, value)
 
     return failure
 
