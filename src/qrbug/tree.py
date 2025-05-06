@@ -29,4 +29,4 @@ class Tree:
 
     @classmethod
     def dump_all(cls) -> Generator[str, None, None]:
-        yield from (f"{key}: {instance.dump()}" for key, instance in Tree.instances.items())
+        yield from (instance.dump() for key, instance in Tree.instances.items())
