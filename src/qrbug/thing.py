@@ -1,6 +1,3 @@
-"""
-Defines all kinds of failures that can happen on a thing.
-"""
 from typing import Optional, TypeAlias
 
 from qrbug.tree import Tree
