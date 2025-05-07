@@ -1,5 +1,5 @@
 import os
-from typing import Optional
+from typing import Optional, Callable
 
 from qrbug.user import user_add, user_remove, UserId
 from qrbug.failure import failure_update, failure_add, failure_remove, DisplayTypes, FailureId
@@ -14,7 +14,7 @@ DB_FILE_PATH = os.path.join(JOURNALS_FILE_PATH, "db.py")
 FAILURES_FILE_PATH = os.path.join(JOURNALS_FILE_PATH, "failures.py")
 
 
-def failure(thing_id: ThingId, failure_id: FailureId, ip: str, timestamp: int, comment: Optional[str]) -> None:
+def failure(thing_id: ThingId, failure_id: FailureId, ip: str, timestamp: int, comment: Optional[str] = None) -> None:
     pass
 
 
@@ -31,11 +31,14 @@ def dispatch(
     pass
 
 
+def exec_code_file(path: str, code_globals: dict[str, Callable]) -> None:
+    with open(path, 'r', encoding='utf-8') as f:
+        file_contents = f.read()
+    file_code = compile(file_contents, path, 'exec')
+    exec(file_code, code_globals)
+
 def load_config() -> None:
-    with open(DB_FILE_PATH, 'r', encoding='utf-8') as f:
-        db_file_contents = f.read()
-    db_file_code = compile(db_file_contents, DB_FILE_PATH, 'exec')
-    exec(db_file_code, {
+    exec_code_file(DB_FILE_PATH, {
         "user_add": user_add,
         "user_remove": user_remove,
         "failure_update": failure_update,
@@ -51,10 +54,7 @@ def load_config() -> None:
     })
 
 def load_failures() -> None:
-    with open(FAILURES_FILE_PATH, 'r', encoding='utf-8') as f:
-        failures_file_contents = f.read()
-    failures_file_code = compile(failures_file_contents, FAILURES_FILE_PATH, 'exec')
-    exec(failures_file_code, {
+    exec_code_file(FAILURES_FILE_PATH, {
         "failure": failure,
         "failure_del": failure_del,
         "dispatch": dispatch,
