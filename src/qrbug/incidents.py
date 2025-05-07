@@ -2,7 +2,8 @@ from typing import Optional
 
 
 class Incidents:
-    instances: list["Incidents"] = []
+    active: list["Incidents"] = []
+    finished: list["Incidents"] = []
 
     def __init__(self, thing_id: str, failure_id: str, ip: str, timestamp: int, comment: Optional[str] = None):
         self.thing_id = thing_id
@@ -19,13 +20,14 @@ class Incidents:
         """
         Factory method, creates a new incident and stores it within the incident instances
         """
-        cls.instances.append(Incidents(thing_id, failure_id, ip, timestamp, comment))
+        cls.active.append(Incidents(thing_id, failure_id, ip, timestamp, comment))
 
     @classmethod
     def remove(cls, other_thing_id, other_failure_id) -> None:
         """
         Deletes any given incident from the list of incidents
         """
-        for current_failure in cls.instances:
+        for current_failure in cls.active:
             if current_failure.is_equal(other_thing_id, other_failure_id):
-                cls.instances.remove(current_failure)
+                cls.active.remove(current_failure)
+                cls.finished.append(current_failure)
