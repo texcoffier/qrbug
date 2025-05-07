@@ -1,0 +1,31 @@
+from typing import Optional
+
+
+class Incidents:
+    instances: list["Incidents"] = []
+
+    def __init__(self, thing_id: str, failure_id: str, ip: str, timestamp: int, comment: Optional[str] = None):
+        self.thing_id = thing_id
+        self.failure_id = failure_id
+        self.ip = ip
+        self.timestamp = timestamp
+        self.comment = comment
+
+    def is_equal(self, other_thing_id, other_failure_id) -> bool:
+        return self.thing_id == other_thing_id and self.failure_id == other_failure_id
+
+    @classmethod
+    def create(cls, thing_id: str, failure_id: str, ip: str, timestamp: int, comment: Optional[str] = None) -> None:
+        """
+        Factory method, creates a new incident and stores it within the incident instances
+        """
+        cls.instances.append(Incidents(thing_id, failure_id, ip, timestamp, comment))
+
+    @classmethod
+    def remove(cls, other_thing_id, other_failure_id) -> None:
+        """
+        Deletes any given incident from the list of incidents
+        """
+        for current_failure in cls.instances:
+            if current_failure.is_equal(other_thing_id, other_failure_id):
+                cls.instances.remove(current_failure)
