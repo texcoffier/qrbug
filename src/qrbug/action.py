@@ -1,7 +1,13 @@
-class Action:
-    instances: dict[str, "Action"] = {}
+from typing import TypeAlias
 
-    def __init__(self, action_id: str, python_script: str):
+
+ActionId: TypeAlias = str
+
+
+class Action:
+    instances: dict[ActionId, "Action"] = {}
+
+    def __init__(self, action_id: ActionId, python_script: str):
         self.id = action_id
         self.python_script = python_script
         self.instances[action_id] = self

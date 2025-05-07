@@ -3,8 +3,11 @@ from typing import Optional, TypeAlias
 from qrbug.tree import Tree
 
 
+DispatcherId: TypeAlias = str
+
+
 class Dispatcher(Tree):
-    instances: dict[str, "Dispatcher"] = {}
+    instances: dict[DispatcherId, "Dispatcher"] = {}
 
     # Default values
     action_id   :   Optional[str] = None
@@ -13,7 +16,7 @@ class Dispatcher(Tree):
     when        :   Optional[str] = None
 
 
-    def __init__(self, dispatch_id: str):
+    def __init__(self, dispatch_id: DispatcherId):
         """
         Creates a new dispatcher.
         :param dispatch_id: The ID of this dispatcher.
