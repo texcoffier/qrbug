@@ -1,5 +1,5 @@
 import os
-from typing import Optional, Callable
+from typing import Optional
 
 from qrbug.action import action, ActionId
 from qrbug.dispatcher import dispatcher_update, dispatcher_del, DispatcherId
@@ -9,10 +9,7 @@ from qrbug.selector import selector
 from qrbug.thing import thing_update, thing_del, ThingId
 from qrbug.user import user_add, user_remove, UserId
 
-# Journal files
-JOURNALS_FILE_PATH = "JOURNALS/"
-DB_FILE_PATH = os.path.join(JOURNALS_FILE_PATH, "db.py")
-FAILURES_FILE_PATH = os.path.join(JOURNALS_FILE_PATH, "incidents.py")
+from qrbug.journals import exec_code_file, DB_FILE_PATH, FAILURES_FILE_PATH
 
 
 def incident(thing_id: ThingId, failure_id: FailureId, ip: str, timestamp: int, comment: Optional[str] = None) -> None:
@@ -31,13 +28,6 @@ def dispatch(
         timestamp: int
 ) -> None:
     pass
-
-
-def exec_code_file(path: str, code_globals: dict[str, Callable]) -> None:
-    with open(path, 'r', encoding='utf-8') as f:
-        file_contents = f.read()
-    file_code = compile(file_contents, path, 'exec')
-    exec(file_code, code_globals)
 
 
 def load_config() -> None:
