@@ -2,9 +2,9 @@ from typing import Generator
 
 
 class Tree:
-    instances: dict[str, "Tree"] = {}
+    instances: dict[str, "Tree"] = None
 
-    def __init__(self, tree_id: str) -> None:
+    def _init(self, tree_id: str) -> None:
         self.id: str = tree_id
         self.children_ids: set[str] = set()
 
@@ -37,7 +37,10 @@ class Tree:
         return cls.instances[tree_id]
 
     def dump(self) -> str:
-        return f"{self.id} {self.children_ids}"
+        if hasattr(self, "_local_dump"):
+            return f"{self.id} {self.children_ids} {self._local_dump()}"
+        else:
+            return f"{self.id} {self.children_ids}"
 
     @classmethod
     def dump_all(cls) -> Generator[str, None, None]:
@@ -57,7 +60,7 @@ class Tree:
         return (instance.check() for instance in Tree.instances.values())
 
     @classmethod
-    def update_tree(cls, tree_id: str, **kwargs):
+    def update_attributes(cls, tree_id: str, **kwargs):
         # Gets the tree the user asked for (or creates one with the corresponding ID if it did not exist)
         tree = cls.get(tree_id)
 

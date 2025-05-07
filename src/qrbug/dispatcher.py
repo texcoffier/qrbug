@@ -21,7 +21,11 @@ class Dispatcher(Tree):
         Creates a new dispatcher.
         :param dispatch_id: The ID of this dispatcher.
         """
-        super().__init__(dispatch_id)
+        self._init(dispatch_id)
+
+    def _local_dump(self) -> str:
+        return (f"Dispatcher(action_id={self.action_id}, selector_id={self.selector_id}, "
+                f"group_id={self.group_id}, when={self.when})")
 
 
 def dispatcher_update(dispatch_id: str, **kwargs) -> Dispatcher:
@@ -29,7 +33,7 @@ def dispatcher_update(dispatch_id: str, **kwargs) -> Dispatcher:
     Creates a new dispatcher, or modifies an existing one.
     :param dispatch_id: The ID of this dispatcher.
     """
-    return Dispatcher.update_tree(dispatch_id, **kwargs)
+    return Dispatcher.update_attributes(dispatch_id, **kwargs)
 
 
 def dispatcher_del(dispatch_id: str) -> None:

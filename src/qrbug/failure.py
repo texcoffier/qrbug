@@ -34,7 +34,11 @@ class Failure(Tree):
         Creates a new failure type.
         :param failure_id: The ID of this failure type.
         """
-        super().__init__(failure_id)
+        self._init(failure_id)
+
+    def _local_dump(self) -> str:
+        return (f"Failure(value={self.value}, display_type={self.display_type}, "
+                f"ask_confirm={self.ask_confirm}, restricted_to_group_id={self.restricted_to_group_id})")
 
 
 def failure_update(failure_id: FailureId, **kwargs) -> Failure:
@@ -46,7 +50,7 @@ def failure_update(failure_id: FailureId, **kwargs) -> Failure:
     :param ask_confirm: Whether the user will have to confirm when pressing the button.
     :param restricted_to_group_id: If only a single group can report this failure type.
     """
-    return Failure.update_tree(failure_id, **kwargs)
+    return Failure.update_attributes(failure_id, **kwargs)
 
 
 def failure_add(parent: FailureId, child: FailureId) -> None:

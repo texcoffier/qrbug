@@ -19,7 +19,10 @@ class User(Tree):
         Creates a new user.
         :param user: The ID of this new user.
         """
-        super().__init__(user)
+        self._init(user)
+
+    def _local_dump(self) -> str:
+        return "User()"
 
 
 def user_add(parent: UserId, child: UserId) -> None:

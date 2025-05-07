@@ -23,7 +23,10 @@ class Thing(Tree):
         Creates a new thing that can fail.
         :param thing_id: The ID of this thing.
         """
-        super().__init__(thing_id)
+        self._init(thing_id)
+
+    def _local_dump(self) -> str:
+        return f"Thing(id={self.id}, location={self.location}, comment={self.comment})"
 
 
 def thing_update(thing_id: ThingId, **kwargs) -> Thing:
@@ -34,7 +37,7 @@ def thing_update(thing_id: ThingId, **kwargs) -> Thing:
     :param failure_id: Which is the root failure for this thing ?
     :param comment: Any comment on the thing.
     """
-    return Thing.update_tree(thing_id, **kwargs)
+    return Thing.update_attributes(thing_id, **kwargs)
 
 
 def thing_del(thing_id: ThingId) -> None:
