@@ -2,6 +2,9 @@
 .idea/
 .vscode/
 *.egg-info/
+__pycache__/
 
 JOURNALS/db.py
 JOURNALS/failures.py
+
+*.pyc
