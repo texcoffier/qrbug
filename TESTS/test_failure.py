@@ -1,5 +1,8 @@
 import unittest
-from qrbug.failure import Failure, failure_update, failure_add, failure_remove
+from pathlib import Path
+
+from qrbug.failure import Failure, failure_update, failure_add, failure_remove, DisplayTypes
+from qrbug.journals import exec_code_file
 
 
 class TestFailure(unittest.TestCase):
@@ -65,3 +68,16 @@ class TestFailure(unittest.TestCase):
         failure_remove(a.id, b.id)
         for failure in (a, b):
             self.assertEqual(len(failure.children_ids), 0)
+
+    def test_with_db(self):
+        # Loads the DB where a simple failure is created
+        exec_code_file(str(Path(__file__).with_suffix('')) + "_db.conf", {
+            "failure_update": failure_update,
+            "failure_remove": failure_remove,
+            "failure_add": failure_add,
+            "DisplayTypes": DisplayTypes,
+        })
+
+        # Checks that there are two users in the DB
+        self.assertEqual(len(Failure.instances), 1)
+        self.assertIn("PC_NO_BOOT", Failure.instances)

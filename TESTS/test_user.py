@@ -1,5 +1,8 @@
 import unittest
+from pathlib import Path
+
 from qrbug.user import User, user_remove, user_add
+from qrbug.journals import exec_code_file
 
 
 class TestUser(unittest.TestCase):
@@ -36,3 +39,13 @@ class TestUser(unittest.TestCase):
         # Tests that after deleting the link from 0 to 1, 0 is no longer the parent of 1
         user_remove("0", "1")
         self.assertEqual(len(User.instances["0"].children_ids), 0)
+
+    def test_with_db(self):
+        # Loads the DB where two users are created
+        exec_code_file(str(Path(__file__).with_suffix('')) + "_db.conf", {
+            "user_add": user_add,
+            "user_remove": user_remove,
+        })
+
+        # Checks that there are two users in the DB
+        self.assertEqual(len(User.instances), 2)
