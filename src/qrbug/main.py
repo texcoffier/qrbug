@@ -8,7 +8,6 @@ from qrbug.action import action, ActionId
 from qrbug.selector import selector
 from qrbug.dispatcher import dispatcher_update, dispatcher_del, DispatcherId
 
-
 JOURNALS_FILE_PATH = "JOURNALS/"
 DB_FILE_PATH = os.path.join(JOURNALS_FILE_PATH, "db.py")
 FAILURES_FILE_PATH = os.path.join(JOURNALS_FILE_PATH, "failures.py")
@@ -21,12 +20,13 @@ def failure(thing_id: ThingId, failure_id: FailureId, ip: str, timestamp: int, c
 def failure_del(thing_id: ThingId, failure_id: FailureId, ip: str, timestamp: int) -> None:
     pass
 
+
 def dispatch(
-    dispatch_id: DispatcherId,
-    failure_ids: list[FailureId],
-    action_id: ActionId,
-    group_id: UserId,
-    timestamp: int
+        dispatch_id: DispatcherId,
+        failure_ids: list[FailureId],
+        action_id: ActionId,
+        group_id: UserId,
+        timestamp: int
 ) -> None:
     pass
 
@@ -36,6 +36,7 @@ def exec_code_file(path: str, code_globals: dict[str, Callable]) -> None:
         file_contents = f.read()
     file_code = compile(file_contents, path, 'exec')
     exec(file_code, code_globals)
+
 
 def load_config() -> None:
     exec_code_file(DB_FILE_PATH, {
@@ -53,6 +54,7 @@ def load_config() -> None:
         "dispatcher_del": dispatcher_del,
     })
 
+
 def load_failures() -> None:
     exec_code_file(FAILURES_FILE_PATH, {
         "failure": failure,
@@ -64,6 +66,7 @@ def load_failures() -> None:
 if __name__ == "__main__":
     from qrbug.failure import Failure
     from qrbug.user import User
+
     print(Failure.instances)
     print(User.instances)
     load_config()
