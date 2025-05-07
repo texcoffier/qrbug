@@ -12,6 +12,8 @@ class User(Tree):
     """
     A user of the app.
     """
+    instances: dict[UserId, "User"] = {}
+
     def __init__(self, user: UserId):
         """
         Creates a new user.

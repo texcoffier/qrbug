@@ -10,6 +10,8 @@ class Thing(Tree):
     """
     A Thing that can fail.
     """
+    instances: dict[ThingId, "Thing"] = {}
+
     # Default values
     location:   Optional[str]       = None
     failure_id: Optional[FailureId] = None

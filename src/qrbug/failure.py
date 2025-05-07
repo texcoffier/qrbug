@@ -21,6 +21,8 @@ class Failure(Tree):
     """
     A failure of a thing.
     """
+    instances: dict[FailureId, "Failure"] = {}
+
     # Default values
     value                  : Optional[str]          = "VALEUR_NON_DEFINIE"
     display_type           : Optional[DisplayTypes] = DisplayTypes.text

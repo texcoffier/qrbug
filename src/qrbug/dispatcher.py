@@ -4,6 +4,8 @@ from qrbug.tree import Tree
 
 
 class Dispatcher(Tree):
+    instances: dict[str, "Dispatcher"] = {}
+
     # Default values
     action_id   :   Optional[str] = None
     selector_id :   Optional[str] = None
