@@ -1,41 +1,6 @@
 from typing import Generator
 
 
-class TreeHealth:
-    def __init__(self, children_ids: list[str], parent_id: str):
-        # Counts how many times each ID is repeated in the classes' children, if they are repeated more than once
-        # They key is the ID, and the value is how many times it is repeated
-        self.repeated_ids: dict[str, int] = {}
-
-        # Whether the tree contains a reference to itself within its children
-        self.is_cyclic: bool = False
-
-        # Checks the IDs given as parameter
-        self.count_repeated_ids(children_ids)
-        self.check_is_cyclic(children_ids, parent_id)
-
-    def count_repeated_ids(self, children_ids: list[str]) -> dict[str, int]:
-        self.repeated_ids.clear()
-
-        for child_id in children_ids:
-            child_id_count = children_ids.count(child_id)
-            if child_id_count > 1:
-                self.repeated_ids[child_id] = child_id_count
-
-        return self.repeated_ids
-
-    def check_is_cyclic(self, children_ids: list[str], parent_id: str) -> bool:
-        self.is_cyclic = parent_id in children_ids
-        return self.is_cyclic
-
-    @property
-    def is_healthy(self) -> bool:
-        return self.is_cyclic is False and self.repeated_ids == {}
-
-    def __bool__(self) -> bool:
-        return self.is_healthy
-
-
 class Tree:
     instances: dict[str, "Tree"] = {}
 
@@ -53,6 +18,18 @@ class Tree:
         # assert child.id != self.id, f"Cannot make {child.id} a child of itself !"
         self.children_ids.remove(child.id)
 
+    def get_all_children_ids(self) -> set[str]:
+        def add_child_to_set(node):
+            if node.id in all_children:
+                return
+            for child_id in node.children_ids:
+                all_children.add(child_id)
+                add_child_to_set(self.instances[child_id])
+
+        all_children = set()
+        add_child_to_set(self)
+        return all_children
+
     @classmethod
     def get(cls, tree_id: str) -> "Tree":
         if tree_id not in cls.instances:
@@ -64,14 +41,20 @@ class Tree:
 
     @classmethod
     def dump_all(cls) -> Generator[str, None, None]:
-        yield from (instance.dump() for key, instance in Tree.instances.items())
+        return (instance.dump() for (key, instance) in Tree.instances.items())
 
-    def check(self) -> TreeHealth:
-        return TreeHealth(self.children_ids, self.id)
+    def check(self) -> str:
+        """
+        Returns an error message about the health of the data structure.
+        """
+        all_children = self.get_all_children_ids()
+        if self.id in all_children:
+            return "WARNING: Cyclic children imports !"
+        return "OK."
 
     @classmethod
-    def check_all(cls) -> Generator[TreeHealth, None, None]:
-        yield from (TreeHealth(instance.children_ids, instance.id) for instance in Tree.instances.values())
+    def check_all(cls) -> Generator[str, None, None]:
+        return (instance.check() for instance in Tree.instances.values())
 
     @classmethod
     def update_tree(cls, tree_id: str, **kwargs):
