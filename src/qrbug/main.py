@@ -1,14 +1,13 @@
 import os
 from typing import Optional, Callable
-from dataclasses import dataclass
 
-from qrbug.user import user_add, user_remove, UserId
-from qrbug.failure import failure_update, failure_add, failure_remove, DisplayTypes, FailureId
-from qrbug.thing import thing_update, thing_del, ThingId
 from qrbug.action import action, ActionId
-from qrbug.selector import selector
 from qrbug.dispatcher import dispatcher_update, dispatcher_del, DispatcherId
+from qrbug.failure import failure_update, failure_add, failure_remove, DisplayTypes, FailureId
 from qrbug.incidents import Incidents
+from qrbug.selector import selector
+from qrbug.thing import thing_update, thing_del, ThingId
+from qrbug.user import user_add, user_remove, UserId
 
 # Journal files
 JOURNALS_FILE_PATH = "JOURNALS/"
