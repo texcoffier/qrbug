@@ -80,11 +80,4 @@ def load_failures() -> None:
 
 
 if __name__ == "__main__":
-    from qrbug.failure import Failure
-    from qrbug.user import User
-
-    print(Failure.instances)
-    print(User.instances)
     load_config()
-    print(Failure.instances)
-    print(User.instances)
