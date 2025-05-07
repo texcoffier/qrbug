@@ -49,7 +49,7 @@ class TestFailure(unittest.TestCase):
         failure_add(a.id, b.id)
         self.assertEqual(len(a.children_ids), 1)
         self.assertEqual(len(b.children_ids), 0)
-        self.assertEqual(a.children_ids[0], b.id)
+        self.assertEqual(a.children_ids, {b.id})
 
     def test_unparenting(self):
         self.assertEqual(len(Failure.instances), 0)  # Checks that there are no failures created yet
@@ -57,7 +57,7 @@ class TestFailure(unittest.TestCase):
         # Creates two failures and parents them (instead of using failure_update() and failure_add())
         a = Failure("0")
         b = Failure("1")
-        a.children_ids = ["1"]
+        a.children_ids = {"1"}
         for failure in (a, b):
             Failure.instances[failure.id] = failure
 

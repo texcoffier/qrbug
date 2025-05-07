@@ -23,7 +23,7 @@ class TestUser(unittest.TestCase):
         self.assertEqual(len(User.instances["1"].children_ids), 0)
 
         # Tests that 0 has 1 as child
-        self.assertEqual(User.instances["0"].children_ids[0], "1")
+        self.assertEqual(User.instances["0"].children_ids, {"1"})
 
     def test_deletion(self):
         # Test setup, adding the children (instead of using user_add())
@@ -31,7 +31,7 @@ class TestUser(unittest.TestCase):
             "0": User("0"),
             "1": User("1"),
         }
-        User.instances["0"].children_ids = ["1"]
+        User.instances["0"].children_ids = {"1"}
 
         # Tests that after deleting the link from 0 to 1, 0 is no longer the parent of 1
         user_remove("0", "1")
