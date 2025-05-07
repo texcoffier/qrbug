@@ -34,7 +34,6 @@ def incident_del(thing_id: ThingId, failure_id: FailureId, ip: str, timestamp: i
     for current_failure in CURRENT_FAILURES:
         if current_failure.thing_id == thing_id and current_failure.failure_id == failure_id:
             CURRENT_FAILURES.remove(current_failure)
-            break
 
 
 def dispatch(
