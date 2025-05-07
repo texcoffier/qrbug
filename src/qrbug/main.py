@@ -26,11 +26,11 @@ class CurrentFailure:
 CURRENT_FAILURES: list[CurrentFailure] = []
 
 
-def failure(thing_id: ThingId, failure_id: FailureId, ip: str, timestamp: int, comment: Optional[str] = None) -> None:
+def incident(thing_id: ThingId, failure_id: FailureId, ip: str, timestamp: int, comment: Optional[str] = None) -> None:
     CURRENT_FAILURES.append(CurrentFailure(thing_id, failure_id, ip, timestamp, comment))
 
 
-def failure_del(thing_id: ThingId, failure_id: FailureId, ip: str, timestamp: int) -> None:
+def incident_del(thing_id: ThingId, failure_id: FailureId, ip: str, timestamp: int) -> None:
     for current_failure in CURRENT_FAILURES:
         if current_failure.thing_id == thing_id and current_failure.failure_id == failure_id:
             CURRENT_FAILURES.remove(current_failure)
@@ -73,8 +73,8 @@ def load_config() -> None:
 
 def load_failures() -> None:
     exec_code_file(FAILURES_FILE_PATH, {
-        "failure": failure,
-        "failure_del": failure_del,
+        "incident": incident,
+        "incident_del": incident_del,
         "dispatch": dispatch,
     })
 
