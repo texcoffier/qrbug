@@ -1,8 +1,7 @@
 import unittest
-from pathlib import Path
 
 from qrbug.user import User, user_remove, user_add
-from qrbug.journals import exec_code_file
+from qrbug.journals import exec_code_file, get_testing_db_path
 
 
 class TestUser(unittest.TestCase):
@@ -42,7 +41,7 @@ class TestUser(unittest.TestCase):
 
     def test_with_db(self):
         # Loads the DB where two users are created
-        exec_code_file(str(Path(__file__).with_suffix('')) + "_db.conf", {
+        exec_code_file(get_testing_db_path(__file__), {
             "user_add": user_add,
             "user_remove": user_remove,
         })

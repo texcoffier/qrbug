@@ -1,8 +1,7 @@
 import unittest
-from pathlib import Path
 
 from qrbug.failure import Failure, failure_update, failure_add, failure_remove, DisplayTypes
-from qrbug.journals import exec_code_file
+from qrbug.journals import exec_code_file, get_testing_db_path
 
 
 class TestFailure(unittest.TestCase):
@@ -71,7 +70,7 @@ class TestFailure(unittest.TestCase):
 
     def test_with_db(self):
         # Loads the DB where a simple failure is created
-        exec_code_file(str(Path(__file__).with_suffix('')) + "_db.conf", {
+        exec_code_file(get_testing_db_path(__file__), {
             "failure_update": failure_update,
             "failure_remove": failure_remove,
             "failure_add": failure_add,
