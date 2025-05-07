@@ -13,7 +13,7 @@ from qrbug.incidents import Incidents
 # Journal files
 JOURNALS_FILE_PATH = "JOURNALS/"
 DB_FILE_PATH = os.path.join(JOURNALS_FILE_PATH, "db.py")
-FAILURES_FILE_PATH = os.path.join(JOURNALS_FILE_PATH, "failures.py")
+FAILURES_FILE_PATH = os.path.join(JOURNALS_FILE_PATH, "incidents.py")
 
 
 def incident(thing_id: ThingId, failure_id: FailureId, ip: str, timestamp: int, comment: Optional[str] = None) -> None:
@@ -58,7 +58,7 @@ def load_config() -> None:
     })
 
 
-def load_failures() -> None:
+def load_incidents() -> None:
     exec_code_file(FAILURES_FILE_PATH, {
         "incident": incident,
         "incident_del": incident_del,
@@ -68,3 +68,4 @@ def load_failures() -> None:
 
 if __name__ == "__main__":
     load_config()
+    load_incidents()

@@ -5,6 +5,6 @@
 __pycache__/
 
 JOURNALS/db.py
-JOURNALS/failures.py
+JOURNALS/incidents.py
 
 *.pyc
