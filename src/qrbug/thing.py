@@ -17,14 +17,6 @@ class Thing(Tree):
     failure_id: Optional[FailureId] = None
     comment:    Optional[str]       = ""
 
-
-    def __init__(self, thing_id: ThingId):
-        """
-        Creates a new thing that can fail.
-        :param thing_id: The ID of this thing.
-        """
-        self._init(thing_id)
-
     def _local_dump(self) -> str:
         return f"Thing(id={self.id}, location={self.location}, comment={self.comment})"
 

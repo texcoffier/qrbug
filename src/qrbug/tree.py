@@ -4,9 +4,13 @@ from typing import Generator
 class Tree:
     instances: dict[str, "Tree"] = None
 
-    def _init(self, tree_id: str) -> None:
+    def __init__(self, tree_id: str) -> None:
         self.id: str = tree_id
         self.children_ids: set[str] = set()
+        self.init()
+
+    def init(self) -> None: # Redefined by subclass
+        pass
 
     def add_child(self, child: "Tree") -> None:
         # assert child.id not in self.children_ids, f"{child.id} is already a child of {self.id}"

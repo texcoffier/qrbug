@@ -14,13 +14,6 @@ class User(Tree):
     """
     instances: dict[UserId, "User"] = {}
 
-    def __init__(self, user: UserId):
-        """
-        Creates a new user.
-        :param user: The ID of this new user.
-        """
-        self._init(user)
-
     # def _local_dump(self) -> str:
     #     return "User()"
 

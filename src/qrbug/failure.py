@@ -29,13 +29,6 @@ class Failure(Tree):
     ask_confirm            : Optional[bool]         = True
     restricted_to_group_id : Optional[UserId]       = None
 
-    def __init__(self, failure_id: FailureId):
-        """
-        Creates a new failure type.
-        :param failure_id: The ID of this failure type.
-        """
-        self._init(failure_id)
-
     def _local_dump(self) -> str:
         return (f"Failure(value={self.value}, display_type={self.display_type}, "
                 f"ask_confirm={self.ask_confirm}, restricted_to_group_id={self.restricted_to_group_id})")

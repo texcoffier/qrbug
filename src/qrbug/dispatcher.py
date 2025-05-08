@@ -15,14 +15,6 @@ class Dispatcher(Tree):
     group_id    :   Optional[str] = None
     when        :   Optional[str] = None
 
-
-    def __init__(self, dispatch_id: DispatcherId):
-        """
-        Creates a new dispatcher.
-        :param dispatch_id: The ID of this dispatcher.
-        """
-        self._init(dispatch_id)
-
     def _local_dump(self) -> str:
         return (f"Dispatcher(action_id={self.action_id}, selector_id={self.selector_id}, "
                 f"group_id={self.group_id}, when={self.when})")
