@@ -16,7 +16,7 @@ class TestUser(TestCase):
                    "1 []")
 
     def test_with_db(self):
-        self.read_db()
+        self.load_config()
         self.check(User,
                    "0 []\n"
                    "1 []")

@@ -61,7 +61,7 @@ class TestFailure(TestCase):
 
     def test_with_db(self):
         # Loads the DB where a simple failure is created
-        self.read_db()
+        self.load_config()
         # Checks that there are two users in the DB
         self.assertEqual(len(Failure.instances), 1)
         self.assertIn("PC_NO_BOOT", Failure.instances)

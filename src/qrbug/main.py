@@ -63,7 +63,7 @@ class TestCase(unittest.TestCase):
     def check(self, cls, value):
         self.assertEqual('\n'.join(sorted(cls.dump_all())), value)
 
-    def read_db(self):
+    def load_config(self):
         test = sys.modules[self.__class__.__module__].__spec__.origin
         exec_code_file(test.replace('.py', '_db.conf'), CONFIGS)
 
