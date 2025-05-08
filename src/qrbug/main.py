@@ -1,16 +1,16 @@
-import os
+import sys
+import unittest
 from typing import Optional
 
 from qrbug.action import action, ActionId
 from qrbug.dispatcher import dispatcher_update, dispatcher_del, DispatcherId
-from qrbug.failure import failure_update, failure_add, failure_remove, DisplayTypes, FailureId
+from qrbug.failure import failure_update, failure_add, failure_remove, DisplayTypes, FailureId, Failure
 from qrbug.incidents import Incidents
 from qrbug.selector import selector
 from qrbug.thing import thing_update, thing_del, ThingId
-from qrbug.user import user_add, user_remove, UserId
+from qrbug.user import user_add, user_remove, UserId, User
 
 from qrbug.journals import exec_code_file, DB_FILE_PATH, FAILURES_FILE_PATH
-
 
 def incident(thing_id: ThingId, failure_id: FailureId, ip: str, timestamp: int, comment: Optional[str] = None) -> None:
     Incidents.create(thing_id, failure_id, ip, timestamp, comment)
@@ -54,6 +54,24 @@ def load_incidents() -> None:
         "dispatch": dispatch,
     })
 
+class TestCase(unittest.TestCase):
+    def tearDown(self):
+        User.instances.clear()
+        Failure.instances.clear()
+
+    def check(self, cls, value):
+        self.assertEqual('\n'.join(sorted(cls.dump_all())), value)
+
+    def read_db(self): 
+        test = sys.modules[self.__class__.__module__].__spec__.origin
+        exec_code_file(test.replace('.py', '_db.conf'), {
+            "user_add": user_add,
+            "user_remove": user_remove,
+            "failure_update": failure_update,
+            "failure_remove": failure_remove,
+            "failure_add": failure_add,
+            "DisplayTypes": DisplayTypes,
+        })
 
 if __name__ == "__main__":
     load_config()

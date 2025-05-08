@@ -1,21 +1,12 @@
-import unittest
-
-from qrbug.failure import Failure, failure_update, failure_add, failure_remove, DisplayTypes
-from qrbug.journals import exec_code_file, get_testing_db_path
-
-
-class TestFailure(unittest.TestCase):
-    def setUp(self):
-        Failure.instances.clear()
-
-    def tearDown(self):
-        Failure.instances.clear()
-
+from qrbug.main import *
+class TestFailure(TestCase):
     def test_creation(self):
         # Checks that the failures are actually registered upon creation
-        self.assertEqual(len(Failure.instances), 0)
+        self.check(Failure,
+                   "")
         failure: Failure = failure_update("0")  # Creates a brand-new failure with ID zero
-        self.assertEqual(len(Failure.instances), 1)  # Checks that the failure actually got registered
+        self.check(Failure,
+                   "0 [] Failure(value=VALEUR_NON_DEFINIE, display_type=DisplayTypes.text, ask_confirm=True, restricted_to_group_id=None)")
 
         # Checks that the new failure has the correct ID and no children
         self.assertEqual(failure.id, "0")
@@ -70,13 +61,7 @@ class TestFailure(unittest.TestCase):
 
     def test_with_db(self):
         # Loads the DB where a simple failure is created
-        exec_code_file(get_testing_db_path(__file__), {
-            "failure_update": failure_update,
-            "failure_remove": failure_remove,
-            "failure_add": failure_add,
-            "DisplayTypes": DisplayTypes,
-        })
-
+        self.read_db()
         # Checks that there are two users in the DB
         self.assertEqual(len(Failure.instances), 1)
         self.assertIn("PC_NO_BOOT", Failure.instances)

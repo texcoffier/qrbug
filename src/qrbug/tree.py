@@ -37,14 +37,14 @@ class Tree:
         return cls.instances[tree_id]
 
     def dump(self) -> str:
+        base = f"{self.id} {sorted(self.children_ids)}"
         if hasattr(self, "_local_dump"):
-            return f"{self.id} {self.children_ids} {self._local_dump()}"
-        else:
-            return f"{self.id} {self.children_ids}"
+            base = f"{base} {self._local_dump()}"
+        return base
 
     @classmethod
     def dump_all(cls) -> Generator[str, None, None]:
-        return (instance.dump() for (key, instance) in Tree.instances.items())
+        return (instance.dump() for (key, instance) in cls.instances.items())
 
     def check(self) -> str:
         """

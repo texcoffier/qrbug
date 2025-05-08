@@ -16,10 +16,3 @@ def exec_code_file(path: str, code_globals: dict[str, Callable]) -> None:
         file_contents = f.read()
     file_code = compile(file_contents, path, 'exec')
     exec(file_code, code_globals)
-
-def get_testing_db_path(test_name: str) -> str:
-    """
-    Returns the path to the test database file, for the current file.
-    :param test_name: The built-in variable `__file__` where this function is called.
-    """
-    return str(Path(test_name).with_suffix('')) + "_db.conf"

@@ -1,50 +1,22 @@
-import unittest
-
-from qrbug.user import User, user_remove, user_add
-from qrbug.journals import exec_code_file, get_testing_db_path
-
-
-class TestUser(unittest.TestCase):
-    def setUp(self):
-        User.instances.clear()
-
-    def tearDown(self):
-        User.instances.clear()
-
+from qrbug.main import *
+class TestUser(TestCase):
     def test_creation(self):
-        # Tests whether adding two users grows the instances count accordingly
-        self.assertEqual(len(User.instances), 0)
+        self.check(User,
+                   '')
         user_add("0", "1")
-        self.assertEqual(len(User.instances), 2)
-
-        # Tests whether both IDs are in the list of instances
-        self.assertEqual(sorted(User.instances), ['0', '1'])
-
-        # Tests the amount of children
-        self.assertEqual(len(User.instances["0"].children_ids), 1)
-        self.assertEqual(len(User.instances["1"].children_ids), 0)
-
-        # Tests that 0 has 1 as child
-        self.assertEqual(User.instances["0"].children_ids, {"1"})
+        self.check(User,
+                   "0 ['1']\n"
+                   "1 []")
 
     def test_deletion(self):
-        # Test setup, adding the children (instead of using user_add())
-        User.instances = {
-            "0": User("0"),
-            "1": User("1"),
-        }
-        User.instances["0"].children_ids = {"1"}
-
-        # Tests that after deleting the link from 0 to 1, 0 is no longer the parent of 1
+        user_add("0", "1") # test_creation checked if it is working
         user_remove("0", "1")
-        self.assertEqual(len(User.instances["0"].children_ids), 0)
+        self.check(User,
+                   "0 []\n"
+                   "1 []")
 
     def test_with_db(self):
-        # Loads the DB where two users are created
-        exec_code_file(get_testing_db_path(__file__), {
-            "user_add": user_add,
-            "user_remove": user_remove,
-        })
-
-        # Checks that there are two users in the DB
-        self.assertEqual(len(User.instances), 2)
+        self.read_db()
+        self.check(User,
+                   "0 []\n"
+                   "1 []")

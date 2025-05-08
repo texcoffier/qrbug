@@ -21,8 +21,8 @@ class User(Tree):
         """
         self._init(user)
 
-    def _local_dump(self) -> str:
-        return "User()"
+    # def _local_dump(self) -> str:
+    #     return "User()"
 
 
 def user_add(parent: UserId, child: UserId) -> None:
