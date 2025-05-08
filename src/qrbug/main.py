@@ -30,22 +30,23 @@ def dispatch(
     pass
 
 
-def load_config() -> None:
-    exec_code_file(DB_FILE_PATH, {
-        "user_add": user_add,
-        "user_remove": user_remove,
-        "failure_update": failure_update,
-        "failure_add": failure_add,
-        "failure_remove": failure_remove,
-        "DisplayTypes": DisplayTypes,
-        "thing_update": thing_update,
-        "thing_del": thing_del,
-        "action": action,
-        "selector": selector,
-        "dispatcher_update": dispatcher_update,
-        "dispatcher_del": dispatcher_del,
-    })
+CONFIGS = {
+    "user_add": user_add,
+    "user_remove": user_remove,
+    "failure_update": failure_update,
+    "failure_add": failure_add,
+    "failure_remove": failure_remove,
+    "DisplayTypes": DisplayTypes,
+    "thing_update": thing_update,
+    "thing_del": thing_del,
+    "action": action,
+    "selector": selector,
+    "dispatcher_update": dispatcher_update,
+    "dispatcher_del": dispatcher_del,
+    }
 
+def load_config() -> None:
+    exec_code_file(DB_FILE_PATH, CONFIGS)
 
 def load_incidents() -> None:
     exec_code_file(FAILURES_FILE_PATH, {
@@ -62,16 +63,9 @@ class TestCase(unittest.TestCase):
     def check(self, cls, value):
         self.assertEqual('\n'.join(sorted(cls.dump_all())), value)
 
-    def read_db(self): 
+    def read_db(self):
         test = sys.modules[self.__class__.__module__].__spec__.origin
-        exec_code_file(test.replace('.py', '_db.conf'), {
-            "user_add": user_add,
-            "user_remove": user_remove,
-            "failure_update": failure_update,
-            "failure_remove": failure_remove,
-            "failure_add": failure_add,
-            "DisplayTypes": DisplayTypes,
-        })
+        exec_code_file(test.replace('.py', '_db.conf'), CONFIGS)
 
 if __name__ == "__main__":
     load_config()
