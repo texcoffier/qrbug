@@ -1,4 +1,4 @@
-from typing import Generator
+from typing import Generator, Optional
 from io import StringIO
 
 
@@ -37,8 +37,16 @@ class Tree:
 
     @classmethod
     def get(cls, tree_id: str) -> "Tree":
+        """ Returns the given tree instance if it exists, or CREATES IT then returns it otherwise. """
         if tree_id not in cls.instances:
             cls.instances[tree_id] = cls(tree_id)
+        return cls.instances[tree_id]
+
+    @classmethod
+    def get_if_exists(cls, tree_id: str) -> Optional["Tree"]:
+        """ Returns the given tree instance if it exists, or None otherwise. """
+        if tree_id not in cls.instances:
+            return None
         return cls.instances[tree_id]
 
     def dump(self) -> str:
