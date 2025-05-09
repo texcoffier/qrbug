@@ -45,7 +45,7 @@ class Failure(Tree):
             VALUE_JUSTIFICATION: int = 50
             DISPLAY_TYPE_JUSTIFICATION: int = 10
 
-            current_failure: Optional[Failure] = Failure.get_if_exists(failure_id)
+            current_failure: Optional["Failure"] = Failure.get_if_exists(failure_id)
             if current_failure is None:
                 return
 
