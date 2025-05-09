@@ -61,7 +61,7 @@ class Tree:
         for attribute in dir(self.__class__):
             attribute_value = getattr(self, attribute)
             if not attribute.startswith("_") and attribute != "instances" and not callable(attribute_value):
-                if attribute_value is not None:
+                if attribute_value is not None and getattr(self.__class__, attribute) != attribute_value:
                     dump.write(f"{attribute}={repr(attribute_value)}, ")
         dump.write(")")
         return dump.getvalue().replace(", )", ")")
