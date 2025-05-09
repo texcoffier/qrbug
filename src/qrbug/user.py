@@ -14,8 +14,8 @@ class User(Tree):
     """
     instances: dict[UserId, "User"] = {}
 
-    # def _local_dump(self) -> str:
-    #     return "User()"
+    def _local_dump(self) -> str:
+        return self.get_representation()
 
 
 def user_add(parent: UserId, child: UserId) -> None:
@@ -34,3 +34,7 @@ def user_remove(parent: UserId, child: UserId) -> None:
     :param child: The ID of the user to be removed.
     """
     User.remove_parenting_link(parent, child)
+
+if __name__ == "__main__":
+    user_add("0", "1")
+    print(User.get("0").dump())

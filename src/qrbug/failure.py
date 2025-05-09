@@ -30,8 +30,7 @@ class Failure(Tree):
     restricted_to_group_id : Optional[UserId]       = None
 
     def _local_dump(self) -> str:
-        return (f"Failure(value={self.value}, display_type={self.display_type}, "
-                f"ask_confirm={self.ask_confirm}, restricted_to_group_id={self.restricted_to_group_id})")
+        return self.get_representation()
 
 
 def failure_update(failure_id: FailureId, **kwargs) -> Failure:
@@ -62,3 +61,7 @@ def failure_remove(parent: FailureId, child: FailureId) -> None:
     :param child: The ID of the failure to be removed.
     """
     Failure.remove_parenting_link(parent, child)
+
+if __name__ == "__main__":
+    failure_update("0", value="Testing title", display_type=DisplayTypes.text)
+    print(Failure.get("0").dump())

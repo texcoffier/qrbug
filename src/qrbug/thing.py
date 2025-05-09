@@ -18,7 +18,7 @@ class Thing(Tree):
     comment:    Optional[str]       = ""
 
     def _local_dump(self) -> str:
-        return f"Thing(id={self.id}, location={self.location}, comment={self.comment})"
+        return self.get_representation()
 
 
 def thing_update(thing_id: ThingId, **kwargs) -> Thing:
@@ -38,3 +38,7 @@ def thing_del(thing_id: ThingId) -> None:
     :param thing_id: The ID of this thing.
     """
     del Thing.instances[thing_id]
+
+if __name__ == "__main__":
+    thing_update("0", location="Testing location", comment="This is a comment")
+    print(Thing.get("0").dump())

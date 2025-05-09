@@ -16,8 +16,7 @@ class Dispatcher(Tree):
     when        :   Optional[str] = None
 
     def _local_dump(self) -> str:
-        return (f"Dispatcher(action_id={self.action_id}, selector_id={self.selector_id}, "
-                f"group_id={self.group_id}, when={self.when})")
+        return self.get_representation()
 
 
 def dispatcher_update(dispatch_id: str, **kwargs) -> Dispatcher:
@@ -34,3 +33,7 @@ def dispatcher_del(dispatch_id: str) -> None:
     :param dispatch_id: The ID of this dispatcher.
     """
     del Dispatcher.instances[dispatch_id]
+
+if __name__ == "__main__":
+    dispatcher_update("0", when="Test", selector_id="0")
+    print(Dispatcher.get("0").dump())
