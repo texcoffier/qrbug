@@ -1,4 +1,5 @@
 from typing import Generator
+from io import StringIO
 
 
 class Tree:
@@ -49,6 +50,21 @@ class Tree:
     @classmethod
     def dump_all(cls) -> Generator[str, None, None]:
         return (instance.dump() for (key, instance) in cls.instances.items())
+
+    def get_representation(self) -> str:
+        """
+        Returns a string that can be used for _local_dump().
+        """
+        dump = StringIO()
+        dump.write(self.__class__.__name__)
+        dump.write("(")
+        for attribute in dir(self.__class__):
+            attribute_value = getattr(self, attribute)
+            if not attribute.startswith("_") and attribute != "instances" and not callable(attribute_value):
+                if attribute_value is not None:
+                    dump.write(f"{attribute}={repr(attribute_value)}, ")
+        dump.write(")")
+        return dump.getvalue().replace(", )", ")")
 
     def check(self) -> str:
         """
