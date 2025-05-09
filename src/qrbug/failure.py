@@ -38,11 +38,12 @@ class Failure(Tree):
 
         def recursively_build_failures_list(failure_id: str, depth: int = 0) -> None:
             nonlocal final_string_representation
-            INDENTATION_SIZE = 2
-            INDENTATION_DEPTH = depth * INDENTATION_SIZE
-            SHOW_ADDITIONAL_ATTRIBUTES_INFO = True
+            INDENTATION_SIZE: int = 2
+            INDENTATION_DEPTH: int = depth * INDENTATION_SIZE
+            SHOW_ADDITIONAL_ATTRIBUTES_INFO: bool = True
+            GROUP_JUSTIFICATION: int = 8
 
-            current_failure = Failure.get_if_exists(failure_id)
+            current_failure: Optional[Failure] = Failure.get_if_exists(failure_id)
             if current_failure is None:
                 return
             final_string_representation.write(
@@ -53,9 +54,13 @@ class Failure(Tree):
                     "\t\t"
                     f"[{current_failure.display_type.name.center(10)}]\t"
                     f"[ask_confirm?={'YES' if current_failure.ask_confirm else 'NO '}]\t"
-                    f"[group={'' if current_failure.restricted_to_group_id is None else
-                        current_failure.restricted_to_group_id.ljust(8)}]"
                 )
+                if current_failure.restricted_to_group_id is not None:
+                    final_string_representation.write(
+                        f"[group={current_failure.restricted_to_group_id.ljust(GROUP_JUSTIFICATION)}]"
+                    )
+                else:
+                    final_string_representation.write(f"[{'No group'.center(GROUP_JUSTIFICATION + len("group="))}]")
             final_string_representation.write("\n")
 
             # We sort by display type then by value, so that the text failures are
