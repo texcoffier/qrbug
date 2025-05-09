@@ -10,7 +10,7 @@ from qrbug.selector import selector
 from qrbug.thing import thing_update, thing_del, ThingId
 from qrbug.user import user_add, user_remove, UserId, User
 
-from qrbug.journals import exec_code_file, DB_FILE_PATH, FAILURES_FILE_PATH
+from qrbug.journals import exec_code_file, DB_FILE_PATH, INCIDENTS_FILE_PATH
 
 def incident(thing_id: ThingId, failure_id: FailureId, ip: str, timestamp: int, comment: Optional[str] = None) -> None:
     Incidents.create(thing_id, failure_id, ip, timestamp, comment)
@@ -49,7 +49,7 @@ def load_config() -> None:
     exec_code_file(DB_FILE_PATH, CONFIGS)
 
 def load_incidents() -> None:
-    exec_code_file(FAILURES_FILE_PATH, {
+    exec_code_file(INCIDENTS_FILE_PATH, {
         "incident": incident,
         "incident_del": incident_del,
         "dispatch": dispatch,

@@ -8,7 +8,7 @@ from typing import Callable
 # Journal files
 JOURNALS_FILE_PATH = "JOURNALS/"
 DB_FILE_PATH = os.path.join(JOURNALS_FILE_PATH, "db.py")
-FAILURES_FILE_PATH = os.path.join(JOURNALS_FILE_PATH, "incidents.py")
+INCIDENTS_FILE_PATH = os.path.join(JOURNALS_FILE_PATH, "incidents.py")
 
 
 def exec_code_file(path: str, code_globals: dict[str, Callable]) -> None:
