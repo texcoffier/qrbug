@@ -57,8 +57,17 @@ class Failure(Tree):
                         current_failure.restricted_to_group_id.ljust(8)}]"
                 )
             final_string_representation.write("\n")
-            for child_id in current_failure.children_ids:
-                recursively_build_failures_list(child_id, depth + 1)
+
+            # We sort by display type then by value, so that the text failures are
+            # always shown first (headers), followed by the buttons, the redirects, and
+            # the input fields (which are usually just the "Other" answer)
+            # We have to sort this instead of just using the loop as-is because sets have no defined order,
+            # which means if we don't sort this, the result is going to come out different every time
+            child_failures_list = [Failure.get_if_exists(failure) for failure in current_failure.children_ids]
+            child_failures_list.sort(key=lambda e: (e.display_type.value, e.value))
+
+            for child_failure in child_failures_list:
+                recursively_build_failures_list(child_failure.id, depth + 1)
 
         recursively_build_failures_list(self.id)
         return final_string_representation.getvalue()
