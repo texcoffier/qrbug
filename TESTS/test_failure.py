@@ -6,7 +6,7 @@ class TestFailure(TestCase):
     def test_creation(self):
         # Checks that the failures are actually registered upon creation
         self.check(Failure, "")
-        failure: Failure = failure_update("0")  # Creates a brand-new failure with ID zero
+        failure_update("0")  # Creates a brand-new failure with ID zero
         self.check(Failure, f"0 [] {Failure.__name__}()")
 
         # Checks that updating an attribute of the failure class works

@@ -55,6 +55,7 @@ def load_incidents() -> None:
         "dispatch": dispatch,
     })
 
+
 class TestCase(unittest.TestCase):
     def tearDown(self):
         User.instances.clear()
@@ -68,6 +69,7 @@ class TestCase(unittest.TestCase):
     def load_config(self):
         test = sys.modules[self.__class__.__module__].__spec__.origin
         exec_code_file(test.replace('.py', '_db.conf'), CONFIGS)
+
 
 if __name__ == "__main__":
     load_config()
