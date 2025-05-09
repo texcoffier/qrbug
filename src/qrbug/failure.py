@@ -80,6 +80,13 @@ class Failure(Tree):
         recursively_build_failures_list(self.id)
         return final_string_representation.getvalue()
 
+    def add_parent(self, parent_id: str) -> None:
+        """
+        This allows to forgo the use of `failure_add()` in the configuration file, by chaining `failure_update()`
+            with the `add_parent()` method when the Failure is created.
+        """
+        Failure.add_parenting_link(parent_id, self.id)
+
 
 def failure_update(failure_id: FailureId, **kwargs) -> Failure:
     """
