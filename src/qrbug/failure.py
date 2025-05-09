@@ -42,17 +42,20 @@ class Failure(Tree):
             INDENTATION_DEPTH: int = depth * INDENTATION_SIZE
             SHOW_ADDITIONAL_ATTRIBUTES_INFO: bool = True
             GROUP_JUSTIFICATION: int = 8
+            VALUE_JUSTIFICATION: int = 50
+            DISPLAY_TYPE_JUSTIFICATION: int = 10
 
             current_failure: Optional[Failure] = Failure.get_if_exists(failure_id)
             if current_failure is None:
                 return
+
             final_string_representation.write(
-                f"{' ' * INDENTATION_DEPTH}- {current_failure.value.ljust(50 - INDENTATION_DEPTH)}"
+                f"{' ' * INDENTATION_DEPTH}- {current_failure.value.ljust(VALUE_JUSTIFICATION - INDENTATION_DEPTH)}"
             )
             if SHOW_ADDITIONAL_ATTRIBUTES_INFO:
                 final_string_representation.write(
                     "\t\t"
-                    f"[{current_failure.display_type.name.center(10)}]\t"
+                    f"[{current_failure.display_type.name.center(DISPLAY_TYPE_JUSTIFICATION)}]\t"
                     f"[ask_confirm?={'YES' if current_failure.ask_confirm else 'NO '}]\t"
                 )
                 if current_failure.restricted_to_group_id is not None:
