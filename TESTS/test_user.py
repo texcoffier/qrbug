@@ -1,4 +1,7 @@
-from qrbug.main import *
+from qrbug.user import User, user_add, user_remove
+from qrbug.main import TestCase
+
+
 class TestUser(TestCase):
     def test_creation(self):
         self.check(User,

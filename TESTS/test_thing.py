@@ -1,40 +1,33 @@
-import unittest
 from qrbug.thing import Thing, thing_update, thing_del
+from qrbug.main import TestCase
+
+ID = "0"
 
 
-class TestThing(unittest.TestCase):
-    def setUp(self):
-        Thing.instances.clear()
-
-    def tearDown(self):
-        Thing.instances.clear()
-
+class TestThing(TestCase):
     def test_creation(self):
-        ID = "0"
-        self.assertEqual(Thing.instances, {})
+        self.check(Thing, '')
         thing_update(ID)
-        self.assertEqual(sorted(list(Thing.instances.keys())), [ID])
+        self.check(Thing, f'{ID} [] {Thing.__name__}()')
 
     def test_update(self):
-        ID = "0"
         # Creates a thing (without using the thing_update()) method
-        a = Thing(ID)
-        Thing.instances[ID] = a
+        Thing.get(ID)
 
         # Updates said thing
-        old_value = a.comment
         new_value = "THIS IS A NEW VALUE FOR THE COMMENT"
         thing_update(ID, comment=new_value)
-        self.assertNotEqual(old_value, new_value)
-        self.assertNotEqual(old_value, a.comment)
+        self.check(Thing, f"{ID} [] {Thing.__name__}(comment='{new_value}')")
 
     def test_delete(self):
-        ID = "0"
         # Creates a thing (without using the thing_update()) method
-        Thing.instances[ID] = Thing(ID)
+        Thing.get(ID)
 
         # Tests around deleting an instance
-        self.assertEqual(len(Thing.instances), 1)
+        self.check(Thing, f'{ID} [] {Thing.__name__}()')
         thing_del(ID)
-        self.assertEqual(len(Thing.instances), 0)
+        self.check(Thing, '')
 
+    def test_with_db(self):
+        self.load_config()
+        self.check(Thing, f"0 [] {Thing.__name__}(comment='A comment, it seems')")
