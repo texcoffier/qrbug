@@ -3,6 +3,7 @@ Defines all kinds of failures that can happen on a thing.
 """
 from typing import Optional, TypeAlias
 import enum
+from io import StringIO
 
 from qrbug.user import UserId
 from qrbug.tree import Tree
@@ -31,6 +32,36 @@ class Failure(Tree):
 
     def _local_dump(self) -> str:
         return self.get_representation()
+
+    def get_hierarchy_representation(self) -> str:
+        final_string_representation = StringIO()
+
+        def recursively_build_failures_list(failure_id: str, depth: int = 0) -> None:
+            nonlocal final_string_representation
+            INDENTATION_SIZE = 2
+            INDENTATION_DEPTH = depth * INDENTATION_SIZE
+            SHOW_ADDITIONAL_ATTRIBUTES_INFO = True
+
+            current_failure = Failure.get_if_exists(failure_id)
+            if current_failure is None:
+                return
+            final_string_representation.write(
+                f"{' ' * INDENTATION_DEPTH}- {current_failure.value.ljust(50 - INDENTATION_DEPTH)}"
+            )
+            if SHOW_ADDITIONAL_ATTRIBUTES_INFO:
+                final_string_representation.write(
+                    "\t\t"
+                    f"[{current_failure.display_type.name.center(10)}]\t"
+                    f"[ask_confirm?={'YES' if current_failure.ask_confirm else 'NO '}]\t"
+                    f"[group={'' if current_failure.restricted_to_group_id is None else
+                        current_failure.restricted_to_group_id.ljust(8)}]"
+                )
+            final_string_representation.write("\n")
+            for child_id in current_failure.children_ids:
+                recursively_build_failures_list(child_id, depth + 1)
+
+        recursively_build_failures_list(self.id)
+        return final_string_representation.getvalue()
 
 
 def failure_update(failure_id: FailureId, **kwargs) -> Failure:
