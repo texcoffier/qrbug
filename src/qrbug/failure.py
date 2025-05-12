@@ -44,6 +44,9 @@ class Failure(Tree):
         return self.get_representation()
 
     def get_hierarchy_representation(self) -> str:
+        """
+        Returns the hierarchy representation of this failure as raw text.
+        """
         final_string_representation = StringIO()
 
         def recursively_build_failures_list(failure_id: str, depth: int = 0) -> None:
@@ -92,6 +95,10 @@ class Failure(Tree):
 
 
     def get_hierarchy_representation_html(self, thing_id: str) -> str:
+        """
+        Returns a representation of the whole hierarchy of this failure as a webpage.
+        :param thing_id: The id of the thing that could be targeted by this failure.
+        """
         final_string_representation = StringIO()
 
         # TODO : Caching ?

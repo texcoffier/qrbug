@@ -12,6 +12,11 @@ from qrbug.main import load_config, load_incidents, INCIDENTS_FILE_PATH
 
 
 def get_failures(thing_id: str, as_html: bool = True) -> str:
+    """
+    Returns the representation of the failure of the given thing, as HTML or raw text.
+    :param thing_id: The id of the thing.
+    :param as_html: If True, return an HTML representation of the failure. Otherwise, returns as raw text.
+    """
     requested_thing = Thing.get_if_exists(thing_id)
     if requested_thing is None:
         return "Requested thing not found"
@@ -28,6 +33,9 @@ def get_failures(thing_id: str, as_html: bool = True) -> str:
 
 
 async def show_failures_tree_route(request: web.Request) -> web.Response:
+    """
+    Returns the webpage listing the failure hierarchy for the given thing.
+    """
     thing_id: Optional[str] = request.match_info.get('thing_id', None)
     if thing_id is None:
         return web.Response(status=404, text="No thing ID provided")
@@ -39,6 +47,9 @@ async def show_failures_tree_route(request: web.Request) -> web.Response:
 
 
 async def register_incident(request: web.Request) -> web.Response:
+    """
+    Registers an incident into the logs, then shows the user that the incident has been registered.
+    """
     thing_id: Optional[str] = request.rel_url.query.get("thing-id", None)
     failure_id: Optional[str] = request.rel_url.query.get("failure-id", None)
     is_repaired: Optional[str] = request.rel_url.query.get("is-repaired", None)
@@ -73,17 +84,26 @@ async def register_incident(request: web.Request) -> web.Response:
     with open(INCIDENTS_FILE_PATH, 'a', encoding='utf-8') as f:
         f.write(function_to_log)
 
-    return_string = (f"thing_id={thing_id}\n"
-                     f"failure_id={failure_id}\n"
-                     f"is_repaired={is_repaired_bool}\n"
-                     f"additional_info={additional_info}\n\n"
-                     f"valid_request={valid_request}\n\n"
-                     f"Registered new incident.")
-    return web.Response(status=200, text=return_string)
+    # return_string = (f"thing_id={thing_id}\n"
+    #                  f"failure_id={failure_id}\n"
+    #                  f"is_repaired={is_repaired_bool}\n"
+    #                  f"additional_info={additional_info}\n\n"
+    #                  f"valid_request={valid_request}\n\n"
+    #                  f"Registered new incident.")
+    # return web.Response(status=200, text=return_string)
+    return web.Response(
+        status=200,
+        text="<h1>Merci !</h1><h3>Votre signalement a été enregistré.</h3>",
+        content_type='text/html'
+    )
 
 
 
 def init_server(argv = None) -> web.Application:
+    """
+    Function that will be run on server startup.
+    Loads the config and incidents journals, starts a new server, and creates the routes.
+    """
     if argv is None:
         argv = []
 
