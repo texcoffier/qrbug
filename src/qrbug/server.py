@@ -11,7 +11,7 @@ from qrbug.failure import Failure
 from qrbug.main import load_config, load_incidents, INCIDENTS_FILE_PATH
 
 
-def get_failures(thing_id: str) -> str:
+def get_failures(thing_id: str, as_html: bool = True) -> str:
     requested_thing = Thing.get_if_exists(thing_id)
     if requested_thing is None:
         return "Requested thing not found"
@@ -21,7 +21,10 @@ def get_failures(thing_id: str) -> str:
     if current_thing_root_failure is None:
         return "Requested thing's root failure not found"
 
-    return current_thing_root_failure.get_hierarchy_representation()
+    if as_html:
+        return current_thing_root_failure.get_hierarchy_representation_html()
+    else:
+        return current_thing_root_failure.get_hierarchy_representation()
 
 
 async def show_failures_tree_route(request: web.Request) -> web.Response:
@@ -31,7 +34,8 @@ async def show_failures_tree_route(request: web.Request) -> web.Response:
     requested_thing: Optional[Thing] = Thing.get_if_exists(thing_id)
     if requested_thing is None:
         return web.Response(status=404, text="Requested Thing does not exist")
-    return web.Response(status=200, text=f"Thing ID: {thing_id}\n\n{requested_thing.dump()}\n\nFailures list :\n{get_failures(thing_id)}")
+    #return web.Response(status=200, text=f"Thing ID: {thing_id}\n\n{requested_thing.dump()}\n\nFailures list :\n{get_failures(thing_id)}")
+    return web.Response(status=200, text=get_failures(thing_id), content_type='text/html')
 
 
 async def register_incident(request: web.Request) -> web.Response:

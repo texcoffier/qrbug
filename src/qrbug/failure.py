@@ -80,6 +80,91 @@ class Failure(Tree):
         recursively_build_failures_list(self.id)
         return final_string_representation.getvalue()
 
+    def get_hierarchy_representation_html(self) -> str:
+        final_string_representation = StringIO()
+        final_string_representation.write("""
+        <!DOCTYPE html>
+        <html>
+        
+        <head>
+            <meta charset="utf-8"/>
+            <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+            <style>
+                body {
+                    font-family: sans-serif;
+                    font-size: 1.2em;
+                }
+        
+                div.button {
+                    display: inline-block;
+                    border: 0.1em outset #888;
+                    border-radius: 0.5em;
+                    margin: 0.2em;
+                    padding: 0.2em;
+                    background: #EEE;
+                }
+        
+                div.button:hover {
+                    border: 0.1em inset #888;
+                    background: #DDD;
+                }
+                
+                ul {
+                    list-style-type: none;
+                }
+                
+                input {
+                    font-size: 1.2em;
+                }
+            </style>
+        </head>
+        
+        <body>
+        <ul>
+        """)
+
+        def recursively_build_failures_list(failure: "Failure") -> None:
+            nonlocal final_string_representation
+
+            element_type = ''
+            additional_attributes = ''
+            if failure.display_type == DisplayTypes.text:
+                element_type = 'p'
+                additional_attributes = ''
+            elif failure.display_type == DisplayTypes.button:
+                element_type = 'div'
+                additional_attributes = 'type="button" class="button"'
+            elif failure.display_type == DisplayTypes.redirect:
+                element_type = 'a'
+                additional_attributes = f'href="{failure.value}"'
+            elif failure.display_type == DisplayTypes.input:
+                element_type = 'input'
+                additional_attributes = f'type="text" placeholder="{failure.value}" name="{failure.id}'
+            final_string_representation.write(
+                f'<li><{element_type} id="{failure.id}" {additional_attributes}>'
+                f'{failure.value}'
+                f'</{element_type}></li>\n'
+                f'<ul>'
+            )
+            final_string_representation.write("\n")
+
+            # We sort by display type then by value, so that the text failures are
+            # always shown first (headers), followed by the buttons, the redirects, and
+            # the input fields (which are usually just the "Other" answer)
+            # We have to sort this instead of just using the loop as-is because sets have no defined order,
+            # which means if we don't sort this, the result is going to come out different every time
+            child_failures_list = [Failure.get_if_exists(child_failure) for child_failure in failure.children_ids]
+            child_failures_list.sort(key=lambda e: (e.display_type.value, e.value))
+
+            for child_failure in child_failures_list:
+                recursively_build_failures_list(child_failure)
+
+            final_string_representation.write(f"</ul>\n")
+
+        recursively_build_failures_list(self)
+        final_string_representation.write("\n</body>")
+        return final_string_representation.getvalue()
+
 
 def failure_update(failure_id: FailureId, **kwargs) -> Failure:
     """
