@@ -82,46 +82,10 @@ class Failure(Tree):
 
     def get_hierarchy_representation_html(self) -> str:
         final_string_representation = StringIO()
-        final_string_representation.write("""
-        <!DOCTYPE html>
-        <html>
-        
-        <head>
-            <meta charset="utf-8"/>
-            <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
-            <style>
-                body {
-                    font-family: sans-serif;
-                    font-size: 1.2em;
-                }
-        
-                div.button {
-                    display: inline-block;
-                    border: 0.1em outset #888;
-                    border-radius: 0.5em;
-                    margin: 0.2em;
-                    padding: 0.2em;
-                    background: #EEE;
-                }
-        
-                div.button:hover {
-                    border: 0.1em inset #888;
-                    background: #DDD;
-                }
-                
-                ul {
-                    list-style-type: none;
-                }
-                
-                input {
-                    font-size: 1.2em;
-                }
-            </style>
-        </head>
-        
-        <body>
-        <ul>
-        """)
+
+        # TODO : Caching ?
+        with open("STATIC/report_failure.html", 'r', encoding='utf-8') as f:
+            html_template: str = f.read()
 
         def recursively_build_failures_list(failure: "Failure") -> None:
             nonlocal final_string_representation
@@ -162,8 +126,7 @@ class Failure(Tree):
             final_string_representation.write(f"</ul>\n")
 
         recursively_build_failures_list(self)
-        final_string_representation.write("\n</body>")
-        return final_string_representation.getvalue()
+        return html_template.replace("%REPRESENTATION%", final_string_representation.getvalue())
 
 
 def failure_update(failure_id: FailureId, **kwargs) -> Failure:
