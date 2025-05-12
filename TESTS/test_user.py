@@ -8,18 +8,18 @@ class TestUser(TestCase):
                    '')
         user_add("0", "1")
         self.check(User,
-                   "0 ['1']\n"
-                   "1 []")
+                   "0 ['1'] User()\n"
+                   "1 [] User()")
 
     def test_deletion(self):
         user_add("0", "1") # test_creation checked if it is working
         user_remove("0", "1")
         self.check(User,
-                   "0 []\n"
-                   "1 []")
+                   "0 [] User()\n"
+                   "1 [] User()")
 
     def test_with_db(self):
         self.load_config()
         self.check(User,
-                   "0 []\n"
-                   "1 []")
+                   "0 [] User()\n"
+                   "1 [] User()")
