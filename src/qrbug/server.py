@@ -72,13 +72,15 @@ async def register_incident(request: web.Request) -> web.Response:
     current_date = datetime.fromtimestamp(timestamp).strftime('%Y-%m-%d %H:%M:%S')
     function_name = "incident_del" if is_repaired_bool else "incident"
     user_ip = request.remote
+    def sanitize(string: str) -> str:
+        return string.replace('\'', '\\\'')
 
-    # TODO: ESCAPE ALL SINGLE QUOTES !
-    function_to_log = f"{function_name}('{thing_id}', '{failure_id}', '{user_ip}', {timestamp}"
+    function_to_log = f"{function_name}('{sanitize(thing_id)}', '{sanitize(failure_id)}', '{sanitize(user_ip)}', {timestamp}"
     if additional_info is not None and is_repaired_bool is False:
         # incident_del() does not take additional_info as parameter,
         # therefore if the incident is repaired, we must ABSOLUTELY NOT get into this if block
-        function_to_log += f", '{additional_info}'"
+        # if this incident is resolved
+        function_to_log += f", '{sanitize(additional_info)}'"
     function_to_log += f")  # {current_date} TODO LOGIN\n"
 
     with open(INCIDENTS_FILE_PATH, 'a', encoding='utf-8') as f:
