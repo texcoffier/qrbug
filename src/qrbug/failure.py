@@ -80,7 +80,8 @@ class Failure(Tree):
         recursively_build_failures_list(self.id)
         return final_string_representation.getvalue()
 
-    def get_hierarchy_representation_html(self) -> str:
+
+    def get_hierarchy_representation_html(self, thing_id: str) -> str:
         final_string_representation = StringIO()
 
         # TODO : Caching ?
@@ -90,27 +91,32 @@ class Failure(Tree):
         def recursively_build_failures_list(failure: "Failure") -> None:
             nonlocal final_string_representation
 
-            element_type = ''
-            additional_attributes = ''
-            if failure.display_type == DisplayTypes.text:
-                element_type = 'p'
-                additional_attributes = ''
-            elif failure.display_type == DisplayTypes.button:
-                element_type = 'div'
-                additional_attributes = 'type="button" class="button"'
-            elif failure.display_type == DisplayTypes.redirect:
-                element_type = 'a'
-                additional_attributes = f'href="{failure.value}"'
-            elif failure.display_type == DisplayTypes.input:
-                element_type = 'input'
-                additional_attributes = f'type="text" placeholder="{failure.value}" name="{failure.id}'
-            final_string_representation.write(
-                f'<li><{element_type} id="{failure.id}" {additional_attributes}>'
-                f'{failure.value}'
-                f'</{element_type}></li>\n'
-                f'<ul>'
+            display_type_cases = {
+                DisplayTypes.text:   ('p',    False, ''),
+                DisplayTypes.button: ('div',  False, 'class="button" onclick="window.location.replace(`/?thing-id={thing_id}&failure-id={failure_id}&is-repaired=0`)"'),
+                DisplayTypes.redirect: ('a',  False, 'href="{failure_value}"'),
+                DisplayTypes.input: ('input', True,  'type="text" placeholder="{failure_value}" name="{failure_id}"')
+            }
+
+            element_type = display_type_cases[failure.display_type][0]
+            single_tag = display_type_cases[failure.display_type][1]  # Whether to treat the HTML tag as a single tag (e.g. input, br, img)
+            additional_attributes = display_type_cases[failure.display_type][2].format(
+                thing_id=thing_id,
+                failure_id=failure.id,
+                failure_value=failure.value,
             )
-            final_string_representation.write("\n")
+
+            if single_tag is False:
+                final_string_representation.write(
+                    f'<li><{element_type} id="{failure.id}" {additional_attributes}>'
+                    f'{failure.value}'
+                    f'</{element_type}>'
+                )
+            else:
+                final_string_representation.write(
+                    f'<li><{element_type} id="{failure.id}" {additional_attributes}/>'
+                )
+            final_string_representation.write(f'</li>\n<ul>')
 
             # We sort by display type then by value, so that the text failures are
             # always shown first (headers), followed by the buttons, the redirects, and

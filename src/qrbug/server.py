@@ -22,7 +22,7 @@ def get_failures(thing_id: str, as_html: bool = True) -> str:
         return "Requested thing's root failure not found"
 
     if as_html:
-        return current_thing_root_failure.get_hierarchy_representation_html()
+        return current_thing_root_failure.get_hierarchy_representation_html(thing_id)
     else:
         return current_thing_root_failure.get_hierarchy_representation()
 
@@ -94,7 +94,7 @@ def init_server(argv = None) -> web.Application:
     # Creates the server
     app = web.Application()
     app.add_routes([
-        web.get('/{thing_id}', show_failures_tree_route),
+        web.get('/thing={thing_id}', show_failures_tree_route),
         web.get('/', register_incident)
     ])
     return app
