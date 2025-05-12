@@ -93,9 +93,9 @@ class Failure(Tree):
 
             display_type_cases = {
                 DisplayTypes.text:   ('p',    False, ''),
-                DisplayTypes.button: ('div',  False, 'class="button" onclick="window.location.replace(`/?thing-id={thing_id}&failure-id={failure_id}&is-repaired=0`)"'),
+                DisplayTypes.button: ('div',  False, 'class="button" onclick="register_incident(get_base_url(`{thing_id}`, `{failure_id}`))"'),
                 DisplayTypes.redirect: ('a',  False, 'href="{failure_value}"'),
-                DisplayTypes.input: ('input', True,  'type="text" placeholder="{failure_value}" name="{failure_id}"')
+                DisplayTypes.input: ('input', True,  'type="text" placeholder="{failure_value}" name="{failure_id}"><div class="button" onclick="register_incident(get_url_with_comment(`{thing_id}`, `{failure_id}`, get_input_value(this)))">-></div><br')
             }
 
             element_type = display_type_cases[failure.display_type][0]

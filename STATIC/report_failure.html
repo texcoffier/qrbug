@@ -32,6 +32,24 @@
             font-size: 1.2em;
         }
     </style>
+
+    <script>
+        function get_base_url(thing_id, failure_id) {
+            return `/?thing-id=${thing_id}&failure-id=${failure_id}&is-repaired=0`;
+        }
+
+        function get_url_with_comment(thing_id, failure_id, comment) {
+            return get_base_url(thing_id, failure_id) + `&additional-info=${comment}`;
+        }
+
+        function get_input_value(e) {
+            return e.parentElement.querySelector(`input`).value;
+        }
+
+        function register_incident(url) {
+            window.location.replace(url);
+        }
+    </script>
 </head>
 
 <body>
