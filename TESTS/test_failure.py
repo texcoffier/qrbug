@@ -28,8 +28,8 @@ class TestFailure(TestCase):
         b = Failure.get("1")
 
         # Checks that those two failures have no children
-        for failure in (a, b):
-            self.assertEqual(len(failure.children_ids), 0)
+        self.check(Failure, f"0 [] {Failure.__name__}()\n"
+                            f"1 [] {Failure.__name__}()")
 
         # Parents 0 to 1 (adds 1 as the child of 0)
         failure_add(a.id, b.id)
