@@ -19,12 +19,12 @@ class DisplayTypes(enum.Enum):
 
 
 # How each type of display type is displayed
-# Tuples are (tag_type, is_single_tag, additional_parameters)
+# Tuples are (tag_type, is_single_tag, additional_parameters, onclick)
 display_type_cases = {
-    DisplayTypes.text:   ('p',    False, ''),
-    DisplayTypes.button: ('div',  False, 'class="button" onclick="register_incident(get_base_url(`{thing_id}`, `{failure_id}`))"'),
-    DisplayTypes.redirect: ('a',  False, 'href="{failure_value}"'),
-    DisplayTypes.input: ('input', True,  'type="text" placeholder="{failure_value}" name="{failure_id}"><div class="button" onclick="register_incident(get_url_with_comment(`{thing_id}`, `{failure_id}`, get_input_value(this)))">-></div><br')
+    DisplayTypes.text:   ('p',    False, '', ''),
+    DisplayTypes.button: ('div',  False, 'class="button" onclick="{onclick}"', 'register_incident(get_base_url(`{thing_id}`, `{failure_id}`))'),
+    DisplayTypes.redirect: ('a',  False, 'href="{failure_value}"', ''),
+    DisplayTypes.input: ('input', True,  'type="text" placeholder="{failure_value}" name="{failure_id}"><div class="button" onclick="{onclick}">-&gt;</div><br', 'register_incident(get_url_with_comment(`{thing_id}`, `{failure_id}`, get_input_value(this)))')
 }
 
 
@@ -108,13 +108,16 @@ class Failure(Tree):
         def recursively_build_failures_list(failure: "Failure") -> None:
             nonlocal final_string_representation
 
+            format_kwargs = {
+                "thing_id": thing_id,
+                "failure_id": failure.id,
+                "failure_value": failure.value,
+            }
+
             element_type = display_type_cases[failure.display_type][0]
             single_tag = display_type_cases[failure.display_type][1]  # Whether to treat the HTML tag as a single tag (e.g. input, br, img)
-            additional_attributes = display_type_cases[failure.display_type][2].format(
-                thing_id=thing_id,
-                failure_id=failure.id,
-                failure_value=failure.value,
-            )
+            onclick_js = display_type_cases[failure.display_type][3].format(**format_kwargs)
+            additional_attributes = display_type_cases[failure.display_type][2].format(**format_kwargs, onclick=onclick_js)
 
             if single_tag is False:
                 final_string_representation.write(
