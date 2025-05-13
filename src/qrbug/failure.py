@@ -1,6 +1,7 @@
 """
 Defines all kinds of failures that can happen on a thing.
 """
+from pathlib import Path
 from typing import Optional, TypeAlias
 import enum
 from io import StringIO
@@ -102,8 +103,8 @@ class Failure(Tree):
         final_string_representation = StringIO()
 
         # TODO : Caching ?
-        with open("STATIC/report_failure.html", 'r', encoding='utf-8') as f:
-            html_template: str = f.read()
+        with Path("STATIC/report_failure.html") as template_file:
+            html_template = template_file.read_text()
 
         def recursively_build_failures_list(failure: "Failure") -> None:
             nonlocal final_string_representation
