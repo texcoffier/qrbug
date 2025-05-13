@@ -66,13 +66,15 @@ class Tree:
         dump = StringIO()
         dump.write(self.__class__.__name__)
         dump.write("(")
+        words = []
         for attribute in dir(self.__class__):
             attribute_value = getattr(self, attribute)
             if not attribute.startswith("_") and attribute != "instances" and not callable(attribute_value):
                 if attribute_value is not None and getattr(self.__class__, attribute) != attribute_value:
-                    dump.write(f"{attribute}={repr(attribute_value)}, ")
+                    words.append(f"{attribute}={repr(attribute_value)}")
+        dump.write(", ".join(words))
         dump.write(")")
-        return dump.getvalue().replace(", )", ")")
+        return dump.getvalue()
 
     def check(self) -> str:
         """
