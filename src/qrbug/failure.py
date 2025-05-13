@@ -76,7 +76,7 @@ class Failure(Tree):
                         f"[group={current_failure.restricted_to_group_id.ljust(GROUP_JUSTIFICATION)}]"
                     )
                 else:
-                    final_string_representation.write(f"[{'No group'.center(GROUP_JUSTIFICATION + len("group="))}]")
+                    final_string_representation.write(f"[{'No group'.center(GROUP_JUSTIFICATION + len('group='))}]")
             final_string_representation.write("\n")
 
             # We sort by display type then by value, so that the text failures are
