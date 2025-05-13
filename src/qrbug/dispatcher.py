@@ -33,7 +33,7 @@ class Dispatcher(Tree):
             return
 
         if selector.is_ok():
-            action = qrbug.main.Action[selector]
+            action = qrbug.main.Action[self.action_id]
             if action is not None:
                 action.run()
 
