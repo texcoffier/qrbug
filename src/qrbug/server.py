@@ -55,12 +55,12 @@ async def register_incident(request: web.Request) -> web.Response:
     is_repaired: Optional[str] = request.rel_url.query.get("is-repaired", None)
     additional_info: Optional[str] = request.rel_url.query.get("additional-info", None)
 
-    valid_request = all((e is not None for e in (thing_id, failure_id, is_repaired)))
-    query_variables: dict[str, Optional[str]] = {
+    query_variables = {
         'thing_id': thing_id,
         'failure_id': failure_id,
         'is_repaired': is_repaired,
     }
+    valid_request = all(query_variables.values())
     if valid_request is False:
         return web.Response(status=404, text=f"Missing query parameters : " + ", ".join(
             (query_param for query_param, query_param_value in query_variables.items() if query_param_value is None)
