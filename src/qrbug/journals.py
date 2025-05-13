@@ -10,8 +10,10 @@ DB_FILE_PATH = JOURNALS_FILE_PATH / "db.py"
 INCIDENTS_FILE_PATH = JOURNALS_FILE_PATH / "incidents.py"
 
 
-def exec_code_file(path: Path, code_globals: dict[str, Callable]) -> None:
-    exec(compile(path.read_text('utf-8'), path, 'exec'), code_globals)
+def exec_code_file(path: Path, code_globals: dict[str, Callable]) -> dict:
+    changed_locals = {}
+    exec(compile(path.read_text('utf-8'), path, 'exec'), code_globals, changed_locals)
+    return changed_locals
 
 
 def load_config() -> None:
