@@ -109,3 +109,6 @@ class Tree:
     @classmethod
     def remove_parenting_link(cls, parent_id: str, child_id: str):
         cls.get(parent_id).remove_child(cls.get(child_id))
+
+    def __class_getitem__(cls, tree_id: str) -> Optional["Tree"]:
+        return cls.get_if_exists(tree_id)
