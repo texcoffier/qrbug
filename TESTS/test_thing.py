@@ -1,7 +1,7 @@
 from qrbug.thing import Thing, thing_update, thing_del
 from qrbug.main import TestCase
 
-ID = "0"
+ID = '0'
 
 
 class TestThing(TestCase):
@@ -15,7 +15,7 @@ class TestThing(TestCase):
         Thing.get(ID)
 
         # Updates said thing
-        new_value = "THIS IS A NEW VALUE FOR THE COMMENT"
+        new_value = 'THIS IS A NEW VALUE FOR THE COMMENT'
         thing_update(ID, comment=new_value)
         self.check(Thing, f"{ID} [] {Thing.__name__}(comment='{new_value}')")
 
