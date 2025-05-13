@@ -1,5 +1,6 @@
 import sys
 import unittest
+from pathlib import Path
 from typing import Optional
 
 from qrbug.action import action, ActionId
@@ -68,7 +69,7 @@ class TestCase(unittest.TestCase):
 
     def load_config(self):
         test = sys.modules[self.__class__.__module__].__spec__.origin
-        exec_code_file(test.replace('.py', '_db.conf'), CONFIGS)
+        exec_code_file(Path(test.replace('.py', '_db.conf')), CONFIGS)
 
 
 if __name__ == "__main__":
