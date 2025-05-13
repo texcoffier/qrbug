@@ -2,12 +2,12 @@ import sys
 import unittest
 from pathlib import Path
 
-from qrbug.action import action, ActionId
-from qrbug.dispatcher import dispatcher_update, dispatcher_del, DispatcherId
+from qrbug.action import action, ActionId, Action
+from qrbug.dispatcher import dispatcher_update, dispatcher_del, DispatcherId, Dispatcher
 from qrbug.failure import failure_update, failure_add, failure_remove, DisplayTypes, FailureId, Failure
-from qrbug.incidents import incident, incident_del
-from qrbug.selector import selector
-from qrbug.thing import thing_update, thing_del
+from qrbug.incidents import incident, incident_del, Incidents
+from qrbug.selector import selector, Selector
+from qrbug.thing import thing_update, thing_del, Thing
 from qrbug.user import user_add, user_remove, UserId, User
 
 from qrbug.journals import exec_code_file, DB_FILE_PATH, INCIDENTS_FILE_PATH
