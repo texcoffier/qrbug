@@ -42,7 +42,13 @@ class Failure(Tree):
     restricted_to_group_id : Optional[UserId]       = None
 
     def _local_dump(self) -> str:
-        return self.get_representation()
+        short_names = {
+            'value': 'val',
+            'display_type': 'type',
+            'ask_confirm': 'confirm',
+            'restricted_to_group_id': 'group',
+        }
+        return self.get_representation(attributes_short=short_names)
 
     def get_hierarchy_representation(self) -> str:
         """

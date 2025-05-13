@@ -11,7 +11,7 @@ class TestFailure(qrbug.main.TestCase):
         # Checks that updating an attribute of the failure class works
         new_value = 'There is a new value'
         qrbug.main.failure_update('0', value=new_value)
-        self.check(qrbug.main.Failure, f"0 [] (value='{new_value}')")
+        self.check(qrbug.main.Failure, f"0 [] (val='{new_value}')")
 
         # Checks that updating a non-existent attribute of the failure class DOESN'T work
         self.assertRaises(AssertionError, qrbug.main.failure_update, '0', non_existent_key='value')
@@ -52,4 +52,4 @@ class TestFailure(qrbug.main.TestCase):
         # Loads the DB where a simple failure is created
         self.load_config()
         # Checks that there are two users in the DB
-        self.check(qrbug.main.Failure, f"PC_NO_BOOT [] (ask_confirm=False, restricted_to_group_id='ROOT', value='Le PC ne démarre pas')")
+        self.check(qrbug.main.Failure, f"PC_NO_BOOT [] (confirm=False, group='ROOT', val='Le PC ne démarre pas')")

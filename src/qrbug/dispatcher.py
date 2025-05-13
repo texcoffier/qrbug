@@ -16,7 +16,12 @@ class Dispatcher(Tree):
     when        :   Optional[str] = None
 
     def _local_dump(self) -> str:
-        return self.get_representation()
+        short_names = {
+            'action_id': 'action',
+            'selector_id': 'selector',
+            'group_id': 'group',
+        }
+        return self.get_representation(attributes_short=short_names)
 
 
 def dispatcher_update(dispatch_id: str, **kwargs) -> Dispatcher:

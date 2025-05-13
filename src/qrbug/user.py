@@ -15,7 +15,7 @@ class User(Tree):
     instances: dict[UserId, "User"] = {}
 
     def _local_dump(self) -> str:
-        return self.get_representation()
+        return '()'
 
 
 def user_add(parent: UserId, child: UserId) -> None:

@@ -1,3 +1,4 @@
+import enum
 from typing import Generator, Optional
 from io import StringIO
 
@@ -59,10 +60,13 @@ class Tree:
     def dump_all(cls) -> Generator[str, None, None]:
         return (instance.dump() for (key, instance) in cls.instances.items())
 
-    def get_representation(self, display_class_name: bool = False) -> str:
+    def get_representation(self, display_class_name: bool = False, attributes_short: dict[str, str] = None) -> str:
         """
         Returns a string that can be used for _local_dump().
         """
+        if attributes_short is None:
+            attributes_short = {}
+
         dump = StringIO()
         if display_class_name:
             dump.write(self.__class__.__name__)
@@ -72,7 +76,13 @@ class Tree:
             attribute_value = getattr(self, attribute)
             if not attribute.startswith("_") and attribute != "instances" and not callable(attribute_value):
                 if attribute_value is not None and getattr(self.__class__, attribute) != attribute_value:
-                    words.append(f"{attribute}={repr(attribute_value)}")
+                    if attribute in attributes_short:
+                        attribute_name = attributes_short[attribute]
+                    else:
+                        attribute_name = attribute
+                    if isinstance(attribute_value, enum.Enum):
+                        attribute_value = attribute_value.name
+                    words.append(f"{attribute_name}={repr(attribute_value)}")
         dump.write(", ".join(words))
         dump.write(")")
         return dump.getvalue()
