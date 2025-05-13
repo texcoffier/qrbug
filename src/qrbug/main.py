@@ -1,24 +1,16 @@
 import sys
 import unittest
 from pathlib import Path
-from typing import Optional
 
 from qrbug.action import action, ActionId
 from qrbug.dispatcher import dispatcher_update, dispatcher_del, DispatcherId
 from qrbug.failure import failure_update, failure_add, failure_remove, DisplayTypes, FailureId, Failure
-from qrbug.incidents import Incidents
+from qrbug.incidents import incident, incident_del
 from qrbug.selector import selector
-from qrbug.thing import thing_update, thing_del, ThingId
+from qrbug.thing import thing_update, thing_del
 from qrbug.user import user_add, user_remove, UserId, User
 
 from qrbug.journals import exec_code_file, DB_FILE_PATH, INCIDENTS_FILE_PATH
-
-def incident(thing_id: ThingId, failure_id: FailureId, ip: str, timestamp: int, comment: Optional[str] = None) -> None:
-    Incidents.create(thing_id, failure_id, ip, timestamp, comment)
-
-
-def incident_del(thing_id: ThingId, failure_id: FailureId, ip: str, timestamp: int) -> None:
-    Incidents.remove(thing_id, failure_id)
 
 
 def dispatch(

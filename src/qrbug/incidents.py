@@ -1,5 +1,8 @@
 from typing import Optional
 
+from qrbug.failure import FailureId
+from qrbug.thing import ThingId
+
 
 class Incidents:
     active: list["Incidents"] = []
@@ -31,3 +34,11 @@ class Incidents:
             if current_failure.is_equal(other_thing_id, other_failure_id):
                 cls.active.remove(current_failure)
                 cls.finished.append(current_failure)
+
+
+def incident(thing_id: ThingId, failure_id: FailureId, ip: str, timestamp: int, comment: Optional[str] = None) -> None:
+    Incidents.create(thing_id, failure_id, ip, timestamp, comment)
+
+
+def incident_del(thing_id: ThingId, failure_id: FailureId, ip: str, timestamp: int) -> None:
+    Incidents.remove(thing_id, failure_id)
