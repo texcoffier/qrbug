@@ -38,16 +38,6 @@ CONFIGS = {
     "dispatcher_del": dispatcher_del,
     }
 
-def load_config() -> None:
-    exec_code_file(DB_FILE_PATH, CONFIGS)
-
-def load_incidents() -> None:
-    exec_code_file(INCIDENTS_FILE_PATH, {
-        "incident": incident,
-        "incident_del": incident_del,
-        "dispatch": dispatch,
-    })
-
 
 class TestCase(unittest.TestCase):
     def tearDown(self):
@@ -63,7 +53,3 @@ class TestCase(unittest.TestCase):
         test = sys.modules[self.__class__.__module__].__spec__.origin
         exec_code_file(Path(test.replace('.py', '_db.conf')), CONFIGS)
 
-
-if __name__ == "__main__":
-    load_config()
-    load_incidents()

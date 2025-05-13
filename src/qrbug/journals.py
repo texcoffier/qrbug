@@ -12,3 +12,17 @@ INCIDENTS_FILE_PATH = JOURNALS_FILE_PATH / "incidents.py"
 
 def exec_code_file(path: Path, code_globals: dict[str, Callable]) -> None:
     exec(compile(path.read_text('utf-8'), path, 'exec'), code_globals)
+
+
+def load_config() -> None:
+    import qrbug
+    exec_code_file(DB_FILE_PATH, qrbug.main.CONFIGS)
+
+
+def load_incidents() -> None:
+    import qrbug
+    exec_code_file(INCIDENTS_FILE_PATH, {
+        "incident": qrbug.main.incident,
+        "incident_del": qrbug.main.incident_del,
+        "dispatch": qrbug.main.dispatch,
+    })

@@ -8,7 +8,7 @@ from aiohttp import web
 
 from qrbug.thing import Thing
 from qrbug.failure import Failure
-from qrbug.main import load_config, load_incidents, INCIDENTS_FILE_PATH
+from qrbug.journals import load_config, load_incidents, INCIDENTS_FILE_PATH
 
 
 def get_failures(thing_id: str, as_html: bool = True) -> str:
