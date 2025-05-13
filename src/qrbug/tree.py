@@ -80,8 +80,7 @@ class Tree:
         """
         Returns an error message about the health of the data structure.
         """
-        all_children = self.get_all_children_ids()
-        if self.id in all_children:
+        if self.id in self.get_all_children_ids():
             return "WARNING: Cyclic children imports !"
         return "OK."
 
