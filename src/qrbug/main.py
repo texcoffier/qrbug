@@ -20,7 +20,11 @@ def dispatch(
         group_id: UserId,
         timestamp: int
 ) -> None:
-    pass
+    dispatcher = Dispatcher[dispatch_id]
+    if dispatcher is None:
+        return
+
+    dispatcher.run(failure_ids)
 
 
 CONFIGS = {

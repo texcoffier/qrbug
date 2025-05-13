@@ -23,6 +23,20 @@ class Dispatcher(Tree):
         }
         return self.get_representation(attributes_short=short_names)
 
+    def run(self, failure_ids: list[str]) -> None:
+        import qrbug
+        if self.selector_id is None or self.action_id is None:
+            return
+
+        selector = qrbug.main.Selector[self.selector_id]
+        if selector is None:
+            return
+
+        if selector.is_ok():
+            action = qrbug.main.Action[selector]
+            if action is not None:
+                action.run()
+
 
 def dispatcher_update(dispatch_id: str, **kwargs) -> Dispatcher:
     """
@@ -38,6 +52,7 @@ def dispatcher_del(dispatch_id: str) -> None:
     :param dispatch_id: The ID of this dispatcher.
     """
     del Dispatcher.instances[dispatch_id]
+
 
 if __name__ == "__main__":
     dispatcher_update("0", when="Test", selector_id="0")
