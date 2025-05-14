@@ -9,7 +9,8 @@ from aiohttp import web
 
 from qrbug.thing import Thing
 from qrbug.failure import Failure
-from qrbug.journals import load_config, load_incidents, INCIDENTS_FILE_PATH
+from qrbug.journals import load_config, load_incidents, set_db_path, set_incidents_path
+import qrbug.journals
 
 
 def get_failures(thing_id: str, as_html: bool = True) -> str:
@@ -81,7 +82,7 @@ async def register_incident(request: web.Request) -> web.Response:
         function_to_log += f", {repr(additional_info)}"
     function_to_log += f")  # {current_date} TODO LOGIN\n"
 
-    with open(INCIDENTS_FILE_PATH, 'a', encoding='utf-8') as f:
+    with open(qrbug.journals.INCIDENTS_FILE_PATH, 'a', encoding='utf-8') as f:
         f.write(function_to_log)
 
     # return_string = (f"thing_id={thing_id}\n"
@@ -108,11 +109,12 @@ def init_server(argv = None) -> web.Application:
         argv = []
 
     if len(argv) > 1 and argv[1] == '--test':
-        load_config(Path('TESTS/test_server_db.conf'))
-        load_incidents(Path('TESTS/test_server_incidents.conf'))
-    else:
-        load_config()
-        load_incidents()
+        set_db_path(Path('TESTS/test_server_db.conf'))
+        set_incidents_path(Path('TESTS/test_server_incidents.conf'))
+
+    # Loads the config
+    load_config()
+    load_incidents()
 
     # Creates the server
     app = web.Application()
