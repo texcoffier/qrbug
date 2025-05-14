@@ -10,10 +10,11 @@ class Dispatcher(Tree):
     instances: dict[DispatcherId, "Dispatcher"] = {}
 
     # Default values
-    action_id   :   Optional[str] = None
-    selector_id :   Optional[str] = None
-    group_id    :   Optional[str] = None
-    when        :   Optional[str] = None
+    # TODO: Retirer les Optional
+    action_id   : str = 'none'  # By default, an action that does nothing
+    selector_id : str = 'true'  # By default, a selector that is always true
+    group_id    : Optional[str] = None  # Personnes à prévenir quand c'est dispatché, par défaut c'est personne
+    when        : Optional[str] = None
 
     def _local_dump(self) -> str:
         short_names = {

@@ -18,6 +18,8 @@ def exec_code_file(path: Path, code_globals: dict[str, Callable]) -> dict:
 
 def load_config() -> None:
     import qrbug
+    qrbug.main.action('none', 'none.py')
+    qrbug.main.selector('true', 'True')
     exec_code_file(DB_FILE_PATH, qrbug.main.CONFIGS)
 
 
