@@ -13,9 +13,8 @@ class Selector:
         return eval(self.expression, {})
 
     def __class_getitem__(cls, selector_id: str) -> Optional["Selector"]:
-        if selector_id in cls.instances:
-            return cls.instances[selector_id]
-        return None
+        return cls.instances.get(selector_id, None)
+
 
 def selector(selector_id: str, expression: str) -> Selector:
     return Selector(selector_id, expression)
