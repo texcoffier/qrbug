@@ -19,9 +19,9 @@ class Action:
 
     def run(self, incident: qrbug.incidents.Incidents):
         import qrbug
-        changed_locals = qrbug.exec_code_file(ACTIONS_FOLDER / self.python_script, {"Incidents": qrbug.Incidents})
-        if 'run' in changed_locals:
-            changed_locals['run'](incident)
+        module_vars = qrbug.exec_code_file(ACTIONS_FOLDER / self.python_script, {"Incidents": qrbug.Incidents})
+        if 'run' in module_vars:
+            module_vars['run'](incident)
 
     def __class_getitem__(cls, action_id: ActionId) -> Optional["Action"]:
         if action_id in cls.instances:
