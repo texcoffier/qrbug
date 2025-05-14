@@ -1,6 +1,8 @@
 from pathlib import Path
 from typing import TypeAlias, Optional
 
+import qrbug.incidents
+
 ActionId: TypeAlias = str
 ACTIONS_FOLDER = Path('ACTIONS/')
 
@@ -15,11 +17,11 @@ class Action:
             self.python_script += '.py'
         self.instances[action_id] = self
 
-    def run(self, incident_id: str):
+    def run(self, incident: qrbug.incidents.Incidents):
         import qrbug
-        changed_locals = qrbug.main.exec_code_file(ACTIONS_FOLDER / self.python_script, {})
+        changed_locals = qrbug.main.exec_code_file(ACTIONS_FOLDER / self.python_script, {"Incidents": qrbug.main.Incidents})
         if 'run' in changed_locals:
-            changed_locals['run']()
+            changed_locals['run'](incident)
 
     def __class_getitem__(cls, action_id: ActionId) -> Optional["Action"]:
         if action_id in cls.instances:

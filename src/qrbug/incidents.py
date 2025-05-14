@@ -35,6 +35,14 @@ class Incidents:
                 cls.active.remove(current_failure)
                 cls.finished.append(current_failure)
 
+    def __class_getitem__(cls, incident_id: str) -> Optional["Incidents"]:
+        if incident_id in cls.active:
+            return cls.active[incident_id]
+        elif incident_id in cls.finished:
+            return cls.finished[incident_id]
+        else:
+            return None
+
 
 def incident(thing_id: ThingId, failure_id: FailureId, ip: str, timestamp: int, comment: Optional[str] = None) -> None:
     Incidents.create(thing_id, failure_id, ip, timestamp, comment)
