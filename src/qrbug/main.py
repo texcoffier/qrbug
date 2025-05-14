@@ -15,7 +15,7 @@ from qrbug.journals import exec_code_file, DB_FILE_PATH, INCIDENTS_FILE_PATH
 
 def dispatch(
         dispatch_id: DispatcherId,
-        failure_ids: list[FailureId],
+        incident_ids: list[str],
         action_id: ActionId,
         group_id: UserId,
         timestamp: int
@@ -24,7 +24,7 @@ def dispatch(
     if dispatcher is None:
         return
 
-    dispatcher.run(failure_ids)
+    dispatcher.run(incident_ids)
 
 
 CONFIGS = {

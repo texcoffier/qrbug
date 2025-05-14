@@ -25,7 +25,7 @@ class Dispatcher(Tree):
         # return self.get_representation(attributes_short=short_names)
         return f'action:{self.action_id} selector:{self.selector_id} group:{self.group_id} when:{self.when}'
 
-    def run(self, failure_ids: list[str]) -> None:
+    def run(self, incident_ids: list[str]) -> None:
         import qrbug
         if self.selector_id is None or self.action_id is None:
             return
@@ -34,7 +34,8 @@ class Dispatcher(Tree):
         if selector.is_ok():
             action = qrbug.main.Action[self.action_id]
             if action is not None:
-                action.run()
+                for incident_id in incident_ids:
+                    action.run(incident_id)
 
 
 def dispatcher_update(dispatch_id: str, **kwargs) -> Dispatcher:
