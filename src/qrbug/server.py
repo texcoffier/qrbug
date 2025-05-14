@@ -52,10 +52,10 @@ async def register_incident(request: web.Request) -> web.Response:
     """
     Registers an incident into the logs, then shows the user that the incident has been registered.
     """
-    thing_id: Optional[str] = request.rel_url.query.get("thing-id", None)
-    failure_id: Optional[str] = request.rel_url.query.get("failure-id", None)
-    is_repaired: Optional[str] = request.rel_url.query.get("is-repaired", None)
-    additional_info: Optional[str] = request.rel_url.query.get("additional-info", None)
+    thing_id: Optional[str] = request.query.get("thing-id", None)
+    failure_id: Optional[str] = request.query.get("failure-id", None)
+    is_repaired: Optional[str] = request.query.get("is-repaired", None)
+    additional_info: Optional[str] = request.query.get("additional-info", None)
 
     query_variables = {
         'thing_id': thing_id,
