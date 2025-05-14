@@ -19,7 +19,7 @@ class Action:
 
     def run(self, incident: qrbug.incidents.Incidents):
         import qrbug
-        changed_locals = qrbug.main.exec_code_file(ACTIONS_FOLDER / self.python_script, {"Incidents": qrbug.main.Incidents})
+        changed_locals = qrbug.exec_code_file(ACTIONS_FOLDER / self.python_script, {"Incidents": qrbug.Incidents})
         if 'run' in changed_locals:
             changed_locals['run'](incident)
 

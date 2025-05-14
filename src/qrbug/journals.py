@@ -28,15 +28,15 @@ def exec_code_file(path: Path, code_globals: dict[str, Callable]) -> dict:
 
 def load_config(db_config_path: Path = None) -> None:
     import qrbug
-    qrbug.main.action('none', 'none.py')
-    qrbug.main.selector('true', 'True')
-    exec_code_file(db_config_path if db_config_path is not None else DB_FILE_PATH, qrbug.main.CONFIGS)
+    qrbug.action('none', 'none.py')
+    qrbug.selector('true', 'True')
+    exec_code_file(db_config_path if db_config_path is not None else DB_FILE_PATH, qrbug.CONFIGS)
 
 
 def load_incidents(incidents_config_path: Path = None) -> None:
     import qrbug
     exec_code_file(incidents_config_path if incidents_config_path is not None else INCIDENTS_FILE_PATH, {
         "incident": qrbug.incident,
-        "incident_del": qrbug.main.incident_del,
-        "dispatch": qrbug.main.dispatch,
+        "incident_del": qrbug.incident_del,
+        "dispatch": qrbug.dispatch,
     })

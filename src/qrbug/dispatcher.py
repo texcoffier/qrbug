@@ -31,9 +31,9 @@ class Dispatcher(Tree):
         if self.selector_id is None or self.action_id is None:
             return
 
-        selector = qrbug.main.Selector[self.selector_id]
+        selector = qrbug.Selector[self.selector_id]
         if selector.is_ok():
-            action = qrbug.main.Action[self.action_id]
+            action = qrbug.Action[self.action_id]
             if action is not None:
                 for incident in incidents:
                     action.run(incident)
