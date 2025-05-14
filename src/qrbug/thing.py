@@ -18,11 +18,12 @@ class Thing(Tree):
     comment:    Optional[str]       = ""
 
     def _local_dump(self) -> str:
-        short_names = {
-            'location': 'loc',
-            'failure_id': 'failure',
-        }
-        return self.get_representation(attributes_short=short_names)
+        # short_names = {
+        #     'location': 'loc',
+        #     'failure_id': 'failure',
+        # }
+        # return self.get_representation(attributes_short=short_names)
+        return f'loc:{self.location} failure:{self.failure_id} comment:{repr(self.comment)}'
 
 
 def thing_update(thing_id: ThingId, **kwargs) -> Thing:

@@ -17,12 +17,13 @@ class Dispatcher(Tree):
     when        : Optional[str] = None
 
     def _local_dump(self) -> str:
-        short_names = {
-            'action_id': 'action',
-            'selector_id': 'selector',
-            'group_id': 'group',
-        }
-        return self.get_representation(attributes_short=short_names)
+        # short_names = {
+        #     'action_id': 'action',
+        #     'selector_id': 'selector',
+        #     'group_id': 'group',
+        # }
+        # return self.get_representation(attributes_short=short_names)
+        return f'action:{self.action_id} selector:{self.selector_id} group:{self.group_id} when:{self.when}'
 
     def run(self, failure_ids: list[str]) -> None:
         import qrbug
