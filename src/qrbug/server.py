@@ -108,7 +108,7 @@ def init_server(argv = None) -> web.Application:
     if argv is None:
         argv = []
 
-    if len(argv) > 1 and argv[1] == '--test':
+    if '--test' in argv:
         set_db_path(Path('TESTS/test_server_db.conf'))
         set_incidents_path(Path('TESTS/test_server_incidents.conf'))
 
@@ -127,4 +127,10 @@ def init_server(argv = None) -> web.Application:
 if __name__ == "__main__":
     import sys
     server = init_server(sys.argv)
-    web.run_app(server)
+    HOST = 'localhost'
+    PORT = 8080
+    if len(sys.argv) >= 2:
+        HOST = sys.argv[1]
+    if len(sys.argv) >= 3:
+        PORT = int(sys.argv[2])
+    web.run_app(server, host=HOST, port=PORT)
