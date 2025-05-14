@@ -1,2 +1,2 @@
-from qrbug.main import CONFIGS
-globals().update(CONFIGS)
+from qrbug.main import QRBUG
+globals().update(QRBUG)

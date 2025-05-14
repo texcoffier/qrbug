@@ -36,7 +36,7 @@ def load_config(db_config_path: Path = None) -> None:
 def load_incidents(incidents_config_path: Path = None) -> None:
     import qrbug
     exec_code_file(incidents_config_path if incidents_config_path is not None else INCIDENTS_FILE_PATH, {
-        "incident": qrbug.main.incident,
+        "incident": qrbug.incident,
         "incident_del": qrbug.main.incident_del,
         "dispatch": qrbug.main.dispatch,
     })

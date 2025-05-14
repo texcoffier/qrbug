@@ -49,6 +49,10 @@ CONFIGS = {
     "dispatcher_del": dispatcher_del,
     }
 
+QRBUG = {
+    **CONFIGS,
+    "incident": incident,
+}
 
 class TestCase(unittest.TestCase):
     def tearDown(self):
