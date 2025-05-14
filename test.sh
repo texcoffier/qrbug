@@ -1,4 +1,11 @@
 #!/bin/sh
+
+if [ "$1" = '-h' -o "$1" = '--help' ]; then
+  echo "./test.sh [HOST=127.0.0.1] [PORT=8080]"
+  exit 0
+fi
+
+
 # Gathers command line arguments
 LAUNCH_HOST="$1"
 if [ -z "$1" ]; then

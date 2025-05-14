@@ -126,6 +126,12 @@ def init_server(argv = None) -> web.Application:
 
 if __name__ == "__main__":
     import sys
+
+    if '-h' in sys.argv or '--help' in sys.argv:
+        print("Usage: python -m qrbug.server [HOST] [PORT] [--test]")
+        print("\n--test : Use the test databases.")
+        pass
+
     server = init_server(sys.argv)
     HOST = 'localhost'
     PORT = 8080
