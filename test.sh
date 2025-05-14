@@ -9,23 +9,21 @@ echo -n '' > 'TESTS/test_server_incidents.conf'
 python3 src/qrbug/server.py --test >/dev/null &
 SERVER_PID="$!"
 
+# Tests that the server
 OK='0'
-for _ in 1 2 3 4 5 6
+for _ in 1 2 3 4 5 6 7 8 9 10
 do
-  if [ "$(curl -s -o /dev/null -w "%{http_code}" "http://127.0.0.1:8080/thing=test_thing")" = 200 ]
-  then
+  if [ "$(curl -s -o /dev/null -w "%{http_code}" "http://127.0.0.1:8080/thing=test_thing")" = 200 ]; then
     OK='1'
     break
   else
     sleep 0.1
   fi
 done
-if [ "$OK" = '0' ]
-then
-  echo "src/qrbug/server.py can't be startd"
+if [ "$OK" = '0' ]; then
+  echo "src/qrbug/server.py cannot be started"
   exit 1
 fi
-
 
 # Tests that you can load the page for a thing
 EXIT_CODE=0
