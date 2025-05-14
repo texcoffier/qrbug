@@ -2,6 +2,7 @@ import asyncio
 import datetime
 import time
 from datetime import datetime
+from pathlib import Path
 from typing import Optional
 
 from aiohttp import web
@@ -106,9 +107,12 @@ def init_server(argv = None) -> web.Application:
     if argv is None:
         argv = []
 
-    # Loads the configs
-    load_config()
-    load_incidents()
+    if len(argv) > 1 and argv[1] == '--test':
+        load_config(Path('TESTS/test_server_db.conf'))
+        load_incidents(Path('TESTS/test_server_incidents.conf'))
+    else:
+        load_config()
+        load_incidents()
 
     # Creates the server
     app = web.Application()
@@ -119,5 +123,6 @@ def init_server(argv = None) -> web.Application:
     return app
 
 if __name__ == "__main__":
-    server = init_server()
+    import sys
+    server = init_server(sys.argv)
     web.run_app(server)

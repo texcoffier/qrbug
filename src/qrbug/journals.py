@@ -16,16 +16,16 @@ def exec_code_file(path: Path, code_globals: dict[str, Callable]) -> dict:
     return changed_locals
 
 
-def load_config() -> None:
+def load_config(db_config_path: Path = DB_FILE_PATH) -> None:
     import qrbug
     qrbug.main.action('none', 'none.py')
     qrbug.main.selector('true', 'True')
-    exec_code_file(DB_FILE_PATH, qrbug.main.CONFIGS)
+    exec_code_file(db_config_path, qrbug.main.CONFIGS)
 
 
-def load_incidents() -> None:
+def load_incidents(incidents_config_path: Path = INCIDENTS_FILE_PATH) -> None:
     import qrbug
-    exec_code_file(INCIDENTS_FILE_PATH, {
+    exec_code_file(incidents_config_path, {
         "incident": qrbug.main.incident,
         "incident_del": qrbug.main.incident_del,
         "dispatch": qrbug.main.dispatch,
