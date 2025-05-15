@@ -34,10 +34,8 @@ class Dispatcher(Tree):
         selector = qrbug.Selector[self.selector_id]
         if selector.is_ok():
             action = qrbug.Action[self.action_id]
-            # TODO: Enlever ce test
-            if action is not None:
-                for incident in incidents:
-                    action.run(incident)
+            for incident in incidents:
+                action.run(incident)
 
 
 def dispatcher_update(dispatch_id: str, **kwargs) -> Dispatcher:
