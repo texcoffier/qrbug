@@ -67,7 +67,7 @@ class Failure(Tree):
         def recursively_build_failures_list(failure_id: str, depth: int = 0) -> None:
             INDENTATION_DEPTH: int = depth * INDENTATION_SIZE
 
-            current_failure: Optional["Failure"] = Failure.get_if_exists(failure_id)
+            current_failure: Optional["Failure"] = Failure[failure_id]
             if current_failure is None:
                 return
 
@@ -94,7 +94,7 @@ class Failure(Tree):
             # We have to sort this instead of just using the loop as-is because sets have no defined order,
             # which means if we don't sort this, the result is going to come out different every time
             child_failures_list = [
-                Failure.get_if_exists(failure)
+                Failure[failure]
                 for failure in current_failure.children_ids
             ]
             child_failures_list.sort(key=lambda e: (e.display_type.value, e.value))
@@ -147,7 +147,7 @@ class Failure(Tree):
             # We have to sort this instead of just using the loop as-is because sets have no defined order,
             # which means if we don't sort this, the result is going to come out different every time
             child_failures_list = [
-                Failure.get_if_exists(child_failure)
+                Failure[child_failure]
                 for child_failure in failure.children_ids
             ]
             child_failures_list.sort(key=lambda e: (e.display_type.value, e.value))

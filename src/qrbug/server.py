@@ -19,12 +19,12 @@ def get_failures(thing_id: str, as_html: bool = True) -> str:
     :param thing_id: The id of the thing.
     :param as_html: If True, return an HTML representation of the failure. Otherwise, returns as raw text.
     """
-    requested_thing = Thing.get_if_exists(thing_id)
+    requested_thing = Thing[thing_id]
     if requested_thing is None:
         return "Requested thing not found"
 
     # Gets the failure for this thing
-    root_failure = Failure.get_if_exists(requested_thing.failure_id)
+    root_failure = Failure[requested_thing.failure_id]
     if root_failure is None:
         return "Requested thing's root failure not found"
 
@@ -41,7 +41,7 @@ async def show_failures_tree_route(request: web.Request) -> web.Response:
     thing_id: Optional[str] = request.match_info.get('thing_id', None)
     if thing_id is None:
         return web.Response(status=404, text="No thing ID provided")
-    requested_thing: Optional[Thing] = Thing.get_if_exists(thing_id)
+    requested_thing: Optional[Thing] = Thing[thing_id]
     if requested_thing is None:
         return web.Response(status=404, text="Requested Thing does not exist")
     #return web.Response(status=200, text=f"Thing ID: {thing_id}\n\n{requested_thing.dump()}\n\nFailures list :\n{get_failures(thing_id)}")
