@@ -2,5 +2,5 @@
 An empty action : Does nothing.
 """
 
-def run():
+def run(_):
     pass
