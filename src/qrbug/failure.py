@@ -56,51 +56,54 @@ class Failure(Tree):
         """
         Returns the hierarchy representation of this failure as raw text.
         """
-        final_string_representation = StringIO()
+        representation: list[str] = []
+
+        INDENTATION_SIZE: int = 2
+        SHOW_ADDITIONAL_ATTRIBUTES_INFO: bool = True
+        GROUP_JUSTIFICATION: int = 8
+        VALUE_JUSTIFICATION: int = 50
+        DISPLAY_TYPE_JUSTIFICATION: int = 10
 
         def recursively_build_failures_list(failure_id: str, depth: int = 0) -> None:
-            nonlocal final_string_representation
-            INDENTATION_SIZE: int = 2
             INDENTATION_DEPTH: int = depth * INDENTATION_SIZE
-            SHOW_ADDITIONAL_ATTRIBUTES_INFO: bool = True
-            GROUP_JUSTIFICATION: int = 8
-            VALUE_JUSTIFICATION: int = 50
-            DISPLAY_TYPE_JUSTIFICATION: int = 10
 
             current_failure: Optional["Failure"] = Failure.get_if_exists(failure_id)
             if current_failure is None:
                 return
 
-            final_string_representation.write(
+            representation.append(
                 f"{' ' * INDENTATION_DEPTH}- {current_failure.value.ljust(VALUE_JUSTIFICATION - INDENTATION_DEPTH)}"
             )
             if SHOW_ADDITIONAL_ATTRIBUTES_INFO:
-                final_string_representation.write(
+                representation.append(
                     "\t\t"
                     f"[{current_failure.display_type.name.center(DISPLAY_TYPE_JUSTIFICATION)}]\t"
                     f"[ask_confirm?={'YES' if current_failure.ask_confirm else 'NO '}]\t"
                 )
                 if current_failure.restricted_to_group_id is not None:
-                    final_string_representation.write(
+                    representation.append(
                         f"[group={current_failure.restricted_to_group_id.ljust(GROUP_JUSTIFICATION)}]"
                     )
                 else:
-                    final_string_representation.write(f"[{'No group'.center(GROUP_JUSTIFICATION + len('group='))}]")
-            final_string_representation.write("\n")
+                    representation.append(f"[{'No group'.center(GROUP_JUSTIFICATION + len('group='))}]")
+            representation.append("\n")
 
             # We sort by display type then by value, so that the text failures are
             # always shown first (headers), followed by the buttons, the redirects, and
             # the input fields (which are usually just the "Other" answer)
             # We have to sort this instead of just using the loop as-is because sets have no defined order,
             # which means if we don't sort this, the result is going to come out different every time
-            child_failures_list = [Failure.get_if_exists(failure) for failure in current_failure.children_ids]
+            child_failures_list = [
+                Failure.get_if_exists(failure)
+                for failure in current_failure.children_ids
+            ]
             child_failures_list.sort(key=lambda e: (e.display_type.value, e.value))
 
             for child_failure in child_failures_list:
                 recursively_build_failures_list(child_failure.id, depth + 1)
 
         recursively_build_failures_list(self.id)
-        return final_string_representation.getvalue()
+        return ''.join(representation)
 
 
     def get_hierarchy_representation_html(self, thing_id: str) -> str:
@@ -108,15 +111,13 @@ class Failure(Tree):
         Returns a representation of the whole hierarchy of this failure as a webpage.
         :param thing_id: The id of the thing that could be targeted by this failure.
         """
-        final_string_representation = StringIO()
+        representation: list[str] = []
 
         # TODO : Caching ?
         with Path("STATIC/report_failure.html") as template_file:
             html_template = template_file.read_text()
 
         def recursively_build_failures_list(failure: "Failure") -> None:
-            nonlocal final_string_representation
-
             format_kwargs = {
                 "thing_id": thing_id,
                 "failure_id": failure.id,
@@ -129,32 +130,35 @@ class Failure(Tree):
             additional_attributes = display_type_cases[failure.display_type][2].format(**format_kwargs, onclick=onclick_js)
 
             if single_tag is False:
-                final_string_representation.write(
+                representation.append(
                     f'<li><{element_type} id="{failure.id}" {additional_attributes}>'
                     f'{failure.value}'
                     f'</{element_type}>'
                 )
             else:
-                final_string_representation.write(
+                representation.append(
                     f'<li><{element_type} id="{failure.id}" {additional_attributes}/>'
                 )
-            final_string_representation.write(f'</li>\n<ul>')
+            representation.append(f'</li>\n<ul>')
 
             # We sort by display type then by value, so that the text failures are
             # always shown first (headers), followed by the buttons, the redirects, and
             # the input fields (which are usually just the "Other" answer)
             # We have to sort this instead of just using the loop as-is because sets have no defined order,
             # which means if we don't sort this, the result is going to come out different every time
-            child_failures_list = [Failure.get_if_exists(child_failure) for child_failure in failure.children_ids]
+            child_failures_list = [
+                Failure.get_if_exists(child_failure)
+                for child_failure in failure.children_ids
+            ]
             child_failures_list.sort(key=lambda e: (e.display_type.value, e.value))
 
             for child_failure in child_failures_list:
                 recursively_build_failures_list(child_failure)
 
-            final_string_representation.write(f"</ul>\n")
+            representation.append(f"</ul>\n")
 
         recursively_build_failures_list(self)
-        return html_template.replace("%REPRESENTATION%", final_string_representation.getvalue())
+        return html_template.replace("%REPRESENTATION%", ''.join(representation))
 
 
 def failure_update(failure_id: FailureId, **kwargs) -> Failure:
