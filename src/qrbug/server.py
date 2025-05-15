@@ -24,14 +24,14 @@ def get_failures(thing_id: str, as_html: bool = True) -> str:
         return "Requested thing not found"
 
     # Gets the failure for this thing
-    current_thing_root_failure = Failure.get_if_exists(requested_thing.failure_id)
-    if current_thing_root_failure is None:
+    root_failure = Failure.get_if_exists(requested_thing.failure_id)
+    if root_failure is None:
         return "Requested thing's root failure not found"
 
     if as_html:
-        return current_thing_root_failure.get_hierarchy_representation_html(thing_id)
+        return root_failure.get_hierarchy_representation_html(thing_id)
     else:
-        return current_thing_root_failure.get_hierarchy_representation()
+        return root_failure.get_hierarchy_representation()
 
 
 async def show_failures_tree_route(request: web.Request) -> web.Response:
