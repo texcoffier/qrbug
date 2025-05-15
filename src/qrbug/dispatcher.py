@@ -11,7 +11,6 @@ class Dispatcher(Tree):
     instances: dict[DispatcherId, "Dispatcher"] = {}
 
     # Default values
-    # TODO: Retirer les Optional
     action_id   : str = 'none'  # By default, an action that does nothing
     selector_id : str = 'true'  # By default, a selector that is always true
     group_id    : str = 'nobody'  # Group of people to warn upon dispatch, default is user group 'nobody'
