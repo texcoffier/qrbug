@@ -20,8 +20,9 @@ class Action:
     def run(self, incident: qrbug.incidents.Incidents):
         import qrbug
         module_vars = qrbug.exec_code_file(ACTIONS_FOLDER / self.python_script, {"Incidents": qrbug.Incidents})
-        if 'run' in module_vars:
-            module_vars['run'](incident)
+        # We assume that the run function is present in the action so the
+        # server throws an exception if it is not the case
+        module_vars['run'](incident)
 
     def __class_getitem__(cls, action_id: ActionId) -> Optional["Action"]:
         return cls.instances.get(action_id, None)
