@@ -30,6 +30,7 @@ def load_config(db_config_path: Path = None) -> None:
     import qrbug
     qrbug.action('none', 'none.py')
     qrbug.selector('true', 'True')
+    qrbug.User.get('nobody')
     exec_code_file(db_config_path if db_config_path is not None else DB_FILE_PATH, qrbug.CONFIGS)
 
 
