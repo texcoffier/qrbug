@@ -16,7 +16,7 @@ class Incidents:
         self.comment = comment
 
     def dump(self) -> str:
-        return f'thing:{self.thing_id} fail:{self.failure_id} ip:{self.ip} comment:{self.comment}'
+        return f'thing:{self.thing_id} fail:{self.failure_id} ip:{self.ip} comment:{repr(self.comment)}'
 
     def is_equal(self, other_thing_id, other_failure_id) -> bool:
         return self.thing_id == other_thing_id and self.failure_id == other_failure_id
