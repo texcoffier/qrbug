@@ -9,8 +9,8 @@ class Selector:
         self.expression = expression
         self.instances[selector_id] = self
 
-    def is_ok(self) -> bool:
-        return eval(self.expression, {})
+    def is_ok(self, user: 'qrbug.User', thing: 'qrbug.Thing', failure: 'qrbug.Failure') -> bool:
+        return eval(self.expression, {"user": user, "thing": thing, "failure": failure})
 
     def __class_getitem__(cls, selector_id: str) -> Optional["Selector"]:
         return cls.instances.get(selector_id, None)
