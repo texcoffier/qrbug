@@ -14,8 +14,8 @@ class Dispatcher(Tree):
     # TODO: Retirer les Optional
     action_id   : str = 'none'  # By default, an action that does nothing
     selector_id : str = 'true'  # By default, a selector that is always true
-    group_id    : Optional[str] = None  # Personnes à prévenir quand c'est dispatché, par défaut c'est personne
-    when        : Optional[str] = None
+    group_id    : str = 'nobody'  # Group of people to warn upon dispatch, default is user group 'nobody'
+    when        : str = 'synchro'
 
     def _local_dump(self) -> str:
         # short_names = {
@@ -34,6 +34,7 @@ class Dispatcher(Tree):
         selector = qrbug.Selector[self.selector_id]
         if selector.is_ok():
             action = qrbug.Action[self.action_id]
+            # TODO: Enlever ce test
             if action is not None:
                 for incident in incidents:
                     action.run(incident)
