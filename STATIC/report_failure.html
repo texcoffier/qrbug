@@ -35,7 +35,15 @@
 
     <script>
         function get_base_url(thing_id, failure_id) {
-            return `/?thing-id=${thing_id}&failure-id=${failure_id}&is-repaired=0`;
+            // Also returns the ticket if defined
+            const url = window.location.href.split('?');
+            let additionalParams = '';
+            if (url.length > 1) {
+                additionalParams = '&' + url[1];
+            }
+
+            // Returns the final URL
+            return `/?thing-id=${thing_id}&failure-id=${failure_id}&is-repaired=0${additionalParams}`;
         }
 
         function get_url_with_comment(thing_id, failure_id, comment) {

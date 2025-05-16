@@ -1,4 +1,3 @@
-import asyncio
 import datetime
 import time
 from datetime import datetime
@@ -7,6 +6,7 @@ from typing import Optional
 
 from aiohttp import web
 
+from qrbug.authentication import get_login_from_token, handle_login
 from qrbug.thing import Thing
 from qrbug.failure import Failure
 from qrbug.journals import load_config, load_incidents, set_db_path, set_incidents_path
@@ -44,7 +44,14 @@ async def show_failures_tree_route(request: web.Request) -> web.Response:
     requested_thing: Optional[Thing] = Thing[thing_id]
     if requested_thing is None:
         return web.Response(status=404, text="Requested Thing does not exist")
+
+    # Creates the CAS login
+    user_login = await handle_login(request, f'thing={thing_id}')
+    if user_login is None:
+        return web.Response(status=403, text="Login ticket invalid")
+
     #return web.Response(status=200, text=f"Thing ID: {thing_id}\n\n{requested_thing.dump()}\n\nFailures list :\n{get_failures(thing_id)}")
+    # TODO : Groupe autorisé à déclarer la panne
     return web.Response(status=200, text=get_failures(thing_id), content_type='text/html')
 
 
@@ -57,6 +64,8 @@ async def register_incident(request: web.Request) -> web.Response:
     is_repaired: Optional[str] = request.query.get("is-repaired", None)
     additional_info: Optional[str] = request.query.get("additional-info", None)
 
+    # TODO: Check that the thing and failure exists
+
     query_variables = {
         'thing_id': thing_id,
         'failure_id': failure_id,
@@ -67,6 +76,25 @@ async def register_incident(request: web.Request) -> web.Response:
         return web.Response(status=404, text=f"Missing query parameters : " + ", ".join(
             (query_param for query_param, query_param_value in query_variables.items() if query_param_value is None)
         ))
+
+    # Checks for existence
+    failure = Failure[failure_id]
+    if failure is None:
+        return web.Response(status=404, text=f"Failure does not exist")
+    if Thing[thing_id] is None:
+        return web.Response(status=404, text=f"Thing does not exist")
+
+    # Cas authentication
+    user_token = request.query.get("token", None)
+    user_login = ''
+    # Only authenticate if failure requires it
+    if failure.restricted_to_group_id is not None:
+        if user_token is not None:
+            user_login = get_login_from_token(user_token, request.remote)
+        if not user_login:
+            user_login = await handle_login(request, f'thing={thing_id}')
+            if user_login is None:
+                return web.Response(status=403, text="Login ticket invalid")
 
     is_repaired_bool: bool = is_repaired == '1'
     timestamp = int(time.time())
@@ -80,7 +108,7 @@ async def register_incident(request: web.Request) -> web.Response:
         # therefore if the incident is repaired, we must ABSOLUTELY NOT get into this if block
         # if this incident is resolved
         function_to_log += f", {repr(additional_info)}"
-    function_to_log += f")  # {current_date} TODO LOGIN\n"
+    function_to_log += f")  # {current_date} {user_login}\n"
 
     with open(qrbug.journals.INCIDENTS_FILE_PATH, 'a', encoding='utf-8') as f:
         f.write(function_to_log)
