@@ -64,8 +64,6 @@ async def register_incident(request: web.Request) -> web.Response:
     is_repaired: Optional[str] = request.query.get("is-repaired", None)
     additional_info: Optional[str] = request.query.get("additional-info", None)
 
-    # TODO: Check that the thing and failure exists
-
     query_variables = {
         'thing_id': thing_id,
         'failure_id': failure_id,
