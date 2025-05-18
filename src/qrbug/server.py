@@ -137,6 +137,13 @@ def init_server(argv = None) -> web.Application:
     if '--test' in argv:
         set_db_path(Path('TESTS/test_server_db.conf'))
         set_incidents_path(Path('TESTS/test_server_incidents.conf'))
+        argv.remove('--test')
+    host = 'localhost'
+    port = 8080
+    if len(sys.argv) >= 2:
+        host = sys.argv[1]
+    if len(sys.argv) >= 3:
+        port = int(sys.argv[2])
 
     # Loads the config
     load_config()
@@ -148,21 +155,15 @@ def init_server(argv = None) -> web.Application:
         web.get('/thing={thing_id}', show_failures_tree_route),
         web.get('/', register_incident)
     ])
-    return app
+    return app, host, port
 
 if __name__ == "__main__":
     import sys
 
     if '-h' in sys.argv or '--help' in sys.argv:
-        print("Usage: python -m qrbug.server [HOST] [PORT] [--test]")
+        print("Usage: python -m qrbug.server [--test] [HOST] [PORT]")
         print("\n--test : Use the test databases.")
         pass
 
-    server = init_server(sys.argv)
-    HOST = 'localhost'
-    PORT = 8080
-    if len(sys.argv) >= 2:
-        HOST = sys.argv[1]
-    if len(sys.argv) >= 3:
-        PORT = int(sys.argv[2])
-    web.run_app(server, host=HOST, port=PORT)
+    server, host, port = init_server(sys.argv)
+    web.run_app(server, host=host, port=port)
