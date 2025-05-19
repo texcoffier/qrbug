@@ -129,6 +129,23 @@ async def register_incident(request: web.Request) -> web.Response:
             else:
                 pass # TODO: Rajouter la fonction dispatch au journal d'incidents
 
+    # Makes the HTML response from the dispatchers
+    html_response = []
+    for dispatcher_id, dispatcher_return_value in returned_html.items():
+        if dispatcher_return_value is not None:
+            html_response.append(
+                f'<p>DISPATCHER [{dispatcher_id}]<br/>'
+            )
+            for (incident_thing_id, incident_failure_id), html_string in dispatcher_return_value.items():
+                if html_string is not None:
+                    html_response.append(
+                        f'INCIDENT [{incident_thing_id}, {incident_failure_id}]<br/>'
+                        f'<div>{html_string}</div><br/>'
+                    )
+                else:
+                    html_response.append('No return value<br/>')
+            html_response.append('</p>')
+
     # return_string = (f"thing_id={thing_id}\n"
     #                  f"failure_id={failure_id}\n"
     #                  f"is_repaired={is_repaired_bool}\n"
