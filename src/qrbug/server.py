@@ -189,9 +189,6 @@ def init_server(argv = None) -> tuple[web.Application, str, int]:
     """
     Function that will be run on server startup.
     Loads the config and incidents journals, starts a new server, and creates the routes.
-
-    ⚠️ RETURNS A web.Application ONLY ⚠️
-    This is required by the server starting framework.
     """
     if argv is None:
         argv = []
@@ -211,6 +208,12 @@ def init_server(argv = None) -> tuple[web.Application, str, int]:
     return app, host, port
 
 def get_server(argv: list = None) -> web.Application:
+    """
+    Function called by server starting scripts to launch the server
+
+    ⚠️ RETURNS A web.Application ONLY ⚠️
+    This is required by the server starting framework.
+    """
     if argv is None:
         argv = []
     return init_server(argv)[0]
