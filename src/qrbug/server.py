@@ -10,6 +10,7 @@ from qrbug.authentication import get_login_from_token, handle_login
 from qrbug.thing import Thing
 from qrbug.failure import Failure
 from qrbug.journals import load_config, load_incidents, set_db_path, set_incidents_path
+from qrbug.incidents import incident, incident_del
 import qrbug.journals
 
 
@@ -112,6 +113,11 @@ async def register_incident(request: web.Request) -> web.Response:
 
     with open(qrbug.journals.INCIDENTS_FILE_PATH, 'a', encoding='utf-8') as f:
         f.write(function_to_log)
+
+    if is_repaired_bool:
+        incident_del(thing_id, failure_id, user_ip, timestamp)
+    else:
+        incident(thing_id, failure_id, user_ip, timestamp, additional_info)
 
     # return_string = (f"thing_id={thing_id}\n"
     #                  f"failure_id={failure_id}\n"
