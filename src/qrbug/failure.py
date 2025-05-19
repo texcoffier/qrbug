@@ -63,6 +63,7 @@ class Failure(Tree):
         GROUP_JUSTIFICATION: int = 8
         VALUE_JUSTIFICATION: int = 50
         DISPLAY_TYPE_WIDTH: int = 10
+        ID_WIDTH: int = max(len(failure_id) for failure_id in self.instances)
 
         def recursively_build_failures_list(failure_id: str, depth: int = 0) -> None:
             INDENTATION_DEPTH: int = depth * INDENTATION_SIZE
@@ -77,6 +78,7 @@ class Failure(Tree):
             if SHOW_ADDITIONAL_ATTRIBUTES_INFO:
                 representation.append(
                     "\t\t"
+                    f"[ {current_failure.id.ljust(ID_WIDTH)} ]\t"
                     f"[{current_failure.display_type.name.center(DISPLAY_TYPE_WIDTH)}]\t"
                     f"[ask_confirm?={'YES' if current_failure.ask_confirm else 'NO '}]\t"
                 )

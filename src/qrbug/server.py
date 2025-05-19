@@ -52,6 +52,8 @@ async def show_failures_tree_route(request: web.Request) -> web.Response:
 
     #return web.Response(status=200, text=f"Thing ID: {thing_id}\n\n{requested_thing.dump()}\n\nFailures list :\n{get_failures(thing_id)}")
     # TODO : Groupe autorisé à déclarer la panne
+    if thing_id == 'debug':
+        return web.Response(status=200, text=get_failures(thing_id, as_html=False))
     return web.Response(status=200, text=get_failures(thing_id), content_type='text/html')
 
 

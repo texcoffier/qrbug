@@ -9,6 +9,7 @@ class Tree:
     def __init__(self, tree_id: str) -> None:
         self.id: str = tree_id
         self.children_ids: set[str] = set()
+        self.parent_ids: set[str] = set()
         self.init()
 
     def init(self) -> None: # Redefined by subclass
@@ -18,11 +19,13 @@ class Tree:
         # assert child.id not in self.children_ids, f"{child.id} is already a child of {self.id}"
         # assert child.id != self.id, f"Cannot make {child.id} a child of itself !"
         self.children_ids.add(child.id)
+        child.parent_ids.add(self.id)
 
     def remove_child(self, child: "Tree") -> None:
         # assert child.id in self.children_ids, f"{child.id} is not a child of {self.id}"
         # assert child.id != self.id, f"Cannot make {child.id} a child of itself !"
         self.children_ids.remove(child.id)
+        child.parent_ids.remove(self.id)
 
     def get_all_children_ids(self) -> set[str]:
         def add_child_to_set(node):
