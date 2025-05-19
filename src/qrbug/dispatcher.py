@@ -33,7 +33,6 @@ class Dispatcher(Tree):
         selector = qrbug.Selector[self.selector_id]
         action = qrbug.Action[self.action_id]
         for incident in incidents:
-            # TODO: Add the user
             if selector.is_ok(qrbug.User[group_id], qrbug.Thing[incident.thing_id], qrbug.Failure[incident.failure_id]):
                 action.run(incident)
 
