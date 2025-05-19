@@ -190,7 +190,7 @@ def init_server(argv = None) -> tuple[web.Application, str, int]:
     Function that will be run on server startup.
     Loads the config and incidents journals, starts a new server, and creates the routes.
 
-    /!\ RETURNS A web.Application ONLY /!\
+    ⚠️ RETURNS A web.Application ONLY ⚠️
     This is required by the server starting framework.
     """
     if argv is None:
