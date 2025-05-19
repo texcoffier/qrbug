@@ -147,6 +147,10 @@ async def register_incident(request: web.Request) -> web.Response:
                     html_response.append('<div style="padding-left: 20px;">No return value<br/></div>')
             html_response.append('</p>')
 
+    response_message = "<h1>Merci !</h1><h3>Votre signalement a été enregistré.</h3>"
+    if len(html_response) > 0:
+        response_message += 'Informations additionnelles :' + ''.join(html_response)
+
     # return_string = (f"thing_id={thing_id}\n"
     #                  f"failure_id={failure_id}\n"
     #                  f"is_repaired={is_repaired_bool}\n"
@@ -156,8 +160,7 @@ async def register_incident(request: web.Request) -> web.Response:
     # return web.Response(status=200, text=return_string)
     return web.Response(
         status=200,
-        #text="<h1>Merci !</h1><h3>Votre signalement a été enregistré.</h3>",
-        text=''.join(html_response),
+        text=response_message,
         content_type='text/html'
     )
 
