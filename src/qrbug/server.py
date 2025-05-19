@@ -140,10 +140,10 @@ def init_server(argv = None) -> web.Application:
         argv.remove('--test')
     host = 'localhost'
     port = 8080
-    if len(sys.argv) >= 2:
-        host = sys.argv[1]
-    if len(sys.argv) >= 3:
-        port = int(sys.argv[2])
+    if len(argv) >= 2:
+        host = argv[1]
+    if len(argv) >= 3:
+        port = int(argv[2])
 
     # Loads the config
     load_config()
@@ -155,7 +155,7 @@ def init_server(argv = None) -> web.Application:
         web.get('/thing={thing_id}', show_failures_tree_route),
         web.get('/', register_incident)
     ])
-    return app, host, port
+    return app
 
 if __name__ == "__main__":
     import sys
