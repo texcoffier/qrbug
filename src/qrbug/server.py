@@ -7,6 +7,7 @@ from typing import Optional
 from aiohttp import web
 
 from qrbug.authentication import get_login_from_token, handle_login
+from qrbug.dispatcher import Dispatcher
 from qrbug.thing import Thing
 from qrbug.failure import Failure
 from qrbug.journals import load_config, load_incidents, set_db_path, set_incidents_path
@@ -117,7 +118,15 @@ async def register_incident(request: web.Request) -> web.Response:
     if is_repaired_bool:
         incident_del(thing_id, failure_id, user_ip, timestamp)
     else:
-        incident(thing_id, failure_id, user_ip, timestamp, additional_info)
+        current_incident = incident(thing_id, failure_id, user_ip, timestamp, additional_info)
+
+    # Dispatchers
+    if not is_repaired_bool:
+        for dispatcher in Dispatcher.instances.values():
+            if dispatcher.when == 'synchro':
+                dispatcher.run([current_incident], 'nobody')
+            else:
+                pass # TODO: Rajouter la fonction dispatch au journal d'incidents
 
     # return_string = (f"thing_id={thing_id}\n"
     #                  f"failure_id={failure_id}\n"

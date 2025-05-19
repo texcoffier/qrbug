@@ -22,14 +22,16 @@ class Incidents:
         return self.thing_id == other_thing_id and self.failure_id == other_failure_id
 
     @classmethod
-    def create(cls, thing_id: str, failure_id: str, ip: str, timestamp: int, comment: Optional[str] = None) -> None:
+    def create(cls, thing_id: str, failure_id: str, ip: str, timestamp: int, comment: Optional[str] = None) -> "Incidents":
         """
         Factory method, creates a new incident and stores it within the incident instances
         """
-        cls.active.append(Incidents(thing_id, failure_id, ip, timestamp, comment))
+        new_incident = Incidents(thing_id, failure_id, ip, timestamp, comment)
+        cls.active.append(new_incident)
+        return new_incident
 
     @classmethod
-    def remove(cls, other_thing_id, other_failure_id) -> None:
+    def remove(cls, other_thing_id: str, other_failure_id: str) -> Optional["Incidents"]:
         """
         Deletes any given incident from the list of incidents
         """
@@ -37,6 +39,8 @@ class Incidents:
             if current_failure.is_equal(other_thing_id, other_failure_id):
                 cls.active.remove(current_failure)
                 cls.finished.append(current_failure)
+                return current_failure
+        return None
 
     def __class_getitem__(cls, incident_id: str) -> Optional["Incidents"]:
         if incident_id in cls.active:
@@ -47,9 +51,9 @@ class Incidents:
             return None
 
 
-def incident(thing_id: ThingId, failure_id: FailureId, ip: str, timestamp: int, comment: Optional[str] = None) -> None:
-    Incidents.create(thing_id, failure_id, ip, timestamp, comment)
+def incident(thing_id: ThingId, failure_id: FailureId, ip: str, timestamp: int, comment: Optional[str] = None) -> "Incidents":
+    return Incidents.create(thing_id, failure_id, ip, timestamp, comment)
 
 
-def incident_del(thing_id: ThingId, failure_id: FailureId, ip: str, timestamp: int) -> None:
-    Incidents.remove(thing_id, failure_id)
+def incident_del(thing_id: ThingId, failure_id: FailureId, ip: str, timestamp: int) -> Optional["Incidents"]:
+    return Incidents.remove(thing_id, failure_id)
