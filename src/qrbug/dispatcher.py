@@ -25,16 +25,21 @@ class Dispatcher(Tree):
         # return self.get_representation(attributes_short=short_names)
         return f'action:{self.action_id} selector:{self.selector_id} group:{self.group_id} when:{self.when}'
 
-    def run(self, incidents: list[qrbug.incidents.Incidents], group_id: str) -> None:
+    def run(self, incidents: list[qrbug.incidents.Incidents], group_id: str) -> dict[tuple[str, str], str]:
+        """
+        Returns a dict with keys being the thing_id and failure_id of an incident, and values being the returned HTML.
+        """
         import qrbug
         if self.selector_id is None or self.action_id is None:
-            return
+            return {}
 
         selector = qrbug.Selector[self.selector_id]
         action = qrbug.Action[self.action_id]
+        return_value: dict[tuple[str, str], Optional[str]] = {}
         for incident in incidents:
             if selector.is_ok(qrbug.User[group_id], qrbug.Thing[incident.thing_id], qrbug.Failure[incident.failure_id]):
-                action.run(incident)
+                return_value[incident.thing_id, incident.failure_id] = action.run(incident)
+        return return_value
 
 
 def dispatcher_update(dispatch_id: str, **kwargs) -> Dispatcher:

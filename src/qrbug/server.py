@@ -121,10 +121,11 @@ async def register_incident(request: web.Request) -> web.Response:
         current_incident = incident(thing_id, failure_id, user_ip, timestamp, additional_info)
 
     # Dispatchers
+    returned_html: dict[str, dict[tuple[str, str], Optional[str]]] = {}
     if not is_repaired_bool:
         for dispatcher in Dispatcher.instances.values():
             if dispatcher.when == 'synchro':
-                dispatcher.run([current_incident], 'nobody')
+                returned_html[dispatcher.id] = dispatcher.run([current_incident], 'nobody')
             else:
                 pass # TODO: Rajouter la fonction dispatch au journal d'incidents
 
@@ -137,7 +138,8 @@ async def register_incident(request: web.Request) -> web.Response:
     # return web.Response(status=200, text=return_string)
     return web.Response(
         status=200,
-        text="<h1>Merci !</h1><h3>Votre signalement a été enregistré.</h3>",
+        #text="<h1>Merci !</h1><h3>Votre signalement a été enregistré.</h3>",
+        text=''.join(html_response),
         content_type='text/html'
     )
 
