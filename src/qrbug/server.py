@@ -139,11 +139,12 @@ async def register_incident(request: web.Request) -> web.Response:
             for (incident_thing_id, incident_failure_id), html_string in dispatcher_return_value.items():
                 if html_string is not None:
                     html_response.append(
-                        f'INCIDENT [{incident_thing_id}, {incident_failure_id}]<br/>'
-                        f'<div>{html_string}</div><br/>'
+                        f'<div style="padding-left: 20px;">INCIDENT [{incident_thing_id}, {incident_failure_id}]'
+                        f'    <div style="padding-left: 40px;">{html_string}</div>'
+                        f'</div>'
                     )
                 else:
-                    html_response.append('No return value<br/>')
+                    html_response.append('<div style="padding-left: 20px;">No return value<br/></div>')
             html_response.append('</p>')
 
     # return_string = (f"thing_id={thing_id}\n"
