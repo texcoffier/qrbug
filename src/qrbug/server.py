@@ -125,25 +125,38 @@ async def register_incident(request: web.Request) -> web.Response:
     )
 
 
+def parse_command_line_args(argv) -> tuple[str, int]:
+    """
+    Parses the command line args and returns them.
+    :param argv: The command line args.
+    :return: The host and port that should be used by the server.
+    """
+    args = argv.copy()  # In order not to modify the original args
+    if '--test' in args:
+        set_db_path(Path('TESTS/test_server_db.conf'))
+        set_incidents_path(Path('TESTS/test_server_incidents.conf'))
+        args.remove('--test')
+    host = 'localhost'
+    port = 8080
+    if len(args) >= 2:
+        host = args[1]
+    if len(args) >= 3:
+        port = int(args[2])
+    return host, port
 
-def init_server(argv = None) -> web.Application:
+
+def init_server(argv = None) -> tuple[web.Application, str, int]:
     """
     Function that will be run on server startup.
     Loads the config and incidents journals, starts a new server, and creates the routes.
+
+    /!\ RETURNS A web.Application ONLY /!\
+    This is required by the server starting framework.
     """
     if argv is None:
         argv = []
 
-    if '--test' in argv:
-        set_db_path(Path('TESTS/test_server_db.conf'))
-        set_incidents_path(Path('TESTS/test_server_incidents.conf'))
-        argv.remove('--test')
-    host = 'localhost'
-    port = 8080
-    if len(argv) >= 2:
-        host = argv[1]
-    if len(argv) >= 3:
-        port = int(argv[2])
+    host, port = parse_command_line_args(argv)
 
     # Loads the config
     load_config()
@@ -155,7 +168,12 @@ def init_server(argv = None) -> web.Application:
         web.get('/thing={thing_id}', show_failures_tree_route),
         web.get('/', register_incident)
     ])
-    return app
+    return app, host, port
+
+def get_server(argv: list = None) -> web.Application:
+    if argv is None:
+        argv = []
+    return init_server(argv)[0]
 
 if __name__ == "__main__":
     import sys
