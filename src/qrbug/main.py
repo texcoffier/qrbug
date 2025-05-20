@@ -61,13 +61,17 @@ CONFIGS = {
     "selector": selector,
     "dispatcher_update": dispatcher_update,
     "dispatcher_del": dispatcher_del,
-    }
+}
 
-QRBUG = {
-    **CONFIGS,
+INCIDENT_FUNCTIONS = {
     "incident": incident,
     "incident_del": incident_del,
     "dispatch": dispatch,
+}
+
+QRBUG = {
+    **CONFIGS,
+    **INCIDENT_FUNCTIONS,
     "User": User,
     "Failure": Failure,
     "Thing": Thing,
@@ -77,5 +81,6 @@ QRBUG = {
     "Incidents": Incidents,
     "exec_code_file": exec_code_file,
     "CONFIGS": CONFIGS,
+    "INCIDENT_FUNCTIONS": INCIDENT_FUNCTIONS,
     "TestCase": TestCase,
 }

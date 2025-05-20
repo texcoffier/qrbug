@@ -10,7 +10,7 @@ from qrbug.authentication import get_login_from_token, handle_login
 from qrbug.dispatcher import Dispatcher
 from qrbug.thing import Thing
 from qrbug.failure import Failure
-from qrbug.journals import load_config, load_incidents, set_db_path, set_incidents_path
+from qrbug.journals import load_config, load_incidents, set_db_path, set_incidents_path, append_line_to_journal
 from qrbug.incidents import incident, incident_del
 import qrbug.journals
 
@@ -113,16 +113,10 @@ async def register_incident(request: web.Request) -> web.Response:
     function_to_log += f")  # {current_date} {user_login}\n"
 
     # TODO: Mettre une fonction append line au journal qui va évaluer la fonction passée
-    with open(qrbug.journals.INCIDENTS_FILE_PATH, 'a', encoding='utf-8') as f:
-        f.write(function_to_log)
+    current_incident = append_line_to_journal(function_to_log)
 
     # TODO: Run on incident repaired
     # TODO: Envoyer un mail à la personne qui a signalé la panne
-
-    if is_repaired_bool:
-        current_incident = incident_del(thing_id, failure_id, user_ip, timestamp)
-    else:
-        current_incident = incident(thing_id, failure_id, user_ip, timestamp, additional_info)
 
     # Dispatchers
     returned_html: dict[str, dict[tuple[str, str], Optional[str]]] = {}

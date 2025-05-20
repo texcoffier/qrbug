@@ -3,12 +3,19 @@ Contains the code related to loading the journals
 """
 from pathlib import Path
 from typing import Callable
+import enum
 
 # Journal files
 JOURNALS_FILE_PATH = Path("JOURNALS")
 DB_FILE_PATH = JOURNALS_FILE_PATH / "db.py"
 DEFAULT_DB_PATH = JOURNALS_FILE_PATH / "default_db.py"
 INCIDENTS_FILE_PATH = JOURNALS_FILE_PATH / "incidents.py"
+
+
+class Journals(enum.Enum):
+    DB = enum.auto()
+    INCIDENTS = enum.auto()
+    DEFAULT_DB = enum.auto()
 
 
 def set_db_path(path: Path) -> None:
@@ -44,8 +51,33 @@ def load_config(db_config_path: Path = None, default_db_path: Path = None) -> No
 
 def load_incidents(incidents_config_path: Path = None) -> None:
     import qrbug
-    exec_code_file(incidents_config_path if incidents_config_path is not None else INCIDENTS_FILE_PATH, {
-        "incident": qrbug.incident,
-        "incident_del": qrbug.incident_del,
-        "dispatch": qrbug.dispatch,
-    })
+    exec_code_file(
+        incidents_config_path if incidents_config_path is not None else INCIDENTS_FILE_PATH,
+        qrbug.INCIDENT_FUNCTIONS
+    )
+
+
+def append_line_to_journal(line: str, journal: Journals = Journals.INCIDENTS) -> "Incident":
+    """
+    Adds a new line at the end of the given journal and executes it in the current environment.
+    """
+    import qrbug
+
+    if journal == Journals.INCIDENTS:
+        journal_path = INCIDENTS_FILE_PATH
+        given_globals = qrbug.INCIDENT_FUNCTIONS
+    elif journal == Journals.DB:
+        journal_path = DB_FILE_PATH
+        given_globals = qrbug.CONFIGS
+    elif journal == Journals.DEFAULT_DB:
+        journal_path = DEFAULT_DB_PATH
+        given_globals = qrbug.CONFIGS
+    else:
+        raise ValueError(f"Unknown journal {journal}")
+
+    with open(journal_path, 'a', encoding='utf-8') as f:
+        f.write(line)
+
+    line_vars = {}
+    exec(compile('current_incident = ' + line, 'no file', 'exec'), given_globals, line_vars)
+    return line_vars['current_incident']
