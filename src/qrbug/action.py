@@ -17,12 +17,12 @@ class Action:
             self.python_script += '.py'
         self.instances[action_id] = self
 
-    def run(self, incident: qrbug.incidents.Incidents):
+    def run(self, incident: qrbug.incidents.Incidents, request) -> Optional[str]:
         import qrbug
         module_vars = qrbug.exec_code_file(ACTIONS_FOLDER / self.python_script, {"Incidents": qrbug.Incidents})
         # We assume that the run function is present in the action so the
         # server throws an exception if it is not the case
-        return module_vars['run'](incident)
+        return module_vars['run'](incident, request)
 
     def __class_getitem__(cls, action_id: ActionId) -> Optional["Action"]:
         return cls.instances.get(action_id, None)
@@ -34,4 +34,4 @@ def action(action_id: str, python_script: str) -> Action:
 
 if __name__ == '__main__':
     action('test', 'test.py')
-    Action['test'].run()
+    #Action['test'].run()

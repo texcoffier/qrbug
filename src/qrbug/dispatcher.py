@@ -25,7 +25,7 @@ class Dispatcher(Tree):
         # return self.get_representation(attributes_short=short_names)
         return f'action:{self.action_id} selector:{self.selector_id} group:{self.group_id} when:{self.when}'
 
-    def run(self, incidents: list[qrbug.incidents.Incidents], group_id: str) -> dict[tuple[str, str], str]:
+    def run(self, incidents: list[qrbug.incidents.Incidents], group_id: str, request) -> dict[tuple[str, str], str]:
         """
         Returns a dict with keys being the thing_id and failure_id of an incident, and values being the returned HTML.
         """
@@ -38,7 +38,7 @@ class Dispatcher(Tree):
         return_value: dict[tuple[str, str], Optional[str]] = {}
         for incident in incidents:
             if selector.is_ok(qrbug.User[group_id], qrbug.Thing[incident.thing_id], qrbug.Failure[incident.failure_id]):
-                return_value[incident.thing_id, incident.failure_id] = action.run(incident)
+                return_value[incident.thing_id, incident.failure_id] = action.run(incident, request)
         return return_value
 
 

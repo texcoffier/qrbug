@@ -101,7 +101,7 @@ async def register_incident(request: web.Request) -> web.Response:
     is_repaired_bool: bool = is_repaired == '1'
     timestamp = int(time.time())
     current_date = datetime.fromtimestamp(timestamp).strftime('%Y-%m-%d %H:%M:%S')
-    function_name = "incident_del" if is_repaired_bool else "incident"
+    function_name = "incident_del" if is_repaired_bool else "incident"  # TODO: Refactor
     user_ip = request.remote
 
     function_to_log = f"{function_name}({repr(thing_id)}, {repr(failure_id)}, {repr(user_ip)}, {timestamp}"
@@ -112,11 +112,15 @@ async def register_incident(request: web.Request) -> web.Response:
         function_to_log += f", {repr(additional_info)}"
     function_to_log += f")  # {current_date} {user_login}\n"
 
+    # TODO: Mettre une fonction append line au journal qui va évaluer la fonction passée
     with open(qrbug.journals.INCIDENTS_FILE_PATH, 'a', encoding='utf-8') as f:
         f.write(function_to_log)
 
+    # TODO: Run on incident repaired
+    # TODO: Envoyer un mail à la personne qui a signalé la panne
+
     if is_repaired_bool:
-        incident_del(thing_id, failure_id, user_ip, timestamp)
+        current_incident = incident_del(thing_id, failure_id, user_ip, timestamp)
     else:
         current_incident = incident(thing_id, failure_id, user_ip, timestamp, additional_info)
 
@@ -125,7 +129,7 @@ async def register_incident(request: web.Request) -> web.Response:
     if not is_repaired_bool:
         for dispatcher in Dispatcher.instances.values():
             if dispatcher.when == 'synchro':
-                returned_html[dispatcher.id] = dispatcher.run([current_incident], 'nobody')
+                returned_html[dispatcher.id] = dispatcher.run([current_incident], 'nobody', request)
             else:
                 pass # TODO: Rajouter la fonction dispatch au journal d'incidents
 

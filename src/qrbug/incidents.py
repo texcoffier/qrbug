@@ -1,7 +1,7 @@
 from typing import Optional
 
-from qrbug.failure import FailureId
-from qrbug.thing import ThingId
+from qrbug.failure import FailureId, Failure
+from qrbug.thing import ThingId, Thing
 
 
 class Incidents:
@@ -49,6 +49,14 @@ class Incidents:
             return cls.finished[incident_id]
         else:
             return None
+
+    @property
+    def failure(self):
+        return Failure[self.failure_id]
+
+    @property
+    def thing(self):
+        return Thing[self.thing_id]
 
 
 def incident(thing_id: ThingId, failure_id: FailureId, ip: str, timestamp: int, comment: Optional[str] = None) -> "Incidents":

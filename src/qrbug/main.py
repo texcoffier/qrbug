@@ -31,7 +31,7 @@ def dispatch(
         if current_incident.failure_id in failure_ids
     ]
 
-    dispatcher.run(dispatched_incidents, group_id)
+    dispatcher.run(dispatched_incidents, group_id, None)
 
 class TestCase(unittest.TestCase):
     def tearDown(self):
