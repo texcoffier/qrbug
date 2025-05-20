@@ -7,6 +7,7 @@ from typing import Callable
 # Journal files
 JOURNALS_FILE_PATH = Path("JOURNALS")
 DB_FILE_PATH = JOURNALS_FILE_PATH / "db.py"
+DEFAULT_DB_PATH = JOURNALS_FILE_PATH / "default_db.py"
 INCIDENTS_FILE_PATH = JOURNALS_FILE_PATH / "incidents.py"
 
 
@@ -26,17 +27,11 @@ def exec_code_file(path: Path, code_globals: dict[str, Callable]) -> dict:
     return changed_locals
 
 
-def load_config(db_config_path: Path = None) -> None:
+def load_config(db_config_path: Path = None, default_db_path: Path = None) -> None:
     import qrbug
 
-    # Creates default elements
-    # These are defined here so they can be overridden by the config
-    # The rest of the code assumes these are defined, so they must not be removed !
-    qrbug.action('none', 'none.py')
-    qrbug.selector('true', 'True')
-    qrbug.User.get('nobody')
-    qrbug.failure_update('debug', value="Toutes les failures", ask_confirm=False)
-    qrbug.thing_update('debug', failure_id="debug", comment="Every available failure")
+    # Loads the default DB
+    exec_code_file(default_db_path if default_db_path is not None else DEFAULT_DB_PATH, qrbug.CONFIGS)
 
     # Loads the DB
     exec_code_file(db_config_path if db_config_path is not None else DB_FILE_PATH, qrbug.CONFIGS)
