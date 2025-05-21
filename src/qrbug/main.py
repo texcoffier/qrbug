@@ -46,11 +46,10 @@ def dispatch(
         return
 
     # Looks for every incident with the given failure ids
-    dispatched_incidents = [
-        current_incident
-        for current_incident in Incidents.active
-        if current_incident.failure_id in failure_ids
-    ]
+    dispatched_incidents = []
+    for failure_id in failure_ids:
+        for current_incident in Incidents.filter_active(failure_id=failure_id):
+            dispatched_incidents.append(current_incident)
 
     dispatcher.run(dispatched_incidents, group_id, None)
 
