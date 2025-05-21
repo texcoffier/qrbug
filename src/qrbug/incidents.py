@@ -8,12 +8,13 @@ class Incidents:
     active: list["Incidents"] = []
     finished: list["Incidents"] = []
 
-    def __init__(self, thing_id: str, failure_id: str, ip: str, timestamp: int, comment: Optional[str] = None):
+    def __init__(self, thing_id: str, failure_id: str, ip: str, timestamp: int, comment: Optional[str] = None, login: str = ''):
         self.thing_id = thing_id
         self.failure_id = failure_id
         self.ip = ip
         self.timestamp = timestamp
         self.comment = comment
+        self.login = login
 
     def dump(self) -> str:
         return f'thing:{self.thing_id} fail:{self.failure_id} ip:{self.ip} comment:{repr(self.comment)}'
