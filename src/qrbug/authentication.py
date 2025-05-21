@@ -5,12 +5,10 @@ from typing import Optional
 
 import aiohttp
 from aiohttp import web
+from qrbug.main import TOKEN_LOGIN_TIMEOUT, SERVICE_URL, CAS_URL
 
 # Token: Login, Timestamp, IP
 LOGGED_USERS: dict[str, tuple[str, int, str]] = {}  # TODO: Classe Session ?
-TOKEN_LOGIN_TIMEOUT = 60
-CAS_URL = 'https://cas.univ-lyon1.fr/cas'
-SERVICE_URL = 'http://qrbug.univ-lyon1.fr:8080/'
 
 
 def get_login_from_token(token: str, user_ip: str) -> str:

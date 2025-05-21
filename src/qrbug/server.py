@@ -10,9 +10,10 @@ from qrbug.authentication import get_login_from_token, handle_login
 from qrbug.dispatcher import Dispatcher
 from qrbug.thing import Thing
 from qrbug.failure import Failure
-from qrbug.journals import load_config, load_incidents, set_db_path, set_incidents_path, append_line_to_journal
+from qrbug.journals import load_config, load_incidents, append_line_to_journal
 from qrbug.incidents import incident, incident_del
 import qrbug.journals
+from qrbug.main import set_db_path, set_incidents_path
 
 
 def get_failures(thing_id: str, as_html: bool = True) -> str:

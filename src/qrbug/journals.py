@@ -5,27 +5,11 @@ from pathlib import Path
 from typing import Callable
 import enum
 
-# Journal files
-JOURNALS_FILE_PATH = Path("JOURNALS")
-DB_FILE_PATH = JOURNALS_FILE_PATH / "db.py"
-DEFAULT_DB_PATH = JOURNALS_FILE_PATH / "default_db.py"
-INCIDENTS_FILE_PATH = JOURNALS_FILE_PATH / "incidents.py"
-
 
 class Journals(enum.Enum):
     DB = enum.auto()
     INCIDENTS = enum.auto()
     DEFAULT_DB = enum.auto()
-
-
-def set_db_path(path: Path) -> None:
-    global DB_FILE_PATH
-    DB_FILE_PATH = path
-
-
-def set_incidents_path(path: Path) -> None:
-    global INCIDENTS_FILE_PATH
-    INCIDENTS_FILE_PATH = path
 
 
 def exec_code_file(path: Path, code_globals: dict[str, Callable]) -> dict:
@@ -38,10 +22,10 @@ def load_config(db_config_path: Path = None, default_db_path: Path = None) -> No
     import qrbug
 
     # Loads the default DB
-    exec_code_file(default_db_path if default_db_path is not None else DEFAULT_DB_PATH, qrbug.CONFIGS)
+    exec_code_file(default_db_path if default_db_path is not None else qrbug.DEFAULT_DB_PATH, qrbug.CONFIGS)
 
     # Loads the DB
-    exec_code_file(db_config_path if db_config_path is not None else DB_FILE_PATH, qrbug.CONFIGS)
+    exec_code_file(db_config_path if db_config_path is not None else qrbug.DB_FILE_PATH, qrbug.CONFIGS)
 
     # Parents every failure WITHOUT PARENTS to the debug failure
     for failure_id, failure in qrbug.Failure.instances.items():
@@ -52,7 +36,7 @@ def load_config(db_config_path: Path = None, default_db_path: Path = None) -> No
 def load_incidents(incidents_config_path: Path = None) -> None:
     import qrbug
     exec_code_file(
-        incidents_config_path if incidents_config_path is not None else INCIDENTS_FILE_PATH,
+        incidents_config_path if incidents_config_path is not None else qrbug.INCIDENTS_FILE_PATH,
         qrbug.INCIDENT_FUNCTIONS
     )
 
@@ -64,13 +48,13 @@ def append_line_to_journal(line: str, journal: Journals = Journals.INCIDENTS) ->
     import qrbug
 
     if journal == Journals.INCIDENTS:
-        journal_path = INCIDENTS_FILE_PATH
+        journal_path = qrbug.INCIDENTS_FILE_PATH
         given_globals = qrbug.INCIDENT_FUNCTIONS
     elif journal == Journals.DB:
-        journal_path = DB_FILE_PATH
+        journal_path = qrbug.DB_FILE_PATH
         given_globals = qrbug.CONFIGS
     elif journal == Journals.DEFAULT_DB:
-        journal_path = DEFAULT_DB_PATH
+        journal_path = qrbug.DEFAULT_DB_PATH
         given_globals = qrbug.CONFIGS
     else:
         raise ValueError(f"Unknown journal {journal}")
