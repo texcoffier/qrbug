@@ -30,8 +30,9 @@ class Dispatcher(Tree):
         Returns a dict with keys being the thing_id and failure_id of an incident, and values being the returned HTML.
         """
         import qrbug
-        if self.selector_id is None or self.action_id is None:
-            return {}
+
+        assert self.selector_id is not None, f'Missing selector id for dispatcher {self.id}'
+        assert self.action_id is not None, f'Missing action id for dispatcher {self.id}'
 
         selector = qrbug.Selector[self.selector_id]
         action = qrbug.Action[self.action_id]
