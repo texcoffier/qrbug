@@ -16,27 +16,6 @@ import qrbug.journals
 from qrbug.main import set_db_path, set_incidents_path
 
 
-def get_failures(thing_id: str, as_html: bool = True) -> str:
-    """
-    Returns the representation of the failure of the given thing, as HTML or raw text.
-    :param thing_id: The id of the thing.
-    :param as_html: If True, return an HTML representation of the failure. Otherwise, returns as raw text.
-    """
-    requested_thing = Thing[thing_id]
-    if requested_thing is None:
-        return "Requested thing not found"
-
-    # Gets the failure for this thing
-    root_failure = Failure[requested_thing.failure_id]
-    if root_failure is None:
-        return "Requested thing's root failure not found"
-
-    if as_html:
-        return root_failure.get_hierarchy_representation_html(thing_id)
-    else:
-        return root_failure.get_hierarchy_representation()
-
-
 async def show_failures_tree_route(request: web.Request) -> web.Response:
     """
     Returns the webpage listing the failure hierarchy for the given thing.
@@ -56,8 +35,8 @@ async def show_failures_tree_route(request: web.Request) -> web.Response:
     #return web.Response(status=200, text=f"Thing ID: {thing_id}\n\n{requested_thing.dump()}\n\nFailures list :\n{get_failures(thing_id)}")
     # TODO : Groupe autorisé à déclarer la panne
     if thing_id == 'debug':
-        return web.Response(status=200, text=get_failures(thing_id, as_html=False))
-    return web.Response(status=200, text=get_failures(thing_id), content_type='text/html')
+        return web.Response(status=200, text=Thing[thing_id].get_failures(thing_id, as_html=False))
+    return web.Response(status=200, text=Thing[thing_id].get_failures(thing_id), content_type='text/html')
 
 
 async def register_incident(request: web.Request) -> web.Response:

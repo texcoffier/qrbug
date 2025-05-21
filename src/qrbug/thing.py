@@ -1,7 +1,7 @@
 from typing import Optional, TypeAlias
 
 from qrbug.tree import Tree
-from qrbug.failure import FailureId
+from qrbug.failure import FailureId, Failure
 
 ThingId: TypeAlias = str
 
@@ -24,6 +24,22 @@ class Thing(Tree):
         # }
         # return self.get_representation(attributes_short=short_names)
         return f'loc:{self.location} failure:{self.failure_id} comment:{repr(self.comment)}'
+
+
+    def get_failures(self, as_html: bool = True) -> str:
+        """
+        Returns the representation of the failure of the given thing, as HTML or raw text.
+        :param as_html: If True, return an HTML representation of the failure. Otherwise, returns as raw text.
+        """
+        # Gets the failure for this thing
+        root_failure = Failure[self.failure_id]
+        if root_failure is None:
+            return "Requested thing's root failure not found"
+
+        if as_html:
+            return root_failure.get_hierarchy_representation_html(self.id)
+        else:
+            return root_failure.get_hierarchy_representation()
 
 
 def thing_update(thing_id: ThingId, **kwargs) -> Thing:
