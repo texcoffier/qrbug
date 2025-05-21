@@ -1,4 +1,5 @@
 from typing import Optional
+import re
 
 from qrbug.failure import FailureId, Failure
 from qrbug.thing import ThingId, Thing
@@ -42,6 +43,57 @@ class Incidents:
                 cls.finished.append(current_failure)
                 return current_failure
         return None
+
+    @classmethod
+    def filter(
+            cls, thing_id: str = None, failure_id: str = None, ip: str = None, login: str = None,
+            timestamp_min: int = 0, timestamp_max: int = None, comment: str = None
+    ) -> tuple[list["Incidents"], list["Incidents"]]:
+        """
+        Returns the list of incidents matching the given criteria
+        :param thing_id: The thing_id of the incident
+        :param failure_id: The failure_id of the incident
+        :param ip: The ip of the incident
+        :param login: The login of the incident
+        :param timestamp_min: The minimum timestamp of the incident
+        :param timestamp_max: The maximum timestamp of the incident
+        :param comment: A regex matching the given comment
+        :return: A tuple of the incidents matching the given criteria ;
+            first element is active incidents, second element is finished incidents
+        """
+        def condition_filter(incident) -> bool:
+            if thing_id is not None and thing_id != incident.thing_id:
+                return False
+            if failure_id is not None and failure_id != incident.failure_id:
+                return False
+            if ip is not None and ip != incident.ip:
+                return False
+            if login is not None and login != incident.login:
+                return False
+            if incident.timestamp < timestamp_min:
+                return False
+            if timestamp_max is not None and incident.timestamp > timestamp_max:
+                return False
+            if comment is not None and re.match(comment, incident.comment) is None:
+                return False
+            return True
+        return list(filter(condition_filter, cls.active)), list(filter(condition_filter, cls.finished))
+
+    @classmethod
+    def filter_active(cls, *args, **kwargs) -> list["Incidents"]:
+        """ Runs the `filter` class method, but only returns active incidents """
+        return cls.filter(*args, **kwargs)[0]
+
+    @classmethod
+    def filter_finished(cls, *args, **kwargs) -> list["Incidents"]:
+        """ Runs the `filter` class method, but only returns finished incidents """
+        return cls.filter(*args, **kwargs)[1]
+
+    @classmethod
+    def filter_all(cls, *args, **kwargs) -> list["Incidents"]:
+        """ Runs the `filter` class method, and returns a flattened list of all incidents """
+        filtered_incidents = cls.filter(*args, **kwargs)
+        return [*filtered_incidents[0], *filtered_incidents[1]]
 
     def __class_getitem__(cls, incident_id: str) -> Optional["Incidents"]:
         if incident_id in cls.active:
