@@ -37,11 +37,10 @@ class Incidents:
         """
         Deletes any given incident from the list of incidents
         """
-        for current_failure in cls.active:
-            if current_failure.is_equal(other_thing_id, other_failure_id):
-                cls.active.remove(current_failure)
-                cls.finished.append(current_failure)
-                return current_failure
+        for failure_to_remove in cls.filter_active(other_thing_id, other_failure_id):
+            cls.active.remove(failure_to_remove)
+            cls.finished.append(failure_to_remove)
+            return failure_to_remove
         return None
 
     @classmethod
