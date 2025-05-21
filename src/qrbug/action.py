@@ -14,7 +14,7 @@ class Action:
         self.id = action_id
         self.python_script = python_script
         if not self.python_script.endswith('.py'):
-            self.python_script += '.py'
+            raise Exception(f'"{self.python_script}" is not a Python file')
         self.instances[action_id] = self
 
     def run(self, incident: qrbug.incidents.Incidents, request) -> Optional[str]:
