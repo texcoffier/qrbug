@@ -39,7 +39,7 @@ class Incidents:
         Deletes any given incident from the list of incidents
         :param login: The login of the user who removed the incident.
         """
-        for failure_to_remove in cls.filter_active(other_thing_id, other_failure_id):
+        for failure_to_remove in cls.filter_active(thing_id=other_thing_id, failure_id=other_failure_id):
             failure_to_remove.remover_login = login
             cls.active.remove(failure_to_remove)
             cls.finished.append(failure_to_remove)
@@ -48,11 +48,12 @@ class Incidents:
 
     @classmethod
     def filter(
-            cls, thing_id: str = None, failure_id: str = None, ip: str = None, login: str = None,
-            timestamp_min: int = 0, timestamp_max: int = None, comment: str = None
-    ) -> tuple[list["Incidents"], list["Incidents"]]:
+            cls, incidents: list["Incidents"], *, thing_id: str = None, failure_id: str = None, ip: str = None,
+            login: str = None, timestamp_min: int = 0, timestamp_max: int = None, comment: str = None
+    ) -> list["Incidents"]:
         """
         Returns the list of incidents matching the given criteria
+        :param incidents: The list of incidents to filter.
         :param thing_id: The thing_id of the incident
         :param failure_id: The failure_id of the incident
         :param ip: The ip of the incident
@@ -79,22 +80,31 @@ class Incidents:
             if comment is not None and re.match(comment, incident.comment) is None:
                 return False
             return True
-        return list(filter(condition_filter, cls.active)), list(filter(condition_filter, cls.finished))
+        return list(filter(condition_filter, incidents))
+
+    @classmethod
+    def filter_both(cls, *args, **kwargs) -> tuple[list["Incidents"], list["Incidents"]]:
+        """
+        Filters both lsts of incidents (active and finished) separately
+        :return: A tuple of the incidents matching the given criteria ;
+            first element is active incidents, second element is finished incidents
+        """
+        return list(cls.filter(cls.active, *args, **kwargs)), list(cls.filter(cls.finished, *args, **kwargs))
 
     @classmethod
     def filter_active(cls, *args, **kwargs) -> list["Incidents"]:
         """ Runs the `filter` class method, but only returns active incidents """
-        return cls.filter(*args, **kwargs)[0]
+        return cls.filter(cls.active, *args, **kwargs)
 
     @classmethod
     def filter_finished(cls, *args, **kwargs) -> list["Incidents"]:
         """ Runs the `filter` class method, but only returns finished incidents """
-        return cls.filter(*args, **kwargs)[1]
+        return cls.filter(cls.finished, *args, **kwargs)
 
     @classmethod
     def filter_all(cls, *args, **kwargs) -> list["Incidents"]:
         """ Runs the `filter` class method, and returns a flattened list of all incidents """
-        filtered_incidents = cls.filter(*args, **kwargs)
+        filtered_incidents = cls.filter_both(*args, **kwargs)
         return [*filtered_incidents[0], *filtered_incidents[1]]
 
     def __class_getitem__(cls, incident_id: str) -> Optional["Incidents"]:
