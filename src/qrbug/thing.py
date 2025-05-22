@@ -61,6 +61,7 @@ def thing_del(thing_id: ThingId) -> None:
 
 
 qrbug.Thing = Thing
+qrbug.ThingId = ThingId
 qrbug.thing_update = thing_update
 qrbug.thing_del = thing_del
 

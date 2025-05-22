@@ -5,7 +5,8 @@ from typing import Optional
 
 import aiohttp
 from aiohttp import web
-from qrbug.main import TOKEN_LOGIN_TIMEOUT, SERVICE_URL, CAS_URL
+import qrbug
+
 
 # Token: Login, Timestamp, IP
 LOGGED_USERS: dict[str, tuple[str, int, str]] = {}  # TODO: Classe Session ?
@@ -20,7 +21,7 @@ def get_login_from_token(token: str, user_ip: str) -> str:
     """
     if token in LOGGED_USERS:
         login, timestamp, ip = LOGGED_USERS[token]
-        if time.time() - timestamp < TOKEN_LOGIN_TIMEOUT and ip == user_ip:
+        if time.time() - timestamp < qrbug.TOKEN_LOGIN_TIMEOUT and ip == user_ip:
             return login
     return ''
 
@@ -49,12 +50,17 @@ async def validate_ticket(cas_url: str, service_url: str, ticket: str, user_ip: 
 
 
 async def handle_login(request: web.Request, extra_url: str = '') -> Optional[str]:
-    service_url = SERVICE_URL + ('/' if not SERVICE_URL.endswith('/') else '') + extra_url
+    service_url = qrbug.SERVICE_URL + ('/' if not qrbug.SERVICE_URL.endswith('/') else '') + extra_url
     login_ticket: Optional[str] = request.query.get("ticket", None)
     if login_ticket is None:
-        raise web.HTTPTemporaryRedirect(f'{CAS_URL}/login?service={service_url}')
+        raise web.HTTPTemporaryRedirect(f'{qrbug.CAS_URL}/login?service={service_url}')
     else:
         user_login = get_login_from_token(login_ticket, request.remote)
         if not user_login:
-            user_login = await validate_ticket(CAS_URL, service_url, login_ticket, request.remote)
+            user_login = await validate_ticket(qrbug.CAS_URL, service_url, login_ticket, request.remote)
     return user_login
+
+
+qrbug.get_login_from_token = get_login_from_token
+qrbug.validate_ticket = validate_ticket
+qrbug.handle_login = handle_login

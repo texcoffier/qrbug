@@ -194,6 +194,7 @@ def failure_remove(parent: FailureId, child: FailureId) -> None:
 
 qrbug.Failure = Failure
 qrbug.FailureId = FailureId
+qrbug.DisplayTypes = DisplayTypes
 qrbug.failure_update = failure_update
 qrbug.failure_add = failure_add
 qrbug.failure_remove = failure_remove

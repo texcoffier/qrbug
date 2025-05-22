@@ -56,6 +56,7 @@ def dispatcher_del(dispatch_id: str) -> None:
 
 
 qrbug.Dispatcher = Dispatcher
+qrbug.DispatcherId = DispatcherId
 qrbug.dispatcher_update = dispatcher_update
 qrbug.dispatcher_del = dispatcher_del
 

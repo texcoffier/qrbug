@@ -6,14 +6,8 @@ from typing import Optional
 
 from aiohttp import web
 
-from qrbug.authentication import get_login_from_token, handle_login
-from qrbug.dispatcher import Dispatcher
-from qrbug.thing import Thing
-from qrbug.failure import Failure
-from qrbug.journals import load_config, load_incidents, append_line_to_journal
-from qrbug.incidents import incident, incident_del
-import qrbug.journals
-from qrbug.main import set_db_path, set_incidents_path
+import qrbug.init
+import qrbug
 
 
 async def show_failures_tree_route(request: web.Request) -> web.Response:
@@ -23,20 +17,20 @@ async def show_failures_tree_route(request: web.Request) -> web.Response:
     thing_id: Optional[str] = request.match_info.get('thing_id', None)
     if thing_id is None:
         return web.Response(status=404, text="No thing ID provided")
-    requested_thing: Optional[Thing] = Thing[thing_id]
+    requested_thing: Optional[qrbug.Thing] = qrbug.Thing[thing_id]
     if requested_thing is None:
         return web.Response(status=404, text="Requested Thing does not exist")
 
     # Creates the CAS login
-    user_login = await handle_login(request, f'thing={thing_id}')
+    user_login = await qrbug.handle_login(request, f'thing={thing_id}')
     if user_login is None:
         return web.Response(status=403, text="Login ticket invalid")
 
     #return web.Response(status=200, text=f"Thing ID: {thing_id}\n\n{requested_thing.dump()}\n\nFailures list :\n{get_failures(thing_id)}")
     # TODO : Groupe autorisé à déclarer la panne
     if thing_id == 'debug':
-        return web.Response(status=200, text=Thing[thing_id].get_failures(thing_id, as_html=False))
-    return web.Response(status=200, text=Thing[thing_id].get_failures(thing_id), content_type='text/html')
+        return web.Response(status=200, text=qrbug.Thing[thing_id].get_failures(thing_id, as_html=False))
+    return web.Response(status=200, text=qrbug.Thing[thing_id].get_failures(thing_id), content_type='text/html')
 
 
 async def register_incident(request: web.Request) -> web.Response:
@@ -60,10 +54,10 @@ async def register_incident(request: web.Request) -> web.Response:
         ))
 
     # Checks for existence
-    failure = Failure[failure_id]
+    failure = qrbug.Failure[failure_id]
     if failure is None:
         return web.Response(status=404, text=f"Failure does not exist")
-    if Thing[thing_id] is None:
+    if qrbug.Thing[thing_id] is None:
         return web.Response(status=404, text=f"Thing does not exist")
 
     # Cas authentication
@@ -72,9 +66,9 @@ async def register_incident(request: web.Request) -> web.Response:
     # Only authenticate if failure requires it
     if failure.restricted_to_group_id is not None:
         if user_token is not None:
-            user_login = get_login_from_token(user_token, request.remote)
+            user_login = qrbug.get_login_from_token(user_token, request.remote)
         if not user_login:
-            user_login = await handle_login(request, f'thing={thing_id}')
+            user_login = await qrbug.handle_login(request, f'thing={thing_id}')
             if user_login is None:
                 return web.Response(status=403, text="Login ticket invalid")
 
@@ -104,7 +98,7 @@ async def register_incident(request: web.Request) -> web.Response:
     # Dispatchers
     returned_html: dict[str, dict[tuple[str, str], Optional[str]]] = {}
     if not is_repaired_bool:
-        for dispatcher in Dispatcher.instances.values():
+        for dispatcher in qrbug.Dispatcher.instances.values():
             if dispatcher.when == 'synchro':
                 returned_html[dispatcher.id] = dispatcher.run([current_incident], 'nobody', request)
             else:
@@ -154,8 +148,8 @@ def parse_command_line_args(argv) -> tuple[str, int]:
     """
     args = argv.copy()  # In order not to modify the original args
     if '--test' in args:
-        set_db_path(Path('TESTS/test_server_db.conf'))
-        set_incidents_path(Path('TESTS/test_server_incidents.conf'))
+        qrbug.set_db_path(Path('TESTS/test_server_db.conf'))
+        qrbug.set_incidents_path(Path('TESTS/test_server_incidents.conf'))
         args.remove('--test')
     host = 'localhost'
     port = 8080
@@ -177,8 +171,8 @@ def init_server(argv = None) -> tuple[web.Application, str, int]:
     host, port = parse_command_line_args(argv)
 
     # Loads the config
-    load_config()
-    load_incidents()
+    qrbug.load_config()
+    qrbug.load_incidents()
 
     # Creates the server
     app = web.Application()
