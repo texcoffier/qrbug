@@ -14,16 +14,6 @@ DB_FILE_PATH = JOURNALS_FILE_PATH / "db.py"
 DEFAULT_DB_PATH = JOURNALS_FILE_PATH / "default_db.py"
 INCIDENTS_FILE_PATH = JOURNALS_FILE_PATH / "incidents.py"
 
-
-def set_db_path(path: Path) -> None:
-    global DB_FILE_PATH
-    DB_FILE_PATH = path
-
-
-def set_incidents_path(path: Path) -> None:
-    global INCIDENTS_FILE_PATH
-    INCIDENTS_FILE_PATH = path
-
 # Dicts
 CONFIGS = {
     "user_add": qrbug.user_add,
@@ -55,9 +45,6 @@ qrbug.JOURNALS_FILE_PATH = JOURNALS_FILE_PATH
 qrbug.DB_FILE_PATH = DB_FILE_PATH
 qrbug.DEFAULT_DB_PATH = DEFAULT_DB_PATH
 qrbug.INCIDENTS_FILE_PATH = INCIDENTS_FILE_PATH
-
-qrbug.set_db_path = set_db_path
-qrbug.set_incidents_path = set_incidents_path
 
 qrbug.CONFIGS = CONFIGS
 qrbug.INCIDENT_FUNCTIONS = INCIDENT_FUNCTIONS

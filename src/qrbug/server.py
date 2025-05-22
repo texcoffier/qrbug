@@ -148,8 +148,8 @@ def parse_command_line_args(argv) -> tuple[str, int]:
     """
     args = argv.copy()  # In order not to modify the original args
     if '--test' in args:
-        qrbug.set_db_path(Path('TESTS/test_server_db.conf'))
-        qrbug.set_incidents_path(Path('TESTS/test_server_incidents.conf'))
+        qrbug.DB_FILE_PATH = Path('TESTS/test_server_db.conf')
+        qrbug.INCIDENTS_FILE_PATH = Path('TESTS/test_server_incidents.conf')
         args.remove('--test')
     host = 'localhost'
     port = 8080
