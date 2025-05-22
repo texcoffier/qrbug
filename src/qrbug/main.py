@@ -45,10 +45,9 @@ QRBUG = {
     "Incidents": qrbug.Incidents,
     "exec_code_file": qrbug.exec_code_file,
     "CONFIGS": qrbug.CONFIGS,
-    "INCIDENT_FUNCTIONS": INCIDENT_FUNCTIONS,
+    "INCIDENT_FUNCTIONS": qrbug.INCIDENT_FUNCTIONS,
     "TestCase": TestCase,
 }
 
-qrbug.INCIDENT_FUNCTIONS = INCIDENT_FUNCTIONS
 qrbug.SETTINGS = SETTINGS
 qrbug.QRBUG = QRBUG
