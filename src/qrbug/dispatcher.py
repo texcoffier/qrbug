@@ -55,10 +55,31 @@ def dispatcher_del(dispatch_id: str) -> None:
     del Dispatcher.instances[dispatch_id]
 
 
+def dispatch(
+        dispatch_id: DispatcherId,
+        failure_ids: list[qrbug.FailureId],
+        action_id: qrbug.ActionId,
+        group_id: qrbug.UserId,
+        timestamp: int
+) -> None:
+    dispatcher = qrbug.Dispatcher[dispatch_id]
+    if dispatcher is None:
+        return
+
+    # Looks for every incident with the given failure ids
+    dispatched_incidents = []
+    for failure_id in failure_ids:
+        for current_incident in qrbug.Incidents.filter_active(failure_id=failure_id):
+            dispatched_incidents.append(current_incident)
+
+    dispatcher.run(dispatched_incidents, group_id, None)
+
+
 qrbug.Dispatcher = Dispatcher
 qrbug.DispatcherId = DispatcherId
 qrbug.dispatcher_update = dispatcher_update
 qrbug.dispatcher_del = dispatcher_del
+qrbug.dispatch = dispatch
 
 if __name__ == "__main__":
     dispatcher_update("0", when="Test", selector_id="0")

@@ -23,4 +23,4 @@ def selector(selector_id: str, expression: str) -> Selector:
 
 
 qrbug.Selector = Selector
-qrbug.selector = selector
+qrbug.selector_update = selector

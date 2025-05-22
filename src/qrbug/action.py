@@ -32,7 +32,7 @@ def action(action_id: str, python_script: str) -> Action:
 
 
 qrbug.Action = Action
-qrbug.action = action
+qrbug.action_update = action
 qrbug.ActionId = ActionId
 
 if __name__ == '__main__':

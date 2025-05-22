@@ -5,36 +5,6 @@ from pathlib import Path
 import qrbug.init
 import qrbug
 
-
-def set_db_path(path: Path) -> None:
-    global DB_FILE_PATH
-    DB_FILE_PATH = path
-
-
-def set_incidents_path(path: Path) -> None:
-    global INCIDENTS_FILE_PATH
-    INCIDENTS_FILE_PATH = path
-
-
-def dispatch(
-        dispatch_id: qrbug.DispatcherId,
-        failure_ids: list[qrbug.FailureId],
-        action_id: qrbug.ActionId,
-        group_id: qrbug.UserId,
-        timestamp: int
-) -> None:
-    dispatcher = qrbug.Dispatcher[dispatch_id]
-    if dispatcher is None:
-        return
-
-    # Looks for every incident with the given failure ids
-    dispatched_incidents = []
-    for failure_id in failure_ids:
-        for current_incident in qrbug.Incidents.filter_active(failure_id=failure_id):
-            dispatched_incidents.append(current_incident)
-
-    dispatcher.run(dispatched_incidents, group_id, None)
-
 class TestCase(unittest.TestCase):
     def tearDown(self):
         qrbug.User.instances.clear()
@@ -51,29 +21,20 @@ class TestCase(unittest.TestCase):
 
 
 qrbug.TestCase = TestCase
-qrbug.dispatch = dispatch
-qrbug.set_db_path = set_db_path
-qrbug.set_incidents_path = set_incidents_path
-
-INCIDENT_FUNCTIONS = {
-    "incident": qrbug.incident,
-    "incident_del": qrbug.incident_del,
-    "dispatch": dispatch,
-}
 
 SETTINGS = {
-    "TOKEN_LOGIN_TIMEOUT": TOKEN_LOGIN_TIMEOUT,
-    "CAS_URL": CAS_URL,
-    "SERVICE_URL": SERVICE_URL,
-    "JOURNALS_FILE_PATH": JOURNALS_FILE_PATH,
-    "DB_FILE_PATH": DB_FILE_PATH,
-    "INCIDENTS_FILE_PATH": INCIDENTS_FILE_PATH,
-    "DEFAULT_DB_PATH": DEFAULT_DB_PATH,
+    "TOKEN_LOGIN_TIMEOUT": qrbug.TOKEN_LOGIN_TIMEOUT,
+    "CAS_URL": qrbug.CAS_URL,
+    "SERVICE_URL": qrbug.SERVICE_URL,
+    "JOURNALS_FILE_PATH": qrbug.JOURNALS_FILE_PATH,
+    "DB_FILE_PATH": qrbug.DB_FILE_PATH,
+    "INCIDENTS_FILE_PATH": qrbug.INCIDENTS_FILE_PATH,
+    "DEFAULT_DB_PATH": qrbug.DEFAULT_DB_PATH,
 }
 
 QRBUG = {
-    **CONFIGS,
-    **INCIDENT_FUNCTIONS,
+    **qrbug.CONFIGS,
+    **qrbug.INCIDENT_FUNCTIONS,
     **SETTINGS,
     "User": qrbug.User,
     "Failure": qrbug.Failure,
