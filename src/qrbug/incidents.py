@@ -16,6 +16,7 @@ class Incidents:
         self.timestamp = timestamp
         self.comment = comment
         self.login = login
+        self.remover_login = None
 
     def dump(self) -> str:
         return f'thing:{self.thing_id} fail:{self.failure_id} ip:{self.ip} comment:{repr(self.comment)}'
@@ -33,11 +34,13 @@ class Incidents:
         return new_incident
 
     @classmethod
-    def remove(cls, other_thing_id: str, other_failure_id: str) -> Optional["Incidents"]:
+    def remove(cls, other_thing_id: str, other_failure_id: str, login: str) -> Optional["Incidents"]:
         """
         Deletes any given incident from the list of incidents
+        :param login: The login of the user who removed the incident.
         """
         for failure_to_remove in cls.filter_active(other_thing_id, other_failure_id):
+            failure_to_remove.remover_login = login
             cls.active.remove(failure_to_remove)
             cls.finished.append(failure_to_remove)
             return failure_to_remove
@@ -115,5 +118,5 @@ def incident(thing_id: ThingId, failure_id: FailureId, ip: str, timestamp: int, 
     return Incidents.create(thing_id, failure_id, ip, timestamp, comment)
 
 
-def incident_del(thing_id: ThingId, failure_id: FailureId, ip: str, timestamp: int) -> Optional["Incidents"]:
-    return Incidents.remove(thing_id, failure_id)
+def incident_del(thing_id: ThingId, failure_id: FailureId, ip: str, timestamp: int, login: str) -> Optional["Incidents"]:
+    return Incidents.remove(thing_id, failure_id, login)

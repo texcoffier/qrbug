@@ -85,11 +85,14 @@ async def register_incident(request: web.Request) -> web.Response:
     user_ip = request.remote
 
     function_to_log = f"{function_name}({repr(thing_id)}, {repr(failure_id)}, {repr(user_ip)}, {timestamp}"
-    if additional_info is not None and is_repaired_bool is False:
-        # incident_del() does not take additional_info as parameter,
-        # therefore if the incident is repaired, we must ABSOLUTELY NOT get into this if block
-        # if this incident is resolved
-        function_to_log += f", {repr(additional_info)}"
+    if is_repaired_bool is False:
+        if additional_info is not None:
+            # incident_del() does not take additional_info as parameter,
+            # therefore if the incident is repaired, we must ABSOLUTELY NOT get into this if block
+            # if this incident is resolved
+            function_to_log += f", {repr(additional_info)}"
+        else:
+            function_to_log += f", {repr(user_login)}"
     function_to_log += f", {repr(user_login)})  # {current_date} {user_login}\n"
 
     # TODO: Mettre une fonction append line au journal qui va évaluer la fonction passée
