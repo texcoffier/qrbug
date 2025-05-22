@@ -85,12 +85,12 @@ async def register_incident(request: web.Request) -> web.Response:
             # therefore if the incident is repaired, we must ABSOLUTELY NOT get into this if block
             # if this incident is resolved
             function_to_log += f", {repr(additional_info)}"
-        else:
-            function_to_log += f", {repr(user_login)}"
-    function_to_log += f", {repr(user_login)})  # {current_date} {user_login}\n"
+    else:
+        function_to_log += f", {repr(user_login)}"
+    function_to_log += f")  # {current_date} {user_login}\n"
 
     # TODO: Mettre une fonction append line au journal qui va évaluer la fonction passée
-    current_incident = append_line_to_journal(function_to_log)
+    current_incident = qrbug.append_line_to_journal(function_to_log)
 
     # TODO: Run on incident repaired
     # TODO: Envoyer un mail à la personne qui a signalé la panne

@@ -8,4 +8,5 @@ import qrbug.action
 import qrbug.dispatcher
 
 import qrbug.constants
+import qrbug.authentication
 import qrbug.journals
