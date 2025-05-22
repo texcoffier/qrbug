@@ -6,8 +6,7 @@ from typing import Optional, TypeAlias
 import enum
 from io import StringIO
 
-from qrbug.user import UserId
-from qrbug.tree import Tree
+import qrbug
 
 FailureId: TypeAlias = str
 
@@ -29,7 +28,7 @@ display_type_cases = {
 }
 
 
-class Failure(Tree):
+class Failure(qrbug.Tree):
     """
     A failure of a thing.
     """
@@ -39,7 +38,7 @@ class Failure(Tree):
     value                  : Optional[str]          = "VALEUR_NON_DEFINIE"
     display_type           : Optional[DisplayTypes] = DisplayTypes.text
     ask_confirm            : Optional[bool]         = True
-    restricted_to_group_id : Optional[UserId]       = None
+    restricted_to_group_id : Optional[qrbug.UserId] = None
 
     def _local_dump(self) -> str:
         # short_names = {
@@ -191,6 +190,13 @@ def failure_remove(parent: FailureId, child: FailureId) -> None:
     :param child: The ID of the failure to be removed.
     """
     Failure.remove_parenting_link(parent, child)
+
+
+qrbug.Failure = Failure
+qrbug.FailureId = FailureId
+qrbug.failure_update = failure_update
+qrbug.failure_add = failure_add
+qrbug.failure_remove = failure_remove
 
 if __name__ == "__main__":
     failure_update("0", value="Testing title", display_type=DisplayTypes.text)

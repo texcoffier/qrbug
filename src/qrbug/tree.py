@@ -2,6 +2,8 @@ import enum
 from typing import Generator, Optional
 from io import StringIO
 
+import qrbug
+
 
 class Tree:
     instances: dict[str, "Tree"] = None
@@ -125,3 +127,6 @@ class Tree:
 
     def __class_getitem__(cls, tree_id: str) -> Optional["Tree"]:
         return cls.get_if_exists(tree_id)
+
+
+qrbug.Tree = Tree

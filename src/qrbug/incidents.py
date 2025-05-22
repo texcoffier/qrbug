@@ -1,8 +1,7 @@
 from typing import Optional
 import re
 
-from qrbug.failure import FailureId, Failure
-from qrbug.thing import ThingId, Thing
+import qrbug
 
 
 class Incidents:
@@ -117,16 +116,21 @@ class Incidents:
 
     @property
     def failure(self):
-        return Failure[self.failure_id]
+        return qrbug.Failure[self.failure_id]
 
     @property
     def thing(self):
-        return Thing[self.thing_id]
+        return qrbug.Thing[self.thing_id]
 
 
-def incident(thing_id: ThingId, failure_id: FailureId, ip: str, timestamp: int, comment: Optional[str] = None) -> "Incidents":
+def incident(thing_id: qrbug.ThingId, failure_id: qrbug.FailureId, ip: str, timestamp: int, comment: Optional[str] = None) -> "Incidents":
     return Incidents.create(thing_id, failure_id, ip, timestamp, comment)
 
 
-def incident_del(thing_id: ThingId, failure_id: FailureId, ip: str, timestamp: int, login: str) -> list["Incidents"]:
+def incident_del(thing_id: qrbug.ThingId, failure_id: qrbug.FailureId, ip: str, timestamp: int, login: str) -> list["Incidents"]:
     return Incidents.remove(thing_id, failure_id, login)
+
+
+qrbug.Incidents = Incidents
+qrbug.incident = incident
+qrbug.incident_del = incident_del

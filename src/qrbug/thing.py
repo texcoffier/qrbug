@@ -1,21 +1,20 @@
 from typing import Optional, TypeAlias
 
-from qrbug.tree import Tree
-from qrbug.failure import FailureId, Failure
+import qrbug
 
 ThingId: TypeAlias = str
 
 
-class Thing(Tree):
+class Thing(qrbug.Tree):
     """
     A Thing that can fail.
     """
     instances: dict[ThingId, "Thing"] = {}
 
     # Default values
-    location:   Optional[str]       = None
-    failure_id: Optional[FailureId] = None
-    comment:    Optional[str]       = ""
+    location:   Optional[str]             = None
+    failure_id: Optional[qrbug.FailureId] = None
+    comment:    Optional[str]             = ""
 
     def _local_dump(self) -> str:
         # short_names = {
@@ -32,7 +31,7 @@ class Thing(Tree):
         :param as_html: If True, return an HTML representation of the failure. Otherwise, returns as raw text.
         """
         # Gets the failure for this thing
-        root_failure = Failure[self.failure_id]
+        root_failure = qrbug.Failure[self.failure_id]
         if root_failure is None:
             return "Requested thing's root failure not found"
 
@@ -59,6 +58,11 @@ def thing_del(thing_id: ThingId) -> None:
     :param thing_id: The ID of this thing.
     """
     del Thing.instances[thing_id]
+
+
+qrbug.Thing = Thing
+qrbug.thing_update = thing_update
+qrbug.thing_del = thing_del
 
 if __name__ == "__main__":
     thing_update("0", location="Testing location", comment="This is a comment")

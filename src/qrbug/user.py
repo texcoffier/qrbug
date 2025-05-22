@@ -3,12 +3,12 @@ Defines a user of the app.
 """
 from typing import TypeAlias
 
-from qrbug.tree import Tree
+import qrbug
 
 UserId: TypeAlias = str
 
 
-class User(Tree):
+class User(qrbug.Tree):
     """
     A user of the app.
     """
@@ -34,6 +34,12 @@ def user_remove(parent: UserId, child: UserId) -> None:
     :param child: The ID of the user to be removed.
     """
     User.remove_parenting_link(parent, child)
+
+
+qrbug.User = User
+qrbug.UserId = UserId
+qrbug.user_add = user_add
+qrbug.user_remove = user_remove
 
 if __name__ == "__main__":
     user_add("0", "1")

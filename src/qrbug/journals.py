@@ -21,8 +21,6 @@ def exec_code_file(path: Path, code_globals: dict[str, Callable]) -> dict:
 
 
 def load_config(db_config_path: Path = None, default_db_path: Path = None) -> None:
-    import qrbug
-
     # Loads the default DB
     exec_code_file(default_db_path if default_db_path is not None else qrbug.DEFAULT_DB_PATH, qrbug.CONFIGS)
 
@@ -36,7 +34,6 @@ def load_config(db_config_path: Path = None, default_db_path: Path = None) -> No
 
 
 def load_incidents(incidents_config_path: Path = None) -> None:
-    import qrbug
     exec_code_file(
         incidents_config_path if incidents_config_path is not None else qrbug.INCIDENTS_FILE_PATH,
         qrbug.INCIDENT_FUNCTIONS
@@ -47,8 +44,6 @@ def append_line_to_journal(line: str, journal: Journals = Journals.INCIDENTS) ->
     """
     Adds a new line at the end of the given journal and executes it in the current environment.
     """
-    import qrbug
-
     if journal == Journals.INCIDENTS:
         journal_path = qrbug.INCIDENTS_FILE_PATH
         given_globals = qrbug.INCIDENT_FUNCTIONS
@@ -68,6 +63,12 @@ def append_line_to_journal(line: str, journal: Journals = Journals.INCIDENTS) ->
     exec(compile('current_incident = ' + line, 'no file', 'exec'), given_globals, line_vars)
     return line_vars['current_incident']
 
+
+qrbug.Journals = Journals
+qrbug.exec_code_file = exec_code_file
+qrbug.load_config = load_config
+qrbug.load_incidents = load_incidents
+qrbug.append_line_to_journal = append_line_to_journal
 
 # class Executor:
 #     filename = None  # TODO: Default val

@@ -1,5 +1,7 @@
 from typing import Optional
 
+import qrbug
+
 
 class Selector:
     instances: dict[str, "Selector"] = {}
@@ -18,3 +20,7 @@ class Selector:
 
 def selector(selector_id: str, expression: str) -> Selector:
     return Selector(selector_id, expression)
+
+
+qrbug.Selector = Selector
+qrbug.selector = selector

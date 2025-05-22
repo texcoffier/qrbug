@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import TypeAlias, Optional
 
-import qrbug.incidents
+import qrbug
 
 ActionId: TypeAlias = str
 ACTIONS_FOLDER = Path('ACTIONS/')
@@ -17,8 +17,7 @@ class Action:
             raise Exception(f'"{self.python_script}" is not a Python file')
         self.instances[action_id] = self
 
-    def run(self, incident: qrbug.incidents.Incidents, request) -> Optional[str]:
-        import qrbug
+    def run(self, incident: qrbug.Incidents, request) -> Optional[str]:
         module_vars = qrbug.exec_code_file(ACTIONS_FOLDER / self.python_script, {"Incidents": qrbug.Incidents})
         # We assume that the run function is present in the action so the
         # server throws an exception if it is not the case
@@ -31,6 +30,10 @@ class Action:
 def action(action_id: str, python_script: str) -> Action:
     return Action(action_id, python_script)
 
+
+qrbug.Action = Action
+qrbug.action = action
+qrbug.ActionId = ActionId
 
 if __name__ == '__main__':
     action('test', 'test.py')

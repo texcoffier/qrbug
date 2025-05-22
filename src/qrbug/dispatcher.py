@@ -1,13 +1,12 @@
 from typing import Optional, TypeAlias
 
-import qrbug.incidents
-from qrbug.tree import Tree
+import qrbug
 
 
 DispatcherId: TypeAlias = str
 
 
-class Dispatcher(Tree):
+class Dispatcher(qrbug.Tree):
     instances: dict[DispatcherId, "Dispatcher"] = {}
 
     # Default values
@@ -25,7 +24,7 @@ class Dispatcher(Tree):
         # return self.get_representation(attributes_short=short_names)
         return f'action:{self.action_id} selector:{self.selector_id} group:{self.group_id} when:{self.when}'
 
-    def run(self, incidents: list[qrbug.incidents.Incidents], group_id: str, request) -> dict[tuple[str, str], str]:
+    def run(self, incidents: list[qrbug.Incidents], group_id: str, request) -> dict[tuple[str, str], str]:
         """
         Returns a dict with keys being the thing_id and failure_id of an incident, and values being the returned HTML.
         """
@@ -55,6 +54,10 @@ def dispatcher_del(dispatch_id: str) -> None:
     """
     del Dispatcher.instances[dispatch_id]
 
+
+qrbug.Dispatcher = Dispatcher
+qrbug.dispatcher_update = dispatcher_update
+qrbug.dispatcher_del = dispatcher_del
 
 if __name__ == "__main__":
     dispatcher_update("0", when="Test", selector_id="0")
