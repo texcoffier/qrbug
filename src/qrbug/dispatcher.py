@@ -31,9 +31,6 @@ class Dispatcher(Tree):
         """
         import qrbug
 
-        assert self.selector_id is not None, f'Missing selector id for dispatcher {self.id}'
-        assert self.action_id is not None, f'Missing action id for dispatcher {self.id}'
-
         selector = qrbug.Selector[self.selector_id]
         action = qrbug.Action[self.action_id]
         return_value: dict[tuple[str, str], Optional[str]] = {}
