@@ -147,10 +147,13 @@ def parse_command_line_args(argv) -> tuple[str, int]:
     :return: The host and port that should be used by the server.
     """
     args = argv.copy()  # In order not to modify the original args
+
+    # The --test flag allows for serialized testing with test.sh
     if '--test' in args:
         qrbug.DB_FILE_PATH = Path('TESTS/test_server_db.conf')
         qrbug.INCIDENTS_FILE_PATH = Path('TESTS/test_server_incidents.conf')
         args.remove('--test')
+
     host = 'localhost'
     port = 8080
     if len(args) >= 2:
