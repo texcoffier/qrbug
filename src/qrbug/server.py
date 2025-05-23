@@ -10,6 +10,9 @@ import qrbug.init
 import qrbug
 
 
+ENABLE_AUTHENTICATION = True
+
+
 async def show_failures_tree_route(request: web.Request) -> web.Response:
     """
     Returns the webpage listing the failure hierarchy for the given thing.
@@ -22,9 +25,10 @@ async def show_failures_tree_route(request: web.Request) -> web.Response:
         return web.Response(status=404, text="Requested Thing does not exist")
 
     # Creates the CAS login
-    user_login = await qrbug.handle_login(request, f'thing={thing_id}')
-    if user_login is None:
-        return web.Response(status=403, text="Login ticket invalid")
+    if ENABLE_AUTHENTICATION:
+        user_login = await qrbug.handle_login(request, f'thing={thing_id}')
+        if user_login is None:
+            return web.Response(status=403, text="Login ticket invalid")
 
     #return web.Response(status=200, text=f"Thing ID: {thing_id}\n\n{requested_thing.dump()}\n\nFailures list :\n{get_failures(thing_id)}")
     # TODO : Groupe autorisé à déclarer la panne
@@ -63,13 +67,14 @@ async def register_incident(request: web.Request) -> web.StreamResponse:
     # Cas authentication
     user_token = request.query.get("token", None)
     user_login = ''
-    if failure.restricted_to_group_id is not None:  # Only authenticate if failure requires it
-        if user_token is not None:
-            user_login = qrbug.get_login_from_token(user_token, request.remote)
-        if not user_login:
-            user_login = await qrbug.handle_login(request, f'thing={thing_id}')
-            if user_login is None:
-                return web.Response(status=403, text="Login ticket invalid")
+    if ENABLE_AUTHENTICATION:
+        if failure.restricted_to_group_id is not None:  # Only authenticate if failure requires it
+            if user_token is not None:
+                user_login = qrbug.get_login_from_token(user_token, request.remote)
+            if not user_login:
+                user_login = await qrbug.handle_login(request, f'thing={thing_id}')
+                if user_login is None:
+                    return web.Response(status=403, text="Login ticket invalid")
 
     is_repaired_bool: bool = is_repaired == '1'
     timestamp = int(time.time())
@@ -151,8 +156,10 @@ def parse_command_line_args(argv) -> tuple[str, int]:
     args = argv.copy()  # In order not to modify the original args
 
     if '--test' in args:  # The --test flag allows for serialized testing with test.sh
+        global ENABLE_AUTHENTICATION
         qrbug.DB_FILE_PATH = Path('TESTS/test_server_db.conf')
         qrbug.INCIDENTS_FILE_PATH = Path('TESTS/test_server_incidents.conf')
+        ENABLE_AUTHENTICATION = False
         args.remove('--test')
 
     host = 'localhost'
