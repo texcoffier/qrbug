@@ -24,18 +24,18 @@ class Dispatcher(qrbug.Tree):
         # return self.get_representation(attributes_short=short_names)
         return f'action:{self.action_id} selector:{self.selector_id} group:{self.group_id} when:{self.when}'
 
-    def run(self, incidents: list[qrbug.Incidents], group_id: str, request) -> dict[tuple[str, str], str]:
+    async def run(self, incidents: list[qrbug.Incidents], group_id: str, request) -> dict[tuple[str, str], str]:
         """
         Returns a dict with keys being the thing_id and failure_id of an incident, and values being the returned HTML.
         """
-        import qrbug
-
         selector = qrbug.Selector[self.selector_id]
         action = qrbug.Action[self.action_id]
         return_value: dict[tuple[str, str], Optional[str]] = {}
         for incident in incidents:
             if selector.is_ok(qrbug.User[group_id], qrbug.Thing[incident.thing_id], qrbug.Failure[incident.failure_id]):
-                return_value[incident.thing_id, incident.failure_id] = action.run(incident, request)
+                # TODO: Retirer de la liste si pas is_ok()
+                # TODO : Garder en mémoire que le dispatcher a été activé - fonction dispatch dans le journal qui indique l'activation d'un dispatcher
+                return_value[incident.thing_id, incident.failure_id] = await action.run(incident, request)
         return return_value
 
 
@@ -55,7 +55,7 @@ def dispatcher_del(dispatch_id: str) -> None:
     del Dispatcher.instances[dispatch_id]
 
 
-def dispatch(
+async def dispatch(
         dispatch_id: DispatcherId,
         failure_ids: list[qrbug.FailureId],
         action_id: qrbug.ActionId,
@@ -72,7 +72,8 @@ def dispatch(
         for current_incident in qrbug.Incidents.filter_active(failure_id=failure_id):
             dispatched_incidents.append(current_incident)
 
-    dispatcher.run(dispatched_incidents, group_id, None)
+    await dispatcher.run(dispatched_incidents, group_id, None)  # TODO: Virer le run pour le journal
+    # TODO: Garder dispatched_incidents
 
 
 qrbug.Dispatcher = Dispatcher
