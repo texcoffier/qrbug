@@ -63,8 +63,7 @@ async def register_incident(request: web.Request) -> web.Response:
     # Cas authentication
     user_token = request.query.get("token", None)
     user_login = ''
-    # Only authenticate if failure requires it
-    if failure.restricted_to_group_id is not None:
+    if failure.restricted_to_group_id is not None:  # Only authenticate if failure requires it
         if user_token is not None:
             user_login = qrbug.get_login_from_token(user_token, request.remote)
         if not user_login:
@@ -148,8 +147,7 @@ def parse_command_line_args(argv) -> tuple[str, int]:
     """
     args = argv.copy()  # In order not to modify the original args
 
-    # The --test flag allows for serialized testing with test.sh
-    if '--test' in args:
+    if '--test' in args:  # The --test flag allows for serialized testing with test.sh
         qrbug.DB_FILE_PATH = Path('TESTS/test_server_db.conf')
         qrbug.INCIDENTS_FILE_PATH = Path('TESTS/test_server_incidents.conf')
         args.remove('--test')
