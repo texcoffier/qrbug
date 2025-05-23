@@ -8,5 +8,6 @@ import qrbug.action
 import qrbug.dispatcher
 
 import qrbug.config
+import qrbug.test_framework
 import qrbug.authentication
 import qrbug.journals

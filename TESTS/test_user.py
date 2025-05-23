@@ -1,3 +1,4 @@
+import qrbug.init
 import qrbug
 
 

@@ -5,23 +5,6 @@ from pathlib import Path
 import qrbug.init
 import qrbug
 
-class TestCase(unittest.TestCase):
-    def tearDown(self):
-        qrbug.User.instances.clear()
-        qrbug.Failure.instances.clear()
-
-    def check(self, cls, value):
-        # The parameters are arranged in this order because the EXPECTED value goes first, followed by the
-        # actual value of the class dump
-        self.assertEqual(value, '\n'.join(sorted(cls.dump_all())))
-
-    def load_config(self):
-        test = sys.modules[self.__class__.__module__].__spec__.origin
-        qrbug.exec_code_file(Path(test.replace('.py', '_db.conf')), CONFIGS)
-
-
-qrbug.TestCase = TestCase
-
 SETTINGS = {
     "TOKEN_LOGIN_TIMEOUT": qrbug.TOKEN_LOGIN_TIMEOUT,
     "CAS_URL": qrbug.CAS_URL,
@@ -46,7 +29,7 @@ QRBUG = {
     "exec_code_file": qrbug.exec_code_file,
     "CONFIGS": qrbug.CONFIGS,
     "INCIDENT_FUNCTIONS": qrbug.INCIDENT_FUNCTIONS,
-    "TestCase": TestCase,
+    "TestCase": qrbug.TestCase,
 }
 
 qrbug.SETTINGS = SETTINGS
