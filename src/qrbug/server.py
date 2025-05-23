@@ -33,7 +33,7 @@ async def show_failures_tree_route(request: web.Request) -> web.Response:
     return web.Response(status=200, text=qrbug.Thing[thing_id].get_failures(thing_id), content_type='text/html')
 
 
-async def register_incident(request: web.Request) -> web.Response:
+async def register_incident(request: web.Request) -> web.StreamResponse:
     """
     Registers an incident into the logs, then shows the user that the incident has been registered.
     """
@@ -103,27 +103,33 @@ async def register_incident(request: web.Request) -> web.Response:
             else:
                 pass # TODO: Rajouter la fonction dispatch au journal d'incidents
 
+    # Starts preparing the response
+    response = web.StreamResponse(
+        status=200,
+        headers={'Content-Type': 'text/html; charset=utf-8'},
+    )
+    await response.prepare(request)
+    await response.write("<h1>Merci !</h1><h3>Votre signalement a été enregistré.</h3>".encode('utf-8'))
+
+    if any(value is not None for value in returned_html.values()):
+        await response.write('Informations additionnelles :'.encode('utf-8'))
+
     # Makes the HTML response from the dispatchers
-    html_response = []
     for dispatcher_id, dispatcher_return_value in returned_html.items():
         if dispatcher_return_value is not None:
-            html_response.append(
-                f'<p>DISPATCHER [{dispatcher_id}]<br/>'
+            await response.write(
+                f'<p>DISPATCHER [{dispatcher_id}]<br/>'.encode('utf-8')
             )
             for (incident_thing_id, incident_failure_id), html_string in dispatcher_return_value.items():
                 if html_string is not None:
-                    html_response.append(
+                    await response.write((
                         f'<div style="padding-left: 20px;">INCIDENT [{incident_thing_id}, {incident_failure_id}]'
                         f'    <div style="padding-left: 40px;">{html_string}</div>'
                         f'</div>'
-                    )
+                    ).encode('utf-8'))
                 else:
-                    html_response.append('<div style="padding-left: 20px;">No return value<br/></div>')
-            html_response.append('</p>')
-
-    response_message = "<h1>Merci !</h1><h3>Votre signalement a été enregistré.</h3>"
-    if len(html_response) > 0:
-        response_message += 'Informations additionnelles :' + ''.join(html_response)
+                    await response.write('<div style="padding-left: 20px;">No return value<br/></div>'.encode('utf-8'))
+            await response.write('</p>'.encode('utf-8'))
 
     # return_string = (f"thing_id={thing_id}\n"
     #                  f"failure_id={failure_id}\n"
@@ -132,11 +138,8 @@ async def register_incident(request: web.Request) -> web.Response:
     #                  f"valid_request={valid_request}\n\n"
     #                  f"Registered new incident.")
     # return web.Response(status=200, text=return_string)
-    return web.Response(
-        status=200,
-        text=response_message,
-        content_type='text/html'
-    )
+    await response.write_eof()
+    return response
 
 
 def parse_command_line_args(argv) -> tuple[str, int]:
