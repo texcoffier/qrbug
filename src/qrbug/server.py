@@ -93,7 +93,6 @@ async def register_incident(request: web.Request) -> web.StreamResponse:
         function_to_log += f", {repr(user_login)}"
     function_to_log += f")  # {current_date} {user_login}\n"
 
-    # TODO: Mettre une fonction append line au journal qui va évaluer la fonction passée
     current_incident = qrbug.append_line_to_journal(function_to_log)
 
     # TODO: Run on incident repaired
