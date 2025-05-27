@@ -1,3 +1,4 @@
+import time
 from typing import Optional, TypeAlias
 
 import qrbug
@@ -15,6 +16,9 @@ class Dispatcher(qrbug.Tree):
     group_id    : str = 'nobody'  # Group of people to warn upon dispatch, default is user group 'nobody'
     when        : str = 'synchro'
 
+    def init(self):
+        self.running_incidents = set()
+
     def _local_dump(self) -> str:
         # short_names = {
         #     'action_id': 'action',
@@ -24,17 +28,19 @@ class Dispatcher(qrbug.Tree):
         # return self.get_representation(attributes_short=short_names)
         return f'action:{self.action_id} selector:{self.selector_id} group:{self.group_id} when:{self.when}'
 
-    async def run(self, incidents: list[qrbug.Incidents], group_id: str, request) -> dict[tuple[str, str], str]:
+    async def run(self, incidents: list[qrbug.Incidents], request) -> dict[tuple[str, str], str]:
         """
         Returns a dict with keys being the thing_id and failure_id of an incident, and values being the returned HTML.
         """
         selector = qrbug.Selector[self.selector_id]
         action = qrbug.Action[self.action_id]
+
         return_value: dict[tuple[str, str], Optional[str]] = {}
         for incident in incidents:
-            if selector.is_ok(qrbug.User[group_id], qrbug.Thing[incident.thing_id], qrbug.Failure[incident.failure_id]):
-                # TODO: Retirer de la liste si pas is_ok()
-                # TODO : Garder en mémoire que le dispatcher a été activé - fonction dispatch dans le journal qui indique l'activation d'un dispatcher
+            if selector.is_ok(
+                    qrbug.User[self.group_id], qrbug.Thing[incident.thing_id], qrbug.Failure[incident.failure_id]
+            ) and (incident.failure_id, incident.thing_id) not in self.running_incidents:  # The dispatcher doesn't run because it is already active
+                qrbug.journal.append_line_to_journal(f'dispatch({repr(self.id)}, {repr(incident.failure_id)}, {repr(self.action_id)}, {repr(self.group_id)}, {int(time.time())})')
                 return_value[incident.thing_id, incident.failure_id] = await action.run(incident, request)
         return return_value
 
@@ -57,23 +63,17 @@ def dispatcher_del(dispatch_id: str) -> None:
 
 async def dispatch(
         dispatch_id: DispatcherId,
-        failure_ids: list[qrbug.FailureId],
+        failure_id: qrbug.FailureId,
+        thing_id: qrbug.ThingId,
         action_id: qrbug.ActionId,
         group_id: qrbug.UserId,
         timestamp: int
 ) -> None:
-    dispatcher = qrbug.Dispatcher[dispatch_id]
-    if dispatcher is None:
-        return
-
-    # Looks for every incident with the given failure ids
-    dispatched_incidents = []
-    for failure_id in failure_ids:
-        for current_incident in qrbug.Incidents.filter_active(failure_id=failure_id):
-            dispatched_incidents.append(current_incident)
-
-    await dispatcher.run(dispatched_incidents, group_id, None)  # TODO: Virer le run pour le journal
-    # TODO: Garder dispatched_incidents
+    """
+    The parameters (besides dispatch_id, thing_id, and failure_id) are useless, they only store information in the log file.
+    This functions marks a dispatcher as running and that it should not be run for these incidents only.
+    """
+    Dispatcher[dispatch_id].running_incidents.add((failure_id, thing_id))
 
 
 qrbug.Dispatcher = Dispatcher
