@@ -11,11 +11,20 @@ import qrbug
 # TODO:                                               -> **OU** faire en sorte que le dispatcher répare la failure, avec le 'auto-close' spécifié dans le dispatcher
 async def run(incident: qrbug.Incidents, request: web.Request) -> Optional[str]:
     from pathlib import Path
+    import asyncio
     import qrbug
 
 
     async def get_html_from_path(path: Path):
-        return path.read_text(encoding='utf-8')  # TODO: Lire 100Ko par 100Ko le fichier puis asyncio.sleep(0)
+        final_string: list[str] = []
+        with open(path, 'r', encoding='utf-8') as f:
+            while True:
+                text = f.read(100_000)
+                if not text:
+                    break
+                final_string.append(text)
+                await asyncio.sleep(0)
+        return ''.join(final_string)
 
     if incident.failure_id.startswith('SHOW_JOURNALS'):
         failure_id = incident.failure_id.removeprefix('SHOW_JOURNALS')
