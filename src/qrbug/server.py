@@ -103,7 +103,7 @@ async def register_incident(request: web.Request) -> web.StreamResponse:
     if not is_repaired_bool:
         for dispatcher in qrbug.Dispatcher.instances.values():
             if dispatcher.when == 'synchro':
-                returned_html[dispatcher.id] = await dispatcher.run([current_incident], 'nobody', request)
+                returned_html[dispatcher.id] = await dispatcher.run([current_incident], request)
             else:
                 pass # TODO: Rajouter la fonction dispatch au journal d'incidents
 
