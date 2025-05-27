@@ -3,6 +3,8 @@ from aiohttp import web
 
 import qrbug
 
+FILE_CHUNK_SIZE_BYTES = 100_000
+
 
 # TODO: Make this less XSS friendly
 # TODO: Stream the answer
@@ -19,7 +21,7 @@ async def run(incident: qrbug.Incidents, request: web.Request) -> Optional[str]:
         final_string: list[str] = []
         with open(path, 'r', encoding='utf-8') as f:
             while True:
-                text = f.read(100_000)
+                text = f.read(FILE_CHUNK_SIZE_BYTES)
                 if not text:
                     break
                 final_string.append(text)
