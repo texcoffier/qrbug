@@ -17,7 +17,7 @@ class Dispatcher(qrbug.Tree):
     when        : str = 'synchro'
 
     def init(self):
-        self.running_incidents = set()
+        self.running_incidents: set[tuple[str, str]] = set()
 
     def _local_dump(self) -> str:
         # short_names = {
@@ -42,6 +42,10 @@ class Dispatcher(qrbug.Tree):
             ) and (incident.failure_id, incident.thing_id) not in self.running_incidents:  # The dispatcher doesn't run because it is already active
                 qrbug.journal.append_line_to_journal(f'dispatch({repr(self.id)}, {repr(incident.failure_id)}, {repr(self.action_id)}, {repr(self.group_id)}, {int(time.time())})')
                 return_value[incident.thing_id, incident.failure_id] = await action.run(incident, request)
+
+                if (incident.failure_id, incident.thing_id) in self.running_incidents:
+                    self.running_incidents.remove((incident.failure_id, incident.thing_id))
+
         return return_value
 
 
