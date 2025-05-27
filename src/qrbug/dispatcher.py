@@ -40,7 +40,7 @@ class Dispatcher(qrbug.Tree):
             if selector.is_ok(
                     qrbug.User[self.group_id], qrbug.Thing[incident.thing_id], qrbug.Failure[incident.failure_id]
             ) and (incident.failure_id, incident.thing_id) not in self.running_incidents:  # The dispatcher doesn't run because it is already active
-                qrbug.journal.append_line_to_journal(f'dispatch({repr(self.id)}, {repr(incident.failure_id)}, {repr(self.action_id)}, {repr(self.group_id)}, {int(time.time())})')
+                qrbug.journal.append_line_to_journal(f'dispatch({repr(self.id)}, {repr(incident.failure_id)}, {repr(incident.thing_id)}, {repr(self.action_id)}, {repr(self.group_id)}, {int(time.time())})')
                 return_value[incident.thing_id, incident.failure_id] = await action.run(incident, request)
 
                 if (incident.failure_id, incident.thing_id) in self.running_incidents:
