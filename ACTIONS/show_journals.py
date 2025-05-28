@@ -4,11 +4,6 @@ from aiohttp import web
 import qrbug
 
 
-# TODO: Make this less XSS friendly
-# TODO: Stream the answer
-
-# TODO: Clore l'incident qui a été créé pour ce DEBUG -> Rajouter un attribut 'auto-close' à failure, qui met que la failure est réparée tout de suite
-# TODO:                                               -> **OU** faire en sorte que le dispatcher répare la failure, avec le 'auto-close' spécifié dans le dispatcher
 async def run(incident: qrbug.Incidents, request: web.Request) -> Optional[str]:
     from pathlib import Path
     import asyncio
