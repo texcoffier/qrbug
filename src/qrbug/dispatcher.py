@@ -65,7 +65,7 @@ def dispatcher_del(dispatch_id: str) -> None:
     del Dispatcher.instances[dispatch_id]
 
 
-async def dispatch(
+def dispatch(
         dispatch_id: DispatcherId,
         failure_id: qrbug.FailureId,
         thing_id: qrbug.ThingId,
