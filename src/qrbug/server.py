@@ -95,6 +95,9 @@ async def register_incident(request: web.Request) -> web.StreamResponse:
 
     current_incident = qrbug.append_line_to_journal(function_to_log)
 
+    if failure.auto_close_incident:
+        qrbug.append_line_to_journal(f'incident_del({repr(thing_id)}, {repr(failure_id)}, {repr(user_ip)}, {timestamp}, {repr(user_login)})  # {current_date} {user_login}\n')
+
     # TODO: Si incident_del on retire le dispatcher de la liste des dispatchers en cours
 
     # TODO: Run on incident repaired

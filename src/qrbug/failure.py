@@ -39,6 +39,7 @@ class Failure(qrbug.Tree):
     display_type           : Optional[DisplayTypes] = DisplayTypes.text
     ask_confirm            : Optional[bool]         = True
     restricted_to_group_id : Optional[qrbug.UserId] = None
+    auto_close_incident    : Optional[bool]         = False
 
     def _local_dump(self) -> str:
         # short_names = {
@@ -49,7 +50,7 @@ class Failure(qrbug.Tree):
         # }
         # return self.get_representation(attributes_short=short_names)
         return f'val:{repr(self.value)} type:{self.display_type.name if self.display_type is not None else None} ' \
-               f'confirm:{self.ask_confirm} group:{self.restricted_to_group_id}'
+               f'confirm:{self.ask_confirm} group:{self.restricted_to_group_id} autoclose:{self.auto_close_incident}'
 
     def get_hierarchy_representation(self) -> str:
         """
