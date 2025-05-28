@@ -44,7 +44,7 @@ class Dispatcher(qrbug.Tree):
                 return_value[incident.thing_id, incident.failure_id] = await action.run(incident, request)
 
                 if (incident.failure_id, incident.thing_id) in self.running_incidents:
-                    self.running_incidents.remove((incident.failure_id, incident.thing_id))
+                    qrbug.append_line_to_journal(f'dispatch_del({repr(self.id)}, {repr(incident.failure_id)}, {repr(incident.thing_id)}, {repr(self.action_id)}, {repr(self.group_id)}, {int(time.time())})\n')
 
         return return_value
 
@@ -80,11 +80,27 @@ def dispatch(
     Dispatcher[dispatch_id].running_incidents.add((failure_id, thing_id))
 
 
+def dispatch_del(
+        dispatch_id: DispatcherId,
+        failure_id: qrbug.FailureId,
+        thing_id: qrbug.ThingId,
+        action_id: qrbug.ActionId,
+        group_id: qrbug.UserId,
+        timestamp: int
+) -> None:
+    """
+    The parameters (besides dispatch_id, thing_id, and failure_id) are useless, they only store information in the log file.
+    This functions marks a dispatcher as running and that it should not be run for these incidents only.
+    """
+    Dispatcher[dispatch_id].running_incidents.remove((failure_id, thing_id))
+
+
 qrbug.Dispatcher = Dispatcher
 qrbug.DispatcherId = DispatcherId
 qrbug.dispatcher_update = dispatcher_update
 qrbug.dispatcher_del = dispatcher_del
 qrbug.dispatch = dispatch
+qrbug.dispatch_del = dispatch_del
 
 if __name__ == "__main__":
     dispatcher_update("0", when="Test", selector_id="0")

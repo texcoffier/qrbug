@@ -34,6 +34,7 @@ INCIDENT_FUNCTIONS = {
     "incident": qrbug.incident,
     "incident_del": qrbug.incident_del,
     "dispatch": qrbug.dispatch,
+    "dispatch_del": qrbug.dispatch_del,
 }
 
 
