@@ -3,8 +3,6 @@ from aiohttp import web
 
 import qrbug
 
-FILE_CHUNK_SIZE_BYTES = 100_000
-
 
 # TODO: Make this less XSS friendly
 # TODO: Stream the answer
@@ -15,6 +13,8 @@ async def run(incident: qrbug.Incidents, request: web.Request) -> Optional[str]:
     from pathlib import Path
     import asyncio
     import qrbug
+
+    FILE_CHUNK_SIZE_BYTES = 100_000
 
 
     async def get_html_from_path(path: Path):
@@ -27,6 +27,7 @@ async def run(incident: qrbug.Incidents, request: web.Request) -> Optional[str]:
                 final_string.append(text)
                 await asyncio.sleep(0)
         return ''.join(final_string)
+
 
     if incident.failure_id.startswith('SHOW_JOURNALS'):
         failure_id = incident.failure_id.removeprefix('SHOW_JOURNALS')
