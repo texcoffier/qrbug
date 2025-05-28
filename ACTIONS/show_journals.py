@@ -26,7 +26,7 @@ async def run(incident: qrbug.Incidents, request: web.Request) -> Optional[str]:
                     break
                 final_string.append(text)
                 await asyncio.sleep(0)
-        return ''.join(final_string)
+        return ''.join(final_string).replace('<', '&lt;').replace('>', '&gt;')
 
 
     if not incident.failure_id.startswith('SHOW_JOURNALS'):
