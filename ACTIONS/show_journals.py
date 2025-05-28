@@ -12,16 +12,14 @@ async def run(incident: qrbug.Incidents, request: web.Request) -> Optional[str]:
     FILE_CHUNK_SIZE_BYTES = 100_000
 
 
-    async def get_html_from_path(path: Path):
-        final_string: list[str] = []
+    async def stream_html_from_path(path: Path, stream):
         with open(path, 'r', encoding='utf-8') as f:
             while True:
                 text = f.read(FILE_CHUNK_SIZE_BYTES)
                 if not text:
                     break
-                final_string.append(text)
+                await stream.write(text.replace('<', '&lt;').replace('>', '&gt;').encode('utf-8'))
                 await asyncio.sleep(0)
-        return ''.join(final_string).replace('<', '&lt;').replace('>', '&gt;')
 
 
     if not incident.failure_id.startswith('SHOW_JOURNALS'):
@@ -39,13 +37,15 @@ async def run(incident: qrbug.Incidents, request: web.Request) -> Optional[str]:
         'INCIDENTS': ('Incidents', qrbug.INCIDENTS_FILE_PATH)
     }
 
-    async def write(name: str, string: str):
-        await request.response.write(f'<h2>{name} :</h2><pre>{string}</pre>\n'.encode('utf-8'))
+    async def write(name: str, path: Path):
+        await request.response.write(f'<h2>{name} :</h2><pre>'.encode('utf-8'))
+        await stream_html_from_path(path, request.response)
+        await request.response.write('</pre>\n'.encode('utf-8'))
 
     for journal in failure_id.split('-'):
         current_journal = translation_table[journal]
         current_journal_name = current_journal[0]
         current_journal_path = current_journal[1]
-        await write(current_journal_name, await get_html_from_path(current_journal_path))
+        await write(current_journal_name, current_journal_path)
 
     return None
