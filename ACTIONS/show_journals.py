@@ -18,7 +18,11 @@ async def run(incident: qrbug.Incidents, request: web.Request) -> Optional[str]:
                 text = f.read(FILE_CHUNK_SIZE_BYTES)
                 if not text:
                     break
-                await stream.write(text.replace('<', '&lt;').replace('>', '&gt;').encode('utf-8'))
+                await stream.write(
+                    text.replace('<', '&lt;')
+                        .replace('>', '&gt;')
+                        .encode('utf-8')
+                )
                 await asyncio.sleep(0)
 
 
@@ -37,9 +41,9 @@ async def run(incident: qrbug.Incidents, request: web.Request) -> Optional[str]:
         'INCIDENTS': ('Incidents', qrbug.INCIDENTS_FILE_PATH)
     }
 
-    async def write(name: str, path: Path):
+    async def write(name: str, journal_path: Path):
         await request.response.write(f'<h2>{name} :</h2><pre>'.encode('utf-8'))
-        await stream_html_from_path(path, request.response)
+        await stream_html_from_path(journal_path, request.response)
         await request.response.write('</pre>\n'.encode('utf-8'))
 
     for journal in failure_id.split('-'):
