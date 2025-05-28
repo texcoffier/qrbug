@@ -29,21 +29,28 @@ async def run(incident: qrbug.Incidents, request: web.Request) -> Optional[str]:
         return ''.join(final_string)
 
 
-    if incident.failure_id.startswith('SHOW_JOURNALS'):
-        failure_id = incident.failure_id.removeprefix('SHOW_JOURNALS')
-        failure_id = failure_id.removeprefix('_')  # The majority of 'SHOW_JOURNALS' failures take the shape of 'SHOW_JOURNALS_*', so removing the underscore is necessary
+    if not incident.failure_id.startswith('SHOW_JOURNALS'):
+        return None
 
-        await request.response.write(
-            '<style>pre { font-family: monospace, monospace; background: #FFC; }</style>\n\n'.encode('utf-8')
-        )
+    failure_id = incident.failure_id.removeprefix('SHOW_JOURNALS').lstrip('_')
 
-        async def write(name: str, string: str):
-            await request.response.write(f'<h2>{name} :</h2><pre>{string}</pre>\n'.encode('utf-8'))
+    await request.response.write(
+        b'<style>pre { font-family: monospace, monospace; background: #FFC; }</style>\n\n'
+    )
 
-        if failure_id in ('', 'ALL', 'DB'):
-            await write('DB', await get_html_from_path(qrbug.DB_FILE_PATH))
-        if failure_id in ('', 'ALL', 'DEFAULT_DB'):
-            await write('Default DB', await get_html_from_path(qrbug.DEFAULT_DB_PATH))
-        if failure_id in ('', 'ALL', 'INCIDENTS'):
-            await write('Incidents', await get_html_from_path(qrbug.INCIDENTS_FILE_PATH))
+    translation_table = {  # Values : (name, path)
+        'DB': ('Configuration', qrbug.DB_FILE_PATH),
+        'DEFAULT_DB': ('Configuration par défaut', qrbug.DEFAULT_DB_PATH),
+        'INCIDENTS': ('Incidents', qrbug.INCIDENTS_FILE_PATH)
+    }
+
+    async def write(name: str, string: str):
+        await request.response.write(f'<h2>{name} :</h2><pre>{string}</pre>\n'.encode('utf-8'))
+
+    for journal in failure_id.split('-'):
+        current_journal = translation_table[journal]
+        current_journal_name = current_journal[0]
+        current_journal_path = current_journal[1]
+        await write(current_journal_name, await get_html_from_path(current_journal_path))
+
     return None
