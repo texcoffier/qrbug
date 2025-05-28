@@ -36,15 +36,21 @@ class Dispatcher(qrbug.Tree):
         selector = qrbug.Selector[self.selector_id]
         action = qrbug.Action[self.action_id]
 
-        return_value: Optional[str] = None
-        if selector.is_ok(
-                qrbug.User[self.group_id], qrbug.Thing[incident.thing_id], qrbug.Failure[incident.failure_id]
-        ) and (incident.failure_id, incident.thing_id) not in self.running_incidents:  # The dispatcher doesn't run because it is already active
-            qrbug.append_line_to_journal(f'dispatch({repr(self.id)}, {repr(incident.failure_id)}, {repr(incident.thing_id)}, {repr(self.action_id)}, {repr(self.group_id)}, {int(time.time())})  # {datetime.fromtimestamp(int(time.time())).strftime('%Y-%m-%d %H:%M:%S')}\n')
-            return_value = await action.run(incident, request)
+        if not selector.is_ok(qrbug.User[self.group_id], qrbug.Thing[incident.thing_id], qrbug.Failure[incident.failure_id]):
+            return None
 
-            if (incident.failure_id, incident.thing_id) in self.running_incidents:
-                qrbug.append_line_to_journal(f'dispatch_del({repr(self.id)}, {repr(incident.failure_id)}, {repr(incident.thing_id)}, {repr(self.action_id)}, {repr(self.group_id)}, {int(time.time())})  # {datetime.fromtimestamp(int(time.time())).strftime('%Y-%m-%d %H:%M:%S')}\n')
+        if (incident.failure_id, incident.thing_id) in self.running_incidents:
+            # The dispatcher doesn't run because it is already active
+            return None
+
+        # dispatch() updates the running_incidents set (increases size)
+        qrbug.append_line_to_journal(f'dispatch({repr(self.id)}, {repr(incident.failure_id)}, {repr(incident.thing_id)}, {repr(self.action_id)}, {repr(self.group_id)}, {int(time.time())})  # {datetime.fromtimestamp(int(time.time())).strftime('%Y-%m-%d %H:%M:%S')}\n')
+
+        return_value = await action.run(incident, request)
+
+        if (incident.failure_id, incident.thing_id) in self.running_incidents:
+            # dispatch_del() updates the running_incidents set (reduces size)
+            qrbug.append_line_to_journal(f'dispatch_del({repr(self.id)}, {repr(incident.failure_id)}, {repr(incident.thing_id)}, {repr(self.action_id)}, {repr(self.group_id)}, {int(time.time())})  # {datetime.fromtimestamp(int(time.time())).strftime('%Y-%m-%d %H:%M:%S')}\n')
 
         return return_value
 
