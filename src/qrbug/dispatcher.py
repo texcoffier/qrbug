@@ -18,7 +18,7 @@ class Dispatcher(qrbug.Tree):
     when        : str = 'synchro'
 
     def init(self):
-        self.running_incidents: set[tuple[str, str]] = set()
+        self.running_incidents: set[tuple[str, str]] = set()  # (failure_id, thing_id)
 
     def _local_dump(self) -> str:
         # short_names = {
@@ -29,23 +29,22 @@ class Dispatcher(qrbug.Tree):
         # return self.get_representation(attributes_short=short_names)
         return f'action:{self.action_id} selector:{self.selector_id} group:{self.group_id} when:{self.when}'
 
-    async def run(self, incidents: list[qrbug.Incidents], request) -> dict[tuple[str, str], str]:
+    async def run(self, incident: qrbug.Incidents, request) -> Optional[str]:
         """
         Returns a dict with keys being the thing_id and failure_id of an incident, and values being the returned HTML.
         """
         selector = qrbug.Selector[self.selector_id]
         action = qrbug.Action[self.action_id]
 
-        return_value: dict[tuple[str, str], Optional[str]] = {}
-        for incident in incidents:
-            if selector.is_ok(
-                    qrbug.User[self.group_id], qrbug.Thing[incident.thing_id], qrbug.Failure[incident.failure_id]
-            ) and (incident.failure_id, incident.thing_id) not in self.running_incidents:  # The dispatcher doesn't run because it is already active
-                qrbug.append_line_to_journal(f'dispatch({repr(self.id)}, {repr(incident.failure_id)}, {repr(incident.thing_id)}, {repr(self.action_id)}, {repr(self.group_id)}, {int(time.time())})  # {datetime.fromtimestamp(int(time.time())).strftime('%Y-%m-%d %H:%M:%S')}\n')
-                return_value[incident.thing_id, incident.failure_id] = await action.run(incident, request)
+        return_value: Optional[str] = None
+        if selector.is_ok(
+                qrbug.User[self.group_id], qrbug.Thing[incident.thing_id], qrbug.Failure[incident.failure_id]
+        ) and (incident.failure_id, incident.thing_id) not in self.running_incidents:  # The dispatcher doesn't run because it is already active
+            qrbug.append_line_to_journal(f'dispatch({repr(self.id)}, {repr(incident.failure_id)}, {repr(incident.thing_id)}, {repr(self.action_id)}, {repr(self.group_id)}, {int(time.time())})  # {datetime.fromtimestamp(int(time.time())).strftime('%Y-%m-%d %H:%M:%S')}\n')
+            return_value = await action.run(incident, request)
 
-                if (incident.failure_id, incident.thing_id) in self.running_incidents:
-                    qrbug.append_line_to_journal(f'dispatch_del({repr(self.id)}, {repr(incident.failure_id)}, {repr(incident.thing_id)}, {repr(self.action_id)}, {repr(self.group_id)}, {int(time.time())})  # {datetime.fromtimestamp(int(time.time())).strftime('%Y-%m-%d %H:%M:%S')}\n')
+            if (incident.failure_id, incident.thing_id) in self.running_incidents:
+                qrbug.append_line_to_journal(f'dispatch_del({repr(self.id)}, {repr(incident.failure_id)}, {repr(incident.thing_id)}, {repr(self.action_id)}, {repr(self.group_id)}, {int(time.time())})  # {datetime.fromtimestamp(int(time.time())).strftime('%Y-%m-%d %H:%M:%S')}\n')
 
         return return_value
 

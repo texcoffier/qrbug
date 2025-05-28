@@ -95,7 +95,7 @@ async def register_incident(request: web.Request) -> web.StreamResponse:
 
     current_incident = qrbug.append_line_to_journal(function_to_log)
 
-    if failure.auto_close_incident:
+    if failure.auto_close_incident:  # TODO: Move after dispatch_del
         qrbug.append_line_to_journal(f'incident_del({repr(thing_id)}, {repr(failure_id)}, {repr(user_ip)}, {timestamp}, {repr(user_login)})  # {current_date} {user_login}\n')
 
     # TODO: Run on incident repaired
@@ -110,16 +110,16 @@ async def register_incident(request: web.Request) -> web.StreamResponse:
     await request.response.write("<h1>Merci !</h1><h3>Votre signalement a été enregistré.</h3>".encode('utf-8'))
 
     # Dispatchers
-    returned_html: dict[str, dict[tuple[str, str], Optional[str]]] = {}
+    returned_html: dict[str, Optional[str]] = {}
     if not is_repaired_bool:
         for dispatcher in qrbug.Dispatcher.instances.values():
             if dispatcher.when == 'synchro':
-                returned_html[dispatcher.id] = await dispatcher.run([current_incident], request)
+                returned_html[dispatcher.id] = await dispatcher.run(current_incident, request)
             else:
                 pass # TODO: Rajouter la fonction dispatch au journal d'incidents
 
     if any(value is not None for value in returned_html.values()):
-        await request.response.write('Informations additionnelles :'.encode('utf-8'))
+        await request.response.write(b'Informations additionnelles :')
 
     # Makes the HTML response from the dispatchers
     for dispatcher_id, dispatcher_return_value in returned_html.items():
@@ -127,16 +127,12 @@ async def register_incident(request: web.Request) -> web.StreamResponse:
             await request.response.write(
                 f'<p>DISPATCHER [{dispatcher_id}]<br/>'.encode('utf-8')
             )
-            for (incident_thing_id, incident_failure_id), html_string in dispatcher_return_value.items():
-                if html_string is not None:
-                    await request.response.write((
-                        f'<div style="padding-left: 20px;">INCIDENT [{incident_thing_id}, {incident_failure_id}]'
-                        f'    <div style="padding-left: 40px;">{html_string}</div>'
-                        f'</div>'
-                    ).encode('utf-8'))
-                else:
-                    await request.response.write('<div style="padding-left: 20px;">No return value<br/></div>'.encode('utf-8'))
-            await request.response.write('</p>'.encode('utf-8'))
+            await request.response.write((
+                f'<div style="padding-left: 20px;">INCIDENT [{current_incident.thing_id}, {current_incident.failure_id}]'
+                f'    <div style="padding-left: 40px;">{dispatcher_return_value}</div>'
+                f'</div>'
+            ).encode('utf-8'))
+            await request.response.write(b'</p>')
 
     # return_string = (f"thing_id={thing_id}\n"
     #                  f"failure_id={failure_id}\n"
