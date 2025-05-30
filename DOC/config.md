@@ -97,5 +97,16 @@ thing_update("b710pc0101", comment="3ème à gauche")
 ```
 *Please see image above for page where this Thing's QR code brings*
 
+You can also delete a Thing from the QRbug database with `thing_del(thing_id)`.
+
 #### Selectors
+A selector is a filter that can be used by Dispatchers (see later) to know which Actions (see later) to trigger based on whether the given incident meets the required conditions for this dispatcher to run.
+
+You can create/update a selector with the following method : `selector(selector_id, expression)`
+
+- **Expression** (string) : A Python expression that evaluates to a boolean (whether the dispatcher can run). The following variables are accessible in this expression :
+  - `user` : An instance of the User class. The User who declared this incident belongs to this group.
+  - `thing` : An instance of the Thing class. Represents the Thing that the incident happened on.
+  - `failure` : An instance of the Failure class. Represents the Failure that was reported in the incident.
+
 
