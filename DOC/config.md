@@ -109,4 +109,29 @@ You can create/update a selector with the following method : `selector(selector_
   - `thing` : An instance of the Thing class. Represents the Thing that the incident happened on.
   - `failure` : An instance of the Failure class. Represents the Failure that was reported in the incident.
 
+#### Action
+An Action is a piece of code that runs when a dispatcher (see later) calls it.
+
+Actions are Python scripts in the `ACTIONS/` folder.  
+
+**How to create an action :**
+- First, create a Python script in the `ACTIONS/` directory.
+- Second, paste the following boilerplate into it :
+```py
+from typing import Optional
+from aiohttp import web
+
+import qrbug
+
+async def run(incident: qrbug.Incidents, request: web.Request) -> Optional[str]:
+    pass
+```
+- The `run` function is the entry point of your program, and will be awaited when called.
+  - Its `incident` parameter is the incident triggering the action
+  - The `request` parameter corresponds to the aiohttp request the user made to the server to register the incident
+- To send HTML back to the webpage displayed after your action is called, use the following code :
+```py
+await request.response.write(my_html_string.encode('utf-8')) 
+```
+- To send data back to the program, return #TODO: TO UPDATE
 
