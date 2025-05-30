@@ -16,7 +16,7 @@ class Journals(enum.Enum):
 
 def exec_code_file(path: Path, code_globals: dict[str, Callable]) -> dict:
     changed_locals = {}
-    exec(compile(path.read_text('utf-8'), path, 'exec'), code_globals, changed_locals)
+    exec(compile(path.read_text('utf-8'), path, 'exec'), code_globals.copy(), changed_locals)
     return changed_locals
 
 
