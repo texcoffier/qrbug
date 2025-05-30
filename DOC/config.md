@@ -148,3 +148,7 @@ Each of these parameters _(besides `dispatcher_id`)_ are optional.
 - **When** : Whether the dispatcher should run synchronously (immediately when the incident occurs), or every n weeks/days/hours...
 
 You can delete a dispatcher with `dispatcher_del(dispatcher_id)`.
+
+### Incidents
+This file logs incidents occurring, incidents being repaired, and dispatchers being dispatched.  
+It is made entirely automatically and should be only read, not edited.
