@@ -135,3 +135,16 @@ await request.response.write(my_html_string.encode('utf-8'))
 ```
 - To send data back to the program, return #TODO: TO UPDATE
 
+#### Dispatcher
+Dispatchers are made to know when to trigger an action based on a selector.
+
+You can create/update one with `dispatcher_update(dispatcher_id, action_id, selector_id, group_id, when)`.
+
+Each of these parameters _(besides `dispatcher_id`)_ are optional.
+
+- **Action ID** : The ID of the action to trigger when this dispatcher deems it necessary.
+- **Selector ID** : The ID of the selector the dispatcher will run to know if the action should be triggered
+- **Group ID** : The group of people to warn (by email) when an incident occurs and an action is triggered
+- **When** : Whether the dispatcher should run synchronously (immediately when the incident occurs), or every n weeks/days/hours...
+
+You can delete a dispatcher with `dispatcher_del(dispatcher_id)`.
