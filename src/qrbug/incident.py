@@ -28,7 +28,7 @@ class Incident:  # TODO: Séparer en deux classes, une avec les parties individu
         """
         Factory method, creates a new incident and stores it within the incident instances
         """
-        new_incident = Incidents(thing_id, failure_id, ip, timestamp, comment)
+        new_incident = Incident(thing_id, failure_id, ip, timestamp, comment)
         cls.active.append(new_incident)
         return new_incident
 
