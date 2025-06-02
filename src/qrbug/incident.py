@@ -106,14 +106,6 @@ class Incident:  # TODO: Séparer en deux classes, une avec les parties individu
         filtered_incidents = cls.filter_both(*args, **kwargs)
         return [*filtered_incidents[0], *filtered_incidents[1]]
 
-    def __class_getitem__(cls, incident_id: str) -> Optional["Incidents"]:
-        if incident_id in cls.active:
-            return cls.active[incident_id]
-        elif incident_id in cls.finished:
-            return cls.finished[incident_id]
-        else:
-            return None
-
     @property
     def failure(self):
         return qrbug.Failure[self.failure_id]
