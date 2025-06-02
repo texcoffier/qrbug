@@ -36,7 +36,7 @@ Each of these parameters *(besides `failure_id`)* is optional if you want to mod
 - **Restricted to group ID** (string) : Only the given group of users or their children can report this failure.
 
 You can parent a failure with `failure_add(parent_id, child_id)`.
-Parenting failures allows to create a hierarchy of failures that can be attached to a single object, so the users can report exactly what went wrong.
+Parenting failures allows to create a hierarchy of failures that can be attached to any object, so the users can report exactly what went wrong.
 
 Here is such an example :
 ```py
