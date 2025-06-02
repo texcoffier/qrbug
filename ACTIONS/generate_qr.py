@@ -24,6 +24,6 @@ async def run(incident: qrbug.Incident, request: web.Request) -> Optional[str]:
 
     # Writes the HTML of the QR code
     await request.response.write((
-        f'<h2>QR Code for thing {requested_thing_id}</h2>'
+        f'<h2>QR Code pour {requested_thing_id}</h2>'
         f'<div><img src="data:image/jpeg;base64,{img_base64.decode()}" /></div>'
     ).encode('utf-8'))
