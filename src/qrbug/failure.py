@@ -17,7 +17,7 @@ class DisplayTypes(enum.Enum):
     redirect = enum.auto()
     input    = enum.auto()
 
-def html(failure, thing_id):
+def html(failure: "Failure", thing_id: "qrbug.ThingId"):
     display_type = failure.display_type
     common = f'failureid="{failure.id}" thingid="{thing_id}"'
     if display_type == DisplayTypes.text:
