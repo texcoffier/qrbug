@@ -12,7 +12,7 @@ SERVICE_URL = 'http://qrbug.univ-lyon1.fr:8080/'
 JOURNALS_FILE_PATH = Path("JOURNALS")
 DB_FILE_PATH = JOURNALS_FILE_PATH / "db.py"
 DEFAULT_DB_PATH = JOURNALS_FILE_PATH / "default_db.py"
-INCIDENTS_FILE_PATH = JOURNALS_FILE_PATH / "incident.py"
+INCIDENTS_FILE_PATH = JOURNALS_FILE_PATH / "incidents.py"
 
 # Dicts
 CONFIGS = {
@@ -31,7 +31,7 @@ CONFIGS = {
 }
 
 INCIDENT_FUNCTIONS = {
-    "incident": qrbug.incident,
+    "incident_new": qrbug.incident_new,
     "incident_del": qrbug.incident_del,
     "dispatch": qrbug.dispatch,
     "dispatch_del": qrbug.dispatch_del,

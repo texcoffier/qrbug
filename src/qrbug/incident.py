@@ -115,7 +115,7 @@ class Incident:  # TODO: Séparer en deux classes, une avec les parties individu
         return qrbug.Thing[self.thing_id]
 
 
-def incident(thing_id: qrbug.ThingId, failure_id: qrbug.FailureId, ip: str, timestamp: int, comment: Optional[str] = None) -> "Incident":
+def incident_new(thing_id: qrbug.ThingId, failure_id: qrbug.FailureId, ip: str, timestamp: int, comment: Optional[str] = None) -> "Incident":
     return Incident.create(thing_id, failure_id, ip, timestamp, comment)
 
 
@@ -124,5 +124,5 @@ def incident_del(thing_id: qrbug.ThingId, failure_id: qrbug.FailureId, ip: str, 
 
 
 qrbug.Incident = Incident
-qrbug.incident = incident
+qrbug.incident_new = incident_new
 qrbug.incident_del = incident_del
