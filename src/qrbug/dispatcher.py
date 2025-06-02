@@ -1,5 +1,4 @@
 import time
-from datetime import datetime
 from typing import Optional, TypeAlias
 
 import qrbug
@@ -44,13 +43,13 @@ class Dispatcher(qrbug.Tree):
         #    return None
 
         # dispatch() updates the running_incidents set (increases size)
-        qrbug.append_line_to_journal(f'dispatch({repr(self.id)}, {repr(incident.failure_id)}, {repr(incident.thing_id)}, {repr(self.action_id)}, {repr(self.group_id)}, {int(time.time())})  # {datetime.fromtimestamp(int(time.time())).strftime("%Y-%m-%d %H:%M:%S")}\n')
+        qrbug.append_line_to_journal(f'dispatch({repr(self.id)}, {repr(incident.failure_id)}, {repr(incident.thing_id)}, {repr(self.action_id)}, {repr(self.group_id)}, {int(time.time())})  # {time.strftime("%Y-%m-%d %H:%M:%S")}\n')
 
         return_value = await action.run(incident, request)
 
         if (incident.failure_id, incident.thing_id) in self.running_incidents:
             # dispatch_del() updates the running_incidents set (reduces size)
-            qrbug.append_line_to_journal(f'dispatch_del({repr(self.id)}, {repr(incident.failure_id)}, {repr(incident.thing_id)}, {repr(self.action_id)}, {repr(self.group_id)}, {int(time.time())})  # {datetime.fromtimestamp(int(time.time())).strftime("%Y-%m-%d %H:%M:%S")}\n')
+            qrbug.append_line_to_journal(f'dispatch_del({repr(self.id)}, {repr(incident.failure_id)}, {repr(incident.thing_id)}, {repr(self.action_id)}, {repr(self.group_id)}, {int(time.time())})  # {time.strftime("%Y-%m-%d %H:%M:%S")}\n')
 
         return return_value
 
