@@ -27,4 +27,4 @@ async def run(incident: qrbug.Incident, request: web.Request) -> Optional[str]:
     ).encode('utf-8'))
 
     # TODO: Auto-close
-    pass
+    qrbug.action.auto_close_incident(incident, request)

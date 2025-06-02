@@ -1,3 +1,4 @@
+import time
 from pathlib import Path
 from typing import TypeAlias, Optional
 
@@ -29,6 +30,13 @@ class Action:
 
 def action(action_id: str, python_script: str) -> Action:
     return Action(action_id, python_script)
+
+
+def auto_close_incident(incident: qrbug.Incident, request: "aiohttp.web.Request") -> None:
+    """
+    Helper function for actions : Auto-closes the given incident.
+    """
+    qrbug.append_line_to_journal(f"incident_del({repr(incident.thing_id)}, {repr(incident.failure_id)}, {repr(request.remote)}, {int(time.time())}, '')")
 
 
 qrbug.Action = Action
