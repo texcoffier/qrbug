@@ -40,13 +40,10 @@ async def run(incident: qrbug.Incidents, request: web.Request) -> Optional[str]:
         'INCIDENTS': ('Incidents', qrbug.INCIDENTS_FILE_PATH)
     }
 
-    async def write(name: str, journal_path: Path):
-        await request.response.write(f'<h2>{name} :</h2><pre>'.encode('utf-8'))
-        await stream_html_from_path(journal_path, request.response)
-        await request.response.write('</pre>\n'.encode('utf-8'))
-
     for journal in failure_id.split('-'):
         journal_name, journal_path = translation_table[journal]
-        await write(journal_name, journal_path)
+        await request.response.write(f'<h2>{journal_name} :</h2><pre>'.encode('utf-8'))
+        await stream_html_from_path(journal_path, request.response)
+        await request.response.write('</pre>\n'.encode('utf-8'))
 
     return None
