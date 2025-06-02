@@ -17,17 +17,20 @@ class DisplayTypes(enum.Enum):
     redirect = enum.auto()
     input    = enum.auto()
 
-
-# How each type of display type is displayed
-# Tuples are (tag_type, is_single_tag, additional_parameters, onclick)
-display_type_cases = {
-    DisplayTypes.text:   ('p',    False, '', ''),
-    DisplayTypes.button: ('div',  False, 'class="button" onclick="{onclick}"', 'register_incident(get_base_url(`{thing_id}`, `{failure_id}`))'),
-    DisplayTypes.redirect: ('a',  False, 'href="{failure_value}"', ''),
-    DisplayTypes.input: ('input', True,
-      'type="text" placeholder="{failure_value}" name="{failure_id}"><div class="button" onclick="{onclick}">-&gt;</div><br',
-      "register_incident(get_url_with_comment('{thing_id}', '{failure_id}', get_input_value(this)))")
-}
+def html(failure, thing_id):
+    display_type = failure.display_type
+    common = f'failureid="{failure.id}" thingid="{thing_id}"'
+    if display_type == DisplayTypes.text:
+        return  f'<p {common}>{failure.value}</p>'
+    elif display_type == DisplayTypes.redirect:
+        return  f'<a {common} href="{failure.value}">{failure.value}</p>'
+    elif display_type == DisplayTypes.button:
+        return f'<div {common} class="button" onclick="register_incident(this)"><BOX>{failure.value}</BOX></div>'
+    elif display_type == DisplayTypes.input:
+        return f'''<div class="input">{failure.value}
+        <div><input {common} onchange="register_incident(this)">
+        <button {common} onclick="register_incident(this)">-&gt;</button></div></div>'''
+    raise ValueError("Unknown display type")
 
 
 class Failure(qrbug.Tree):
@@ -126,31 +129,12 @@ class Failure(qrbug.Tree):
 
         def recursively_build_failures_list(failure_id: str) -> None:
             failure = Failure[failure_id]
-            format_kwargs = {
-                "thing_id": thing_id,
-                "failure_id": failure.id,
-                "failure_value": failure.value,
-            }
-
-            element_type, single_tag, additional_attributes, onclick_js = display_type_cases[failure.display_type]
-            additional_attributes = additional_attributes.format(
-                **format_kwargs,
-                onclick=onclick_js.format(**format_kwargs))
-
-            if single_tag:
-                representation.append(
-                    f'<li><{element_type} id="{failure.id}" {additional_attributes}/>'
-                )
-            else:
-                representation.append(
-                    f'<li><{element_type} id="{failure.id}" {additional_attributes}>'
-                    f'{failure.value}'
-                    f'</{element_type}>'
-                )
-            representation.append(f'</li>\n<ul>')
-            for failure_id in failure.children_ids:
-                recursively_build_failures_list(failure_id)
-            representation.append(f"</ul>\n")
+            representation.append(html(failure, thing_id))
+            if failure.children_ids:
+                representation.append(f'<div class="children">')
+                for failure_id in failure.children_ids:
+                    recursively_build_failures_list(failure_id)
+                representation.append(f"</div>\n")
 
         recursively_build_failures_list(self.id)
         return html_template.replace("%REPRESENTATION%", ''.join(representation))

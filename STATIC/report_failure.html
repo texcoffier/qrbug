@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <meta charset="utf-8"/>
+    <meta charset="utf-8" />
     <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
     <style>
         body {
@@ -24,44 +24,68 @@
             background: #DDD;
         }
 
-        ul {
-            list-style-type: none;
-        }
-
         input {
             font-size: 1.2em;
+        }
+
+        @media (orientation: portrait) {
+            BODY, BUTTON {
+                font-size: 5vw;
+            }
+
+            DIV.button {
+                display: inline-flex;
+                width: 43vw;
+                height: 5em;
+                text-align: center;
+                vertical-align: top;
+                border: 0px;
+                border-radius: 1em;
+            }
+            DIV.input DIV {
+                display: flex;
+            }
+            DIV.input DIV INPUT {
+                flex: 1;
+                margin-right: 0.5em;
+            }
+
+            BOX {
+                display: flex;
+                align-items: center;
+                cursor: pointer;
+            }
+
+            P {
+                margin: 0px;
+                text-align: center;
+                font-weight: bold;
+            }
+
+            INPUT {
+                border: 0px;
+                background: #F8F8F8;
+            }
         }
     </style>
 
     <script>
-        function get_base_url(thing_id, failure_id) {
-            // Also returns the ticket if defined
-            const url = window.location.href.split('?');
-            let additionalParams = '';
-            if (url.length > 1) {
-                additionalParams = '&' + url[1];
-            }
-
-            // Returns the final URL
-            return `/?thing-id=${thing_id}&failure-id=${failure_id}&is-repaired=0${additionalParams}`;
-        }
-
-        function get_url_with_comment(thing_id, failure_id, comment) {
-            return get_base_url(thing_id, failure_id) + `&additional-info=${comment}`;
-        }
-
-        function get_input_value(e) {
-            return e.parentElement.querySelector(`input`).value;
-        }
-
-        function register_incident(url) {
+        function register_incident(element) {
+            let url = '/?thing-id=' + element.getAttribute('thingid')
+                + '&failure-id=' + element.getAttribute('failureid')
+                + '&is-repaired=0'
+                + (location.search ? location.search.replace('?', '&') : '') // ticket
+                ;
+            let value = element.value; // INPUT
+            if (element.tagName == 'BUTTON')
+                value = element.previousElementSibling.value;
+            if (value)
+                url += '&additional-info=' + value;
             window.location.replace(url);
         }
     </script>
 </head>
 
 <body>
-    <ul>
-        %REPRESENTATION%
-    </ul>
+    %REPRESENTATION%
 </body>
