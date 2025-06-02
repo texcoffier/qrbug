@@ -4,7 +4,7 @@ from aiohttp import web
 import qrbug
 
 
-@qrbug.action.auto_close_incident
+@qrbug.action_helpers.auto_close_incident
 async def run(incident: qrbug.Incident, request: web.Request) -> Optional[str]:
     import base64
     from io import BytesIO
