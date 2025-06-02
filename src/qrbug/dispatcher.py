@@ -58,9 +58,9 @@ class Dispatcher(qrbug.Tree):
         # On ajoute incident_update, on lui passe le (thing_id, failure_id) et le dispatcher_id
         # Quand le serveur edémarre, on va remettre à jour la liste des dispatchers qui ont été lancés.
 
-        if (incident.failure_id, incident.thing_id) in self.running_incidents:
+        #if (incident.failure_id, incident.thing_id) in self.running_incidents:
             # dispatch_del() updates the running_incidents set (reduces size)
-            qrbug.append_line_to_journal(f'dispatch_del({repr(self.id)}, {repr(incident.failure_id)}, {repr(incident.thing_id)}, {repr(self.action_id)}, {repr(self.group_id)}, {int(time.time())})  # {time.strftime("%Y-%m-%d %H:%M:%S")}\n')
+        #    qrbug.append_line_to_journal(f'dispatch_del({repr(self.id)}, {repr(incident.failure_id)}, {repr(incident.thing_id)}, {repr(self.action_id)}, {repr(self.group_id)}, {int(time.time())})  # {time.strftime("%Y-%m-%d %H:%M:%S")}\n')
 
         return return_value
 
