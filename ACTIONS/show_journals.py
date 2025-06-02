@@ -7,6 +7,7 @@ import qrbug
 async def run(incident: qrbug.Incidents, request: web.Request) -> Optional[str]:
     from pathlib import Path
     import asyncio
+    import html
     import qrbug
 
     FILE_CHUNK_SIZE_BYTES = 100_000
@@ -19,10 +20,7 @@ async def run(incident: qrbug.Incidents, request: web.Request) -> Optional[str]:
                 if not text:
                     break
                 await stream.write(
-                    text.replace('&', '&amp;')
-                        .replace('<', '&lt;')
-                        .replace('>', '&gt;')
-                        .encode('utf-8')
+                    html.escape(text).encode('utf-8')
                 )
                 await asyncio.sleep(0)
 
