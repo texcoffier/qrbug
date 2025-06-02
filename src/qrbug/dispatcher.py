@@ -28,7 +28,7 @@ class Dispatcher(qrbug.Tree):
         # return self.get_representation(attributes_short=short_names)
         return f'action:{self.action_id} selector:{self.selector_id} group:{self.group_id} when:{self.when}'
 
-    async def run(self, incident: qrbug.Incident, request) -> Optional[str]:
+    async def run(self, incident: qrbug.Incident, request) -> Optional[qrbug.action_helpers.ActionReturnValue]:
         """
         Returns a dict with keys being the thing_id and failure_id of an incident, and values being the returned HTML.
         """

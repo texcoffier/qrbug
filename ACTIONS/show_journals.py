@@ -5,7 +5,7 @@ import qrbug
 
 
 @qrbug.action_helpers.auto_close_incident
-async def run(incident: qrbug.Incident, request: web.Request) -> Optional[str]:
+async def run(incident: qrbug.Incident, request: web.Request) -> Optional[qrbug.action_helpers.ActionReturnValue]:
     from pathlib import Path
     import asyncio
     import html

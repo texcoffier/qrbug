@@ -110,7 +110,7 @@ async def register_incident(request: web.Request) -> web.StreamResponse:
     await request.response.write("<h1>Merci !</h1><h3>Votre signalement a été enregistré.</h3>".encode('utf-8'))
 
     # Dispatchers
-    returned_html: dict[str, Optional[str]] = {}
+    returned_html: dict[str, Optional[qrbug.action_helpers.ActionReturnValue]] = {}
     if not is_repaired_bool:
         for dispatcher in qrbug.Dispatcher.instances.values():
             if dispatcher.when == 'synchro':
@@ -122,17 +122,31 @@ async def register_incident(request: web.Request) -> web.StreamResponse:
         await request.response.write(b'Informations additionnelles :')
 
     # Makes the HTML response from the dispatchers
+    INDENT_SIZE_PIXELS = 20
     for dispatcher_id, dispatcher_return_value in returned_html.items():
         if dispatcher_return_value is not None:
             await request.response.write(
-                f'<p>DISPATCHER [{dispatcher_id}]<br/>'.encode('utf-8')
+                f'<p>DISPATCHER [{dispatcher_id}]<br/>\n'.encode('utf-8')
             )
             await request.response.write((
-                f'<div style="padding-left: 20px;">INCIDENT [{current_incident.thing_id}, {current_incident.failure_id}]'
-                f'    <div style="padding-left: 40px;">{dispatcher_return_value}</div>'
-                f'</div>'
+                f'<div style="padding-left: {INDENT_SIZE_PIXELS}px;">\n'
+                f'    INCIDENT [{current_incident.thing_id}, {current_incident.failure_id}]\n'
             ).encode('utf-8'))
-            await request.response.write(b'</p>')
+
+            response_values = [  # (title, value)
+                ('ERROR', dispatcher_return_value.error_msg),
+                ('INFO', dispatcher_return_value.info_msg),
+            ]
+            for title, response_value in response_values:
+                if response_value:
+                    await request.response.write((
+                        f'    <div style="padding-left: {INDENT_SIZE_PIXELS * 2}px;">\n'
+                        f'        <h3>{title}</h3>\n'
+                        f'        <div style="padding-left: {INDENT_SIZE_PIXELS * 3}px;">{response_value}</div>\n'
+                        f'    </div>\n'
+                    ).encode('utf-8'))
+            await request.response.write(b'</div>\n')
+            await request.response.write(b'</p>\n')
 
     # return_string = (f"thing_id={thing_id}\n"
     #                  f"failure_id={failure_id}\n"
