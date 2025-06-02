@@ -37,11 +37,14 @@ class Failure(qrbug.Tree):
     instances: dict[FailureId, "Failure"] = {}
 
     # Default values
-    value                  : Optional[str]          = "VALEUR_NON_DEFINIE"
+    value                  : Optional[str]          = ''
     display_type           : Optional[DisplayTypes] = DisplayTypes.text
     ask_confirm            : Optional[bool]         = True
     restricted_to_group_id : Optional[qrbug.UserId] = None
     auto_close_incident    : Optional[bool]         = False
+
+    def init(self):
+        self.value = f"VALEUR_NON_DEFINIE POUR «{self.id}»"
 
     def _local_dump(self) -> str:
         # short_names = {
