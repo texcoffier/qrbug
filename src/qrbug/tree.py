@@ -17,6 +17,15 @@ class Tree:
     def init(self) -> None: # Redefined by subclass
         pass
 
+    def path(self) -> str:
+        """Return one of the path from root node, remove duplicate string"""
+        if self.parent_ids:
+            parent_path = self.instances[next(iter(self.parent_ids))].path()
+            if self.id.startswith(parent_path):
+                return self.id
+            return f'{parent_path}/{self.id}'
+        return f'/{self.id}'
+
     def add_child(self, child: "Tree", before: str = '') -> None:
         # assert child.id not in self.children_ids, f"{child.id} is already a child of {self.id}"
         # assert child.id != self.id, f"Cannot make {child.id} a child of itself !"

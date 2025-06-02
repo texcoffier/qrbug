@@ -121,7 +121,11 @@ class Failure(qrbug.Tree):
         Returns a representation of the whole hierarchy of this failure as a webpage.
         :param thing_id: The id of the thing that could be targeted by this failure.
         """
-        representation: list[str] = []
+        path = qrbug.Thing[thing_id].path()
+        representation: list[str] = [
+            '<TITLE>', path, '</TITLE>',
+            '<H1>', path, '</H1>'
+            ]
 
         # TODO : Caching ?
         with Path("STATIC/report_failure.html") as template_file:
