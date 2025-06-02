@@ -95,8 +95,8 @@ async def register_incident(request: web.Request) -> web.StreamResponse:
 
     current_incident = qrbug.append_line_to_journal(function_to_log)
 
-    if failure.auto_close_incident:  # TODO: Move after dispatch_del
-        qrbug.append_line_to_journal(f'incident_del({repr(thing_id)}, {repr(failure_id)}, {repr(user_ip)}, {timestamp}, {repr(user_login)})  # {current_date} {user_login}\n')
+    # if failure.auto_close_incident:  # TODO: Move after dispatch_del
+    #     qrbug.append_line_to_journal(f'incident_del({repr(thing_id)}, {repr(failure_id)}, {repr(user_ip)}, {timestamp}, {repr(user_login)})  # {current_date} {user_login}\n')
 
     # TODO: Run on incident repaired
     # TODO: Envoyer un mail à la personne qui a signalé la panne
