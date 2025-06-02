@@ -79,7 +79,7 @@ async def register_incident(request: web.Request) -> web.StreamResponse:
     is_repaired_bool: bool = is_repaired == '1'
     timestamp = int(time.time())
     current_date = datetime.fromtimestamp(timestamp).strftime('%Y-%m-%d %H:%M:%S')
-    function_name = "incident_del" if is_repaired_bool else "incident"  # TODO: Refactor
+    function_name = "incident_del" if is_repaired_bool else "incident_new"  # TODO: Refactor
     user_ip = request.remote
 
     function_to_log = f"{function_name}({repr(thing_id)}, {repr(failure_id)}, {repr(user_ip)}, {timestamp}"
