@@ -24,7 +24,9 @@ display_type_cases = {
     DisplayTypes.text:   ('p',    False, '', ''),
     DisplayTypes.button: ('div',  False, 'class="button" onclick="{onclick}"', 'register_incident(get_base_url(`{thing_id}`, `{failure_id}`))'),
     DisplayTypes.redirect: ('a',  False, 'href="{failure_value}"', ''),
-    DisplayTypes.input: ('input', True,  'type="text" placeholder="{failure_value}" name="{failure_id}"><div class="button" onclick="{onclick}">-&gt;</div><br', 'register_incident(get_url_with_comment(`{thing_id}`, `{failure_id}`, get_input_value(this)))')
+    DisplayTypes.input: ('input', True,
+      'type="text" placeholder="{failure_value}" name="{failure_id}"><div class="button" onclick="{onclick}">-&gt;</div><br',
+      "register_incident(get_url_with_comment('{thing_id}', '{failure_id}', get_input_value(this)))")
 }
 
 
@@ -119,47 +121,35 @@ class Failure(qrbug.Tree):
         with Path("STATIC/report_failure.html") as template_file:
             html_template = template_file.read_text()
 
-        def recursively_build_failures_list(failure: "Failure") -> None:
+        def recursively_build_failures_list(failure_id: str) -> None:
+            failure = Failure[failure_id]
             format_kwargs = {
                 "thing_id": thing_id,
                 "failure_id": failure.id,
                 "failure_value": failure.value,
             }
 
-            element_type = display_type_cases[failure.display_type][0]
-            single_tag = display_type_cases[failure.display_type][1]  # Whether to treat the HTML tag as a single tag (e.g. input, br, img)
-            onclick_js = display_type_cases[failure.display_type][3].format(**format_kwargs)
-            additional_attributes = display_type_cases[failure.display_type][2].format(**format_kwargs, onclick=onclick_js)
+            element_type, single_tag, additional_attributes, onclick_js = display_type_cases[failure.display_type]
+            additional_attributes = additional_attributes.format(
+                **format_kwargs,
+                onclick=onclick_js.format(**format_kwargs))
 
-            if single_tag is False:
+            if single_tag:
+                representation.append(
+                    f'<li><{element_type} id="{failure.id}" {additional_attributes}/>'
+                )
+            else:
                 representation.append(
                     f'<li><{element_type} id="{failure.id}" {additional_attributes}>'
                     f'{failure.value}'
                     f'</{element_type}>'
                 )
-            else:
-                representation.append(
-                    f'<li><{element_type} id="{failure.id}" {additional_attributes}/>'
-                )
             representation.append(f'</li>\n<ul>')
-
-            # We sort by display type then by value, so that the text failures are
-            # always shown first (headers), followed by the buttons, the redirects, and
-            # the input fields (which are usually just the "Other" answer)
-            # We have to sort this instead of just using the loop as-is because sets have no defined order,
-            # which means if we don't sort this, the result is going to come out different every time
-            child_failures_list = [
-                Failure[child_failure]
-                for child_failure in failure.children_ids
-            ]
-            child_failures_list.sort(key=lambda e: (e.display_type.value, e.value))
-
-            for child_failure in child_failures_list:
-                recursively_build_failures_list(child_failure)
-
+            for failure_id in failure.children_ids:
+                recursively_build_failures_list(failure_id)
             representation.append(f"</ul>\n")
 
-        recursively_build_failures_list(self)
+        recursively_build_failures_list(self.id)
         return html_template.replace("%REPRESENTATION%", ''.join(representation))
 
 
