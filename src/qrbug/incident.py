@@ -8,6 +8,8 @@ class Incident:  # TODO: Séparer en deux classes, une avec les parties individu
     active: list["Incident"] = []
     finished: list["Incident"] = []
 
+    # TODO: Un dico avec (thing_id, failure_id) contenant la liste d'incidents
+
     def __init__(self, thing_id: str, failure_id: str, ip: str, timestamp: int, comment: Optional[str] = None, login: str = ''):
         self.thing_id = thing_id
         self.failure_id = failure_id
@@ -16,6 +18,8 @@ class Incident:  # TODO: Séparer en deux classes, une avec les parties individu
         self.comment = comment
         self.login = login
         self.remover_login = None
+
+    # TODO: Fonctions utilitaires pour les devs d'actions
 
     def dump(self) -> str:
         return f'thing:{self.thing_id} fail:{self.failure_id} ip:{self.ip} comment:{repr(self.comment)}'

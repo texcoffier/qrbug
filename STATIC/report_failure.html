@@ -28,10 +28,6 @@
             font-size: 1.2em;
         }
 
-        H1 {
-            font-size: 100%
-        }
-
         @media (orientation: portrait) {
             BODY, BUTTON {
                 font-size: 5vw;
@@ -81,7 +77,7 @@
                 + (location.search ? location.search.replace('?', '&') : '') // ticket
                 ;
             let value = element.value; // INPUT
-            if (element.tagName == 'BUTTON')
+            if (element.tagName === 'BUTTON')
                 value = element.previousElementSibling.value;
             if (value)
                 url += '&additional-info=' + value;
