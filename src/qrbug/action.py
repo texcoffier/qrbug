@@ -1,6 +1,6 @@
 import time
 from pathlib import Path
-from typing import TypeAlias, Optional
+from typing import TypeAlias, Optional, Callable, Awaitable
 
 import qrbug
 
@@ -32,11 +32,14 @@ def action(action_id: str, python_script: str) -> Action:
     return Action(action_id, python_script)
 
 
-def auto_close_incident(incident: qrbug.Incident, request: "aiohttp.web.Request") -> None:
+def auto_close_incident(action_function: Callable[[qrbug.Incident, "aiohttp.web.Request"], Awaitable[None]]):
     """
-    Helper function for actions : Auto-closes the given incident.
+    Helper decorator for actions : Auto-closes the given incident.
     """
-    qrbug.append_line_to_journal(f"incident_del({repr(incident.thing_id)}, {repr(incident.failure_id)}, {repr(request.remote)}, {int(time.time())}, '')")
+    async def wrapper(incident: qrbug.Incident, request: "aiohttp.web.Request") -> None:
+        await action_function(incident, request)
+        qrbug.append_line_to_journal(f"incident_del({repr(incident.thing_id)}, {repr(incident.failure_id)}, {repr(request.remote)}, {int(time.time())}, '')\n")
+    return wrapper
 
 
 qrbug.Action = Action

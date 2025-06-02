@@ -3,6 +3,8 @@ from aiohttp import web
 
 import qrbug
 
+
+@qrbug.action.auto_close_incident
 async def run(incident: qrbug.Incident, request: web.Request) -> Optional[str]:
     import base64
     from io import BytesIO
@@ -25,6 +27,3 @@ async def run(incident: qrbug.Incident, request: web.Request) -> Optional[str]:
         f'<h2>QR Code for thing {requested_thing_id}</h2>'
         f'<div><img src="data:image/jpeg;base64,{img_base64.decode()}" /></div>'
     ).encode('utf-8'))
-
-    # TODO: Auto-close
-    qrbug.action.auto_close_incident(incident, request)
