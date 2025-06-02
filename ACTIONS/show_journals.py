@@ -4,7 +4,7 @@ from aiohttp import web
 import qrbug
 
 
-async def run(incident: qrbug.Incidents, request: web.Request) -> Optional[str]:
+async def run(incident: qrbug.Incident, request: web.Request) -> Optional[str]:
     from pathlib import Path
     import asyncio
     import html
@@ -37,7 +37,7 @@ async def run(incident: qrbug.Incidents, request: web.Request) -> Optional[str]:
     translation_table = {  # Values : (name, path)
         'DB': ('Configuration', qrbug.DB_FILE_PATH),
         'DEFAULT_DB': ('Configuration par défaut', qrbug.DEFAULT_DB_PATH),
-        'INCIDENTS': ('Incidents', qrbug.INCIDENTS_FILE_PATH)
+        'INCIDENTS': ('Incident', qrbug.INCIDENTS_FILE_PATH)
     }
 
     for journal in failure_id.split('-'):

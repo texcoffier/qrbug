@@ -25,7 +25,7 @@ QRBUG = {
     "Action": qrbug.Action,
     "Selector": qrbug.Selector,
     "Dispatcher": qrbug.Dispatcher,
-    "Incidents": qrbug.Incidents,
+    "Incident": qrbug.Incident,
     "exec_code_file": qrbug.exec_code_file,
     "CONFIGS": qrbug.CONFIGS,
     "INCIDENT_FUNCTIONS": qrbug.INCIDENT_FUNCTIONS,

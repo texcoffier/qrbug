@@ -94,7 +94,7 @@ qrbug.append_line_to_journal = append_line_to_journal
 #
 # class Action(Executor):
 #     import qrbug
-#     functions = {"Incidents": qrbug.Incidents}
+#     functions = {"Incident": qrbug.Incident}
 #
 #
 # class Journal(Executor):

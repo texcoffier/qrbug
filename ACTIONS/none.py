@@ -6,5 +6,5 @@ from aiohttp import web
 
 import qrbug
 
-def run(_incident: qrbug.Incidents, _request: web.Request) -> Optional[str]:
+def run(_incident: qrbug.Incident, _request: web.Request) -> Optional[str]:
     pass

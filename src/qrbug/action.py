@@ -17,8 +17,8 @@ class Action:
             raise Exception(f'"{self.python_script}" is not a Python file')
         self.instances[action_id] = self
 
-    async def run(self, incident: qrbug.Incidents, request) -> Optional[str]:
-        module_vars = qrbug.exec_code_file(ACTIONS_FOLDER / self.python_script, {"Incidents": qrbug.Incidents})
+    async def run(self, incident: qrbug.Incident, request) -> Optional[str]:
+        module_vars = qrbug.exec_code_file(ACTIONS_FOLDER / self.python_script, {"Incident": qrbug.Incident})
         # We assume that the run function is present in the action so the
         # server throws an exception if it is not the case
         return await module_vars['run'](incident, request)

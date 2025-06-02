@@ -108,7 +108,7 @@ from aiohttp import web
 
 import qrbug
 
-async def run(incident: qrbug.Incidents, request: web.Request) -> Optional[str]:
+async def run(incident: qrbug.Incident, request: web.Request) -> Optional[str]:
     pass
 ```
 - The `run` function is the entry point of your program, and will be awaited when called.

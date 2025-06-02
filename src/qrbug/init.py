@@ -3,7 +3,7 @@ import qrbug.user
 import qrbug.failure
 import qrbug.thing
 import qrbug.selector
-import qrbug.incidents
+import qrbug.incident
 import qrbug.action
 import qrbug.dispatcher
 

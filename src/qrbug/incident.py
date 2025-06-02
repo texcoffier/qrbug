@@ -4,9 +4,9 @@ import re
 import qrbug
 
 
-class Incidents:
-    active: list["Incidents"] = []
-    finished: list["Incidents"] = []
+class Incident:  # TODO: Séparer en deux classes, une avec les parties individuelles te une avec les parties communes
+    active: list["Incident"] = []
+    finished: list["Incident"] = []
 
     def __init__(self, thing_id: str, failure_id: str, ip: str, timestamp: int, comment: Optional[str] = None, login: str = ''):
         self.thing_id = thing_id
@@ -24,7 +24,7 @@ class Incidents:
         return self.thing_id == other_thing_id and self.failure_id == other_failure_id
 
     @classmethod
-    def create(cls, thing_id: str, failure_id: str, ip: str, timestamp: int, comment: Optional[str] = None) -> "Incidents":
+    def create(cls, thing_id: str, failure_id: str, ip: str, timestamp: int, comment: Optional[str] = None) -> "Incident":
         """
         Factory method, creates a new incident and stores it within the incident instances
         """
@@ -33,7 +33,7 @@ class Incidents:
         return new_incident
 
     @classmethod
-    def remove(cls, other_thing_id: str, other_failure_id: str, login: str) -> list["Incidents"]:
+    def remove(cls, other_thing_id: str, other_failure_id: str, login: str) -> list["Incident"]:
         """
         Deletes any given incident from the list of incidents
         :param login: The login of the user who removed the incident.
@@ -47,9 +47,9 @@ class Incidents:
 
     @classmethod
     def filter(
-            cls, incidents: list["Incidents"], *, thing_id: str = None, failure_id: str = None, ip: str = None,
+            cls, incidents: list["Incident"], *, thing_id: str = None, failure_id: str = None, ip: str = None,
             login: str = None, timestamp_min: int = 0, timestamp_max: int = None, comment: str = None
-    ) -> list["Incidents"]:
+    ) -> list["Incident"]:
         """
         Returns the list of incidents matching the given criteria
         :param incidents: The list of incidents to filter.
@@ -82,7 +82,7 @@ class Incidents:
         return list(filter(condition_filter, incidents))
 
     @classmethod
-    def filter_both(cls, *args, **kwargs) -> tuple[list["Incidents"], list["Incidents"]]:
+    def filter_both(cls, *args, **kwargs) -> tuple[list["Incident"], list["Incident"]]:
         """
         Filters both lsts of incidents (active and finished) separately
         :return: A tuple of the incidents matching the given criteria ;
@@ -91,17 +91,17 @@ class Incidents:
         return list(cls.filter(cls.active, *args, **kwargs)), list(cls.filter(cls.finished, *args, **kwargs))
 
     @classmethod
-    def filter_active(cls, *args, **kwargs) -> list["Incidents"]:
+    def filter_active(cls, *args, **kwargs) -> list["Incident"]:
         """ Runs the `filter` class method, but only returns active incidents """
         return cls.filter(cls.active, *args, **kwargs)
 
     @classmethod
-    def filter_finished(cls, *args, **kwargs) -> list["Incidents"]:
+    def filter_finished(cls, *args, **kwargs) -> list["Incident"]:
         """ Runs the `filter` class method, but only returns finished incidents """
         return cls.filter(cls.finished, *args, **kwargs)
 
     @classmethod
-    def filter_all(cls, *args, **kwargs) -> list["Incidents"]:
+    def filter_all(cls, *args, **kwargs) -> list["Incident"]:
         """ Runs the `filter` class method, and returns a flattened list of all incidents """
         filtered_incidents = cls.filter_both(*args, **kwargs)
         return [*filtered_incidents[0], *filtered_incidents[1]]
@@ -123,14 +123,14 @@ class Incidents:
         return qrbug.Thing[self.thing_id]
 
 
-def incident(thing_id: qrbug.ThingId, failure_id: qrbug.FailureId, ip: str, timestamp: int, comment: Optional[str] = None) -> "Incidents":
-    return Incidents.create(thing_id, failure_id, ip, timestamp, comment)
+def incident(thing_id: qrbug.ThingId, failure_id: qrbug.FailureId, ip: str, timestamp: int, comment: Optional[str] = None) -> "Incident":
+    return Incident.create(thing_id, failure_id, ip, timestamp, comment)
 
 
-def incident_del(thing_id: qrbug.ThingId, failure_id: qrbug.FailureId, ip: str, timestamp: int, login: str) -> list["Incidents"]:
-    return Incidents.remove(thing_id, failure_id, login)
+def incident_del(thing_id: qrbug.ThingId, failure_id: qrbug.FailureId, ip: str, timestamp: int, login: str) -> list["Incident"]:
+    return Incident.remove(thing_id, failure_id, login)
 
 
-qrbug.Incidents = Incidents
+qrbug.Incident = Incident
 qrbug.incident = incident
 qrbug.incident_del = incident_del
