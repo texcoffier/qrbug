@@ -4,21 +4,6 @@ QRbug uses multiple journal files as config.
 You can find them in the `JOURNALS/` directory.
 
 ## Journals
-Please note that every journal file contains valid Python code.  
-The following code is thus valid in a journal :
-```py
-for i in range(5):
-    print('*' * i)
-```
-And will print the following characters to the console every time the given journal is reloaded :
-```
-
-*
-**
-***
-****
-```
-
 ### Default DB
 The `default_db.py` is always run first, and defines base users, selectors, and failures.  
 It is not meant to be edited by the end user, but rather by the developer of QRbug.
