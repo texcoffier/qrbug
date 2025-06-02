@@ -24,6 +24,7 @@ CONFIGS = {
     "DisplayTypes": qrbug.DisplayTypes,
     "thing_update": qrbug.thing_update,
     "thing_del": qrbug.thing_del,
+    "thing_remove": qrbug.thing_remove,
     "thing_add": qrbug.thing_add,
     "action": qrbug.action_update,
     "selector": qrbug.selector_update,
