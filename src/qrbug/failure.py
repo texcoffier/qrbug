@@ -175,13 +175,13 @@ def failure_update(failure_id: FailureId, **kwargs) -> Failure:
     return Failure.update_attributes(failure_id, **kwargs)
 
 
-def failure_add(parent: FailureId, child: FailureId) -> None:
+def failure_add(parent: FailureId, child: FailureId, before_id:str='') -> None:
     """
     Adds a new child to an existing failure.
     :param parent: The ID of the failure to add the child to.
     :param child: The ID of the child failure.
     """
-    Failure.add_parenting_link(parent, child)
+    Failure.add_parenting_link(parent, child, before_id)
 
 
 def failure_remove(parent: FailureId, child: FailureId) -> None:
