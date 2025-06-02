@@ -19,7 +19,8 @@ async def run(incident: qrbug.Incidents, request: web.Request) -> Optional[str]:
                 if not text:
                     break
                 await stream.write(
-                    text.replace('<', '&lt;')
+                    text.replace('&', '&amp;')
+                        .replace('<', '&lt;')
                         .replace('>', '&gt;')
                         .encode('utf-8')
                 )
