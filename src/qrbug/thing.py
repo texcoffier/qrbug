@@ -51,6 +51,22 @@ def thing_update(thing_id: ThingId, **kwargs) -> Thing:
     """
     return Thing.update_attributes(thing_id, **kwargs)
 
+def thing_add(parent: ThingId, child: ThingId) -> None:
+    """
+    Adds a ting inside a thing.
+    :param parent: The ID of the thing to add the child to.
+    :param child: The ID of the child failure.
+    """
+    Thing.add_parenting_link(parent, child)
+
+def thing_remove(parent: ThingId, child: ThingId) -> None:
+    """
+    Removes the parenting link from a Thing to another.
+    :param parent: The ID of the Thing to remove the child from.
+    :param child: The ID of the Thing to be removed.
+    """
+    Thing.remove_parenting_link(parent, child)
+
 
 def thing_del(thing_id: ThingId) -> None:
     """
@@ -64,6 +80,8 @@ qrbug.Thing = Thing
 qrbug.ThingId = ThingId
 qrbug.thing_update = thing_update
 qrbug.thing_del = thing_del
+qrbug.thing_remove = thing_remove
+qrbug.thing_add = thing_add
 
 if __name__ == "__main__":
     thing_update("0", location="Testing location", comment="This is a comment")
