@@ -4,6 +4,7 @@ from aiohttp import web
 import qrbug
 
 
+@qrbug.action.auto_close_incident
 async def run(incident: qrbug.Incident, request: web.Request) -> Optional[str]:
     from pathlib import Path
     import asyncio
