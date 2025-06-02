@@ -18,7 +18,7 @@ class Dispatcher(qrbug.Tree):
     when        : str = 'synchro'
 
     def init(self):
-        self.running_incidents: set[tuple[str, str]] = set()  # (failure_id, thing_id)
+        pass  # TODO: Gérer le cas d'usage d'un déclenchement après plusieurs signalements de pannes dans une même salle
 
     def _local_dump(self) -> str:
         # short_names = {
@@ -39,9 +39,9 @@ class Dispatcher(qrbug.Tree):
         if not selector.is_ok(qrbug.User[self.group_id], qrbug.Thing[incident.thing_id], qrbug.Failure[incident.failure_id]):
             return None
 
-        if (incident.failure_id, incident.thing_id) in self.running_incidents:
-            # The dispatcher doesn't run because it is already active
-            return None
+        #if (incident.failure_id, incident.thing_id) in self.running_incidents:
+        #    # The dispatcher doesn't run because it is already active
+        #    return None
 
         # dispatch() updates the running_incidents set (increases size)
         qrbug.append_line_to_journal(f'dispatch({repr(self.id)}, {repr(incident.failure_id)}, {repr(incident.thing_id)}, {repr(self.action_id)}, {repr(self.group_id)}, {int(time.time())})  # {datetime.fromtimestamp(int(time.time())).strftime("%Y-%m-%d %H:%M:%S")}\n')
@@ -83,7 +83,8 @@ def dispatch(
     The parameters (besides dispatch_id, thing_id, and failure_id) are useless, they only store information in the log file.
     This functions marks a dispatcher as running and that it should not be run for these incidents only.
     """
-    Dispatcher[dispatch_id].running_incidents.add((failure_id, thing_id))
+    #Dispatcher[dispatch_id].running_incidents.add((failure_id, thing_id))
+    pass
 
 
 def dispatch_del(
@@ -98,7 +99,8 @@ def dispatch_del(
     The parameters (besides dispatch_id, thing_id, and failure_id) are useless, they only store information in the log file.
     This functions marks a dispatcher as running and that it should not be run for these incidents only.
     """
-    Dispatcher[dispatch_id].running_incidents.remove((failure_id, thing_id))
+    pass
+    #Dispatcher[dispatch_id].running_incidents.remove((failure_id, thing_id))
 
 
 qrbug.Dispatcher = Dispatcher
