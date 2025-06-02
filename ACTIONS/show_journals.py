@@ -46,9 +46,7 @@ async def run(incident: qrbug.Incidents, request: web.Request) -> Optional[str]:
         await request.response.write('</pre>\n'.encode('utf-8'))
 
     for journal in failure_id.split('-'):
-        current_journal = translation_table[journal]
-        current_journal_name = current_journal[0]
-        current_journal_path = current_journal[1]
-        await write(current_journal_name, current_journal_path)
+        journal_name, journal_path = translation_table[journal]
+        await write(journal_name, journal_path)
 
     return None
