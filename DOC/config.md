@@ -28,10 +28,10 @@ Each of these parameters *(besides `failure_id`)* is optional if you want to mod
 
 - **Value** (string) : The written value that will be displayed when presenting the failure.
 - **Display type** (DisplayType) : One of 4 available display types when presenting the failure to the user
-  - `DisplayType.text` : Just some text. _This failure type cannot be manually triggered by a user._
-  - `DisplayType.button` : A button the user can click to report an incident.
-  - `DisplayType.redirect` : A link to something the user might want to know about. _This failure type cannot be manually triggered by a user._
-  - `DisplayType.input` : An input box the user can write into to report an incident.
+  - `DisplayType.text` : Just some text ; `value` will be presented as simple raw text. _This failure type cannot be manually triggered by a user._
+  - `DisplayType.button` : A button the user can click to report an incident ; `value` will be the text inside the button. 
+  - `DisplayType.redirect` : A link to something the user might want to know about ; `value` will be the link itself, e.g. https://example.com. _This failure type cannot be manually triggered by a user._
+  - `DisplayType.input` : An input box the user can write into to report an incident ; `value` will be the placeholder text of that input.
 - **Ask confirm** (bool) : Whether to present the user with a confirmation box before submitting the incident report for this failure.
 - **Restricted to group ID** (string) : Only the given group of users or their children can report this failure.
 
