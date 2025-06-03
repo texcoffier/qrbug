@@ -75,23 +75,12 @@ async def register_incident(request: web.Request) -> web.StreamResponse:
                     return web.Response(status=403, text="Login ticket invalid")
 
     is_repaired_bool: bool = is_repaired == '1'
-    timestamp = int(time.time())
-    current_date = time.strftime('%Y-%m-%d %H:%M:%S')
-    function_name = "incident_del" if is_repaired_bool else "incident_new"  # TODO: Refactor
     user_ip = request.remote
 
-    function_to_log = f"{function_name}({repr(thing_id)}, {repr(failure_id)}, {repr(user_ip)}, {timestamp}"
-    if is_repaired_bool is False:
-        if additional_info is not None:
-            # incident_del() does not take additional_info as parameter,
-            # therefore if the incident is repaired, we must ABSOLUTELY NOT get into this if block
-            # if this incident is resolved
-            function_to_log += f", {repr(additional_info)}"
+    if is_repaired_bool:
+        current_incident = qrbug.Incident.close(thing_id, failure_id, user_ip, user_login)
     else:
-        function_to_log += f", {repr(user_login)}"
-    function_to_log += f")  # {current_date} {user_login}\n"
-
-    current_incident = qrbug.append_line_to_journal(function_to_log)
+        current_incident = qrbug.Incident.open(thing_id, failure_id, user_ip, user_login, additional_info)
 
     # if failure.auto_close_incident:  # TODO: Move after dispatch_del
     #     qrbug.append_line_to_journal(f'incident_del({repr(thing_id)}, {repr(failure_id)}, {repr(user_ip)}, {timestamp}, {repr(user_login)})  # {current_date} {user_login}\n')

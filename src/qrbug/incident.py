@@ -1,3 +1,4 @@
+import time
 from typing import Optional
 import re
 
@@ -35,6 +36,30 @@ class Incident:  # TODO: Séparer en deux classes, une avec les parties individu
         new_incident = Incident(thing_id, failure_id, ip, timestamp, comment)
         cls.active.append(new_incident)
         return new_incident
+
+    @classmethod
+    def close(cls, thing_id: qrbug.ThingId, failure_id: qrbug.FailureId, ip: str, login: str) -> "Incident":
+        """
+        Closes the given incident AND writes it into the journal
+        """
+        return qrbug.append_line_to_journal(
+            f"incident_del({repr(thing_id)}, {repr(failure_id)}, {repr(ip)}, {int(time.time())}, {repr(login)})"
+            f"  # {time.strftime('%Y-%m-%d %H:%M:%S')} {login}\n"  # TODO Remove XSS from pasting login
+        )
+
+    @classmethod
+    def open(cls, thing_id: qrbug.ThingId, failure_id: qrbug.FailureId, ip: str, login: str, additional_info: Optional[str] = None) -> "Incident":
+        """
+        Opens a new incident based on the parameters AND writes it into the journal
+        """
+        final_string = [
+            f"incident_new({repr(thing_id)}, {repr(failure_id)}, {repr(ip)}, {int(time.time())}",
+            '',
+            f")  # {time.strftime('%Y-%m-%d %H:%M:%S')} {login}\n",  # TODO Remove XSS from pasting login
+        ]
+        if additional_info is not None:
+            final_string[1] = f", {repr(additional_info)}"
+        return qrbug.append_line_to_journal(''.join(final_string))
 
     @classmethod
     def remove(cls, other_thing_id: str, other_failure_id: str, login: str) -> list["Incident"]:
