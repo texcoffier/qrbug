@@ -26,6 +26,15 @@ class Tree:
             return f'{parent_path}/{self.id}'
         return f'/{self.id}'
 
+    def inside(self, node: "TreeId"):
+        """Consider that a node is not inside itself"""
+        for parent in self.parent_ids:
+            if parent == node:
+                return True
+            if self.instances[parent].inside(node):
+                return True
+        return False
+
     def add_child(self, child: "Tree", before: str = '') -> None:
         # assert child.id not in self.children_ids, f"{child.id} is already a child of {self.id}"
         # assert child.id != self.id, f"Cannot make {child.id} a child of itself !"
