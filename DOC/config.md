@@ -108,11 +108,11 @@ from aiohttp import web
 
 import qrbug
 
-async def run(incident: qrbug.Incident, request: web.Request) -> Optional[str]:
+async def run(incidents: List[qrbug.Incident], request: web.Request) -> Optional[str]:
     pass
 ```
 - The `run` function is the entry point of your program, and will be awaited when called.
-  - Its `incident` parameter is the incident triggering the action
+  - Its `incidents` parameter is the list of incident to process.
   - The `request` parameter corresponds to the aiohttp request the user made to the server to register the incident
 - To send HTML back to the webpage displayed after your action is called, use the following code :
 ```py
@@ -123,14 +123,14 @@ await request.response.write(my_html_string.encode('utf-8'))
 #### Dispatcher
 Dispatchers are made to know when to trigger an action based on a selector.
 
-You can create/update one with `dispatcher_update(dispatcher_id, action_id, selector_id, group_id, when)`.
+You can create/update one with `dispatcher_update(dispatcher_id, action_id, selector_id, group_id, incidents)`.
 
 Each of these parameters _(besides `dispatcher_id`)_ are optional.
 
 - **Action ID** : The ID of the action to trigger when this dispatcher deems it necessary.
 - **Selector ID** : The ID of the selector the dispatcher will run to know if the action should be triggered
 - **Group ID** : The group of people to warn (by email) when an incident occurs and an action is triggered
-- **When** : Whether the dispatcher should run synchronously (immediately when the incident occurs), or every n weeks/days/hours...
+- **incidents** : The ID of the selector filtering the incident list to pass to the action.
 
 You can delete a dispatcher with `dispatcher_del(dispatcher_id)`.
 

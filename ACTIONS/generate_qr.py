@@ -3,13 +3,18 @@ from aiohttp import web
 
 import qrbug
 
+# Run by a dispatcher:
+#    thing: building, room, pc...
+#    failure: print qr code
+#    incidents: descendants of the thing
 
-@qrbug.action_helpers.auto_close_incident
-async def run(incident: qrbug.Incident, request: web.Request) -> Optional[qrbug.action_helpers.ActionReturnValue]:
+async def run(incidents: List[qrbug.Incident], request: web.Request) -> Optional[qrbug.action_helpers.ActionReturnValue]:
     import base64
     from io import BytesIO
     import qrbug
     import qrcode
+
+    incident = incidents[0]
 
     REPORT_THING_URL = qrbug.SERVICE_URL + '/thing={}'
 
@@ -27,3 +32,5 @@ async def run(incident: qrbug.Incident, request: web.Request) -> Optional[qrbug.
         f'<h2>QR Code pour {requested_thing_id}</h2>'
         f'<div><img src="data:image/jpeg;base64,{img_base64.decode()}" /></div>'
     ).encode('utf-8'))
+
+    incident.incident_del()

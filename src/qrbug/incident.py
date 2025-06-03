@@ -51,6 +51,9 @@ class Incident:  # TODO: Séparer en deux classes, une avec les parties individu
             f"  # {time.strftime('%Y-%m-%d %H:%M:%S')} {safe(login)}\n"
         )
 
+    def incident_del(self):
+        return self.close(self.thing_id, self.failure_id, self.ip, self.login)
+
     @classmethod
     def open(cls, thing_id: qrbug.ThingId, failure_id: qrbug.FailureId, ip: str, login: str, additional_info: Optional[str] = None) -> "Incident":
         """
