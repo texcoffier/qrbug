@@ -5,6 +5,12 @@ import re
 import qrbug
 
 
+def safe(string: str) -> str:
+    return (string.replace('\n', '\\n')
+                  .replace('\r', '\\r')
+            )
+
+
 class Incident:  # TODO: Séparer en deux classes, une avec les parties individuelles te une avec les parties communes
     active: list["Incident"] = []
     finished: list["Incident"] = []
@@ -42,7 +48,7 @@ class Incident:  # TODO: Séparer en deux classes, une avec les parties individu
         """
         return qrbug.append_line_to_journal(
             f"incident_del({repr(thing_id)}, {repr(failure_id)}, {repr(ip)}, {int(time.time())}, {repr(login)})"
-            f"  # {time.strftime('%Y-%m-%d %H:%M:%S')} {login}\n"  # TODO Remove XSS from pasting login
+            f"  # {time.strftime('%Y-%m-%d %H:%M:%S')} {safe(login)}\n"
         )
 
     @classmethod
@@ -53,7 +59,7 @@ class Incident:  # TODO: Séparer en deux classes, une avec les parties individu
         final_string = [
             f"incident_new({repr(thing_id)}, {repr(failure_id)}, {repr(ip)}, {int(time.time())}",
             '',
-            f")  # {time.strftime('%Y-%m-%d %H:%M:%S')} {login}\n",  # TODO Remove XSS from pasting login
+            f")  # {time.strftime('%Y-%m-%d %H:%M:%S')} {safe(login)}\n",
         ]
         if additional_info is not None:
             final_string[1] = f", {repr(additional_info)}"
