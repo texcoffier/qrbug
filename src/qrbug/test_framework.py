@@ -9,6 +9,8 @@ class TestCase(unittest.TestCase):
         qrbug.User.instances.clear()
         qrbug.Failure.instances.clear()
         qrbug.Thing.instances.clear()
+        qrbug.Incident.active.clear()
+        qrbug.Incident.finished.clear()
 
     def check(self, cls, value):
         # The parameters are arranged in this order because the EXPECTED value goes first, followed by the

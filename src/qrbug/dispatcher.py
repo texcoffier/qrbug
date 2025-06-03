@@ -46,6 +46,8 @@ class Dispatcher(qrbug.Tree):
                          for incident in qrbug.Incident.active
                          if selector.is_ok(incident)
                         ]
+            if not incidents:
+                return
         else:
             incidents = [incident]
 

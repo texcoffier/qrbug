@@ -65,6 +65,12 @@ class Selector:
         if not self.compiled:
             self.expr = compil_expr(ast.literal_eval(self.expression)) # For regtests
             self.compiled = compile(self.expr, '', 'eval')
+
+        if qrbug.Thing[incident.thing_id] is None:
+            raise Exception(f'Unknown thing: «{incident.thing_id}»')
+        if qrbug.Failure[incident.failure_id] is None:
+            raise Exception(f'Unknown failure: «{incident.failure_id}»')
+
         return eval(self.compiled, {"incident": incident, 'qrbug': qrbug})
 
     def __class_getitem__(cls, selector_id: str) -> Optional["Selector"]:

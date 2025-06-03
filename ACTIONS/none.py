@@ -1,7 +1,7 @@
 """
 An empty action : Does nothing.
 """
-from typing import Optional
+from typing import Optional, List
 from aiohttp import web
 
 import qrbug
