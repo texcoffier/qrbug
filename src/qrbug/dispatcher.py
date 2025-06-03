@@ -32,27 +32,19 @@ class Dispatcher(qrbug.Tree):
         """
         Returns a dict with keys being the thing_id and failure_id of an incident, and values being the returned HTML.
         """
-        selector = qrbug.Selector[self.selector_id]
-        action = qrbug.Action[self.action_id]
-
         # TODO: ! DOCUMENTATION !
+
+        if not qrbug.Selector[self.selector_id].is_ok(incident, request):
+            return None
+
+        # dispatch() updates the running_incidents set (increases size)
+        qrbug.append_line_to_journal(f'dispatch({repr(self.id)}, {repr(incident.failure_id)}, {repr(incident.thing_id)}, {repr(self.action_id)}, {repr(self.group_id)}, {int(time.time())})  # {time.strftime("%Y-%m-%d %H:%M:%S")}\n')
 
         # TODO : Action renvoie un dictionnaire
         # - Champs avec message d'erreur
         # - Champs avec 'auto-repair' (incident_del, defaults False)
 
-        if not selector.is_ok(qrbug.User[self.group_id], qrbug.Thing[incident.thing_id], qrbug.Failure[incident.failure_id]):
-            # TODO: Dans le sélecteur - teste si 3 incidents dans 1 salle, si pour un d'entre eux le dispatcheur est lancé, il n'est pas relancé
-            return None
-
-        #if (incident.failure_id, incident.thing_id) in self.running_incidents:
-        #    # The dispatcher doesn't run because it is already active
-        #    return None
-
-        # dispatch() updates the running_incidents set (increases size)
-        qrbug.append_line_to_journal(f'dispatch({repr(self.id)}, {repr(incident.failure_id)}, {repr(incident.thing_id)}, {repr(self.action_id)}, {repr(self.group_id)}, {int(time.time())})  # {time.strftime("%Y-%m-%d %H:%M:%S")}\n')
-
-        return_value = await action.run(incident, request)
+        return_value = await qrbug.Action[self.action_id].run(incident, request)
         # Action.run décide de la liste des incidents sur lesquels ont veut dire 'les dispatcheurs ont pris ceux-là en comlpte'
         # `A ce moment-là, on rajoute au journal la liste de ces incidents
         # On ajoute incident_update, on lui passe le (thing_id, failure_id) et le dispatcher_id

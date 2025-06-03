@@ -7,12 +7,13 @@ OPERATORS = [' or ', ' and ']
 
 ITEMS = {
     'Incident': 'incident'                         , # The incident sent to dispatcher
-    #'Thing': 'qrbug.Thing[incident.thing_id]'      , # Its thing
-    'Thing': 'thing',
-    #'Failure': 'qrbug.Failure[incident.failure_id]', # Its failure
-    'Failure': 'failure',
-    'User': 'qrbug.User[request.login]'            , # User triggering the incident
+    'Thing': 'qrbug.Thing[incident.thing_id]'      , # Its thing
+    'Failure': 'qrbug.Failure[incident.failure_id]', # Its failure
+    'User': 'qrbug.User[incident.login]'           , # User triggering the incident
     'Selector': 'qrbug.Selector[%ID%]'             , # Selector from 'id' attr
+    # TODO :
+    #   * Incident other attributes (IP, date...)
+    #   * Incident closed/open
 }
 
 ATTRIBUTES = {
@@ -20,7 +21,7 @@ ATTRIBUTES = {
     'id'                     : '.id'                         , # Any
     'location'               : '.location'                   , # Thing
     'comment'                : '.comment'                    , # Thing
-    'is_ok'                  : '.is_ok(user, thing, failure)', # Selector
+    'is_ok'                  : '.is_ok(incident)'            , # Selector
     'value'                  : '.value'                      , # Failure
     'display_type'           : '.display_type'               , # Failure
     'ask_confirm'            : '.ask_confirm'                , # Failure
@@ -60,11 +61,11 @@ class Selector:
         self.expression = expression
         self.instances[selector_id] = self
 
-    def is_ok(self, user: 'qrbug.User', thing: 'qrbug.Thing', failure: 'qrbug.Failure') -> bool:
+    def is_ok(self, incident: 'qrbug.Incident') -> bool:
         if not self.compiled:
             self.expr = compil_expr(ast.literal_eval(self.expression)) # For regtests
             self.compiled = compile(self.expr, '', 'eval')
-        return eval(self.compiled, {"user": user, "thing": thing, "failure": failure, 'qrbug': qrbug})
+        return eval(self.compiled, {"incident": incident, 'qrbug': qrbug})
 
     def __class_getitem__(cls, selector_id: str) -> Optional["Selector"]:
         return cls.instances.get(selector_id, None)

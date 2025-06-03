@@ -18,9 +18,10 @@ def init_db():
 
 class TestSelector(qrbug.TestCase):
 
-    def check(self, selector, user, thing, failure, expected):
-        result = selector.is_ok(
-            qrbug.User[user], qrbug.Thing[thing], qrbug.Failure[failure])
+    def check(self, selector, login, thing_id, failure_id, expected):
+        incident = qrbug.Incident(thing_id, failure_id, login=login,
+            ip='no-ip', timestamp=42, comment='no-comment')
+        result = selector.is_ok(incident)
         self.assertEqual(result, expected, selector.expr)
 
     def test_thing(self):
