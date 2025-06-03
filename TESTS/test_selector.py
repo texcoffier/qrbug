@@ -1,22 +1,23 @@
 import qrbug.init
 import qrbug
 
-def init_db():
-    qrbug.thing_update('thing_child',
-        location='thing_child_location',
-        comment='thing_child_comment')
-    qrbug.user_add('user_parent', 'user_child')
-    qrbug.thing_add('thing_parent', 'thing_child')
-    qrbug.thing_add('thing_parent_parent', 'thing_parent')
-    qrbug.failure_update('fail1',
-        value='first failure',
-        display_type=qrbug.DisplayTypes.text,
-        ask_confirm=False,
-        restricted_to_group_id='group'
-    )
 
 
 class TestSelector(qrbug.TestCase):
+
+    def setUp(self):
+        qrbug.thing_update('thing_child',
+            location='thing_child_location',
+            comment='thing_child_comment')
+        qrbug.user_add('user_parent', 'user_child')
+        qrbug.thing_add('thing_parent', 'thing_child')
+        qrbug.thing_add('thing_parent_parent', 'thing_parent')
+        qrbug.failure_update('fail1',
+            value='first failure',
+            display_type=qrbug.DisplayTypes.text,
+            ask_confirm=False,
+            restricted_to_group_id='group'
+        )
 
     def check(self, selector, login, thing_id, failure_id, expected):
         incident = qrbug.Incident(thing_id, failure_id, login=login,
@@ -25,8 +26,6 @@ class TestSelector(qrbug.TestCase):
         self.assertEqual(result, expected, selector.expr)
 
     def test_thing(self):
-        init_db()
-
         s = qrbug.selector_update('thing_id=thing_child',
             '{"class":"Thing", "attr":"id", "test":"=", "value":"thing_child"}')
         self.check(s, "user_child", "thing_child" , "fail1", True)
@@ -83,11 +82,8 @@ class TestSelector(qrbug.TestCase):
             '{"class":"Thing", "attr":"comment", "test":"true"}')
         self.check(s, "user_child", "thing_child" , "fail1", 'thing_child_comment')
 
-        self.tearDown()
 
     def test_failure(self):
-        init_db()
-
         s = qrbug.selector_update('failure value',
             '{"class":"Failure", "attr":"value", "test":"true"}')
         self.check(s, "user_child", "thing_child" , "fail1", 'first failure')
@@ -104,12 +100,9 @@ class TestSelector(qrbug.TestCase):
             '{"class":"Failure", "attr":"restricted_to_group_id", "test":"true"}')
         self.check(s, "user_child", "thing_child" , "fail1", 'group')
 
-        self.tearDown()
 
 
     def test_or_and(self):
-        init_db()
-
         s = qrbug.selector_update('thing_id or failure_id',
             '[0, {"class":"Thing", "attr":"id", "test":"true"}, {"class":"Failure", "attr":"id", "test":"true"}]')
         self.check(s, "user_child", "thing_child" , "fail1", 'thing_child')
@@ -133,8 +126,5 @@ class TestSelector(qrbug.TestCase):
         s = qrbug.selector_update('not thing_id and not failure_id',
             '[1, {"class":"Thing", "attr":"id", "test":"true"}, {"class":"Failure", "attr":"id", "test":"false"}]')
         self.check(s, "user_child", "thing_child" , "fail1", False)
-
-
-        self.tearDown()
 
         
