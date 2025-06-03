@@ -3,14 +3,13 @@ from aiohttp import web
 
 import qrbug
 
-
-@qrbug.action_helpers.auto_close_incident
-async def run(incident: qrbug.Incident, request: web.Request) -> Optional[qrbug.action_helpers.ActionReturnValue]:
+async def run(incidents: List[qrbug.Incident], request: web.Request) -> Optional[qrbug.action_helpers.ActionReturnValue]:
     from pathlib import Path
     import asyncio
     import html
     import qrbug
 
+    incident = incidents[0]
     FILE_CHUNK_SIZE_BYTES = 100_000
 
 
@@ -46,5 +45,7 @@ async def run(incident: qrbug.Incident, request: web.Request) -> Optional[qrbug.
         await request.response.write(f'<h2>{journal_name} :</h2><pre>'.encode('utf-8'))
         await stream_html_from_path(journal_path, request.response)
         await request.response.write('</pre>\n'.encode('utf-8'))
+
+    incident.incident_del()
 
     return None

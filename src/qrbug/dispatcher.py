@@ -14,7 +14,7 @@ class Dispatcher(qrbug.Tree):
     action_id   : str = 'none'  # By default, an action that does nothing
     selector_id : str = 'true'  # By default, a selector that is always true
     group_id    : str = 'nobody'  # Group of people to warn upon dispatch, default is user group 'nobody'
-    when        : str = 'synchro'
+    incidents   : str = ''      # Selector ID to compute incidents list. If empty : current incident
 
     def init(self):
         pass  # TODO: Gérer le cas d'usage d'un déclenchement après plusieurs signalements de pannes dans une même salle
@@ -26,7 +26,7 @@ class Dispatcher(qrbug.Tree):
         #     'group_id': 'group',
         # }
         # return self.get_representation(attributes_short=short_names)
-        return f'action:{self.action_id} selector:{self.selector_id} group:{self.group_id} when:{self.when}'
+        return f'action:{self.action_id} selector:{self.selector_id} group:{self.group_id} incidents:{self.incidents}'
 
     async def run(self, incident: qrbug.Incident, request) -> Optional[qrbug.action_helpers.ActionReturnValue]:
         """
@@ -44,7 +44,16 @@ class Dispatcher(qrbug.Tree):
         # - Champs avec message d'erreur
         # - Champs avec 'auto-repair' (incident_del, defaults False)
 
-        return_value = await qrbug.Action[self.action_id].run(incident, request)
+        if self.incidents:
+            selector = qrbug.Selector[self.incidents]
+            incidents = [incident
+                         for incident in qrbug.Incident.active
+                         if selector.is_ok(incident)
+                        ]
+        else:
+            incidents = [incident]
+
+        return_value = await qrbug.Action[self.action_id].run(incidents, request)
         # Action.run décide de la liste des incidents sur lesquels ont veut dire 'les dispatcheurs ont pris ceux-là en comlpte'
         # `A ce moment-là, on rajoute au journal la liste de ces incidents
         # On ajoute incident_update, on lui passe le (thing_id, failure_id) et le dispatcher_id
@@ -113,5 +122,5 @@ qrbug.dispatch = dispatch
 qrbug.dispatch_del = dispatch_del
 
 if __name__ == "__main__":
-    dispatcher_update("0", when="Test", selector_id="0")
+    dispatcher_update("0", selector_id="0")
     print(Dispatcher.get("0").dump())
