@@ -21,6 +21,7 @@ def init_db():
     qrbug.selector_update('false', '{"class": "Thing", "attr":"id", "test": "false"}')
     qrbug.selector_update('07:00', '{"class": "Failure", "attr":"id", "test": "=", "value": "07:00"}')
     qrbug.action_update('echo', 'echo.py')
+    qrbug.action_update('close', 'close.py')
 
 class File:
     def __init__(self, lines):
@@ -74,10 +75,14 @@ class TestAction(qrbug.TestCase):
         d1 = qrbug.dispatcher_update('morning', action_id='echo', selector_id='07:00',
             group_id='user_parent', incidents='true')
 
+        close = qrbug.dispatcher_update('close', action_id='close', selector_id='07:00')
+
         i1 = qrbug.Incident.open('thing_child', 'fail1', 'ip1', 'login1')
         self.check(d1, i1, [])
         i2 = qrbug.Incident.open('thing_child', 'fail1', 'ip2', 'login2')
         self.check(d1, i2, [])
+        
+        # Close '07:00' after dispatching
         morning = qrbug.Incident.open('debug', '07:00', '', '')
         self.check(d1, morning, [
             'Start\n',
@@ -86,13 +91,26 @@ class TestAction(qrbug.TestCase):
             'debug,07:00,,None,,None\n',
             'End\n'
             ])
+        self.check(close, morning, ['«Clôture de /07:00» «VALEUR_NON_DEFINIE POUR «07:00»»\n'])
+
+        # Close '07:00' after dispatching
         morning = qrbug.Incident.open('debug', '07:00', '', '')
         self.check(d1, morning, [
             'Start\n',
             'thing_child,fail1,ip1,None,,None\n',
             'thing_child,fail1,ip2,None,,None\n',
             'debug,07:00,,None,,None\n',
-            'debug,07:00,,None,,None\n',
+            'End\n'
+            ])
+        self.check(close, morning, ['«Clôture de /07:00» «VALEUR_NON_DEFINIE POUR «07:00»»\n'])
+
+        # Close '07:00' before dispatching
+        morning = qrbug.Incident.open('debug', '07:00', '', '')
+        self.check(close, morning, ['«Clôture de /07:00» «VALEUR_NON_DEFINIE POUR «07:00»»\n'])
+        self.check(d1, morning, [
+            'Start\n',
+            'thing_child,fail1,ip1,None,,None\n',
+            'thing_child,fail1,ip2,None,,None\n',
             'End\n'
             ])
 
