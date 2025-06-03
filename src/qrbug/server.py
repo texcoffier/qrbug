@@ -99,7 +99,7 @@ async def register_incident(request: web.Request) -> web.StreamResponse:
     # Dispatchers
     returned_html: dict[str, Optional[qrbug.action_helpers.ActionReturnValue]] = {}
     if not is_repaired_bool:
-        for dispatcher in qrbug.Dispatcher.instances.values():
+        for dispatcher in qrbug.Dispatcher.sorted_instances:
             returned_html[dispatcher.id] = await dispatcher.run(current_incident, request)
 
     if any(value is not None for value in returned_html.values()):

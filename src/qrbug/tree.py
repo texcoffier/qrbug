@@ -1,5 +1,5 @@
 import enum
-from typing import Generator, Optional
+from typing import Generator, Optional, List
 from io import StringIO
 
 import qrbug
@@ -7,12 +7,14 @@ import qrbug
 
 class Tree:
     instances: dict[str, "Tree"] = None
+    sorted_instances: List["Tree"] = []
 
     def __init__(self, tree_id: str) -> None:
         self.id: str = tree_id
         self.children_ids: list[str] = []
         self.parent_ids: set[str] = set()
         self.init()
+        Tree.sorted_instances = sorted(self.instances.values(), key=lambda x: x.id)
 
     def init(self) -> None: # Redefined by subclass
         pass
