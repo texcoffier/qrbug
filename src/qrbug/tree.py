@@ -14,7 +14,7 @@ class Tree:
         self.children_ids: list[str] = []
         self.parent_ids: set[str] = set()
         self.init()
-        Tree.sorted_instances = sorted(self.instances.values(), key=lambda x: x.id)
+        self.__class__.sorted_instances = sorted(self.instances.values(), key=lambda x: x.id)
 
     def init(self) -> None: # Redefined by subclass
         pass
