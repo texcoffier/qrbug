@@ -1,6 +1,4 @@
-import datetime
 import time
-from datetime import datetime
 from pathlib import Path
 from typing import Optional
 
@@ -78,7 +76,7 @@ async def register_incident(request: web.Request) -> web.StreamResponse:
 
     is_repaired_bool: bool = is_repaired == '1'
     timestamp = int(time.time())
-    current_date = datetime.fromtimestamp(timestamp).strftime('%Y-%m-%d %H:%M:%S')
+    current_date = time.strftime('%Y-%m-%d %H:%M:%S')
     function_name = "incident_del" if is_repaired_bool else "incident_new"  # TODO: Refactor
     user_ip = request.remote
 
