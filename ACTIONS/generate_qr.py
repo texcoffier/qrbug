@@ -8,7 +8,7 @@ import qrbug
 #    failure: print qr code
 #    incidents: descendants of the thing
 
-async def run(incidents: List[qrbug.Incident], request: web.Request) -> Optional[qrbug.action_helpers.ActionReturnValue]:
+async def run(incidents: list[qrbug.Incident], request: web.Request) -> Optional[qrbug.action_helpers.ActionReturnValue]:
     import base64
     from io import BytesIO
     import qrbug
