@@ -8,6 +8,7 @@ class TestCase(unittest.TestCase):
     def tearDown(self):
         qrbug.User.instances.clear()
         qrbug.Failure.instances.clear()
+        qrbug.Thing.instances.clear()
 
     def check(self, cls, value):
         # The parameters are arranged in this order because the EXPECTED value goes first, followed by the
