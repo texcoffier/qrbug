@@ -40,10 +40,6 @@ class Dispatcher(qrbug.Tree):
         # dispatch() updates the running_incidents set (increases size)
         qrbug.append_line_to_journal(f'dispatch({repr(self.id)}, {repr(incident.failure_id)}, {repr(incident.thing_id)}, {repr(self.action_id)}, {repr(self.group_id)}, {int(time.time())})  # {time.strftime("%Y-%m-%d %H:%M:%S")}\n')
 
-        # TODO : Action renvoie un dictionnaire
-        # - Champs avec message d'erreur
-        # - Champs avec 'auto-repair' (incident_del, defaults False)
-
         if self.incidents:
             selector = qrbug.Selector[self.incidents]
             incidents = [incident
