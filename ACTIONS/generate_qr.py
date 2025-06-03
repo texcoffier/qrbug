@@ -16,7 +16,7 @@ async def run(incidents: list[qrbug.Incident], request: web.Request) -> Optional
 
     incident = incidents[0]
 
-    IMAGE_FORMAT = 'JPEG'
+    IMAGE_FORMAT = 'PNG'
     REPORT_THING_URL = qrbug.SERVICE_URL + '/thing={}'
 
     requested_thing_id = incident.comment
@@ -27,6 +27,9 @@ async def run(incidents: list[qrbug.Incident], request: web.Request) -> Optional
     buffer = BytesIO()
     img.save(buffer, format=IMAGE_FORMAT)
     img_base64 = base64.b64encode(buffer.getvalue())
+
+    # TODO : générer les QR codes de tous les objets fils de ceux passés en paramètre
+    # sorted(Thing[id] for id in get_all_children_ids(), key=lambda x: x.path())
 
     # Writes the HTML of the QR code
     await request.response.write((
