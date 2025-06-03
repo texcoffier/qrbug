@@ -20,8 +20,6 @@ class Incident:  # TODO: Séparer en deux classes, une avec les parties individu
         self.login = login
         self.remover_login = None
 
-    # TODO: Fonctions utilitaires pour les devs d'actions
-
     def dump(self) -> str:
         return f'thing:{self.thing_id} fail:{self.failure_id} ip:{self.ip} comment:{repr(self.comment)}'
 
