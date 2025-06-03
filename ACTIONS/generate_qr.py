@@ -16,6 +16,7 @@ async def run(incidents: list[qrbug.Incident], request: web.Request) -> Optional
 
     incident = incidents[0]
 
+    IMAGE_FORMAT = 'JPEG'
     REPORT_THING_URL = qrbug.SERVICE_URL + '/thing={}'
 
     requested_thing_id = incident.comment
@@ -24,13 +25,13 @@ async def run(incidents: list[qrbug.Incident], request: web.Request) -> Optional
     img = qrcode.make(url)
 
     buffer = BytesIO()
-    img.save(buffer, format='JPEG')
+    img.save(buffer, format=IMAGE_FORMAT)
     img_base64 = base64.b64encode(buffer.getvalue())
 
     # Writes the HTML of the QR code
     await request.response.write((
         f'<h2>QR Code pour {requested_thing_id}</h2>'
-        f'<div><img src="data:image/jpeg;base64,{img_base64.decode()}" /></div>'
+        f'<div><img src="data:image/{IMAGE_FORMAT.lower()};base64,{img_base64.decode()}" /></div>'
     ).encode('utf-8'))
 
     incident.incident_del()
