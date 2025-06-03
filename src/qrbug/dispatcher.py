@@ -34,7 +34,7 @@ class Dispatcher(qrbug.Tree):
         """
         # TODO: ! DOCUMENTATION !
 
-        if not qrbug.Selector[self.selector_id].is_ok(incident, request):
+        if not qrbug.Selector[self.selector_id].is_ok(incident):
             return None
 
         # dispatch() updates the running_incidents set (increases size)
