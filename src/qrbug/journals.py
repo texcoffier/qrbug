@@ -27,11 +27,6 @@ def load_config(db_config_path: Path = None, default_db_path: Path = None) -> No
     # Loads the DB
     exec_code_file(db_config_path if db_config_path is not None else qrbug.DB_FILE_PATH, qrbug.CONFIGS)
 
-    # Parents every failure WITHOUT PARENTS to the debug failure
-    for failure_id, failure in qrbug.Failure.instances.items():
-        if failure_id != 'debug' and len(failure.parent_ids) == 0:
-            qrbug.failure_add('debug', failure_id)
-
 
 def load_incidents(incidents_config_path: Path = None) -> None:
     exec_code_file(

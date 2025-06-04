@@ -65,6 +65,23 @@ class Tree:
         add_child_to_set(self)
         return all_children
 
+    def walk(self, go_in, go_out):
+        done = set()
+        def walk_(node):
+            go_in(node)
+            if node.id not in done:
+                done.add(node.id)
+                for child_id in node.children_ids:
+                    walk_(node.instances[child_id])
+            go_out(node)
+        walk_(self)
+
+    @classmethod
+    def roots(self):
+        for node in self.instances.values():
+            if not node.parent_ids:
+                yield node
+
     @classmethod
     def get(cls, tree_id: str) -> "Tree":
         """ Returns the given tree instance if it exists, or CREATES IT then returns it otherwise. """
