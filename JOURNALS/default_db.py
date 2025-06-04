@@ -8,6 +8,7 @@ action('list', 'list.py')
 selector('true', '{"class":"Thing", "attr":"id", "test":"true"}')
 selector('list', '{"class":"Failure", "test":"in", "value": "list"}')
 selector('journal', '{"class":"Failure", "test":"in", "value": "journal"}')
+selector('generate_qr', '{"class":"Failure", "attr":"id", "test":"=", "value": "generate_qr"}')
 
 user_add('admin', 'thierry.excoffier')
 user_add('admin', 'p2205989')
@@ -38,8 +39,14 @@ failure_add('journal', 'journal-config')
 failure_update('journal-incident', value="journal des incidents", ask_confirm=False, restricted_to_group_id="admin", display_type=DisplayTypes.button)
 failure_add('journal', 'journal-incident')
 
+failure_update('generate_qr_top', value='Générer un QR code :', ask_confirm=False, restricted_to_group_id="admin", display_type=DisplayTypes.text)
+failure_add('top', 'generate_qr_top')
+failure_update('generate_qr', value='Entrez le nom d\'une Thing', ask_confirm=True, restricted_to_group_id="admin", display_type=DisplayTypes.input)
+failure_add('generate_qr_top', 'generate_qr')
+
 thing_update('admin', failure_id="top", comment="Interface d'administration")
 
 dispatcher_update('admin-list', action_id='list', selector_id='list')
 dispatcher_update('admin-journal', action_id='journal', selector_id='journal')
+dispatcher_update('generate-qr', action_id='generate_qrcode', selector_id='generate_qr')
 
