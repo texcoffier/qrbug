@@ -33,11 +33,11 @@ class Incident:  # TODO: Séparer en deux classes, une avec les parties individu
         return self.thing_id == other_thing_id and self.failure_id == other_failure_id
 
     @classmethod
-    def create(cls, thing_id: str, failure_id: str, ip: str, timestamp: int, comment: Optional[str] = None) -> "Incident":
+    def create(cls, thing_id: str, failure_id: str, ip: str, timestamp: int, comment: Optional[str] = None, login: Optional[str] = None) -> "Incident":
         """
         Factory method, creates a new incident and stores it within the incident instances
         """
-        new_incident = Incident(thing_id, failure_id, ip, timestamp, comment)
+        new_incident = Incident(thing_id, failure_id, ip, timestamp, comment, login)
         cls.active.append(new_incident)
         return new_incident
 
@@ -60,12 +60,12 @@ class Incident:  # TODO: Séparer en deux classes, une avec les parties individu
         Opens a new incident based on the parameters AND writes it into the journal
         """
         final_string = [
-            f"incident_new({repr(thing_id)}, {repr(failure_id)}, {repr(ip)}, {int(time.time())}",
-            '',
-            f")  # {time.strftime('%Y-%m-%d %H:%M:%S')} {safe(login)}\n",
+            f"incident_new({repr(thing_id)}, {repr(failure_id)}, {repr(ip)}, {int(time.time())},",
+            '""',
+            f", {repr(login)})  # {time.strftime('%Y-%m-%d %H:%M:%S')}\n",
         ]
         if additional_info is not None:
-            final_string[1] = f", {repr(additional_info)}"
+            final_string[1] = f"{repr(additional_info)}"
         return qrbug.append_line_to_journal(''.join(final_string))
 
     @classmethod
@@ -151,8 +151,9 @@ class Incident:  # TODO: Séparer en deux classes, une avec les parties individu
         return qrbug.Thing[self.thing_id]
 
 
-def incident_new(thing_id: qrbug.ThingId, failure_id: qrbug.FailureId, ip: str, timestamp: int, comment: Optional[str] = None) -> "Incident":
-    return Incident.create(thing_id, failure_id, ip, timestamp, comment)
+def incident_new(thing_id: qrbug.ThingId, failure_id: qrbug.FailureId, ip: str,
+        timestamp: int, comment: Optional[str] = None, login: Optional[str] = None) -> "Incident":
+    return Incident.create(thing_id, failure_id, ip, timestamp, comment, login)
 
 
 def incident_del(thing_id: qrbug.ThingId, failure_id: qrbug.FailureId, ip: str, timestamp: int, login: str) -> list["Incident"]:
