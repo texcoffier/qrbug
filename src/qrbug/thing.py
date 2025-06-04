@@ -1,3 +1,4 @@
+import html
 from typing import Optional, TypeAlias
 
 import qrbug
@@ -48,6 +49,45 @@ class Thing(qrbug.Tree):
     @property
     def failure(self) -> Optional[qrbug.Failure]:
         return qrbug.Failure[self.failure_id]
+
+    def get_html(self, is_full_page: bool = False) -> str:
+        """
+        Returns an HTML representation of this Thing and its linked Failure.
+        :param is_full_page: If true, will return a full page based on 'STATIC/report_failure.html'
+        :return: The HTML representation of this Thing.
+        """
+        if is_full_page:
+            with qrbug.REPORT_FAILURE_TEMPLATE as template_file:
+                html_template = template_file.read_text()
+
+        representation: list[str] = [
+            '<div>',
+            '  <ul>',
+            f'    <li>Emplacement : {html.escape(self.location) if self.location is not None else "[NON REMPLI]"}</li>',
+            f'    <li>Commentaire : {html.escape(self.comment) if self.comment else "[NON REMPLI]"}</li>',
+            f'    <li>ID : {html.escape(self.id) if self.id is not None else "[NON REMPLI]"}</li>',
+            f'    <li>ID de la Failure : {html.escape(self.failure_id) if self.failure_id is not None else "[NON REMPLI]"}</li>',
+            '  </ul>',
+            '</div>',
+            '<div>',
+            self.failure.get_hierarchy_representation_html(self.id, False),
+            '</div>',
+            '<div>',
+        ]
+        if is_full_page:
+            representation.append(
+                f'  <div failureid="generate_qr" thingid="{self.id}" class="button" onclick="register_incident(this)"><BOX>Générer un QR code pour cet objet</BOX></div>'
+            )
+        else:
+            representation.append(
+                f'  <a href="/?thing-id={self.id}&failure-id=generate_qr&is-repaired=0&additional-info={self.id}">Générer un QR code pour cet objet</a>'
+            )
+        representation.append('</div>')
+
+        if is_full_page:
+            return html_template.replace("%REPRESENTATION%", ''.join(representation))
+        else:
+            return ''.join(representation)
 
 
 def thing_update(thing_id: ThingId, **kwargs) -> Thing:
