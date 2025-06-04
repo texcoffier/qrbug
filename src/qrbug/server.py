@@ -180,7 +180,7 @@ def init_server(argv = None) -> tuple[web.Application, str, int]:
     # Creates the server
     app = web.Application()
     app.add_routes([
-        web.get('/thing={thing_id}', show_failures_tree_route),
+        web.get('/thing={thing_id:[^{}\?]+}', show_failures_tree_route),
         web.get('/', register_incident)
     ])
     return app, host, port
