@@ -40,6 +40,10 @@ class Thing(qrbug.Tree):
         else:
             return root_failure.get_hierarchy_representation()
 
+    @property
+    def failure(self) -> Optional[qrbug.Failure]:
+        return qrbug.Failure[self.failure_id]
+
 
 def thing_update(thing_id: ThingId, **kwargs) -> Thing:
     """
