@@ -1,5 +1,8 @@
 from typing import Optional
 from aiohttp import web
+import base64
+from io import BytesIO
+import qrcode
 
 import qrbug
 
@@ -9,11 +12,6 @@ import qrbug
 #    incidents: descendants of the thing
 
 async def run(incidents: list[qrbug.Incident], request: web.Request) -> Optional[qrbug.action_helpers.ActionReturnValue]:
-    import base64
-    from io import BytesIO
-    import qrbug
-    import qrcode
-
     incident = incidents[0]
 
     IMAGE_FORMAT = 'PNG'

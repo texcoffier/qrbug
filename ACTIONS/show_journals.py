@@ -1,14 +1,13 @@
+from pathlib import Path
+import asyncio
+import html
+import qrbug
 from typing import Optional
 from aiohttp import web
 
 import qrbug
 
 async def run(incidents: List[qrbug.Incident], request: web.Request) -> Optional[qrbug.action_helpers.ActionReturnValue]:
-    from pathlib import Path
-    import asyncio
-    import html
-    import qrbug
-
     incident = incidents[0]
     FILE_CHUNK_SIZE_BYTES = 100_000
 
