@@ -8,7 +8,7 @@ action('list', 'list.py')
 selector('true', '{"class":"Thing", "attr":"id", "test":"true"}')
 selector('list', '{"class":"Failure", "test":"in", "value": "list"}')
 selector('journal', '{"class":"Failure", "test":"in", "value": "journal"}')
-selector('generate_qr', '{"class":"Failure", "attr":"id", "test":"=", "value": "generate_qr"}')
+selector('generate_qr', '{"class":"Failure", "attr":"id", "test":"contains", "value": "qrcode"}')
 
 user_add('admin', 'thierry.excoffier')
 user_add('admin', 'p2205989')
@@ -41,8 +41,11 @@ failure_add('journal', 'journal-incident')
 
 failure_update('generate_qr_top', value='Générer un QR code :', ask_confirm=False, restricted_to_group_id="admin", display_type=DisplayTypes.text)
 failure_add('top', 'generate_qr_top')
-failure_update('generate_qr', value='Entrez le nom d\'une Thing', ask_confirm=True, restricted_to_group_id="admin", display_type=DisplayTypes.input)
-failure_add('generate_qr_top', 'generate_qr')
+failure_update('qrcode', value='Entrez le nom d\'une Thing', ask_confirm=True, restricted_to_group_id="admin", display_type=DisplayTypes.input)
+failure_add('generate_qr_top', 'qrcode')
+for rows, cols in ((5, 8), (5, 7), (6, 6)):
+    failure_update(f'qrcode-A4-{rows}-{cols}', value=f'A4, {rows} lignes, {cols} colonnes', ask_confirm=True, restricted_to_group_id="admin", display_type=DisplayTypes.button)
+    failure_add('generate_qr_top', f'qrcode-A4-{rows}-{cols}')
 
 thing_update('admin', failure_id="top", comment="Interface d'administration")
 
