@@ -53,11 +53,15 @@ async def handle_login(request: web.Request, extra_url: str = '') -> Optional[st
     service_url = qrbug.SERVICE_URL + ('/' if not qrbug.SERVICE_URL.endswith('/') else '') + extra_url
     login_ticket: Optional[str] = request.query.get("ticket", None)
     if login_ticket is None:
-        raise web.HTTPTemporaryRedirect(f'{qrbug.CAS_URL}/login?service={service_url}')
+        user_login = None
     else:
         user_login = get_login_from_token(login_ticket, request.remote)
         if not user_login:
             user_login = await validate_ticket(qrbug.CAS_URL, service_url, login_ticket, request.remote)
+
+    if not user_login:
+        raise web.HTTPTemporaryRedirect(f'{qrbug.CAS_URL}/login?service={service_url}')
+
     return user_login
 
 
