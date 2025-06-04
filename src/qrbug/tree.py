@@ -14,7 +14,6 @@ class Tree:
         self.children_ids: list[str] = []
         self.parent_ids: set[str] = set()
         self.init()
-        self.__class__.sorted_instances = sorted(self.instances.values(), key=lambda x: x.id)
 
     def init(self) -> None: # Redefined by subclass
         pass
@@ -71,6 +70,7 @@ class Tree:
         """ Returns the given tree instance if it exists, or CREATES IT then returns it otherwise. """
         if tree_id not in cls.instances:
             cls.instances[tree_id] = cls(tree_id)
+            cls.sorted_instances = sorted(cls.instances.values(), key=lambda x: x.id)
         return cls.instances[tree_id]
 
     @classmethod
