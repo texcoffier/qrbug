@@ -45,18 +45,18 @@ class TestAction(qrbug.TestCase):
         d1 = qrbug.dispatcher_update('simple', action_id='echo', selector_id='true',
             group_id='user_parent', incidents='')
         i1 = qrbug.Incident.open('thing_child', 'fail1', 'ip1', 'login1')
-        self.check(d1, i1, ['Start\n', 'thing_child,fail1,ip1,None,,None\n', 'End\n'])
+        self.check(d1, i1, ['Start\n', 'thing_child,fail1,ip1,,login1,None\n', 'End\n'])
 
         i2 = qrbug.Incident.open('thing_child', 'fail1', 'ip2', 'login2')
-        self.check(d1, i2, ['Start\n', 'thing_child,fail1,ip2,None,,None\n', 'End\n'])
+        self.check(d1, i2, ['Start\n', 'thing_child,fail1,ip2,,login2,None\n', 'End\n'])
 
         # The 2 incidents are open, send all incidents to action
         d2 = qrbug.dispatcher_update('simple', action_id='echo', selector_id='true',
             group_id='user_parent', incidents='true')
         self.check(d2, i2, [
             'Start\n',
-            'thing_child,fail1,ip1,None,,None\n',
-            'thing_child,fail1,ip2,None,,None\n',
+            'thing_child,fail1,ip1,,login1,None\n',
+            'thing_child,fail1,ip2,,login2,None\n',
             'End\n'
             ])
 
@@ -80,9 +80,9 @@ class TestAction(qrbug.TestCase):
         morning = qrbug.Incident.open('debug', '07:00', '', '')
         self.check(d1, morning, [
             'Start\n',
-            'thing_child,fail1,ip1,None,,None\n',
-            'thing_child,fail1,ip2,None,,None\n',
-            'debug,07:00,,None,,None\n',
+            'thing_child,fail1,ip1,,login1,None\n',
+            'thing_child,fail1,ip2,,login2,None\n',
+            'debug,07:00,,,,None\n',
             'End\n'
             ])
         self.check(close, morning, ['«Clôture de /07:00» «VALEUR_NON_DEFINIE POUR «07:00»»\n'])
@@ -91,9 +91,9 @@ class TestAction(qrbug.TestCase):
         morning = qrbug.Incident.open('debug', '07:00', '', '')
         self.check(d1, morning, [
             'Start\n',
-            'thing_child,fail1,ip1,None,,None\n',
-            'thing_child,fail1,ip2,None,,None\n',
-            'debug,07:00,,None,,None\n',
+            'thing_child,fail1,ip1,,login1,None\n',
+            'thing_child,fail1,ip2,,login2,None\n',
+            'debug,07:00,,,,None\n',
             'End\n'
             ])
         self.check(close, morning, ['«Clôture de /07:00» «VALEUR_NON_DEFINIE POUR «07:00»»\n'])
@@ -103,8 +103,8 @@ class TestAction(qrbug.TestCase):
         self.check(close, morning, ['«Clôture de /07:00» «VALEUR_NON_DEFINIE POUR «07:00»»\n'])
         self.check(d1, morning, [
             'Start\n',
-            'thing_child,fail1,ip1,None,,None\n',
-            'thing_child,fail1,ip2,None,,None\n',
+            'thing_child,fail1,ip1,,login1,None\n',
+            'thing_child,fail1,ip2,,login2,None\n',
             'End\n'
             ])
 
