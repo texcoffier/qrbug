@@ -33,7 +33,12 @@ class Thing(qrbug.Tree):
         # Gets the failure for this thing
         root_failure = self.failure
         if root_failure is None:
-            return "Requested thing's root failure not found"
+            return f"""Il n'est possible de déclarer aucun panne pour
+            <ul>
+            <li> Identifiant : «{self.id}»
+            <li> Emplacement : «{self.location}»
+            <li> Commentaire : «{self.comment}»
+            </ul>"""
 
         if as_html:
             return root_failure.get_hierarchy_representation_html(self.id)
