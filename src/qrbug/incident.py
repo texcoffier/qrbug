@@ -1,5 +1,5 @@
 import time
-from typing import Optional
+from typing import Optional, Tuple
 import re
 
 import qrbug
@@ -10,21 +10,22 @@ def safe(string: str) -> str:
                   .replace('\r', '\\r')
             )
 
-
-class Incident:  # TODO: Séparer en deux classes, une avec les parties individuelles te une avec les parties communes
-    active: list["Incident"] = []
-    finished: list["Incident"] = []
-
-    # TODO: Un dico avec (thing_id, failure_id) contenant la liste d'incidents
-
-    def __init__(self, thing_id: str, failure_id: str, ip: str, timestamp: int, comment: Optional[str] = None, login: str = ''):
-        self.thing_id = thing_id
-        self.failure_id = failure_id
+class Report:
+    remover_login:Optional[str] = None
+    def __init__(self, ip: str, timestamp: int, comment: Optional[str] = None, login: str = ''):
         self.ip = ip
         self.timestamp = timestamp
         self.comment = comment
         self.login = login
-        self.remover_login = None
+
+class Incident:
+    instances: dict[Tuple["ThingID", "FailureID"], "Incident"] = {}
+
+    def __init__(self, thing_id: str, failure_id: str):
+        self.thing_id = thing_id
+        self.failure_id = failure_id
+        self.active: list[Report] = []
+        self.finished: list[Report] = []
 
     def dump(self) -> str:
         return f'thing:{self.thing_id} fail:{self.failure_id} ip:{self.ip} comment:{repr(self.comment)}'
@@ -33,13 +34,17 @@ class Incident:  # TODO: Séparer en deux classes, une avec les parties individu
         return self.thing_id == other_thing_id and self.failure_id == other_failure_id
 
     @classmethod
-    def create(cls, thing_id: str, failure_id: str, ip: str, timestamp: int, comment: Optional[str] = None, login: Optional[str] = None) -> "Incident":
+    def create(cls, thing_id: str, failure_id: str, ip: str, timestamp: int,
+               comment: Optional[str] = None, login: Optional[str] = None) -> "Incident":
         """
         Factory method, creates a new incident and stores it within the incident instances
         """
-        new_incident = Incident(thing_id, failure_id, ip, timestamp, comment, login)
-        cls.active.append(new_incident)
-        return new_incident
+        key = (thing_id, failure_id)
+        if key not in cls.instances:
+            cls.instances[key] = Incident(thing_id, failure_id)
+        incident = cls.instances[key]
+        incident.active.append(Report(ip, timestamp, comment, login))
+        return incident
 
     @classmethod
     def close(cls, thing_id: qrbug.ThingId, failure_id: qrbug.FailureId, ip: str, login: str) -> "Incident":
@@ -48,11 +53,12 @@ class Incident:  # TODO: Séparer en deux classes, une avec les parties individu
         """
         return qrbug.append_line_to_journal(
             f"incident_del({repr(thing_id)}, {repr(failure_id)}, {repr(ip)}, {int(time.time())}, {repr(login)})"
-            f"  # {time.strftime('%Y-%m-%d %H:%M:%S')} {safe(login)}\n"
+            f" # {time.strftime('%Y-%m-%d %H:%M:%S')}\n"
         )
 
     def incident_del(self):
-        return self.close(self.thing_id, self.failure_id, self.ip, self.login)
+        return self.close(self.thing_id, self.failure_id,
+                          self.active[-1].ip, self.active[-1].login)
 
     @classmethod
     def open(cls, thing_id: qrbug.ThingId, failure_id: qrbug.FailureId, ip: str, login: str, additional_info: Optional[str] = None) -> "Incident":
@@ -69,22 +75,22 @@ class Incident:  # TODO: Séparer en deux classes, une avec les parties individu
         return qrbug.append_line_to_journal(''.join(final_string))
 
     @classmethod
-    def remove(cls, other_thing_id: str, other_failure_id: str, login: str) -> list["Incident"]:
+    def remove(cls, other_thing_id: str, other_failure_id: str, login: str) -> None:
         """
         Deletes any given incident from the list of incidents
         :param login: The login of the user who removed the incident.
         """
-        filtered_incidents = cls.filter_active(thing_id=other_thing_id, failure_id=other_failure_id)
-        for failure_to_remove in filtered_incidents:
-            failure_to_remove.remover_login = login
-            cls.active.remove(failure_to_remove)
-            cls.finished.append(failure_to_remove)
-        return filtered_incidents
+        incident = cls.instances[other_thing_id, other_failure_id]
+        for report in incident.active:
+            report.remover_login = login
+            incident.finished.append(report)
+        incident.active.clear()
 
     @classmethod
     def filter(
             cls, incidents: list["Incident"], *, thing_id: str = None, failure_id: str = None, ip: str = None,
-            login: str = None, timestamp_min: int = 0, timestamp_max: int = None, comment: str = None
+            login: str = None, timestamp_min: int = 0, timestamp_max: int = None, comment: str = None,
+            active: bool = True
     ) -> list["Incident"]:
         """
         Returns the list of incidents matching the given criteria
@@ -96,6 +102,7 @@ class Incident:  # TODO: Séparer en deux classes, une avec les parties individu
         :param timestamp_min: The minimum timestamp of the incident
         :param timestamp_max: The maximum timestamp of the incident
         :param comment: A regex matching the given comment
+
         :return: A tuple of the incidents matching the given criteria ;
             first element is active incidents, second element is finished incidents
         """
@@ -104,17 +111,19 @@ class Incident:  # TODO: Séparer en deux classes, une avec les parties individu
                 return False
             if failure_id is not None and failure_id != incident.failure_id:
                 return False
-            if ip is not None and ip != incident.ip:
-                return False
-            if login is not None and login != incident.login:
-                return False
-            if incident.timestamp < timestamp_min:
-                return False
-            if timestamp_max is not None and incident.timestamp > timestamp_max:
-                return False
-            if comment is not None and re.match(comment, incident.comment) is None:
-                return False
-            return True
+            for report in incident.active if active else incident.finished:
+                if ip is not None and ip != incident.ip:
+                    continue
+                if login is not None and login != incident.login:
+                    continue
+                if incident.timestamp < timestamp_min:
+                    continue
+                if timestamp_max is not None and incident.timestamp > timestamp_max:
+                    continue
+                if comment is not None and re.match(comment, incident.comment) is None:
+                    continue
+                return True
+            return False
         return list(filter(condition_filter, incidents))
 
     @classmethod
@@ -124,17 +133,18 @@ class Incident:  # TODO: Séparer en deux classes, une avec les parties individu
         :return: A tuple of the incidents matching the given criteria ;
             first element is active incidents, second element is finished incidents
         """
-        return list(cls.filter(cls.active, *args, **kwargs)), list(cls.filter(cls.finished, *args, **kwargs))
+        return (list(cls.filter(cls.instances, *args, **kwargs, active=True)),
+                list(cls.filter(cls.instances, *args, **kwargs, active=False)))
 
     @classmethod
     def filter_active(cls, *args, **kwargs) -> list["Incident"]:
         """ Runs the `filter` class method, but only returns active incidents """
-        return cls.filter(cls.active, *args, **kwargs)
+        return cls.filter(cls.instances, *args, **kwargs, active=True)
 
     @classmethod
     def filter_finished(cls, *args, **kwargs) -> list["Incident"]:
         """ Runs the `filter` class method, but only returns finished incidents """
-        return cls.filter(cls.finished, *args, **kwargs)
+        return cls.filter(cls.instances, *args, **kwargs, active=False)
 
     @classmethod
     def filter_all(cls, *args, **kwargs) -> list["Incident"]:
@@ -157,7 +167,7 @@ def incident_new(thing_id: qrbug.ThingId, failure_id: qrbug.FailureId, ip: str,
 
 
 def incident_del(thing_id: qrbug.ThingId, failure_id: qrbug.FailureId, ip: str, timestamp: int, login: str) -> list["Incident"]:
-    return Incident.remove(thing_id, failure_id, login)
+    Incident.remove(thing_id, failure_id, login)
 
 
 qrbug.Incident = Incident

@@ -48,7 +48,7 @@ class TestAction(qrbug.TestCase):
         self.check(d1, i1, ['Start\n', 'thing_child,fail1,ip1,,login1,None\n', 'End\n'])
 
         i2 = qrbug.Incident.open('thing_child', 'fail1', 'ip2', 'login2')
-        self.check(d1, i2, ['Start\n', 'thing_child,fail1,ip2,,login2,None\n', 'End\n'])
+        self.check(d1, i2, ['Start\n', 'thing_child,fail1,ip1,,login1,None\n', 'thing_child,fail1,ip2,,login2,None\n', 'End\n'])
 
         # The 2 incidents are open, send all incidents to action
         d2 = qrbug.dispatcher_update('simple', action_id='echo', selector_id='true',
