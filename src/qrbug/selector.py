@@ -7,8 +7,8 @@ OPERATORS = [' or ', ' and ']
 
 ITEMS = {
     'Incident': 'incident'                         , # The incident sent to dispatcher
-    'Thing': 'qrbug.Thing[incident.thing_id]'      , # Its thing
-    'Failure': 'qrbug.Failure[incident.failure_id]', # Its failure
+    'Thing': 'incident.thing'      , # Its thing
+    'Failure': 'incident.failure', # Its failure
     'User': 'qrbug.User[incident.login]'           , # User triggering the incident
     'Selector': 'qrbug.Selector[%ID%]'             , # Selector from 'id' attr
     # TODO :
@@ -66,9 +66,9 @@ class Selector:
             self.expr = compil_expr(ast.literal_eval(self.expression)) # For regtests
             self.compiled = compile(self.expr, '', 'eval')
 
-        if qrbug.Thing[incident.thing_id] is None:
+        if incident.thing is None:
             raise Exception(f'Unknown thing: «{incident.thing_id}»')
-        if qrbug.Failure[incident.failure_id] is None:
+        if incident.failure is None:
             raise Exception(f'Unknown failure: «{incident.failure_id}»')
 
         return eval(self.compiled, {"incident": incident, 'qrbug': qrbug})

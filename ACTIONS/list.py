@@ -7,7 +7,7 @@ import qrbug
 async def run(incidents: List[qrbug.Incident], request: web.Request) -> Optional[qrbug.action_helpers.ActionReturnValue]:
     incident = incidents[0]
 
-    await request.response.write(f'<h1>{qrbug.Failure[incident.failure_id].value}</h1>'
+    await request.response.write(f'<h1>{incident.failure.value}</h1>'
         .encode('utf-8'))
 
     what = getattr(qrbug, incident.failure_id.split('-')[1])

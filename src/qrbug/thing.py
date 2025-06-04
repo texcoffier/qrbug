@@ -31,7 +31,7 @@ class Thing(qrbug.Tree):
         :param as_html: If True, return an HTML representation of the failure. Otherwise, returns as raw text.
         """
         # Gets the failure for this thing
-        root_failure = qrbug.Failure[self.failure_id]
+        root_failure = self.failure
         if root_failure is None:
             return "Requested thing's root failure not found"
 
