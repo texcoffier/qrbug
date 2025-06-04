@@ -29,10 +29,9 @@ def load_config(db_config_path: Path = None, default_db_path: Path = None) -> No
 
 
 def load_incidents(incidents_config_path: Path = None) -> None:
-    exec_code_file(
-        incidents_config_path if incidents_config_path is not None else qrbug.INCIDENTS_FILE_PATH,
-        qrbug.INCIDENT_FUNCTIONS
-    )
+    path = incidents_config_path or qrbug.INCIDENTS_FILE_PATH
+    if path.exists():
+        exec_code_file(path, qrbug.INCIDENT_FUNCTIONS)
 
 
 def append_line_to_journal(line: str, journal: Journals = Journals.INCIDENTS) -> "Incident":
