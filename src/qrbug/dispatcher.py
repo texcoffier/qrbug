@@ -52,13 +52,14 @@ class Dispatcher(qrbug.Tree):
         else:
             incidents = [incident]
 
-        for incident in incidents:
-            qrbug.send_mail(
-                os.getenv('QRBUG_DEFAULT_EMAIL_TO'),  # TODO : Get users to send emails to
-                f'Nouvel incident déclaré sur QRbug',
-                f'QRBUG: Un incident s\'est produit sur la machine {repr(incident.thing_id)} avec la panne {repr(incident.failure_id)}.',  # TODO: Faire mieux
-                cc=tuple()  # TODO: Ajouter les CCs
-            )
+        if self.group_id != 'nobody':
+            for incident in incidents:
+                qrbug.send_mail(
+                    os.getenv('QRBUG_DEFAULT_EMAIL_TO'),  # TODO : Get users to send emails to
+                    f'Nouvel incident déclaré sur QRbug',
+                    f'QRBUG: Un incident s\'est produit sur la machine {repr(incident.thing_id)} avec la panne {repr(incident.failure_id)}.',  # TODO: Faire mieux
+                    cc=tuple(f'{login}@{os.getenv("QRBUG_EMAIL_CC_SERVER")}' for login in qrbug.User.get(self.group_id).get_all_children_ids())  # TODO: Ajouter les CCs
+                )
         return_value = await qrbug.Action[self.action_id].run(incidents, request)
         # Action.run décide de la liste des incidents sur lesquels ont veut dire 'les dispatcheurs ont pris ceux-là en comlpte'
         # `A ce moment-là, on rajoute au journal la liste de ces incidents
