@@ -1,3 +1,4 @@
+import qrbug.notifications
 import qrbug.tree
 import qrbug.user
 import qrbug.failure

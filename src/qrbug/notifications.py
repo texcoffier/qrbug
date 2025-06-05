@@ -2,7 +2,9 @@ import email.header
 import email.utils
 import os
 import re
-from typing import Union
+from typing import Union, Optional
+
+import qrbug
 
 
 def send_mail_smtp(sender: str, recipients: Union[tuple[str, ...], list[str]], body: bytes):
@@ -44,8 +46,11 @@ def send_mail_smtp(sender: str, recipients: Union[tuple[str, ...], list[str]], b
     return None
 
 
-def send_mail(to, subject, message, sender=None, show_to=False, reply_to=None,
-              error_to=None, cc=()):
+def send_mail(
+        to: str, subject: str, message: str, sender: Optional[str] = None,
+        show_to: bool = False, reply_to: Optional[str] = None,
+        error_to: Optional[str] = None, cc: tuple[str] = tuple()
+):
 
     def encode(x):
         return email.header.Header(x.strip()).encode()
@@ -100,3 +105,4 @@ def send_mail(to, subject, message, sender=None, show_to=False, reply_to=None,
     return send_mail_smtp(sender, recipients, body)
 
 send_mail.session = None
+qrbug.send_mail = send_mail
