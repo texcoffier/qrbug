@@ -1,7 +1,9 @@
 import email.header
 import email.utils
+import html
 import os
 import re
+import time
 from typing import Union, Optional
 
 import qrbug
@@ -105,4 +107,21 @@ def send_mail(
     return send_mail_smtp(sender, recipients, body)
 
 send_mail.session = None
+
+
+def get_email_contents(incident: qrbug.Incident) -> str:
+    email_body = [
+        f'QRBUG: Un incident s\'est produit sur la machine {repr(incident.thing_id)} avec la panne {repr(incident.failure_id)}.'
+    ]
+    if len(incident.active) > 0:
+        email_body.append('\n\n')
+        email_body.append(f'Cet incident a été signalé un total de {len(incident.active)} fois par :\n')
+        for report in incident.active:
+            email_body.append(f'- {report.login} (IP: {report.ip}) le {time.strftime("%d/%m/%Y à %H:%M:%S")}\n')
+            if report.comment:
+                email_body.append(f'  - Avec le commentaire: {html.escape(report.comment)}\n')
+    return ''.join(email_body)
+
+
 qrbug.send_mail = send_mail
+qrbug.get_email_contents = get_email_contents
