@@ -54,7 +54,7 @@ class Dispatcher(qrbug.Tree):
 
         if self.group_id != 'nobody':
             for incident in incidents:
-                qrbug.send_mail(
+                await qrbug.send_mail(
                     os.getenv('QRBUG_DEFAULT_EMAIL_TO'),  # TODO : Get users to send emails to
                     f'Nouvel incident déclaré sur QRbug',
                     qrbug.get_email_contents(incident),  # TODO: Faire mieux

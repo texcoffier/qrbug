@@ -1,3 +1,4 @@
+import asyncio
 import email.header
 import email.utils
 import html
@@ -9,7 +10,7 @@ from typing import Union, Optional
 import qrbug
 
 
-def send_mail_smtp(sender: str, recipients: Union[tuple[str, ...], list[str]], body: bytes):
+async def send_mail_smtp(sender: str, recipients: Union[tuple[str, ...], list[str]], body: bytes):
     import smtplib
 
     smtp_result = 'NotSent'
@@ -33,6 +34,7 @@ def send_mail_smtp(sender: str, recipients: Union[tuple[str, ...], list[str]], b
         except smtplib.SMTPRecipientsRefused:
             # Next server
             pass
+        await asyncio.sleep(0)
 
     if smtp_result == 'NotSent':
         if isinstance(recipients, str):
@@ -48,7 +50,7 @@ def send_mail_smtp(sender: str, recipients: Union[tuple[str, ...], list[str]], b
     return None
 
 
-def send_mail(
+async def send_mail(
         to: str, subject: str, message: str, sender: Optional[str] = None,
         show_to: bool = False, reply_to: Optional[str] = None,
         error_to: Optional[str] = None, cc: tuple[str] = tuple()
@@ -78,33 +80,33 @@ def send_mail(
         return None
     if len(to) == 1:
         show_to = True
-    header = "From: {}\n".format(encode(reply_to or sender))
+    header = ["From: {}\n".format(encode(reply_to or sender))]
 
     s = subject.replace('\n', ' ').replace('\r', ' ')[:300]
-    header += "Subject: " + encode(s) + '\n'
+    header.append("Subject: " + encode(s) + '\n')
     if show_to:
         for tto in to:
-            header += "To: {}\n".format(tto)
+            header.append("To: {}\n".format(tto))
     for tto in cc:
-        header += "CC: {}\n".format(tto)
+        header.append("CC: {}\n".format(tto))
     if reply_to:
-        header += 'Return-Path: {}\n'.format(encode(sender))
+        header.append('Return-Path: {}\n'.format(encode(sender)))
     if error_to:
-        header += 'Error-To: {}\n'.format(encode(error_to))  # pragma: no cover
+        header.append('Error-To: {}\n'.format(encode(error_to)))
 
     if message.startswith('<html>') or message.startswith('<!DOCTYPE html>'):
-        header += 'Content-Type: text/html; charset="utf-8"\n'
+        header.append('Content-Type: text/html; charset="utf-8"\n')
     else:
-        header += 'Content-Type: text/plain; charset="utf-8"\n'
+        header.append('Content-Type: text/plain; charset="utf-8"\n')
 
-    header += "Date: " + email.utils.formatdate(localtime=True) + '\n'
-    header += "Content-Transfer-Encoding: 8bit\n"
-    header += "MIME-Version: 1.0\n"
-    header += '\n'
-    header = header.replace("\n", "\r\n")
+    header.append("Date: " + email.utils.formatdate(localtime=True) + '\n')
+    header.append("Content-Transfer-Encoding: 8bit\n")
+    header.append("MIME-Version: 1.0\n")
+    header.append('\n')
+    header = ''.join(header).replace("\n", "\r\n")
     recipients = tuple(to) + tuple(cc)
     body = (header + message).encode('utf-8')
-    return send_mail_smtp(sender, recipients, body)
+    return await send_mail_smtp(sender, recipients, body)
 
 send_mail.session = None
 
