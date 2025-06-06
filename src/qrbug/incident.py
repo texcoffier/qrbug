@@ -17,6 +17,7 @@ class Report:
         self.timestamp = timestamp
         self.comment = comment
         self.login = login
+        self.remover_login = None
 
 class Incident:
     instances: dict[Tuple["ThingID", "FailureID"], "Incident"] = {}
@@ -26,12 +27,20 @@ class Incident:
         self.failure_id = failure_id
         self.active: list[Report] = []
         self.finished: list[Report] = []
+        self.dispatchers: set["Dispatcher"] = set()
 
     def dump(self) -> str:
         return f'thing:{self.thing_id} fail:{self.failure_id} ip:{self.ip} comment:{repr(self.comment)}'
 
     def is_equal(self, other_thing_id, other_failure_id) -> bool:
         return self.thing_id == other_thing_id and self.failure_id == other_failure_id
+
+    def is_for(self, user: "User") -> bool:
+        """A dispatcher has been triggered for this user."""
+        for dispatcher in self.dispatchers:
+            if user.inside_or_equal(qrbug.Dispatcher[dispatcher].group_id):
+                return True
+        return False
 
     @classmethod
     def create(cls, thing_id: str, failure_id: str, ip: str, timestamp: int,
@@ -85,6 +94,7 @@ class Incident:
             report.remover_login = login
             incident.finished.append(report)
         incident.active.clear()
+        incident.dispatchers.clear()
 
     @classmethod
     def filter(

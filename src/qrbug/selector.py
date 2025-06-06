@@ -7,9 +7,12 @@ OPERATORS = [' or ', ' and ']
 
 ITEMS = {
     'Incident': 'incident'                         , # The incident sent to dispatcher
-    'Thing': 'incident.thing'      , # Its thing
-    'Failure': 'incident.failure', # Its failure
+    'Thing': 'incident.thing'                      , # Its thing
+    'Failure': 'incident.failure'                  , # Its failure
     'User': 'qrbug.User[incident.login]'           , # User triggering the incident
+    'SourceThing': 'source.thing'                  , # Its thing
+    'SourceFailure': 'source.failure'              , # Its failure
+    'SourceUser': 'qrbug.User.get(source.active[-1].login)', # User triggering the incident
     'Selector': 'qrbug.Selector[%ID%]'             , # Selector from 'id' attr
     # TODO :
     #   * Incident other attributes (IP, date...)
@@ -26,6 +29,7 @@ ATTRIBUTES = {
     'display_type'           : '.display_type'               , # Failure
     'ask_confirm'            : '.ask_confirm'                , # Failure
     'restricted_to_group_id' : '.restricted_to_group_id'     , # Failure
+    'to'                     : '.group_id'                   , # Dispatcher
 }
 
 TESTS = {
@@ -35,6 +39,8 @@ TESTS = {
     '>=': '%ATTR% >= %VALUE%',
     '=': '%ATTR% == %VALUE%',
     'in': '%ATTR%.inside(%VALUE%)',
+    'in_or_equal': '%ATTR%.inside_or_equal(%VALUE%)',
+    'is_concerned': 'incident.is_for(%ATTR%)',
     'contains': '%VALUE% in %ATTR%',
     'true': '%ATTR%',
     'false': 'not %ATTR%',
@@ -43,14 +49,13 @@ TESTS = {
 def compil_expr(expr):
     if isinstance(expr, list):
         return '(' + OPERATORS[expr[0]].join(compil_expr(item) for item in expr[1:]) + ')'
-    
+
     item = ITEMS[expr['class']]
     if 'id' in expr:
         item = item.replace('%ID%', repr(expr['id']))
     if 'attr' in expr:
         item += ATTRIBUTES[expr['attr']]
     return TESTS[expr['test']].replace('%ATTR%', item).replace('%VALUE%', repr(expr.get('value', '')))
-    
 
 class Selector:
     instances: dict[str, "Selector"] = {}
@@ -61,7 +66,7 @@ class Selector:
         self.expression = expression
         self.instances[selector_id] = self
 
-    def is_ok(self, incident: 'qrbug.Incident') -> bool:
+    def is_ok(self, incident: 'qrbug.Incident', source=None, dispatcher=None) -> bool:
         if not self.compiled:
             self.expr = compil_expr(ast.literal_eval(self.expression)) # For regtests
             self.compiled = compile(self.expr, '', 'eval')
@@ -70,8 +75,7 @@ class Selector:
             raise Exception(f'Unknown thing: «{incident.thing_id}»')
         if incident.failure is None:
             raise Exception(f'Unknown failure: «{incident.failure_id}»')
-
-        return eval(self.compiled, {"incident": incident, 'qrbug': qrbug})
+        return eval(self.compiled, {"incident": incident, 'qrbug': qrbug, 'source': source, 'dispatcher': dispatcher})
 
     def __class_getitem__(cls, selector_id: str) -> Optional["Selector"]:
         return cls.instances.get(selector_id, None)

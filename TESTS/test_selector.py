@@ -1,3 +1,4 @@
+import asyncio
 import qrbug.init
 import qrbug
 
@@ -128,3 +129,19 @@ class TestSelector(qrbug.TestCase):
         self.check(s, "user_child", "thing_child" , "fail1", False)
 
         
+    def test_is_concerned(self):
+        # Record a report
+        dispatcher = qrbug.dispatcher_update('xxx', selector_id="true", action_id="echo", group_id='user_parent')
+        for_me = qrbug.selector_update('for-me', '{"class":"SourceUser", "test":"is_concerned"}')
+        incident = qrbug.Incident.open(
+            'thing_child', 'fail1', login='no-login', ip='no-ip', additional_info='no-comment')
+        result = asyncio.run(dispatcher.run(incident, qrbug.Request()))
+        self.assertEqual(incident.dispatchers, set(('xxx',)))
+
+        # Get my incidents
+        for user, expected in (('user_child', True), ('user_parent', True), ('somebody', False)):
+            incident_trigger = qrbug.Incident.open(
+                'a_thing', 'fail1', login=user, ip='no-ip', additional_info='no-comment')
+            result = for_me.is_ok(incident, incident_trigger, dispatcher)
+            self.assertEqual(result, expected)
+

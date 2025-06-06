@@ -34,7 +34,6 @@ class Dispatcher(qrbug.Tree):
         Returns a dict with keys being the thing_id and failure_id of an incident, and values being the returned HTML.
         """
         # TODO: ! DOCUMENTATION !
-
         if not qrbug.Selector[self.selector_id].is_ok(incident):
             return None
 
@@ -43,14 +42,19 @@ class Dispatcher(qrbug.Tree):
 
         if self.incidents:
             selector = qrbug.Selector[self.incidents]
-            incidents = [incident
-                         for incident in qrbug.Incident.instances.values()
-                         if incident.active and selector.is_ok(incident)
+            incidents = [i
+                         for i in qrbug.Incident.instances.values()
+                         if i.active and selector.is_ok(i, incident, self)
                         ]
             if not incidents:
                 return
         else:
             incidents = [incident]
+
+        ################################################
+        # NO «await» ARE ALLOWED BEFORE THIS LINE
+        # It is done in order to get the last «Report»
+        ################################################
 
         if self.group_id != 'nobody':
             for incident in incidents:
@@ -102,7 +106,7 @@ def dispatch(
     This functions marks a dispatcher as running and that it should not be run for these incidents only.
     """
     #Dispatcher[dispatch_id].running_incidents.add((failure_id, thing_id))
-    pass
+    qrbug.Incident.instances[thing_id, failure_id].dispatchers.add(dispatch_id)
 
 
 def dispatch_del(

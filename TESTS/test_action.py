@@ -2,17 +2,6 @@ import asyncio
 import qrbug.init
 import qrbug
 
-class File:
-    def __init__(self, lines):
-        self.lines = lines
-    async def write(self, data):
-        self.lines.append(data.decode('utf-8'))
-
-class Request:
-    def __init__(self):
-        self.lines = []
-        self.response = File(self.lines)
-
 class TestAction(qrbug.TestCase):
 
     def setUp(self):
@@ -37,7 +26,7 @@ class TestAction(qrbug.TestCase):
         qrbug.action_update('close', 'close.py')
 
     def check(self, dispatcher, incident, expected):
-        request = Request()
+        request = qrbug.Request()
         asyncio.run(dispatcher.run(incident, request))
         self.assertEqual(request.lines, expected)
 
@@ -75,7 +64,7 @@ class TestAction(qrbug.TestCase):
         self.check(d1, i1, [])
         i2 = qrbug.Incident.open('thing_child', 'fail1', 'ip2', 'login2')
         self.check(d1, i2, [])
-        
+
         # Close '07:00' after dispatching
         morning = qrbug.Incident.open('debug', '07:00', '', '')
         self.check(d1, morning, [

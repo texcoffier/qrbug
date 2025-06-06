@@ -21,4 +21,15 @@ class TestCase(unittest.TestCase):
         qrbug.exec_code_file(Path(test.replace('.py', '_db.conf')), qrbug.CONFIGS)
 
 
+class File:
+    def __init__(self, lines):
+        self.lines = lines
+    async def write(self, data):
+        self.lines.append(data.decode('utf-8'))
+class Request:
+    def __init__(self):
+        self.lines = []
+        self.response = File(self.lines)
+
 qrbug.TestCase = TestCase
+qrbug.Request = Request

@@ -9,6 +9,7 @@ selector('true', '{"class":"Thing", "attr":"id", "test":"true"}')
 selector('list', '{"class":"Failure", "test":"in", "value": "list"}')
 selector('journal', '{"class":"Failure", "test":"in", "value": "journal"}')
 selector('generate_qr', '{"class":"Failure", "attr":"id", "test":"=", "value": "generate_qr"}')
+selector('for-me', '{"class":"SourceUser", "test":"is_concerned"}')
 
 user_add('admin', 'thierry.excoffier')
 user_add('admin', 'p2205989')
@@ -44,9 +45,16 @@ failure_add('top', 'generate_qr_top')
 failure_update('generate_qr', value='Entrez le nom d\'une Thing', ask_confirm=True, restricted_to_group_id="admin", display_type=DisplayTypes.input)
 failure_add('generate_qr_top', 'generate_qr')
 
+failure_update('personnal', value="Ce qui me concerne :", ask_confirm=False, restricted_to_group_id="admin")
+failure_add('top', 'personnal')
+failure_update('for-me', value="Les incidents que je dois traiter", ask_confirm=False, restricted_to_group_id="admin", display_type=DisplayTypes.button)
+failure_add('personnal', 'for-me')
+
+
 thing_update('admin', failure_id="top", comment="Interface d'administration")
 
 dispatcher_update('admin-list', action_id='list', selector_id='list', group_id='admin')
 dispatcher_update('admin-journal', action_id='journal', selector_id='journal', group_id='admin')
 dispatcher_update('generate-qr', action_id='generate_qrcode', selector_id='generate_qr')
+dispatcher_update('for-me', action_id='echo', selector_id='true', incidents='for-me')
 

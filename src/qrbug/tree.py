@@ -36,6 +36,10 @@ class Tree:
                 return True
         return False
 
+    def inside_or_equal(self, node: "TreeId"):
+        """Inside he group or is the group"""
+        return self.inside(node) or self.id == node
+
     def add_child(self, child: "Tree", before: str = '') -> None:
         # assert child.id not in self.children_ids, f"{child.id} is already a child of {self.id}"
         # assert child.id != self.id, f"Cannot make {child.id} a child of itself !"
