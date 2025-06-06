@@ -23,3 +23,7 @@ if [ $? -eq 0 ]; then
 else
 	echo "Something went wrong..."
 fi
+
+# Creating the logs folders
+mkdir LOGS
+mkdir LOGS/MAIL
