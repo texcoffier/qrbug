@@ -110,9 +110,6 @@ async def send_mail(
     # Logs the mail to the logs folder
     qrbug.log_email(body)
 
-    with open(filename, 'wb') as f:
-        f.write(body)
-
     return await send_mail_smtp(sender, recipients, body)
 
 send_mail.session = None
