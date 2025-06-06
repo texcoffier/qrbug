@@ -56,5 +56,4 @@ thing_update('admin', failure_id="top", comment="Interface d'administration")
 dispatcher_update('admin-list', action_id='list', selector_id='list', group_id='admin')
 dispatcher_update('admin-journal', action_id='journal', selector_id='journal', group_id='admin')
 dispatcher_update('generate-qr', action_id='generate_qrcode', selector_id='generate_qr')
-dispatcher_update('for-me', action_id='echo', selector_id='true', incidents='for-me')
 
