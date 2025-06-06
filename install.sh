@@ -27,3 +27,4 @@ fi
 # Creating the logs folders
 mkdir LOGS
 mkdir LOGS/MAIL
+mkdir LOGS/ERROR

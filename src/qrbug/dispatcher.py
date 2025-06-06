@@ -1,5 +1,6 @@
 import os
 import time
+import traceback
 from typing import Optional, TypeAlias
 
 import qrbug
@@ -64,7 +65,28 @@ class Dispatcher(qrbug.Tree):
                     qrbug.get_incident_email_contents(incident),  # TODO: Faire mieux
                     cc=tuple(f'{login}@{os.getenv("QRBUG_EMAIL_CC_SERVER")}' for login in qrbug.User.get(self.group_id).get_all_children_ids())  # TODO: Ajouter les CCs
                 )
-        return_value = await qrbug.Action[self.action_id].run(incidents, request)
+
+        try:
+            return_value = await qrbug.Action[self.action_id].run(incidents, request)
+        except Exception as e:
+            retrieved_traceback = '\n'.join(traceback.format_exception(e))
+            return_value = qrbug.action_helpers.ActionReturnValue(
+                error_msg=(
+                        '<pre style="background-color: rgba(255, 0, 0, 0.4); padding: 4px; border-radius: 2px;">' +
+                        retrieved_traceback +
+                        '</pre>'
+                )
+            )
+
+            # Logs the mail to the logs folder
+            filename = f'LOGS/ERROR/error-{time.strftime("%Y-%m-%d-%H-%M-%S")}.log'
+            attempts_count = 1
+            while os.path.exists(filename):
+                filename = filename.rstrip('.log').rstrip(f' ({attempts_count})') + f' ({attempts_count + 1}).log'
+                attempts_count += 1
+
+            with open(filename, 'w', encoding='utf-8') as f:
+                f.write(retrieved_traceback)
         # Action.run décide de la liste des incidents sur lesquels ont veut dire 'les dispatcheurs ont pris ceux-là en comlpte'
         # `A ce moment-là, on rajoute au journal la liste de ces incidents
         # On ajoute incident_update, on lui passe le (thing_id, failure_id) et le dispatcher_id
