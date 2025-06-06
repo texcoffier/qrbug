@@ -108,11 +108,7 @@ async def send_mail(
     body = (header + message).encode('utf-8')
 
     # Logs the mail to the logs folder
-    filename = f'LOGS/MAIL/mail-{time.strftime("%Y-%m-%d-%H-%M-%S")}.log'
-    attempts_count = 1
-    while os.path.exists(filename):
-        filename = filename.rstrip('.log').rstrip(f' ({attempts_count})') + f' ({attempts_count + 1}).log'
-        attempts_count += 1
+    qrbug.log('MAIL', 'mail', body)
 
     with open(filename, 'wb') as f:
         f.write(body)

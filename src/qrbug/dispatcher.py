@@ -77,16 +77,7 @@ class Dispatcher(qrbug.Tree):
                         '</pre>'
                 )
             )
-
-            # Logs the mail to the logs folder
-            filename = f'LOGS/ERROR/error-{time.strftime("%Y-%m-%d-%H-%M-%S")}.log'
-            attempts_count = 1
-            while os.path.exists(filename):
-                filename = filename.rstrip('.log').rstrip(f' ({attempts_count})') + f' ({attempts_count + 1}).log'
-                attempts_count += 1
-
-            with open(filename, 'w', encoding='utf-8') as f:
-                f.write(retrieved_traceback)
+            qrbug.log('ERROR', 'error', retrieved_traceback)
         # Action.run décide de la liste des incidents sur lesquels ont veut dire 'les dispatcheurs ont pris ceux-là en comlpte'
         # `A ce moment-là, on rajoute au journal la liste de ces incidents
         # On ajoute incident_update, on lui passe le (thing_id, failure_id) et le dispatcher_id
