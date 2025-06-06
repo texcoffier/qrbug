@@ -25,4 +25,14 @@ def log(log_folder_path: Path, log_file_prefix: str, content: Union[str, bytes])
         f.write(content)
 
 
+def log_email(content: bytes):
+    return log(qrbug.EMAIL_LOG_DIRECTORY, qrbug.EMAIL_LOG_PREFIX, content)
+
+
+def log_error(content: str):
+    return log(qrbug.ERROR_LOG_DIRECTORY, qrbug.ERROR_LOG_PREFIX, content)
+
+
 qrbug.log = log
+qrbug.log_email = log_email
+qrbug.log_error = log_error
