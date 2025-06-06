@@ -5,6 +5,10 @@ from pathlib import Path
 import qrbug
 
 class TestCase(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        qrbug.INCIDENTS_FILE_PATH = qrbug.JOURNALS_FILE_PATH / 'incidents_unittests.py'
+
     def tearDown(self):
         qrbug.User.instances.clear()
         qrbug.Failure.instances.clear()
