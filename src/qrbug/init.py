@@ -1,4 +1,4 @@
-import qrbug.logging
+import qrbug.logging_system
 import qrbug.tree
 import qrbug.user
 import qrbug.failure

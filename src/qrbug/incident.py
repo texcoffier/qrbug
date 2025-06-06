@@ -1,6 +1,7 @@
 import time
 from typing import Optional, Tuple
 import re
+import html
 
 import qrbug
 
