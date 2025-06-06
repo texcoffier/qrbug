@@ -180,6 +180,21 @@ def incident_del(thing_id: qrbug.ThingId, failure_id: qrbug.FailureId, ip: str, 
     Incident.remove(thing_id, failure_id, login)
 
 
+def get_incident_email_contents(incident: Incident) -> str:
+    email_body = [
+        f'QRBUG: Un incident s\'est produit sur la machine {repr(incident.thing_id)} avec la panne {repr(incident.failure_id)}.'
+    ]
+    if len(incident.active) > 0:
+        email_body.append('\n\n')
+        email_body.append(f'Cet incident a été signalé un total de {len(incident.active)} fois par :\n')
+        for report in incident.active:
+            email_body.append(f'- {report.login} (IP: {report.ip}) le {time.strftime("%d/%m/%Y à %H:%M:%S")}\n')
+            if report.comment:
+                email_body.append(f'  - Avec le commentaire: {html.escape(report.comment)}\n')
+    return ''.join(email_body)
+
+
 qrbug.Incident = Incident
 qrbug.incident_new = incident_new
 qrbug.incident_del = incident_del
+qrbug.get_incident_email_contents = get_incident_email_contents

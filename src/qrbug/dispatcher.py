@@ -61,7 +61,7 @@ class Dispatcher(qrbug.Tree):
                 await qrbug.send_mail(
                     os.getenv('QRBUG_DEFAULT_EMAIL_TO'),  # TODO : Get users to send emails to (cf. get_user_from_login)
                     f'Nouvel incident déclaré sur QRbug',
-                    qrbug.get_email_contents(incident),  # TODO: Faire mieux
+                    qrbug.get_incident_email_contents(incident),  # TODO: Faire mieux
                     cc=tuple(f'{login}@{os.getenv("QRBUG_EMAIL_CC_SERVER")}' for login in qrbug.User.get(self.group_id).get_all_children_ids())  # TODO: Ajouter les CCs
                 )
         return_value = await qrbug.Action[self.action_id].run(incidents, request)
