@@ -77,7 +77,7 @@ class Dispatcher(qrbug.Tree):
                         '</pre>'
                 )
             )
-            qrbug.log('ERROR', 'error', retrieved_traceback)
+            qrbug.log('ERROR', 'backtrace', retrieved_traceback)
         # Action.run décide de la liste des incidents sur lesquels ont veut dire 'les dispatcheurs ont pris ceux-là en comlpte'
         # `A ce moment-là, on rajoute au journal la liste de ces incidents
         # On ajoute incident_update, on lui passe le (thing_id, failure_id) et le dispatcher_id
