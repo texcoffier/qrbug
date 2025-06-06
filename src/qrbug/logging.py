@@ -6,14 +6,15 @@ from typing import Union
 import qrbug
 
 
-def log(log_folder_name: str, log_file_prefix: str, content: Union[str, bytes]):
+def log(log_folder_path: Path, log_file_prefix: str, content: Union[str, bytes]):
     """
     Logs the given content to a log file.
     """
-    filename = f'LOGS/{log_folder_name}/{log_file_prefix}-{time.strftime("%Y-%m-%d-%H-%M-%S")}.log'
+    current_time = time.strftime("%Y-%m-%d-%H-%M-%S")
+    filename = log_folder_path / f'{log_file_prefix}-{current_time}.log'
     attempts_count = 1
     while os.path.exists(filename):
-        filename = filename.rstrip('.log').rstrip(f' ({attempts_count})') + f' ({attempts_count + 1}).log'
+        filename = log_folder_path / f'{log_file_prefix}-{current_time} ({attempts_count + 1}).log'
         attempts_count += 1
 
     if isinstance(content, bytes):

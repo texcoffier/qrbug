@@ -108,7 +108,7 @@ async def send_mail(
     body = (header + message).encode('utf-8')
 
     # Logs the mail to the logs folder
-    qrbug.log('MAIL', 'mail', body)
+    qrbug.log(qrbug.EMAIL_LOG_DIRECTORY, qrbug.EMAIL_LOG_PREFIX, body)
 
     with open(filename, 'wb') as f:
         f.write(body)
