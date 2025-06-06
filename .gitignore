@@ -4,6 +4,8 @@
 *.egg-info/
 __pycache__/
 
+LOGS/
+
 JOURNALS/db.py
 JOURNALS/incidents.py
 
