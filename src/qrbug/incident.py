@@ -30,7 +30,6 @@ class Incident:
         self.failure_id = failure_id
         self.active: list[Report] = []
         self.finished: list[Report] = []
-        self.dispatchers: set["Dispatcher"] = set()
 
     def dump(self) -> str:
         active = ''.join(f'    Active {report.ip} {report.login} {report.comment}\n'
@@ -44,9 +43,11 @@ class Incident:
 
     def is_for(self, user: "User") -> bool:
         """A dispatcher has been triggered for this user."""
-        for dispatcher in self.dispatchers:
-            if user.inside_or_equal(qrbug.Dispatcher[dispatcher].group_id):
-                return True
+        for selector_id, users in qrbug.Concerned.instances.items():
+            for u in users:
+                if user.inside_or_equal(u):
+                    if qrbug.Selector[selector_id].is_ok(self):
+                        return True
         return False
 
     @classmethod
@@ -107,7 +108,6 @@ class Incident:
             incident.finished.append(report)
         incident.pending_feedback = incident.active
         incident.active = []
-        incident.dispatchers.clear()
 
     @classmethod
     def filter(

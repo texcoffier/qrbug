@@ -40,6 +40,8 @@ CONFIGS = {
     "selector": qrbug.selector_update,
     "dispatcher_update": qrbug.dispatcher_update,
     "dispatcher_del": qrbug.dispatcher_del,
+    "concerned_add": qrbug.concerned_add,
+    "concerned_del": qrbug.concerned_del,
 }
 
 INCIDENT_FUNCTIONS = {

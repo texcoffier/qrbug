@@ -123,13 +123,12 @@ await request.response.write(my_html_string.encode('utf-8'))
 #### Dispatcher
 Dispatchers are made to know when to trigger an action based on a selector.
 
-You can create/update one with `dispatcher_update(dispatcher_id, action_id, selector_id, group_id, incidents)`.
+You can create/update one with `dispatcher_update(dispatcher_id, action_id, selector_id, incidents)`.
 
 Each of these parameters _(besides `dispatcher_id`)_ are optional.
 
 - **Action ID** : The ID of the action to trigger when this dispatcher deems it necessary.
 - **Selector ID** : The ID of the selector the dispatcher will run to know if the action should be triggered
-- **Group ID** : The group of people to warn (by email) when an incident occurs and an action is triggered
 - **incidents** : The ID of the selector filtering the incident list to pass to the action.
 
 You can delete a dispatcher with `dispatcher_del(dispatcher_id)`.

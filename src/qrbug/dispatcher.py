@@ -15,20 +15,13 @@ class Dispatcher(qrbug.Tree):
     # Default values
     action_id   : str = 'none'  # By default, an action that does nothing
     selector_id : str = 'true'  # By default, a selector that is always true
-    group_id    : str = 'nobody'  # Group of people to warn upon dispatch, default is user group 'nobody'
     incidents   : str = ''      # Selector ID to compute incidents list. If empty : current incident
 
     def init(self):
         pass  # TODO: Gérer le cas d'usage d'un déclenchement après plusieurs signalements de pannes dans une même salle
 
     def _local_dump(self) -> str:
-        # short_names = {
-        #     'action_id': 'action',
-        #     'selector_id': 'selector',
-        #     'group_id': 'group',
-        # }
-        # return self.get_representation(attributes_short=short_names)
-        return f'action:{self.action_id} selector:{self.selector_id} group:{self.group_id} incidents:{self.incidents}'
+        return f'action:{self.action_id} selector:{self.selector_id} incidents:{self.incidents}'
 
     async def run(self, incident: qrbug.Incident, request) -> Optional[qrbug.action_helpers.ActionReturnValue]:
         """
@@ -43,7 +36,7 @@ class Dispatcher(qrbug.Tree):
             selector = qrbug.Selector[self.incidents]
             incidents = [i
                          for i in qrbug.Incident.instances.values()
-                         if selector.is_ok(i, incident, self)
+                         if selector.is_ok(i, incident)
                         ]
         else:
             incidents = [incident]
@@ -56,14 +49,6 @@ class Dispatcher(qrbug.Tree):
         # It is done in order to get the last «Report»
         ################################################
 
-        #if self.group_id != 'nobody':
-        #    for incident in incidents:
-        #        await qrbug.send_mail(
-        #            os.getenv('QRBUG_DEFAULT_EMAIL_TO'),  # TODO : Get users to send emails to (cf. get_user_from_login)
-        #            f'Nouvel incident déclaré sur QRbug',
-        #            qrbug.get_incident_email_contents(incident),  # TODO: Faire mieux
-        #            cc=tuple(f'{login}@{os.getenv("QRBUG_EMAIL_CC_SERVER")}' for login in qrbug.User.get(self.group_id).get_all_children_ids())  # TODO: Ajouter les CCs
-        #        )
         try:
             return_value = await qrbug.Action[self.action_id].run(incidents, request)
         except Exception as e:
@@ -78,7 +63,7 @@ class Dispatcher(qrbug.Tree):
             qrbug.log_error(retrieved_traceback)
 
         # 'dispatch' erase 'pending_feedback' and it is needed by the action
-        qrbug.append_line_to_journal(f'dispatch({repr(self.id)}, {repr(incident.failure_id)}, {repr(incident.thing_id)}, {repr(self.action_id)}, {repr(self.group_id)}, {int(time.time())})  # {time.strftime("%Y-%m-%d %H:%M:%S")} {len(incidents)} incidents\n')
+        qrbug.append_line_to_journal(f'dispatch({repr(self.id)}, {repr(incident.failure_id)}, {repr(incident.thing_id)}, {repr(self.action_id)}, {int(time.time())})  # {time.strftime("%Y-%m-%d %H:%M:%S")} {len(incidents)} incidents\n')
 
         return return_value
 
@@ -104,7 +89,6 @@ def dispatch(
         failure_id: qrbug.FailureId,
         thing_id: qrbug.ThingId,
         action_id: qrbug.ActionId,
-        group_id: qrbug.UserId,
         timestamp: int
 ) -> None:
     """
@@ -112,7 +96,6 @@ def dispatch(
     This functions marks a dispatcher as running and that it should not be run for these incidents only.
     """
     #Dispatcher[dispatch_id].running_incidents.add((failure_id, thing_id))
-    qrbug.Incident.instances[thing_id, failure_id].dispatchers.add(dispatch_id)
     if dispatch_id == 'send-pending-feedback': # Not nice
         for incident in qrbug.Incident.instances.values():
             incident.pending_feedback = []
@@ -123,7 +106,6 @@ def dispatch_del(
         failure_id: qrbug.FailureId,
         thing_id: qrbug.ThingId,
         action_id: qrbug.ActionId,
-        group_id: qrbug.UserId,
         timestamp: int
 ) -> None:
     """

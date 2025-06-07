@@ -17,15 +17,18 @@ async def run(incidents: List[qrbug.Incident], request: web.Request) -> Optional
         def go_in(node):
             texts.append(html.escape(node.dump()))
             texts.append('<ul>')
-        def go_out(node):
+        def go_out(_node):
             texts.append('</ul>')
         for tree in what.roots():
             tree.walk(go_in, go_out)
+    elif issubclass(what, qrbug.Concerned):
+        for selector_id, users in what.instances.items():
+            texts.append(html.escape(f'{selector_id} : {users}') + '<br>')
     else:
         for node in what.instances.values() if hasattr(what, 'instances') else what.active:
             try:
                 texts.append(html.escape(node.dump()) + '<br>')
-            except:
+            except: # pylint: disabled=bare-except
                 texts.append(html.escape(str(node)) + '<br>')
 
     await request.response.write(''.join(texts).encode('utf-8'))

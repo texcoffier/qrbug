@@ -29,7 +29,6 @@ ATTRIBUTES = {
     'display_type'           : '.display_type'               , # Failure
     'ask_confirm'            : '.ask_confirm'                , # Failure
     'restricted_to_group_id' : '.restricted_to_group_id'     , # Failure
-    'to'                     : '.group_id'                   , # Dispatcher
 }
 
 TESTS = {
@@ -76,7 +75,7 @@ class Selector:
         self.expression = expression
         self.instances[selector_id] = self
 
-    def is_ok(self, incident: 'qrbug.Incident', source=None, dispatcher=None) -> bool:
+    def is_ok(self, incident: 'qrbug.Incident', source=None) -> bool:
         if not self.compiled:
             self.expr = compil_expr(ast.literal_eval(self.expression)) # For regtests
             self.compiled = compile(self.expr, '', 'eval')
@@ -86,7 +85,7 @@ class Selector:
         if incident.failure is None:
             raise Exception(f'Unknown failure: «{incident.failure_id}»')
         # print(len(incident.active), source, self.expr)
-        return eval(self.compiled, {"incident": incident, 'qrbug': qrbug, 'source': source, 'dispatcher': dispatcher})
+        return eval(self.compiled, {'incident': incident, 'qrbug': qrbug, 'source': source})
 
     def __class_getitem__(cls, selector_id: str) -> Optional["Selector"]:
         return cls.instances.get(selector_id, None)

@@ -31,8 +31,7 @@ class TestAction(qrbug.TestCase):
         self.assertEqual(request.lines, expected)
 
     def test_simple_dispatch(self):
-        d1 = qrbug.dispatcher_update('simple', action_id='echo', selector_id='true',
-            group_id='user_parent', incidents='')
+        d1 = qrbug.dispatcher_update('simple', action_id='echo', selector_id='true', incidents='')
         i1 = qrbug.Incident.open('thing_child', 'fail1', 'ip1', 'login1')
         self.check(d1, i1, ['<pre>\n', 'Active thing_child,fail1,ip1,,login1,None\n', '</pre>\n'])
 
@@ -40,8 +39,7 @@ class TestAction(qrbug.TestCase):
         self.check(d1, i2, ['<pre>\n', 'Active thing_child,fail1,ip1,,login1,None\n', 'Active thing_child,fail1,ip2,,login2,None\n', '</pre>\n'])
 
         # The 2 incidents are open, s</pre> all incidents to action
-        d2 = qrbug.dispatcher_update('simple', action_id='echo', selector_id='true',
-            group_id='user_parent', incidents='true')
+        d2 = qrbug.dispatcher_update('simple', action_id='echo', selector_id='true', incidents='true')
         self.check(d2, i2, [
             '<pre>\n',
             'Active thing_child,fail1,ip1,,login1,None\n',
@@ -50,13 +48,11 @@ class TestAction(qrbug.TestCase):
             ])
 
         # The 2 incidents are open, s</pre> no incidents to action
-        d2 = qrbug.dispatcher_update('simple', action_id='echo', selector_id='true',
-            group_id='user_parent', incidents='false')
+        d2 = qrbug.dispatcher_update('simple', action_id='echo', selector_id='true', incidents='false')
         self.check(d2, i2, [])
 
     def test_hour_dispatch(self):
-        d1 = qrbug.dispatcher_update('morning', action_id='echo', selector_id='07:00',
-            group_id='user_parent', incidents='true')
+        d1 = qrbug.dispatcher_update('morning', action_id='echo', selector_id='07:00', incidents='true')
 
         close = qrbug.dispatcher_update('close', action_id='close', selector_id='07:00')
 

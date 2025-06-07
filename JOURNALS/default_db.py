@@ -39,6 +39,8 @@ failure_update('list-Dispatcher', value="les automatismes", ask_confirm=False, r
 failure_add('list', 'list-Dispatcher')
 failure_update('list-Action', value="les actions", ask_confirm=False, restricted_to_group_id="admin", display_type=DisplayTypes.button)
 failure_add('list', 'list-Action')
+failure_update('list-Concerned', value="qui est concerné", ask_confirm=False, restricted_to_group_id="admin", display_type=DisplayTypes.button)
+failure_add('list', 'list-Concerned')
 failure_update('list-Incident', value="les incidents en cours", ask_confirm=False, restricted_to_group_id="admin", display_type=DisplayTypes.button)
 failure_add('list', 'list-Incident')
 
@@ -69,14 +71,19 @@ failure_add('personnal', 'personnal-for-me')
 
 thing_update('admin', failure_id="top", comment="Interface d'administration")
 
-dispatcher_update('admin-list', action_id='list', selector_id='list', group_id='admin')
-dispatcher_update('admin-journal', action_id='journal', selector_id='journal', group_id='admin')
+dispatcher_update('admin-list', action_id='list', selector_id='list')
+dispatcher_update('admin-journal', action_id='journal', selector_id='journal')
 dispatcher_update('pending-feedback', action_id='echo', selector_id='pending-feedback', incidents="with-pending-feedback")
 dispatcher_update('send-pending-feedback', action_id='pending_feedback', selector_id='send-pending-feedback', incidents="with-pending-feedback")
 dispatcher_update('generate-qr', action_id='generate_qrcode', selector_id='generate_qr')
 dispatcher_update('personnal-for-me', action_id='echo', selector_id='personnal-for-me', incidents="for-me")
 
-# Admin is concerned by all reports. This dis play the reporting feedback
-dispatcher_update('report-feedback', action_id='report_feedback', selector_id='not-backoffice', group_id='admin')
+# Admin is concerned by all reports. This display the reporting (not fix) feedback
+dispatcher_update('report-feedback', action_id='report_feedback', selector_id='not-backoffice')
 # 'z' to be the last dispatched
 dispatcher_update('z-backoffice-close', action_id='close_auto', selector_id='backoffice')
+
+concerned_add('not-backoffice', 'admin')
+
+# selector('nautibus-hard', '[1, {"class":"Thing", "test": "inside", "value": "DOUA:Nautibus"}, [0, {"class":"Failure", "test": "in", "value": "MOUSE"}, {"class":"Failure", "test": "in", "value": "KEYBOARD"}, {"class":"Failure", "test": "in", "value": "SCREEN"}')
+# concerned_add('nautibus-hard', 'admin-Nautibus-hard')
