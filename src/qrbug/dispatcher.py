@@ -35,37 +35,35 @@ class Dispatcher(qrbug.Tree):
         Returns a dict with keys being the thing_id and failure_id of an incident, and values being the returned HTML.
         """
         # TODO: ! DOCUMENTATION !
+
         if not qrbug.Selector[self.selector_id].is_ok(incident):
             return None
-
-        # dispatch() updates the running_incidents set (increases size)
-        qrbug.append_line_to_journal(f'dispatch({repr(self.id)}, {repr(incident.failure_id)}, {repr(incident.thing_id)}, {repr(self.action_id)}, {repr(self.group_id)}, {int(time.time())})  # {time.strftime("%Y-%m-%d %H:%M:%S")}\n')
 
         if self.incidents:
             selector = qrbug.Selector[self.incidents]
             incidents = [i
                          for i in qrbug.Incident.instances.values()
-                         if i.active and selector.is_ok(i, incident, self)
+                         if selector.is_ok(i, incident, self)
                         ]
-            if not incidents:
-                return
         else:
             incidents = [incident]
+
+        if not incidents:
+            return
 
         ################################################
         # NO «await» ARE ALLOWED BEFORE THIS LINE
         # It is done in order to get the last «Report»
         ################################################
 
-        if self.group_id != 'nobody':
-            for incident in incidents:
-                await qrbug.send_mail(
-                    os.getenv('QRBUG_DEFAULT_EMAIL_TO'),  # TODO : Get users to send emails to (cf. get_user_from_login)
-                    f'Nouvel incident déclaré sur QRbug',
-                    qrbug.get_incident_email_contents(incident),  # TODO: Faire mieux
-                    cc=tuple(f'{login}@{os.getenv("QRBUG_EMAIL_CC_SERVER")}' for login in qrbug.User.get(self.group_id).get_all_children_ids())  # TODO: Ajouter les CCs
-                )
-
+        #if self.group_id != 'nobody':
+        #    for incident in incidents:
+        #        await qrbug.send_mail(
+        #            os.getenv('QRBUG_DEFAULT_EMAIL_TO'),  # TODO : Get users to send emails to (cf. get_user_from_login)
+        #            f'Nouvel incident déclaré sur QRbug',
+        #            qrbug.get_incident_email_contents(incident),  # TODO: Faire mieux
+        #            cc=tuple(f'{login}@{os.getenv("QRBUG_EMAIL_CC_SERVER")}' for login in qrbug.User.get(self.group_id).get_all_children_ids())  # TODO: Ajouter les CCs
+        #        )
         try:
             return_value = await qrbug.Action[self.action_id].run(incidents, request)
         except Exception as e:
@@ -78,14 +76,9 @@ class Dispatcher(qrbug.Tree):
                 )
             )
             qrbug.log_error(retrieved_traceback)
-        # Action.run décide de la liste des incidents sur lesquels ont veut dire 'les dispatcheurs ont pris ceux-là en comlpte'
-        # `A ce moment-là, on rajoute au journal la liste de ces incidents
-        # On ajoute incident_update, on lui passe le (thing_id, failure_id) et le dispatcher_id
-        # Quand le serveur edémarre, on va remettre à jour la liste des dispatchers qui ont été lancés.
 
-        #if (incident.failure_id, incident.thing_id) in self.running_incidents:
-            # dispatch_del() updates the running_incidents set (reduces size)
-        #    qrbug.append_line_to_journal(f'dispatch_del({repr(self.id)}, {repr(incident.failure_id)}, {repr(incident.thing_id)}, {repr(self.action_id)}, {repr(self.group_id)}, {int(time.time())})  # {time.strftime("%Y-%m-%d %H:%M:%S")}\n')
+        # 'dispatch' erase 'pending_feedback' and it is needed by the action
+        qrbug.append_line_to_journal(f'dispatch({repr(self.id)}, {repr(incident.failure_id)}, {repr(incident.thing_id)}, {repr(self.action_id)}, {repr(self.group_id)}, {int(time.time())})  # {time.strftime("%Y-%m-%d %H:%M:%S")} {len(incidents)} incidents\n')
 
         return return_value
 
@@ -120,6 +113,9 @@ def dispatch(
     """
     #Dispatcher[dispatch_id].running_incidents.add((failure_id, thing_id))
     qrbug.Incident.instances[thing_id, failure_id].dispatchers.add(dispatch_id)
+    if dispatch_id == 'send-pending-feedback': # Not nice
+        for incident in qrbug.Incident.instances.values():
+            incident.pending_feedback = []
 
 
 def dispatch_del(

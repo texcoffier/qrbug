@@ -1,0 +1,21 @@
+"""
+Feedback on report
+"""
+import html
+
+async def run(incidents, request):
+    incident = incidents[0]
+    await request.response.write(
+        f"""
+        <style>
+        DIV {{ margin: 2em; font-weight: bold }}
+        </style>
+        Merci d'avoir signalé l'incident :
+        <div>
+        {html.escape(incident.failure.value)}
+        </div>
+        à propos de :
+        <div>
+        {html.escape(incident.thing_id)}
+        </div>
+        <p>Quelqu'un s'en occupera prochainement.""".encode('utf-8'))

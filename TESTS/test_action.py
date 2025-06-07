@@ -34,22 +34,22 @@ class TestAction(qrbug.TestCase):
         d1 = qrbug.dispatcher_update('simple', action_id='echo', selector_id='true',
             group_id='user_parent', incidents='')
         i1 = qrbug.Incident.open('thing_child', 'fail1', 'ip1', 'login1')
-        self.check(d1, i1, ['Start\n', 'thing_child,fail1,ip1,,login1,None\n', 'End\n'])
+        self.check(d1, i1, ['<pre>\n', 'Active thing_child,fail1,ip1,,login1,None\n', '</pre>\n'])
 
         i2 = qrbug.Incident.open('thing_child', 'fail1', 'ip2', 'login2')
-        self.check(d1, i2, ['Start\n', 'thing_child,fail1,ip1,,login1,None\n', 'thing_child,fail1,ip2,,login2,None\n', 'End\n'])
+        self.check(d1, i2, ['<pre>\n', 'Active thing_child,fail1,ip1,,login1,None\n', 'Active thing_child,fail1,ip2,,login2,None\n', '</pre>\n'])
 
-        # The 2 incidents are open, send all incidents to action
+        # The 2 incidents are open, s</pre> all incidents to action
         d2 = qrbug.dispatcher_update('simple', action_id='echo', selector_id='true',
             group_id='user_parent', incidents='true')
         self.check(d2, i2, [
-            'Start\n',
-            'thing_child,fail1,ip1,,login1,None\n',
-            'thing_child,fail1,ip2,,login2,None\n',
-            'End\n'
+            '<pre>\n',
+            'Active thing_child,fail1,ip1,,login1,None\n',
+            'Active thing_child,fail1,ip2,,login2,None\n',
+            '</pre>\n'
             ])
 
-        # The 2 incidents are open, send no incidents to action
+        # The 2 incidents are open, s</pre> no incidents to action
         d2 = qrbug.dispatcher_update('simple', action_id='echo', selector_id='true',
             group_id='user_parent', incidents='false')
         self.check(d2, i2, [])
@@ -68,22 +68,23 @@ class TestAction(qrbug.TestCase):
         # Close '07:00' after dispatching
         morning = qrbug.Incident.open('debug', '07:00', '', '')
         self.check(d1, morning, [
-            'Start\n',
-            'thing_child,fail1,ip1,,login1,None\n',
-            'thing_child,fail1,ip2,,login2,None\n',
-            'debug,07:00,,,,None\n',
-            'End\n'
+            '<pre>\n',
+            'Active thing_child,fail1,ip1,,login1,None\n',
+            'Active thing_child,fail1,ip2,,login2,None\n',
+            'Active debug,07:00,,,,None\n',
+            '</pre>\n'
             ])
         self.check(close, morning, ['«Clôture de /07:00» «VALEUR_NON_DEFINIE POUR «07:00»»\n'])
 
         # Close '07:00' after dispatching
         morning = qrbug.Incident.open('debug', '07:00', '', '')
         self.check(d1, morning, [
-            'Start\n',
-            'thing_child,fail1,ip1,,login1,None\n',
-            'thing_child,fail1,ip2,,login2,None\n',
-            'debug,07:00,,,,None\n',
-            'End\n'
+            '<pre>\n',
+            'Active thing_child,fail1,ip1,,login1,None\n',
+            'Active thing_child,fail1,ip2,,login2,None\n',
+            'Active debug,07:00,,,,None\n',
+            'Pending feedback debug,07:00,,,,\n',
+            '</pre>\n'
             ])
         self.check(close, morning, ['«Clôture de /07:00» «VALEUR_NON_DEFINIE POUR «07:00»»\n'])
 
@@ -91,11 +92,65 @@ class TestAction(qrbug.TestCase):
         morning = qrbug.Incident.open('debug', '07:00', '', '')
         self.check(close, morning, ['«Clôture de /07:00» «VALEUR_NON_DEFINIE POUR «07:00»»\n'])
         self.check(d1, morning, [
-            'Start\n',
-            'thing_child,fail1,ip1,,login1,None\n',
-            'thing_child,fail1,ip2,,login2,None\n',
-            'End\n'
+            '<pre>\n',
+            'Active thing_child,fail1,ip1,,login1,None\n',
+            'Active thing_child,fail1,ip2,,login2,None\n',
+            '</pre>\n'
             ])
 
+    def test_list_incident(self):
+        qrbug.action_update('list', 'list.py')
+        qrbug.failure_update('list-Incident')
 
-        
+        qrbug.Incident.open('thing_child', 'fail1', 'ip1', 'login1')
+        trigger = qrbug.Incident.open('debug', 'list-Incident', 'ip2', 'login2')
+        dispatcher = qrbug.dispatcher_update('show_incidents', action_id='echo',
+            selector_id='true', incidents='true')
+
+        request = qrbug.Request()
+        asyncio.run(dispatcher.run(trigger, request))
+        self.assertEqual(request.lines, [
+            '<pre>\n',
+            'Active thing_child,fail1,ip1,,login1,None\n',
+            'Active debug,list-Incident,ip2,,login2,None\n',
+            '</pre>\n'
+            ])
+
+        # Fix the problem
+        qrbug.Incident.close('thing_child', 'fail1', 'ip1', 'fixer_login')
+        request = qrbug.Request()
+        asyncio.run(dispatcher.run(trigger, request))
+        self.assertEqual(request.lines, [
+            '<pre>\n',
+            'Active debug,list-Incident,ip2,,login2,None\n',
+            '</pre>\n'
+            ])
+
+        # Pending user feeback
+        qrbug.selector_update('with-pending-feedback', '{"test": "pending_feedback"}')
+        list_pending = qrbug.dispatcher_update('show_pending', action_id='echo',
+            selector_id='true', incidents='with-pending-feedback')
+        request = qrbug.Request()
+        asyncio.run(list_pending.run(trigger, request))
+        self.assertEqual(request.lines, [
+            '<pre>\n',
+            'Pending feedback thing_child,fail1,ip1,,login1,fixer_login\n',
+            '</pre>\n'
+            ])
+
+        # Send pending feedback
+        qrbug.action_update('pending_feedback', 'pending_feedback.py')
+        send_pending = qrbug.dispatcher_update('send_pending', action_id='pending_feedback',
+            selector_id='true', incidents='with-pending-feedback')
+        request = qrbug.Request()
+        asyncio.run(send_pending.run(trigger, request))
+        self.assertEqual(request.lines, [
+            '<pre>\n',
+            'SEND FEEDBACK FOR thing_child,fail1,ip1,,login1,fixer_login\n',
+            '</pre>\n'
+            ])
+
+        # Pending user feeback
+        request = qrbug.Request()
+        asyncio.run(list_pending.run(trigger, request))
+        self.assertEqual(request.lines, [])

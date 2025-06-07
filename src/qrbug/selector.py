@@ -24,7 +24,7 @@ ATTRIBUTES = {
     'id'                     : '.id'                         , # Any
     'location'               : '.location'                   , # Thing
     'comment'                : '.comment'                    , # Thing
-    'is_ok'                  : '.is_ok(incident)'            , # Selector
+    'is_ok'                  : '.is_ok(incident, source)'    , # Selector
     'value'                  : '.value'                      , # Failure
     'display_type'           : '.display_type'               , # Failure
     'ask_confirm'            : '.ask_confirm'                , # Failure
@@ -41,6 +41,7 @@ TESTS = {
     'in': '%ATTR%.inside(%VALUE%)',
     'in_or_equal': '%ATTR%.inside_or_equal(%VALUE%)',
     'is_concerned': 'incident.is_for(%ATTR%)',
+    'pending_feedback': 'incident.pending_feedback',
     'contains': '%VALUE% in %ATTR%',
     'true': '%ATTR%',
     'false': 'not %ATTR%',
@@ -50,12 +51,21 @@ def compil_expr(expr):
     if isinstance(expr, list):
         return '(' + OPERATORS[expr[0]].join(compil_expr(item) for item in expr[1:]) + ')'
 
-    item = ITEMS[expr['class']]
-    if 'id' in expr:
-        item = item.replace('%ID%', repr(expr['id']))
-    if 'attr' in expr:
-        item += ATTRIBUTES[expr['attr']]
-    return TESTS[expr['test']].replace('%ATTR%', item).replace('%VALUE%', repr(expr.get('value', '')))
+    if 'class' in expr:
+        item = ITEMS[expr['class']]
+        if 'id' in expr:
+            item = item.replace('%ID%', repr(expr['id']))
+        if 'attr' in expr:
+            item += ATTRIBUTES[expr['attr']]
+        test = TESTS[expr['test']].replace('%ATTR%', item).replace('%VALUE%', repr(expr.get('value', '')))
+    else:
+        test = TESTS[expr['test']].replace('%VALUE%', repr(expr.get('value', '')))
+    if expr['test'] != 'pending_feedback': # Very special case
+        # The incident may be closed before dispatcher start
+        # so 'source' is tested.
+        # Not nice at all. Mudt fix
+        test = '(incident.active or not source) and ' + test
+    return test
 
 class Selector:
     instances: dict[str, "Selector"] = {}
@@ -75,6 +85,7 @@ class Selector:
             raise Exception(f'Unknown thing: «{incident.thing_id}»')
         if incident.failure is None:
             raise Exception(f'Unknown failure: «{incident.failure_id}»')
+        # print(len(incident.active), source, self.expr)
         return eval(self.compiled, {"incident": incident, 'qrbug': qrbug, 'source': source, 'dispatcher': dispatcher})
 
     def __class_getitem__(cls, selector_id: str) -> Optional["Selector"]:

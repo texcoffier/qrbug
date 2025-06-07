@@ -74,21 +74,9 @@ async def register_incident(request: web.Request) -> web.StreamResponse:
     user_ip = request.remote
 
     if is_repaired_bool:
-        incident = qrbug.Incident.instances[thing_id, failure_id]
-        for report in incident.active:  # TODO: Fix this being empty
-            await qrbug.send_mail(
-                qrbug.get_user_from_login(report.login),
-                'Incident réparé',
-                f'Merci d\'avoir signalé l\'incident {repr(failure.value)} sur {repr(thing_id)} !\nCet incident vient tout juste d\'être résolu !'
-            )
         current_incident = qrbug.Incident.close(thing_id, failure_id, user_ip, user_login)
     else:
         current_incident = qrbug.Incident.open(thing_id, failure_id, user_ip, user_login, additional_info)
-        await qrbug.send_mail(
-            qrbug.get_user_from_login(user_login),
-            'Rapport d\'Incident QRbug',
-            f'Merci d\'avoir signalé l\'incident {repr(failure.value)} sur {repr(thing_id)} !\nQuelqu\'un s\'en occupera prochainement.'
-        )
 
     # if failure.auto_close_incident:  # TODO: Move after dispatch_del
     #     qrbug.append_line_to_journal(f'incident_del({repr(thing_id)}, {repr(failure_id)}, {repr(user_ip)}, {timestamp}, {repr(user_login)})  # {current_date} {user_login}\n')
@@ -102,7 +90,6 @@ async def register_incident(request: web.Request) -> web.StreamResponse:
         headers={'Content-Type': 'text/html; charset=utf-8'},
     )
     await request.response.prepare(request)
-    await request.response.write("<h1>Merci !</h1><h3>Votre signalement a été enregistré.</h3>".encode('utf-8'))
 
     # Dispatchers
     returned_html: dict[str, Optional[qrbug.action_helpers.ActionReturnValue]] = {}

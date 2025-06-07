@@ -33,6 +33,4 @@ async def run(incidents: List[qrbug.Incident], request: web.Request) -> Optional
     await stream_html_from_path(FILENAME[incident.failure_id], request.response)
     await request.response.write('</pre>\n'.encode('utf-8'))
 
-    incident.incident_del()
-
     return None

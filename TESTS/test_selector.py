@@ -145,3 +145,14 @@ class TestSelector(qrbug.TestCase):
             result = for_me.is_ok(incident, incident_trigger, dispatcher)
             self.assertEqual(result, expected)
 
+    def test_pending_feedback(self):
+        # Record a report
+        dispatcher = qrbug.dispatcher_update('xxx', selector_id="true", action_id="echo", group_id='user_parent')
+        for_me = qrbug.selector_update('for-me', '{"class":"SourceUser", "test":"is_concerned"}')
+        incident = qrbug.Incident.open(
+            'thing_child', 'fail1', login='no-login', ip='no-ip', additional_info='no-comment')
+        incident.incident_del()
+        self.assertEqual(len(incident.pending_feedback), 1)
+
+        selector = qrbug.selector_update('pending-feedback', '{"test":"pending_feedback"}')
+        self.assertEqual(len(selector.is_ok(incident)), 1)

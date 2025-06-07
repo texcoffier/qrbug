@@ -19,10 +19,12 @@ class Report:
         self.comment = comment
         self.login = login
         self.remover_login = None
+    def __str__(self):
+        return f'Report({repr(self.ip)}, {self.timestamp}, {repr(self.comment)}, {repr(self.login)}, {repr(self.remover_login)})'
 
 class Incident:
     instances: dict[Tuple["ThingID", "FailureID"], "Incident"] = {}
-
+    pending_feedback:list[Report] = []
     def __init__(self, thing_id: str, failure_id: str):
         self.thing_id = thing_id
         self.failure_id = failure_id
@@ -31,7 +33,11 @@ class Incident:
         self.dispatchers: set["Dispatcher"] = set()
 
     def dump(self) -> str:
-        return f'thing:{self.thing_id} fail:{self.failure_id} ip:{self.ip} comment:{repr(self.comment)}'
+        active = ''.join(f'    Active {report.ip} {report.login} {report.comment}\n'
+                           for report in self.active)
+        finished = ''.join(f'   Finished {report.ip} {report.login} {report.comment} {report.remover_login}\n'
+                           for report in self.finished)
+        return f'thing: «{self.thing_id}» failure: «{self.failure_id}»\n{active}{finished}'
 
     def is_equal(self, other_thing_id, other_failure_id) -> bool:
         return self.thing_id == other_thing_id and self.failure_id == other_failure_id
@@ -67,6 +73,11 @@ class Incident:
         )
 
     def incident_del(self):
+        """
+        This function is called only to delete the created incident
+        because it is an API incident.
+        Not called on journal loading.
+        """
         return self.close(self.thing_id, self.failure_id,
                           self.active[-1].ip, self.active[-1].login)
 
@@ -94,7 +105,8 @@ class Incident:
         for report in incident.active:
             report.remover_login = login
             incident.finished.append(report)
-        incident.active.clear()
+        incident.pending_feedback = incident.active
+        incident.active = []
         incident.dispatchers.clear()
 
     @classmethod

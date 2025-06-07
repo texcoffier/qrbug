@@ -34,5 +34,3 @@ async def run(incidents: list[qrbug.Incident], request: web.Request) -> Optional
         f'<h2>QR Code pour {requested_thing_id}</h2>'
         f'<div><img src="data:image/{IMAGE_FORMAT.lower()};base64,{img_base64.decode()}" /></div>'
     ).encode('utf-8'))
-
-    incident.incident_del()

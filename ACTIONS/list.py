@@ -29,6 +29,5 @@ async def run(incidents: List[qrbug.Incident], request: web.Request) -> Optional
                 texts.append(html.escape(str(node)) + '<br>')
 
     await request.response.write(''.join(texts).encode('utf-8'))
-    incident.incident_del()
 
     return None
