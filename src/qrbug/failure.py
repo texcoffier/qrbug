@@ -1,10 +1,9 @@
 """
 Defines all kinds of failures that can happen on a thing.
 """
-from pathlib import Path
+import html
 from typing import Optional, TypeAlias
 import enum
-from io import StringIO
 
 import qrbug
 
@@ -17,7 +16,7 @@ class DisplayTypes(enum.Enum):
     redirect = enum.auto()
     input    = enum.auto()
 
-def html(failure: "Failure", thing):
+def element(failure: "Failure", thing):
     display_type = failure.display_type
     common = f'failureid="{failure.id}" thingid="{thing.id}" what="{thing.__class__.__name__.lower()}"'
     if display_type == DisplayTypes.text:
@@ -27,8 +26,13 @@ def html(failure: "Failure", thing):
     elif display_type == DisplayTypes.button:
         return f'<div {common} class="button" onclick="register_incident(this)"><BOX>{failure.value}</BOX></div>'
     elif display_type == DisplayTypes.input:
+        value = ''
+        if failure.inside('edit') and '-' in failure.id:
+            attr = getattr(thing, failure.id.split('-', 1)[1], None)
+            if attr is not None:
+                value = f' value="{html.escape(attr)}"'
         return f'''<div class="input">{failure.value}
-        <div><input {common} onchange="register_incident(this)">
+        <div><input {common} {value} onkeypress="if (event.key=='Enter') register_incident(this)">
         <button {common} onclick="register_incident(this)">-&gt;</button></div></div>'''
     raise ValueError("Unknown display type")
 
@@ -134,7 +138,7 @@ class Failure(qrbug.Tree):
 
         def recursively_build_failures_list(failure_id: str) -> None:
             failure = Failure[failure_id]
-            representation.append(html(failure, thing))
+            representation.append(element(failure, thing))
             if failure.children_ids:
                 representation.append(f'<div class="children">')
                 for failure_id in failure.children_ids:

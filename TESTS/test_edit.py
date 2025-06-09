@@ -8,11 +8,11 @@ class TestEdit(qrbug.TestCase):
     def setUp(self):
         qrbug.exec_code_file(qrbug.DEFAULT_DB_PATH, qrbug.CONFIGS)
 
-    def runtest(self, failure, dispatcher):
+    def runtest(self, failure, dispatcher, value=''):
         qrbug.selector_update('edit-selector',
             '{"class":"Failure", "test":"in_or_equal", "value": "%s"}' % failure)
         request = qrbug.Request()
-        trigger = qrbug.Incident.open('a-selector', failure, 'ip2', 'login2', 'john.doe')
+        trigger = qrbug.Incident.open('a-selector', failure, 'ip2', 'login2', value)
         asyncio.run(qrbug.Dispatcher[dispatcher].run(trigger, request))
         return request.lines
 
@@ -20,12 +20,12 @@ class TestEdit(qrbug.TestCase):
         qrbug.selector_update('a-selector', '{"test":"true"}')
         qrbug.concerned_add('a-selector', 'nobody')
 
-        lines = self.runtest('concerned-add', 'edit-concerned')
+        lines = self.runtest('concerned-add', 'edit-concerned', 'john.doe')
         self.assertEqual(lines,
             ["L'utilisateur/groupe «john.doe» est maintenant concerné par le sélecteur «a-selector»\n"])
         self.assertEqual(qrbug.Concerned.instances['a-selector'].users, {'nobody', 'john.doe'})
 
-        lines = self.runtest('concerned-del', 'edit-concerned')
+        lines = self.runtest('concerned-del', 'edit-concerned', 'john.doe')
         self.assertEqual(lines,
             ["L'utilisateur/groupe «john.doe» n'est plus concerné par le sélecteur «a-selector»\n"])
         self.assertEqual(qrbug.Concerned.instances['a-selector'].users, {'nobody'})
@@ -76,3 +76,21 @@ class TestEdit(qrbug.TestCase):
 
         self.assertTrue(qrbug.Failure['user'].get_hierarchy_representation()
             .count('ask_confirm') == 1)
+
+    def test_action(self):
+        qrbug.action_update('a-selector', 'close.py') # Action to edit
+
+        lines = self.runtest('action-python_script', 'edit-action', 'echo.py')
+        self.assertEqual(lines,
+            ["L'action «a-selector» lance maintenant le script «echo.py»\n"])
+
+        lines = self.runtest('action-python_script', 'edit-action', 'nodefinedscript.py')
+        self.assertEqual(lines,
+            ["Le script Python «nodefinedscript.py» n'existe pas.\n"])
+
+        lines = self.runtest('action', 'edit-action')
+        self.assertEqual(lines,
+            ["Unexpected edit failure for Action\n"])
+
+        self.assertTrue(qrbug.Failure['action'].get_hierarchy_representation()
+            .count('ask_confirm') == 2)

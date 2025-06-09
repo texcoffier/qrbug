@@ -106,33 +106,46 @@ dispatcher_update('edit-concerned', action_id='edit_concerned', selector_id='edi
 # Edit dispatcher
 action('edit_dispatcher', 'edit_dispatcher.py')
 selector('edit-dispatcher', '{"class":"Failure", "test":"in_or_equal", "value": "dispatcher"}')
-failure_update('dispatcher', value="Dispatcher :", ask_confirm=False, restricted_to_group_id="admin")
+failure_update('dispatcher', value="", ask_confirm=False, restricted_to_group_id="admin")
 dispatcher_update('edit-dispatcher', action_id='edit_dispatcher', selector_id='edit-dispatcher')
+failure_add('edit', 'dispatcher')
 
 # Edit failure
 action('edit_failure', 'edit_failure.py')
 selector('edit-failure', '{"class":"Failure", "test":"in_or_equal", "value": "failure"}')
-failure_update('failure', value="Dispatcher :", ask_confirm=False, restricted_to_group_id="admin")
+failure_update('failure', value="", ask_confirm=False, restricted_to_group_id="admin")
 dispatcher_update('edit-failure', action_id='edit_failure', selector_id='edit-failure')
+failure_add('edit', 'failure')
 
 # Edit selector
 action('edit_selector', 'edit_selector.py')
 selector('edit-selector', '{"class":"Failure", "test":"in_or_equal", "value": "selector"}')
-failure_update('selector', value="Dispatcher :", ask_confirm=False, restricted_to_group_id="admin")
+failure_update('selector', value="", ask_confirm=False, restricted_to_group_id="admin")
 dispatcher_update('edit-selector', action_id='edit_selector', selector_id='edit-selector')
+failure_add('edit', 'selector')
 
 # Edit user
 action('edit_user', 'edit_user.py')
 selector('edit-user', '{"class":"Failure", "test":"in_or_equal", "value": "user"}')
-failure_update('user', value="Dispatcher :", ask_confirm=False, restricted_to_group_id="admin")
+failure_update('user', value="", ask_confirm=False, restricted_to_group_id="admin")
 dispatcher_update('edit-user', action_id='edit_user', selector_id='edit-user')
+failure_add('edit', 'user')
 
 # Edit thing
 action('edit_thing', 'edit_thing.py')
 selector('edit-thing', '{"class":"Failure", "test":"in_or_equal", "value": "thing"}')
-failure_update('thing', value="Dispatcher :", ask_confirm=False, restricted_to_group_id="admin")
+failure_update('thing', value="", ask_confirm=False, restricted_to_group_id="admin")
 dispatcher_update('edit-thing', action_id='edit_thing', selector_id='edit-thing')
+failure_add('edit', 'thing')
 
+# Edit action
+action('edit_action', 'edit_action.py')
+selector('edit-action', '{"class":"Failure", "test":"in_or_equal", "value": "action"}')
+failure_update('action', value="", ask_confirm=False, restricted_to_group_id="admin")
+dispatcher_update('edit-action', action_id='edit_action', selector_id='edit-action')
+failure_update('action-python_script', value="Le script Python à lancer", ask_confirm=False, restricted_to_group_id="admin", display_type=DisplayTypes.input)
+failure_add('action', 'action-python_script')
+failure_add('edit', 'action')
 
 # Admin is concerned by all reports. This display the reporting (not fix) feedback
 dispatcher_update('report-feedback', action_id='report_feedback', selector_id='not-backoffice')

@@ -10,6 +10,9 @@ ACTIONS_FOLDER = Path('ACTIONS/')
 class Action(qrbug.Editable):
     instances: dict[ActionId, "Action"] = {}
 
+    def path(self):
+        return f"Pour l'action nommée «{self.id}» :"
+
     def __init__(self, action_id: ActionId, python_script: str):
         self.id = action_id
         self.python_script = python_script
