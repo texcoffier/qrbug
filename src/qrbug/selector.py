@@ -66,7 +66,7 @@ def compil_expr(expr):
         test = '(incident.active or not source) and ' + test
     return test
 
-class Selector:
+class Selector(qrbug.Editable):
     instances: dict[str, "Selector"] = {}
     compiled = None
 

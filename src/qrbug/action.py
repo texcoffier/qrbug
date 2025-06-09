@@ -7,7 +7,7 @@ ActionId: TypeAlias = str
 ACTIONS_FOLDER = Path('ACTIONS/')
 
 
-class Action:
+class Action(qrbug.Editable):
     instances: dict[ActionId, "Action"] = {}
 
     def __init__(self, action_id: ActionId, python_script: str):
@@ -22,10 +22,6 @@ class Action:
         # We assume that the run function is present in the action so the
         # server throws an exception if it is not the case
         return await module_vars['run'](incidents, request)
-
-    def __class_getitem__(cls, action_id: ActionId) -> Optional["Action"]:
-        return cls.instances.get(action_id, None)
-
 
 def action(action_id: str, python_script: str) -> Action:
     return Action(action_id, python_script)

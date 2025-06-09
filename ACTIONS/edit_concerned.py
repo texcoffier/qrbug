@@ -16,5 +16,5 @@ async def run(incidents, request):
                 f'concerned_del({repr(selector)}, {repr(user)})\n', qrbug.Journals.DB)
         feedback = f"L'utilisateur/groupe «{user}» n'est plus concerné par le sélecteur «{selector}»\n"
     else:
-        feedback = "Unexpected edit failure for Concerned"
+        feedback = "Unexpected edit failure for Concerned\n"
     await request.response.write(feedback.encode('utf-8'))

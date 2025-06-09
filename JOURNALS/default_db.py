@@ -83,12 +83,15 @@ dispatcher_update('send-pending-feedback', action_id='pending_feedback', selecto
 dispatcher_update('generate-qr', action_id='generate_qrcode', selector_id='generate_qr')
 dispatcher_update('personnal-for-me', action_id='echo', selector_id='personnal-for-me', incidents="for-me")
 
+####################
 # Edit configuration
+####################
 failure_add('toptop', 'edit')
 failure_update('edit', value="Editeur de configuration :", ask_confirm=False, restricted_to_group_id="admin")
+
 # Edit concerned
 action('edit_concerned', 'edit_concerned.py')
-selector('edit-concerned', '{"class":"Failure", "test":"in", "value": "concerned"}')
+selector('edit-concerned', '{"class":"Failure", "test":"in_or_equal", "value": "concerned"}')
 failure_update('concerned', value="Concerned :", ask_confirm=False, restricted_to_group_id="admin")
 failure_update('concerned-add', value="Add user to concerned", ask_confirm=False, restricted_to_group_id="admin", display_type=DisplayTypes.input)
 failure_add('concerned', 'concerned-add')
@@ -99,6 +102,36 @@ failure_add('edit', 'concerned')
 failure_update('selector-update', value="Selector :", ask_confirm=False, restricted_to_group_id="admin", display_type=DisplayTypes.input)
 failure_add('edit', 'selector-update')
 dispatcher_update('edit-concerned', action_id='edit_concerned', selector_id='edit-concerned')
+
+# Edit dispatcher
+action('edit_dispatcher', 'edit_dispatcher.py')
+selector('edit-dispatcher', '{"class":"Failure", "test":"in_or_equal", "value": "dispatcher"}')
+failure_update('dispatcher', value="Dispatcher :", ask_confirm=False, restricted_to_group_id="admin")
+dispatcher_update('edit-dispatcher', action_id='edit_dispatcher', selector_id='edit-dispatcher')
+
+# Edit failure
+action('edit_failure', 'edit_failure.py')
+selector('edit-failure', '{"class":"Failure", "test":"in_or_equal", "value": "failure"}')
+failure_update('failure', value="Dispatcher :", ask_confirm=False, restricted_to_group_id="admin")
+dispatcher_update('edit-failure', action_id='edit_failure', selector_id='edit-failure')
+
+# Edit selector
+action('edit_selector', 'edit_selector.py')
+selector('edit-selector', '{"class":"Failure", "test":"in_or_equal", "value": "selector"}')
+failure_update('selector', value="Dispatcher :", ask_confirm=False, restricted_to_group_id="admin")
+dispatcher_update('edit-selector', action_id='edit_selector', selector_id='edit-selector')
+
+# Edit user
+action('edit_user', 'edit_user.py')
+selector('edit-user', '{"class":"Failure", "test":"in_or_equal", "value": "user"}')
+failure_update('user', value="Dispatcher :", ask_confirm=False, restricted_to_group_id="admin")
+dispatcher_update('edit-user', action_id='edit_user', selector_id='edit-user')
+
+# Edit thing
+action('edit_thing', 'edit_thing.py')
+selector('edit-thing', '{"class":"Failure", "test":"in_or_equal", "value": "thing"}')
+failure_update('thing', value="Dispatcher :", ask_confirm=False, restricted_to_group_id="admin")
+dispatcher_update('edit-thing', action_id='edit_thing', selector_id='edit-thing')
 
 
 # Admin is concerned by all reports. This display the reporting (not fix) feedback

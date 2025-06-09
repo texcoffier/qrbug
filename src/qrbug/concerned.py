@@ -1,7 +1,7 @@
 import html
 import qrbug
 
-class Concerned:
+class Concerned(qrbug.Editable):
     instances: dict["SelectorId", set['UserId']] = {}
 
     def __init__(self, selector_id):
@@ -21,16 +21,6 @@ class Concerned:
 
     def path(self):
         return f'Utilisateurs concernés par le sélecteur «{html.escape(self.id)}»'
-
-    def get_failures(self, as_html: bool = True) -> str:
-        root_failure = qrbug.Failure['concerned']
-        if as_html:
-            return root_failure.get_hierarchy_representation_html(self)
-        else:
-            return root_failure.get_hierarchy_representation()
-
-    def __class_getitem__(cls, selector_id: str) -> set["UserId"]:
-        return cls.instances.get(selector_id, None)
 
 qrbug.concerned_add = Concerned.concerned_add
 qrbug.concerned_del = Concerned.concerned_del

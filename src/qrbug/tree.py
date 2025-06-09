@@ -5,7 +5,7 @@ from io import StringIO
 import qrbug
 
 
-class Tree:
+class Tree(qrbug.Editable):
     instances: dict[str, "Tree"] = None
     sorted_instances: List["Tree"] = []
 
@@ -94,13 +94,6 @@ class Tree:
             cls.sorted_instances = sorted(cls.instances.values(), key=lambda x: x.id)
         return cls.instances[tree_id]
 
-    @classmethod
-    def get_if_exists(cls, tree_id: str) -> Optional["Tree"]:
-        """ Returns the given tree instance if it exists, or None otherwise. """
-        if tree_id not in cls.instances:
-            return None
-        return cls.instances[tree_id]
-
     def dump(self) -> str:
         base = f"{self.id} {sorted(self.children_ids)}"
         if hasattr(self, "_local_dump"):
@@ -170,9 +163,5 @@ class Tree:
     @classmethod
     def remove_parenting_link(cls, parent_id: str, child_id: str):
         cls.get(parent_id).remove_child(cls.get(child_id))
-
-    def __class_getitem__(cls, tree_id: str) -> Optional["Tree"]:
-        return cls.get_if_exists(tree_id)
-
 
 qrbug.Tree = Tree
