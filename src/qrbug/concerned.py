@@ -1,10 +1,6 @@
 import html
 import qrbug
 
-# ECRIRE DANS LE JOURNAL CONFIG
-
-
-
 class Concerned:
     instances: dict["SelectorId", set['UserId']] = {}
 

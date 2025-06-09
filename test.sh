@@ -21,7 +21,7 @@ fi
 python3 -m unittest
 
 # Preps the DB
-rm 'TESTS/xxx-incidents.py'
+mv 'TESTS/xxx-incidents.py' 'TESTS/xxx-incidents-unittest.py'
 
 # Launches the server and tests the two routes
 python3 src/qrbug/server.py "$LAUNCH_HOST" "$LAUNCH_PORT" --test >/dev/null &
@@ -63,7 +63,7 @@ if [ "$(curl -s -o TESTS/xxx-page-content -w "%{http_code}" "$TESTING_URL_REGIST
 then
   if grep -q "Quelqu'un" TESTS/xxx-page-content
   then
-    if [ -e "TESTS/test_server_incidents.conf" ]; then
+    if [ -e "TESTS/xxx-incidents.py" ]; then
       echo "OK"
     else
       echo "FAIL"
@@ -81,9 +81,6 @@ fi
 
 # Kills the server
 kill $SERVER_PID
-
-# Cleans up
-echo -n '' > 'TESTS/test_server_incidents.conf'
 
 # Exits
 exit $EXIT_CODE

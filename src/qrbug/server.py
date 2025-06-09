@@ -156,8 +156,10 @@ def parse_command_line_args(argv) -> tuple[str, int]:
 
     if '--test' in args:  # The --test flag allows for serialized testing with test.sh
         global ENABLE_AUTHENTICATION
-        qrbug.DB_FILE_PATH = Path('TESTS/test_server_db.conf')
-        qrbug.INCIDENTS_FILE_PATH = Path('TESTS/test_server_incidents.conf')
+
+        qrbug.DB_FILE_PATH = Path('TESTS/xxx-db.py')
+        qrbug.DB_FILE_PATH.write_bytes(Path('TESTS/test_server_db.conf').read_bytes())
+        qrbug.INCIDENTS_FILE_PATH = Path('TESTS/xxx-incidents.py')
         ENABLE_AUTHENTICATION = False
         args.remove('--test')
 
