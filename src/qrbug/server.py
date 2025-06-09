@@ -10,37 +10,44 @@ import qrbug
 
 ENABLE_AUTHENTICATION = True
 
+WHAT = {
+    'thing': qrbug.Thing,
+    'concerned': qrbug.Concerned,
+}
 
 async def show_failures_tree_route(request: web.Request) -> web.Response:
     """
     Returns the webpage listing the failure hierarchy for the given thing.
     """
+    what: Optional[str] = request.match_info.get("what", None)
     thing_id: Optional[str] = request.match_info.get('thing_id', None)
     if thing_id is None:
         return web.Response(status=404, text="No thing ID provided")
-    requested_thing: Optional[qrbug.Thing] = qrbug.Thing[thing_id]
+    requested_thing = WHAT[what][thing_id]
     if requested_thing is None:
         return web.Response(status=404, text="Requested Thing does not exist")
 
     # Creates the CAS login
     if ENABLE_AUTHENTICATION:
-        user_login = await qrbug.handle_login(request, f'thing={thing_id}')
+        user_login = await qrbug.handle_login(request, f'{what}={thing_id}')
         if user_login is None:
             return web.Response(status=403, text="Login ticket invalid")
 
-    return web.Response(status=200, text=qrbug.Thing[thing_id].get_failures(), content_type='text/html')
+    return web.Response(status=200, text=requested_thing.get_failures(), content_type='text/html')
 
 
 async def register_incident(request: web.Request) -> web.StreamResponse:
     """
     Registers an incident into the logs, then shows the user that the incident has been registered.
     """
+    what: Optional[str] = request.query.get("what", None)
     thing_id: Optional[str] = request.query.get("thing-id", None)
     failure_id: Optional[str] = request.query.get("failure-id", None)
     is_repaired: Optional[str] = request.query.get("is-repaired", None)
     additional_info: Optional[str] = request.query.get("additional-info", None)
 
     query_variables = {
+        'what': what,
         'thing_id': thing_id,
         'failure_id': failure_id,
         'is_repaired': is_repaired,
@@ -55,8 +62,9 @@ async def register_incident(request: web.Request) -> web.StreamResponse:
     failure = qrbug.Failure[failure_id]
     if failure is None:
         return web.Response(status=404, text=f"Failure does not exist")
-    if qrbug.Thing[thing_id] is None:
-        return web.Response(status=404, text=f"Thing does not exist")
+
+    if not WHAT[what][thing_id]:
+        return web.Response(status=404, text=f"{what}[{thing_id}] does not exist")
 
     # Cas authentication
     user_token = request.query.get("token", None)
@@ -66,7 +74,7 @@ async def register_incident(request: web.Request) -> web.StreamResponse:
             if user_token is not None:
                 user_login = qrbug.get_login_from_token(user_token, request.remote)
             if not user_login:
-                user_login = await qrbug.handle_login(request, f'thing={thing_id}')
+                user_login = await qrbug.handle_login(request, f'{what}={thing_id}')
                 if user_login is None:
                     return web.Response(status=403, text="Login ticket invalid")
 
@@ -179,7 +187,7 @@ def init_server(argv = None) -> tuple[web.Application, str, int]:
     # Creates the server
     app = web.Application()
     app.add_routes([
-        web.get('/thing={thing_id:[^{}\?]+}', show_failures_tree_route),
+        web.get('/{what:thing|concerned}={thing_id:[^{}\?]+}', show_failures_tree_route),
         web.get('/', register_incident)
     ])
     return app, host, port

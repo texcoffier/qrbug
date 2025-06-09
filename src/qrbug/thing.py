@@ -42,7 +42,7 @@ class Thing(qrbug.Tree):
             </ul>"""
 
         if as_html:
-            return root_failure.get_hierarchy_representation_html(self.id)
+            return root_failure.get_hierarchy_representation_html(self)
         else:
             return root_failure.get_hierarchy_representation()
 

@@ -79,9 +79,9 @@ class Selector:
         if not self.compiled:
             self.expr = compil_expr(ast.literal_eval(self.expression)) # For regtests
             self.compiled = compile(self.expr, '', 'eval')
-
-        if incident.thing is None:
-            raise Exception(f'Unknown thing: «{incident.thing_id}»')
+        # There are not Thing for for Edit incident
+        # if incident.thing is None:
+        #     raise Exception(f'Unknown thing: «{incident.thing_id}»')
         if incident.failure is None:
             raise Exception(f'Unknown failure: «{incident.failure_id}»')
         # print(len(incident.active), source, self.expr)

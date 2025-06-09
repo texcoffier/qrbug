@@ -73,6 +73,7 @@
         function register_incident(element) {
             let url = '/?thing-id=' + element.getAttribute('thingid')
                 + '&failure-id=' + element.getAttribute('failureid')
+                + '&what=' + element.getAttribute('what')
                 + '&is-repaired=0'
                 + (location.search ? location.search.replace('?', '&') : '') // ticket
                 ;

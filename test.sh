@@ -21,7 +21,7 @@ fi
 python3 -m unittest
 
 # Preps the DB
-echo -n '' > 'TESTS/test_server_incidents.conf'
+rm 'TESTS/xxx-incidents.py'
 
 # Launches the server and tests the two routes
 python3 src/qrbug/server.py "$LAUNCH_HOST" "$LAUNCH_PORT" --test >/dev/null &
@@ -29,13 +29,14 @@ SERVER_PID="$!"
 
 BASE_URL="http://$LAUNCH_HOST:$LAUNCH_PORT"
 TESTING_URL_GET="${BASE_URL}/thing=test_thing"
-TESTING_URL_REGISTER="${BASE_URL}/?thing-id=test_thing&failure-id=test&is-repaired=0"
+TESTING_URL_REGISTER="${BASE_URL}/?thing-id=test_thing&failure-id=test&is-repaired=0&what=thing"
 
-# Tests that the server
+
+echo -n "TEST: load failures list of test_thing"
 OK='0'
 for _ in 1 2 3 4 5 6 7 8 9 10
 do
-  if [ "$(curl -s -o /dev/null -w "%{http_code}" "$TESTING_URL_GET")" = 200 ]; then
+  if [ "$(curl -s -o TESTS/xxx-page-content -w "%{http_code}" "$TESTING_URL_GET")" = 200 ]; then
     OK='1'
     break
   else
@@ -46,26 +47,37 @@ if [ "$OK" = '0' ]; then
   echo "src/qrbug/server.py cannot be started"
   exit 1
 fi
-
-# Tests that you can load the page for a thing
-EXIT_CODE=0
-STATUS_CODE="$(curl -s -o /dev/null -w "%{http_code}" "$TESTING_URL_GET")"
-echo -n "TEST: Access to failures list of test_thing returned HTTP code ${STATUS_CODE}"
-if [ "$STATUS_CODE" -ne 200 ]; then
-  echo " -> FAIL"
+echo -n " -> loaded"
+if grep -q 'failureid="test" thingid="test_thing" what="thing"' TESTS/xxx-page-content
+then
+  echo " -> content OK"
+else
+  echo " -> content is BAD"
   EXIT_CODE=1
-else
-  echo " -> OK"
 fi
 
-# Tests that you can register a failure
-curl -s -o /dev/null -w "" "$TESTING_URL_REGISTER"
-if [ -z "$(cat "TESTS/test_server_incidents.conf")" ]; then
-  echo "TEST: Failed to register the incident -> FAIL"
-  EXIT_CODE=2
+
+echo -n "TEST: Registered a report : "
+
+if [ "$(curl -s -o TESTS/xxx-page-content -w "%{http_code}" "$TESTING_URL_REGISTER")" = 200 ]
+then
+  if grep -q "Quelqu'un" TESTS/xxx-page-content
+  then
+    if [ -e "TESTS/test_server_incidents.conf" ]; then
+      echo "OK"
+    else
+      echo "FAIL"
+      EXIT_CODE=2
+    fi
+  else
+    echo "content FAIL"
+    EXIT_CODE=2
+  fi
 else
-  echo "TEST: Registered incident -> OK"
+    echo "load FAIL"
+    EXIT_CODE=2
 fi
+
 
 # Kills the server
 kill $SERVER_PID

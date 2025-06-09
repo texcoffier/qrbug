@@ -17,9 +17,9 @@ class DisplayTypes(enum.Enum):
     redirect = enum.auto()
     input    = enum.auto()
 
-def html(failure: "Failure", thing_id: "qrbug.ThingId"):
+def html(failure: "Failure", thing):
     display_type = failure.display_type
-    common = f'failureid="{failure.id}" thingid="{thing_id}"'
+    common = f'failureid="{failure.id}" thingid="{thing.id}" what="{thing.__class__.__name__.lower()}"'
     if display_type == DisplayTypes.text:
         return  f'<p {common}>{failure.value}</p>'
     elif display_type == DisplayTypes.redirect:
@@ -115,13 +115,13 @@ class Failure(qrbug.Tree):
         return ''.join(representation)
 
 
-    def get_hierarchy_representation_html(self, thing_id: str, use_template: bool = True) -> str:
+    def get_hierarchy_representation_html(self, thing, use_template: bool = True) -> str:
         """
         Returns a representation of the whole hierarchy of this failure as a webpage.
         :param thing_id: The id of the thing that could be targeted by this failure.
         :param use_template: If true, return this failure's HTML using a template file.
         """
-        path = qrbug.Thing[thing_id].path()
+        path = thing.path()
         representation: list[str] = [
             '<TITLE>', path, '</TITLE>',
             '<H1>', path, '</H1>'
@@ -134,7 +134,7 @@ class Failure(qrbug.Tree):
 
         def recursively_build_failures_list(failure_id: str) -> None:
             failure = Failure[failure_id]
-            representation.append(html(failure, thing_id))
+            representation.append(html(failure, thing))
             if failure.children_ids:
                 representation.append(f'<div class="children">')
                 for failure_id in failure.children_ids:

@@ -43,10 +43,10 @@ class Incident:
 
     def is_for(self, user: "User") -> bool:
         """A dispatcher has been triggered for this user."""
-        for selector_id, users in qrbug.Concerned.instances.items():
-            for u in users:
+        for concerned in qrbug.Concerned.instances.values():
+            for u in concerned.users:
                 if user.inside_or_equal(u):
-                    if qrbug.Selector[selector_id].is_ok(self):
+                    if qrbug.Selector[concerned.id].is_ok(self):
                         return True
         return False
 

@@ -1,3 +1,5 @@
+# pylint: disable=undefined-variable,line-too-long
+
 action('none', 'none.py')
 action('close', 'close.py')
 action('close_auto', 'close_auto.py')
@@ -14,7 +16,7 @@ selector('journal', '{"class":"Failure", "test":"in", "value": "journal"}')
 selector('generate_qr', '{"class":"Failure", "attr":"id", "test":"=", "value": "generate_qr"}')
 selector('for-me', '{"class":"SourceUser", "test":"is_concerned"}')
 selector('personnal-for-me', '{"class":"Failure", "attr": "id", "test": "=", "value": "personnal-for-me"}')
-selector('backoffice', '{"class":"Failure", "test": "in", "value": "top"}')
+selector('backoffice', '{"class":"Failure", "test": "in", "value": "toptop"}')
 selector('not-backoffice', '{"class":"Selector", "id": "backoffice", "attr": "is_ok", "test": "false"}')
 selector('pending-feedback', '{"class":"Failure", "attr": "id", "test": "=", "value": "pending-feedback"}')
 selector('send-pending-feedback', '{"class":"Failure", "attr": "id", "test": "=", "value": "send-pending-feedback"}')
@@ -23,7 +25,10 @@ selector('with-pending-feedback', '[1, {"test": "pending_feedback"}, {"class":"S
 user_add('admin', 'thierry.excoffier')
 user_add('admin', 'p2205989')
 
+failure_update('toptop', value='')
+
 failure_update('top', value='')
+failure_add('toptop', 'top')
 
 failure_update('list', value="Lister :", ask_confirm=False, restricted_to_group_id="admin")
 failure_add('top', 'list')
@@ -77,6 +82,24 @@ dispatcher_update('pending-feedback', action_id='echo', selector_id='pending-fee
 dispatcher_update('send-pending-feedback', action_id='pending_feedback', selector_id='send-pending-feedback', incidents="with-pending-feedback")
 dispatcher_update('generate-qr', action_id='generate_qrcode', selector_id='generate_qr')
 dispatcher_update('personnal-for-me', action_id='echo', selector_id='personnal-for-me', incidents="for-me")
+
+# Edit configuration
+failure_add('toptop', 'edit')
+failure_update('edit', value="Editeur de configuration :", ask_confirm=False, restricted_to_group_id="admin")
+# Edit concerned
+action('edit_concerned', 'edit_concerned.py')
+selector('edit-concerned', '{"class":"Failure", "test":"in", "value": "concerned"}')
+failure_update('concerned', value="Concerned :", ask_confirm=False, restricted_to_group_id="admin")
+failure_update('concerned-add', value="Add user to concerned", ask_confirm=False, restricted_to_group_id="admin", display_type=DisplayTypes.input)
+failure_add('concerned', 'concerned-add')
+failure_update('concerned-del', value="Remove user to concerned", ask_confirm=False, restricted_to_group_id="admin", display_type=DisplayTypes.input)
+failure_add('concerned', 'concerned-del')
+failure_add('edit', 'concerned')
+
+failure_update('selector-update', value="Selector :", ask_confirm=False, restricted_to_group_id="admin", display_type=DisplayTypes.input)
+failure_add('edit', 'selector-update')
+dispatcher_update('edit-concerned', action_id='edit_concerned', selector_id='edit-concerned')
+
 
 # Admin is concerned by all reports. This display the reporting (not fix) feedback
 dispatcher_update('report-feedback', action_id='report_feedback', selector_id='not-backoffice')

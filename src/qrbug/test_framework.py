@@ -7,13 +7,18 @@ import qrbug
 class TestCase(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        qrbug.INCIDENTS_FILE_PATH = qrbug.JOURNALS_FILE_PATH / 'incidents_unittests.py'
+        qrbug.INCIDENTS_FILE_PATH = Path("TESTS", "xxx-incidents.py")
+        qrbug.DB_FILE_PATH = Path("TESTS", "xxx-db.py")
+        if qrbug.DB_FILE_PATH.exists():
+            qrbug.DB_FILE_PATH.unlink()
+
 
     def tearDown(self):
         qrbug.User.instances.clear()
         qrbug.Failure.instances.clear()
         qrbug.Thing.instances.clear()
         qrbug.Incident.instances.clear()
+        qrbug.Concerned.instances.clear()
 
     def check(self, cls, value):
         # The parameters are arranged in this order because the EXPECTED value goes first, followed by the

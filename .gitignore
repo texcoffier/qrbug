@@ -8,6 +8,6 @@ LOGS/
 
 JOURNALS/db.py
 JOURNALS/incidents.py
-JOURNALS/incidents_unittests.py
 
+xxx*
 *.pyc
