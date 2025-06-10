@@ -21,11 +21,9 @@ class Tree(qrbug.Editable):
     def path(self) -> str:
         """Return one of the path from root node, remove duplicate string"""
         if self.parent_ids:
-            parent_path = self.instances[next(iter(self.parent_ids))].path()
-            if self.id.startswith(parent_path):
-                return self.id
-            return f'{parent_path}/{self.id}'
-        return f'/{self.id}'
+            parent = self.instances[next(iter(self.parent_ids))]
+            return f'{parent.path()} {self.id.removeprefix(parent.id)}'
+        return f'{self.id}'
 
     def inside(self, node: "TreeId"):
         """Consider that a node is not inside itself"""

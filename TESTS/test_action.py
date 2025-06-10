@@ -70,7 +70,7 @@ class TestAction(qrbug.TestCase):
             'Active debug,07:00,,,,None\n',
             '</pre>\n'
             ])
-        self.check(close, morning, ['«Clôture de /07:00» «VALEUR_NON_DEFINIE POUR «07:00»»\n'])
+        self.check(close, morning, ['«Clôture de 07:00» «VALEUR_NON_DEFINIE POUR «07:00»»\n'])
 
         # Close '07:00' after dispatching
         morning = qrbug.Incident.open('debug', '07:00', '', '')
@@ -82,11 +82,11 @@ class TestAction(qrbug.TestCase):
             'Pending feedback debug,07:00,,,,\n',
             '</pre>\n'
             ])
-        self.check(close, morning, ['«Clôture de /07:00» «VALEUR_NON_DEFINIE POUR «07:00»»\n'])
+        self.check(close, morning, ['«Clôture de 07:00» «VALEUR_NON_DEFINIE POUR «07:00»»\n'])
 
         # Close '07:00' before dispatching
         morning = qrbug.Incident.open('debug', '07:00', '', '')
-        self.check(close, morning, ['«Clôture de /07:00» «VALEUR_NON_DEFINIE POUR «07:00»»\n'])
+        self.check(close, morning, ['«Clôture de 07:00» «VALEUR_NON_DEFINIE POUR «07:00»»\n'])
         self.check(d1, morning, [
             '<pre>\n',
             'Active thing_child,fail1,ip1,,login1,None\n',

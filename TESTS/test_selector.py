@@ -54,9 +54,9 @@ class TestSelector(qrbug.TestCase):
 
         s = qrbug.selector_update('thing_id path true',
             '{"class":"Thing", "attr":"path", "test":"true"}')
-        self.check(s, "user_child", "thing_child" , "fail1", '/thing_parent_parent/thing_parent/thing_child')
-        self.check(s, "user_child", "thing_parent", "fail1", '/thing_parent_parent/thing_parent')
-        self.check(s, "user_child", "thing_parent_parent", "fail1", '/thing_parent_parent')
+        self.check(s, "user_child", "thing_child" , "fail1", 'thing_parent_parent thing_parent thing_child')
+        self.check(s, "user_child", "thing_parent", "fail1", 'thing_parent_parent thing_parent')
+        self.check(s, "user_child", "thing_parent_parent", "fail1", 'thing_parent_parent')
 
         s = qrbug.selector_update('thing_id in thing_parent',
             '{"class":"Thing", "test":"in", "value": "thing_parent"}')
