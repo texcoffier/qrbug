@@ -79,7 +79,9 @@ async def register_incident(request: web.Request) -> web.StreamResponse:
             if user_token is not None:
                 user_login = qrbug.get_login_from_token(user_token, request.remote)
             if not user_login:
-                user_login = await qrbug.handle_login(request, f'{what}={thing_id}')
+                params = '&'.join(f'{name.replace("_", "-")}={value}'
+                                  for name, value in query_variables.items())
+                user_login = await qrbug.handle_login(request, f'?{params}')
                 if user_login is None:
                     return web.Response(status=403, text="Login ticket invalid")
 
