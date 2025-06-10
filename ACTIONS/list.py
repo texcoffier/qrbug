@@ -29,9 +29,13 @@ async def run(incidents: List[qrbug.Incident], request: web.Request) -> Optional
             <th>{html.escape(concerned_del.value)}
             </tr>''')
         for selector_id, concerned in what.instances.items():
+            users = [
+                f'<a href="user={user}?ticket={request.ticket}">{html.escape(user)}</a>'
+                for user in concerned.users
+                ]
             texts.append(f'''<tr>
             <td><a href="selector={selector_id}?ticket={request.ticket}">{html.escape(selector_id)}</a>
-            <td>{html.escape(' '.join(concerned.users))}
+            <td>{' '.join(users)}
             <td>{qrbug.element(concerned_add, concerned, in_place=True)}
             <td>{qrbug.element(concerned_del, concerned, in_place=True)}
             </tr>''')
