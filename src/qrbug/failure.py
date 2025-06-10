@@ -137,7 +137,11 @@ class Failure(qrbug.Tree):
         if use_template:
             html_template = qrbug.get_template()
 
+        done = set()
         def recursively_build_failures_list(failure_id: str) -> None:
+            if failure_id in done:
+                return
+            done.add(failure_id)
             failure = Failure[failure_id]
             representation.append(element(failure, thing))
             if failure.children_ids:
