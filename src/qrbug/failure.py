@@ -16,7 +16,7 @@ class DisplayTypes(enum.Enum):
     redirect = enum.auto()
     input    = enum.auto()
 
-def element(failure: "Failure", thing):
+def element(failure: "Failure", thing, in_place=False):
     display_type = failure.display_type
     common = f'failureid="{failure.id}" thingid="{thing.id}" what="{thing.__class__.__name__.lower()}"'
     if display_type == DisplayTypes.text:
@@ -30,12 +30,14 @@ def element(failure: "Failure", thing):
         if failure.inside('edit') and '-' in failure.id:
             attr = getattr(thing, failure.id.split('-', 1)[1], None)
             if attr is not None:
-                value = f' value="{html.escape(attr)}"'
-        return f'''<div class="input">{failure.value}
-        <div><input {common} {value} onkeypress="if (event.key=='Enter') register_incident(this)">
-        <button {common} onclick="register_incident(this)">-&gt;</button></div></div>'''
+                value = html.escape(attr)
+        in_place = int(in_place)
+        return f'''<div class="input">{'' if in_place else failure.value}
+        <div><input {common} value="{value}" autocomplete="off" onkeypress="if (event.key=='Enter') register_incident(this,{in_place})">
+        <button {common} onclick="register_incident(this, {in_place})">-&gt;</button></div></div>'''
     raise ValueError("Unknown display type")
 
+qrbug.element = element
 
 class Failure(qrbug.Tree):
     """
@@ -133,8 +135,7 @@ class Failure(qrbug.Tree):
 
         # TODO : Caching ?
         if use_template:
-            with qrbug.REPORT_FAILURE_TEMPLATE as template_file:
-                html_template = template_file.read_text()
+            html_template = qrbug.get_template()
 
         def recursively_build_failures_list(failure_id: str) -> None:
             failure = Failure[failure_id]

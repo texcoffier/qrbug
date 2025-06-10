@@ -28,6 +28,14 @@
             font-size: 1.2em;
         }
 
+        IFRAME {
+            display: block;
+            border: 0px;
+            background: #EEE;
+            width: 100%;
+            height: 5em;
+        }
+
         @media (orientation: portrait) {
             BODY, BUTTON {
                 font-size: 5vw;
@@ -70,7 +78,7 @@
     </style>
 
     <script>
-        function register_incident(element) {
+        function register_incident(element, in_place) {
             let url = '/?thing-id=' + element.getAttribute('thingid')
                 + '&failure-id=' + element.getAttribute('failureid')
                 + '&what=' + element.getAttribute('what')
@@ -82,7 +90,13 @@
                 value = element.previousElementSibling.value;
             if (value)
                 url += '&additional-info=' + value;
-            window.location = url;
+            if(in_place) {
+                iframe = document.createElement('IFRAME');
+                iframe.src = url;
+                element.parentNode.appendChild(iframe);
+            } else {
+                window.location = url;
+            }
         }
     </script>
 </head>

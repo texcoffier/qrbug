@@ -22,8 +22,24 @@ async def run(incidents: List[qrbug.Incident], request: web.Request) -> Optional
         for tree in what.roots():
             tree.walk(go_in, go_out)
     elif issubclass(what, qrbug.Concerned):
-        for selector_id, users in what.instances.items():
-            texts.append(html.escape(f'{selector_id} : {users}') + '<br>')
+        texts.append('<table border>')
+        concerned_add = qrbug.Failure['concerned-add']
+        concerned_del = qrbug.Failure['concerned-del']
+        texts.append(f'''<tr>
+            <th>Le selecteur d'incident
+            <th>Personne/groupe concernés
+            <th>{html.escape(concerned_add.value)}
+            <th>{html.escape(concerned_del.value)}
+            </tr>''')
+        for selector_id, concerned in what.instances.items():
+            texts.append(f'''<tr>
+            <td><a href="selector={selector_id}?ticket={request.ticket}">{html.escape(selector_id)}</a>
+            <td>{html.escape(' '.join(concerned.users))}
+            <td>{qrbug.element(concerned_add, concerned, in_place=True)}
+            <td>{qrbug.element(concerned_del, concerned, in_place=True)}
+            </tr>''')
+        texts.append('</table>')
+        texts = [qrbug.get_template().replace('%REPRESENTATION%', ''.join(texts))]
     else:
         for node in what.instances.values() if hasattr(what, 'instances') else what.active:
             try:

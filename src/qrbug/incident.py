@@ -183,6 +183,10 @@ class Incident:
     def thing(self):
         return qrbug.Thing[self.thing_id]
 
+    @property
+    def concerned(self):
+        return qrbug.Concerned[self.thing_id]
+
 
 def incident_new(thing_id: qrbug.ThingId, failure_id: qrbug.FailureId, ip: str,
         timestamp: int, comment: Optional[str] = None, login: Optional[str] = None) -> "Incident":

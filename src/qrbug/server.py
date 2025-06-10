@@ -100,6 +100,7 @@ async def register_incident(request: web.Request) -> web.StreamResponse:
     # TODO: Envoyer un mail à la personne qui a signalé la panne
 
     # Starts preparing the response
+    request.ticket = request.query.get('ticket', None)
     request.response = web.StreamResponse(
         status=200,
         headers={'Content-Type': 'text/html; charset=utf-8'},

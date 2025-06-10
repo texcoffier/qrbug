@@ -93,9 +93,9 @@ failure_update('edit', value="Editeur de configuration :", ask_confirm=False, re
 action('edit_concerned', 'edit_concerned.py')
 selector('edit-concerned', '{"class":"Failure", "test":"in_or_equal", "value": "concerned"}')
 failure_update('concerned', value="Concerned :", ask_confirm=False, restricted_to_group_id="admin")
-failure_update('concerned-add', value="Add user to concerned", ask_confirm=False, restricted_to_group_id="admin", display_type=DisplayTypes.input)
+failure_update('concerned-add', value="Ajouter un utilisateur/groupe", ask_confirm=False, restricted_to_group_id="admin", display_type=DisplayTypes.input)
 failure_add('concerned', 'concerned-add')
-failure_update('concerned-del', value="Remove user to concerned", ask_confirm=False, restricted_to_group_id="admin", display_type=DisplayTypes.input)
+failure_update('concerned-del', value="Enlever un utilisateur/groupe", ask_confirm=False, restricted_to_group_id="admin", display_type=DisplayTypes.input)
 failure_add('concerned', 'concerned-del')
 failure_add('edit', 'concerned')
 

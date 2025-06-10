@@ -1,6 +1,3 @@
-import time
-from typing import Callable, Awaitable
-
 import qrbug
 
 class ActionReturnValue:
@@ -16,3 +13,8 @@ class ActionReturnValue:
 
     def __bool__(self):
         return not self.is_empty()
+
+def get_template():
+    """The file containing JS helpers and style."""
+    return qrbug.REPORT_FAILURE_TEMPLATE.read_text()
+qrbug.get_template = get_template

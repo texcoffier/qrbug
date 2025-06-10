@@ -1,6 +1,7 @@
 """
 In this case, the thing is a selector ID and the value an user.
 """
+import html
 import qrbug
 
 async def run(incidents, request):
@@ -10,11 +11,14 @@ async def run(incidents, request):
     if incident.failure_id == 'concerned-add':
         qrbug.append_line_to_journal(
                 f'concerned_add({repr(selector)}, {repr(user)})\n', qrbug.Journals.DB)
-        feedback = f"L'utilisateur/groupe «{user}» est maintenant concerné par le sélecteur «{selector}»\n"
+        feedback = f"L'utilisateur/groupe «{html.escape(user)}» est maintenant concerné par le sélecteur «{html.escape(selector)}»\n"
     elif incident.failure_id == 'concerned-del':
-        qrbug.append_line_to_journal(
-                f'concerned_del({repr(selector)}, {repr(user)})\n', qrbug.Journals.DB)
-        feedback = f"L'utilisateur/groupe «{user}» n'est plus concerné par le sélecteur «{selector}»\n"
+        if user in incident.concerned.users:
+            qrbug.append_line_to_journal(
+                    f'concerned_del({repr(selector)}, {repr(user)})\n', qrbug.Journals.DB)
+            feedback = f"L'utilisateur/groupe «{html.escape(user)}» n'est plus concerné par le sélecteur «{html.escape(selector)}»\n"
+        else:
+            feedback = f"L'utilisateur/groupe «{html.escape(user)}» <b>n'était pas</b> concerné par le sélecteur «{html.escape(selector)}»\n"
     else:
         feedback = "Unexpected edit failure for Concerned\n"
     await request.response.write(feedback.encode('utf-8'))
