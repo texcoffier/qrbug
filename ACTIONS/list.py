@@ -7,11 +7,8 @@ import qrbug
 async def run(incidents: List[qrbug.Incident], request: web.Request) -> Optional[qrbug.action_helpers.ActionReturnValue]:
     incident = incidents[0]
 
-    await request.response.write(f'<h1>{incident.failure.value}</h1>'
-        .encode('utf-8'))
-
     what = getattr(qrbug, incident.failure_id.split('-')[1])
-    texts = []
+    texts = [f'<h1>{incident.failure.value}</h1>']
 
     if issubclass(what, qrbug.Tree):
         def go_in(node):

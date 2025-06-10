@@ -22,17 +22,17 @@ class TestEdit(qrbug.TestCase):
 
         lines = self.runtest('concerned-add', 'edit-concerned', 'john.doe')
         self.assertEqual(lines,
-            ["L'utilisateur/groupe «john.doe» est maintenant concerné par le sélecteur «a-selector»\n"])
+            ["<!DOCTYPE html>\nL'utilisateur/groupe «john.doe» est maintenant concerné par le sélecteur «a-selector»\n"])
         self.assertEqual(qrbug.Concerned.instances['a-selector'].users, {'nobody', 'john.doe'})
 
         lines = self.runtest('concerned-del', 'edit-concerned', 'john.doe')
         self.assertEqual(lines,
-            ["L'utilisateur/groupe «john.doe» n'est plus concerné par le sélecteur «a-selector»\n"])
+            ["<!DOCTYPE html>\nL'utilisateur/groupe «john.doe» n'est plus concerné par le sélecteur «a-selector»\n"])
         self.assertEqual(qrbug.Concerned.instances['a-selector'].users, {'nobody'})
 
         lines = self.runtest('concerned', 'edit-concerned')
         self.assertEqual(lines,
-            ["Unexpected edit failure for Concerned\n"])
+            ["<!DOCTYPE html>\nUnexpected edit failure for Concerned\n"])
 
         self.assertTrue(qrbug.Failure['concerned'].get_hierarchy_representation()
             .count('ask_confirm') == 3)
@@ -40,7 +40,7 @@ class TestEdit(qrbug.TestCase):
     def test_dispatcher(self):
         lines = self.runtest('dispatcher', 'edit-dispatcher')
         self.assertEqual(lines,
-            ["Unexpected edit failure for Dispatcher\n"])
+            ["<!DOCTYPE html>\nUnexpected edit failure for Dispatcher\n"])
 
         self.assertTrue(qrbug.Failure['dispatcher'].get_hierarchy_representation()
             .count('ask_confirm') == 1)
@@ -48,7 +48,7 @@ class TestEdit(qrbug.TestCase):
     def test_failure(self):
         lines = self.runtest('failure', 'edit-failure')
         self.assertEqual(lines,
-            ["Unexpected edit failure for Failure\n"])
+            ["<!DOCTYPE html>\nUnexpected edit failure for Failure\n"])
 
         self.assertTrue(qrbug.Failure['failure'].get_hierarchy_representation()
             .count('ask_confirm') == 1)
@@ -56,7 +56,7 @@ class TestEdit(qrbug.TestCase):
     def test_selector(self):
         lines = self.runtest('selector', 'edit-selector')
         self.assertEqual(lines,
-            ["Unexpected edit failure for Selector\n"])
+            ["<!DOCTYPE html>\nUnexpected edit failure for Selector\n"])
 
         self.assertTrue(qrbug.Failure['selector'].get_hierarchy_representation()
             .count('ask_confirm') == 1)
@@ -64,7 +64,7 @@ class TestEdit(qrbug.TestCase):
     def test_thing(self):
         lines = self.runtest('thing', 'edit-thing')
         self.assertEqual(lines,
-            ["Unexpected edit failure for Thing\n"])
+            ["<!DOCTYPE html>\nUnexpected edit failure for Thing\n"])
 
         self.assertTrue(qrbug.Failure['thing'].get_hierarchy_representation()
             .count('ask_confirm') == 1)
@@ -72,7 +72,7 @@ class TestEdit(qrbug.TestCase):
     def test_user(self):
         lines = self.runtest('user', 'edit-user')
         self.assertEqual(lines,
-            ["Unexpected edit failure for User\n"])
+            ["<!DOCTYPE html>\nUnexpected edit failure for User\n"])
 
         self.assertTrue(qrbug.Failure['user'].get_hierarchy_representation()
             .count('ask_confirm') == 1)
@@ -82,15 +82,15 @@ class TestEdit(qrbug.TestCase):
 
         lines = self.runtest('action-python_script', 'edit-action', 'echo.py')
         self.assertEqual(lines,
-            ["L'action «a-selector» lance maintenant le script «echo.py»\n"])
+            ["<!DOCTYPE html>\nL'action «a-selector» lance maintenant le script «echo.py»\n"])
 
         lines = self.runtest('action-python_script', 'edit-action', 'nodefinedscript.py')
         self.assertEqual(lines,
-            ["Le script Python «nodefinedscript.py» n'existe pas.\n"])
+            ["<!DOCTYPE html>\nLe script Python «nodefinedscript.py» n'existe pas.\n"])
 
         lines = self.runtest('action', 'edit-action')
         self.assertEqual(lines,
-            ["Unexpected edit failure for Action\n"])
+            ["<!DOCTYPE html>\nUnexpected edit failure for Action\n"])
 
         self.assertTrue(qrbug.Failure['action'].get_hierarchy_representation()
             .count('ask_confirm') == 2)
