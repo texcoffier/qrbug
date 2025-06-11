@@ -16,7 +16,7 @@ selector('journal', '{"class":"Failure", "test":"in", "value": "journal"}')
 selector('generate_qr', '{"class":"Failure", "attr":"id", "test":"=", "value": "generate_qr"}')
 selector('for-me', '{"class":"SourceUser", "test":"is_concerned"}')
 selector('personnal-for-me', '{"class":"Failure", "attr": "id", "test": "=", "value": "personnal-for-me"}')
-selector('backoffice', '{"class":"Failure", "test": "in", "value": "toptop"}')
+selector('backoffice', '{"class":"Failure", "test": "in", "value": "backoffice"}')
 selector('not-backoffice', '{"class":"Selector", "id": "backoffice", "attr": "is_ok", "test": "false"}')
 selector('pending-feedback', '{"class":"Failure", "attr": "id", "test": "=", "value": "pending-feedback"}')
 selector('send-pending-feedback', '{"class":"Failure", "attr": "id", "test": "=", "value": "send-pending-feedback"}')
@@ -25,10 +25,10 @@ selector('with-pending-feedback', '[1, {"test": "pending_feedback"}, {"class":"S
 user_add('admin', 'thierry.excoffier')
 user_add('admin', 'p2205989')
 
-failure_update('toptop', value='')
+failure_update('backoffice', value='')
 
 failure_update('top', value='')
-failure_add('toptop', 'top')
+failure_add('backoffice', 'top')
 
 failure_update('list', value="Lister", ask_confirm=False, restricted_to_group_id="admin")
 failure_add('top', 'list')
@@ -74,8 +74,10 @@ failure_update('personnal-for-me', value="Les incidents que je dois traiter", as
 failure_add('personnal', 'personnal-for-me')
 
 
-thing_update('admin', failure_id="top", comment="Interface d'administration")
-thing_update('backoffice', failure_id="edit", comment="API du backoffice")
+thing_update('admin', comment="Interface d'administration")
+thing_add_failure('admin', "top")
+thing_update('backoffice', comment="API du backoffice")
+thing_add_failure('backoffice', 'edit')
 
 dispatcher_update('admin-list', action_id='list', selector_id='list')
 dispatcher_update('admin-journal', action_id='journal', selector_id='journal')
@@ -87,7 +89,7 @@ dispatcher_update('personnal-for-me', action_id='echo', selector_id='personnal-f
 ####################
 # Edit configuration
 ####################
-failure_add('toptop', 'edit')
+failure_add('backoffice', 'edit')
 failure_update('edit', value="API de l'éditeur de configuration, elle ne permet aucune modification mais affiche seulement les éléments modifiables pour chacun des types d'objet.", ask_confirm=False, restricted_to_group_id="admin")
 
 # Edit concerned

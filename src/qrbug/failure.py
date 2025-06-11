@@ -121,7 +121,7 @@ class Failure(qrbug.Tree):
         return ''.join(representation)
 
 
-    def get_hierarchy_representation_html(self, thing, use_template: bool = True) -> str:
+    def get_hierarchy_representation_html(self, thing, use_template: bool = True, done = None) -> str:
         """
         Returns a representation of the whole hierarchy of this failure as a webpage.
         :param thing_id: The id of the thing that could be targeted by this failure.
@@ -133,11 +133,7 @@ class Failure(qrbug.Tree):
             '<H1>', path, '</H1>'
             ]
 
-        # TODO : Caching ?
-        if use_template:
-            html_template = qrbug.get_template()
-
-        done = set()
+        done = done or set()
         def recursively_build_failures_list(failure_id: str) -> None:
             if failure_id in done:
                 return
@@ -152,7 +148,7 @@ class Failure(qrbug.Tree):
 
         recursively_build_failures_list(self.id)
         if use_template:
-            return html_template.replace("%REPRESENTATION%", ''.join(representation))
+            return qrbug.get_template().replace("%REPRESENTATION%", ''.join(representation))
         else:
             return ''.join(representation)
 

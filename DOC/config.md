@@ -77,7 +77,8 @@ Each of these parameters *(besides `thing_id`)* is optional if you want to modif
 
 Example :  
 ```py
-thing_update("b710pc0101", location="Nautibus 101", failure_id="PC_NO_BOOT")
+thing_update("b710pc0101", location="Nautibus 101")
+thing_add_failure("b710pc0101", "PC_NO_BOOT")
 thing_update("b710pc0101", comment="3ème à gauche")
 ```
 *Please see image above for page where this Thing's QR code brings*

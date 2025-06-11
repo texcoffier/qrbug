@@ -13,18 +13,14 @@ class Thing(qrbug.Tree):
     instances: dict[ThingId, "Thing"] = {}
 
     # Default values
-    location:   Optional[str]             = None
-    failure_id: Optional[qrbug.FailureId] = None
-    comment:    Optional[str]             = ""
+    location    : Optional[str]         = None
+    comment     : Optional[str]         = ""
+
+    def init(self):
+        self.failure_ids:set[qrbug.FailureId] = []
 
     def _local_dump(self) -> str:
-        # short_names = {
-        #     'location': 'loc',
-        #     'failure_id': 'failure',
-        # }
-        # return self.get_representation(attributes_short=short_names)
-        return f'loc:{self.location} failure:{self.failure_id} comment:{repr(self.comment)}'
-
+        return f'loc:{self.location} failures:{self.failure_ids} comment:{repr(self.comment)}'
 
     def get_failures(self, as_html: bool = True) -> str:
         """
@@ -32,23 +28,29 @@ class Thing(qrbug.Tree):
         :param as_html: If True, return an HTML representation of the failure. Otherwise, returns as raw text.
         """
         # Gets the failure for this thing
-        root_failure = self.failure
-        if root_failure is None:
-            return f"""Il n'est possible de déclarer aucun panne pour
+        if not self.failure_ids:
+            return f"""Il n'est possible de déclarer de panne pour
             <ul>
             <li> Identifiant : «{self.id}»
             <li> Emplacement : «{self.location}»
             <li> Commentaire : «{self.comment}»
             </ul>"""
 
+        done = set()
+        texts = []
+        for failure_id in self.failure_ids:
+            failure = qrbug.Failure[failure_id]
+            if as_html:
+                texts.append(failure.get_hierarchy_representation_html(self, use_template=False, done=done))
+            else:
+                texts.append(failure.get_hierarchy_representation(done))
         if as_html:
-            return root_failure.get_hierarchy_representation_html(self)
-        else:
-            return root_failure.get_hierarchy_representation()
+            return qrbug.get_template().replace("%REPRESENTATION%", ''.join(texts))
+        return ''.join(texts)
 
-    @property
-    def failure(self) -> Optional[qrbug.Failure]:
-        return qrbug.Failure[self.failure_id]
+    # @property
+    # def failure(self) -> Optional[qrbug.Failure]:
+    #     return qrbug.Failure[self.failure_id]
 
     def get_html(self, is_full_page: bool = False) -> str:
         """
@@ -60,17 +62,22 @@ class Thing(qrbug.Tree):
             with qrbug.REPORT_FAILURE_TEMPLATE as template_file:
                 html_template = template_file.read_text()
 
+        done = set()
         representation: list[str] = [
             '<div>',
             '  <ul>',
             f'    <li>Emplacement : {html.escape(self.location) if self.location is not None else "[NON REMPLI]"}</li>',
             f'    <li>Commentaire : {html.escape(self.comment) if self.comment else "[NON REMPLI]"}</li>',
             f'    <li>ID : {html.escape(self.id) if self.id is not None else "[NON REMPLI]"}</li>',
-            f'    <li>ID de la Failure : {html.escape(self.failure_id) if self.failure_id is not None else "[NON REMPLI]"}</li>',
+            f'    <li>ID des pannes : {html.escape(repr(self.failure_ids))}</li>',
             '  </ul>',
             '</div>',
             '<div>',
-            self.failure.get_hierarchy_representation_html(self.id, False),
+            *(
+              qrbug.Failure[failure].get_hierarchy_representation_html(
+                    self.id, use_template=False, done=done)
+              for failure_id in self.failures_ids
+             ),
             '</div>',
             '<div>',
         ]
@@ -89,13 +96,22 @@ class Thing(qrbug.Tree):
         else:
             return ''.join(representation)
 
+    @classmethod
+    def add_failure(cls, thing_id, failure_id):
+        failures = cls.instances[thing_id].failure_ids
+        if failure_id in failures:
+            failures.remove(failure_id)
+        failures.append(failure_id)
+
+    @classmethod
+    def del_failure(cls, thing_id, failure_id):
+        cls.instances[thing_id].failure_ids.remove(failure_id)
 
 def thing_update(thing_id: ThingId, **kwargs) -> Thing:
     """
     Creates a new thing that can fail, or modifies an existing one.
     :param thing_id: The ID of this thing.
     :param location: Where this thing is located.
-    :param failure_id: Which is the root failure for this thing ?
     :param comment: Any comment on the thing.
     """
     return Thing.update_attributes(thing_id, **kwargs)
@@ -116,7 +132,6 @@ def thing_remove(parent: ThingId, child: ThingId) -> None:
     """
     Thing.remove_parenting_link(parent, child)
 
-
 def thing_del(thing_id: ThingId) -> None:
     """
     Deletes an existing thing.
@@ -124,13 +139,14 @@ def thing_del(thing_id: ThingId) -> None:
     """
     del Thing.instances[thing_id]
 
-
 qrbug.Thing = Thing
 qrbug.ThingId = ThingId
 qrbug.thing_update = thing_update
 qrbug.thing_del = thing_del
 qrbug.thing_remove = thing_remove
 qrbug.thing_add = thing_add
+qrbug.thing_add_failure = Thing.add_failure
+qrbug.thing_del_failure = Thing.del_failure
 
 if __name__ == "__main__":
     thing_update("0", location="Testing location", comment="This is a comment")

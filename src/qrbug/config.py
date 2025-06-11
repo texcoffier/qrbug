@@ -36,6 +36,8 @@ CONFIGS = {
     "thing_del": qrbug.thing_del,
     "thing_remove": qrbug.thing_remove,
     "thing_add": qrbug.thing_add,
+    "thing_add_failure": qrbug.thing_add_failure,
+    "thing_del_failure": qrbug.thing_del_failure,
     "action": qrbug.action_update,
     "selector": qrbug.selector_update,
     "dispatcher_update": qrbug.dispatcher_update,
