@@ -106,7 +106,9 @@
                 ;
             let input = document.getElementById('input')
                 || (element.tagName == 'INPUT' ? element : undefined)
-                || (element.previousElementSibling.tagName == 'INPUT' ? element.previousElementSibling : undefined)
+                || (element.previousElementSibling
+                    && element.previousElementSibling.tagName == 'INPUT'
+                    ? element.previousElementSibling : undefined)
                 ;
             let value = input ? input.value : undefined;
             if (value)
