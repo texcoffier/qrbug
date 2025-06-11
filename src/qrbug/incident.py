@@ -88,7 +88,7 @@ class Incident:
         Opens a new incident based on the parameters AND writes it into the journal
         """
         final_string = [
-            f"incident_new({repr(thing_id)}, {repr(failure_id)}, {repr(ip)}, {int(time.time())},",
+            f"incident_new({repr(thing_id)}, {repr(failure_id)}, {repr(ip)}, {int(time.time())}, ",
             '""',
             f", {repr(login)})  # {time.strftime('%Y-%m-%d %H:%M:%S')}\n",
         ]
