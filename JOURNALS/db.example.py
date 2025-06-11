@@ -4,7 +4,7 @@ failure_update("PC_NO_BOOT", value="Le PC ne démarre pas", display_type=Display
 failure_update("PC_NO_BOOT_BIOS_ERROR",   value="... et affiche un texte blanc sur écran noir", display_type=DisplayTypes.button, ask_confirm=True, restricted_to_group_id="ROOT")
 failure_update("PC_NO_BOOT_BLACK_SCREEN", value="... et l'écran ne s'allume pas non plus",      display_type=DisplayTypes.text, ask_confirm=True, restricted_to_group_id="ROOT")
 failure_update("PC_NO_BOOT_NO_POWER",     value="... et la diode sur le PC ne clignote pas",    display_type=DisplayTypes.button, ask_confirm=True, restricted_to_group_id="ROOT")
-failure_update("PC_NO_BOOT_OTHER", value="Autre chose ?", display_type=DisplayTypes.input, ask_confirm=True, restricted_to_group_id="ROOT")
+failure_update("PC_NO_BOOT_OTHER", value="Autre chose ?", display_type=DisplayTypes.textarea, ask_confirm=True, restricted_to_group_id="ROOT")
 failure_update("PC_NO_BOOT_BLACK_SCREEN_UNPLUGGED_WIRE", value="... et un câble est débranché", display_type=DisplayTypes.button, ask_confirm=True, restricted_to_group_id="ROOT")
 failure_update("PC_NO_BOOT_BLACK_SCREEN_PLUGGED_WIRE", value="... et je ne peux pas voir les câbles", display_type=DisplayTypes.button, ask_confirm=True, restricted_to_group_id=None)
 failure_update("UNIV_WEBSITE", value="https://www.univ-lyon1.fr/", display_type=DisplayTypes.redirect, ask_confirm=False, restricted_to_group_id="ROOT")

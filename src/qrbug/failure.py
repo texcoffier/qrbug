@@ -14,6 +14,7 @@ class DisplayTypes(enum.Enum):
     text     = enum.auto()
     button   = enum.auto()
     redirect = enum.auto()
+    textarea = enum.auto()
     input    = enum.auto()
 
 def element(failure: "Failure", thing, in_place=False):
@@ -21,17 +22,20 @@ def element(failure: "Failure", thing, in_place=False):
     common = f'failureid="{failure.id}" thingid="{thing.id}" what="{thing.__class__.__name__.lower()}"'
     if display_type == DisplayTypes.text:
         return  f'<p {common}>{failure.value}</p>'
-    elif display_type == DisplayTypes.redirect:
+    if display_type == DisplayTypes.redirect:
         return  f'<a {common} href="{failure.value}">{failure.value}</p>'
-    elif display_type == DisplayTypes.button:
+    if display_type == DisplayTypes.button:
         return f'<div {common} class="button" onclick="register_incident(this)"><BOX>{failure.value}</BOX></div>'
-    elif display_type == DisplayTypes.input:
-        value = ''
-        if failure.inside('edit') and '-' in failure.id:
-            attr = getattr(thing, failure.id.split('-', 1)[1], None)
-            if attr is not None:
-                value = html.escape(attr)
-        in_place = int(in_place)
+
+    value = ''
+    if failure.inside('edit') and '-' in failure.id:
+        attr = getattr(thing, failure.id.split('-', 1)[1], None)
+        if attr is not None:
+            value = html.escape(attr)
+    in_place = int(in_place)
+    if display_type == DisplayTypes.textarea:
+        return f'<div {common} class="button" value="{value}" onclick="ask_value(this,{in_place})"><BOX>{failure.value}</BOX></div>'
+    if display_type == DisplayTypes.input:
         return f'''<div class="input">{'' if in_place else failure.value}
         <div><input {common} value="{value}" autocomplete="off" onkeypress="if (event.key=='Enter') register_incident(this,{in_place})">
         <button {common} onclick="register_incident(this, {in_place})">-&gt;</button></div></div>'''

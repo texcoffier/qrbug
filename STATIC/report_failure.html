@@ -96,17 +96,21 @@
 
     <script>
         function register_incident(element, in_place) {
+            while ( ! element.getAttribute('thingid') )
+                element = element.parentNode;
             let url = '/?thing-id=' + element.getAttribute('thingid')
                 + '&failure-id=' + element.getAttribute('failureid')
                 + '&what=' + element.getAttribute('what')
                 + '&is-repaired=0'
                 + (location.search ? location.search.replace('?', '&') : '') // ticket
                 ;
-            let value = element.value; // INPUT
-            if (element.tagName === 'BUTTON')
-                value = element.previousElementSibling.value;
+            let input = document.getElementById('input')
+                || (element.tagName == 'INPUT' ? element : undefined)
+                || (element.previousElementSibling.tagName == 'INPUT' ? element.previousElementSibling : undefined)
+                ;
+            let value = input ? input.value : undefined;
             if (value)
-                url += '&additional-info=' + value;
+                url += '&additional-info=' + encodeURIComponent(value);
             if(in_place) {
                 iframe = document.createElement('IFRAME');
                 iframe.src = url;
@@ -114,6 +118,31 @@
             } else {
                 window.location = url;
             }
+        }
+        function close_dialog(event) {
+            document.getElementById('popup').remove();
+            event.stopPropagation();
+        }
+        function ask_value(element, in_place) {
+            if (document.getElementById('popup')) {
+                return;
+            }
+            popup = document.createElement('DIALOG');
+            popup.id = 'popup';
+            popup.method = "dialog";
+            popup.onclose = close_dialog;
+            txt = '<b>' + element.innerHTML + '</b><br>'
+                + '<p>Précisez le problème :</p>'
+                + '<textarea id="input" autocomplete="off"'
+                + '       style="width:100%; font-size:120%; height:5em; margin-bottom: 1em;"'
+                + '       onkeypress="if(event.key==\'Enter\')register_incident(this,' + in_place + ')">'
+                + '</textarea>'
+                + '<button onclick="close_dialog(event)" style="font-size:120%;float:left">Annuler</button>'
+                + '<button onclick="register_incident(this,' + in_place + ');close_dialog(event)" style="font-size:120%;float:right">Envoyer</button>';
+            popup.innerHTML = txt;
+            element.appendChild(popup);
+            document.getElementById('input').textContent = element.value;
+            popup.showModal();
         }
     </script>
 </head>
