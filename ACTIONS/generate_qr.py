@@ -6,6 +6,10 @@ import qrcode
 
 import qrbug
 
+
+IMAGE_FORMAT = 'PNG'
+REPORT_THING_URL = qrbug.SERVICE_URL + '/thing={}'
+
 # Run by a dispatcher:
 #    thing: building, room, pc...
 #    failure: print qr code
@@ -13,9 +17,6 @@ import qrbug
 
 async def run(incidents: list[qrbug.Incident], request: web.Request) -> Optional[qrbug.action_helpers.ActionReturnValue]:
     incident = incidents[0]
-
-    IMAGE_FORMAT = 'PNG'
-    REPORT_THING_URL = qrbug.SERVICE_URL + '/thing={}'
 
     requested_thing_id = incident.comment
     url = REPORT_THING_URL.format(requested_thing_id)
