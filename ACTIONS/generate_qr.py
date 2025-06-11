@@ -10,9 +10,12 @@ import qrbug
 IMAGE_FORMAT = 'PNG'
 REPORT_THING_URL = qrbug.SERVICE_URL + '/thing={}'
 
+QR_GEN_THING_ID = 'QR_GEN'
+QR_GEN_FAILURE_ID = 'generate_qr'
+
 
 def get_qr_gen_link(thing_id: qrbug.ThingId, ticket: str) -> str:
-    return f'/?thing-id=QR_GEN&failure-id=generate_qr&what=thing&is-repaired=0&&additional-info={thing_id}&ticket={ticket}'
+    return f'/?thing-id={QR_GEN_THING_ID}&failure-id={QR_GEN_FAILURE_ID}&what=thing&is-repaired=0&&additional-info={thing_id}&ticket={ticket}'
 
 # Run by a dispatcher:
 #    thing: building, room, pc...
