@@ -119,19 +119,19 @@ async def register_incident(request: qrbug.Request) -> web.StreamResponse:
             returned_html[dispatcher.id] = await dispatcher.run(current_incident, request)
 
     if any(value is not None for value in returned_html.values()):
-        await request.response.write(b'Informations additionnelles :')
+        await request.write('Informations additionnelles :')
 
     # Makes the HTML response from the dispatchers
     INDENT_SIZE_PIXELS = 20
     for dispatcher_id, dispatcher_return_value in returned_html.items():
         if dispatcher_return_value is not None:
-            await request.response.write(
-                f'<p>DISPATCHER [{dispatcher_id}]<br/>\n'.encode('utf-8')
+            await request.write(
+                f'<p>DISPATCHER [{dispatcher_id}]<br/>\n'
             )
-            await request.response.write((
+            await request.write((
                 f'<div style="padding-left: {INDENT_SIZE_PIXELS}px;">\n'
                 f'    INCIDENT [{current_incident.thing_id}, {current_incident.failure_id}]\n'
-            ).encode('utf-8'))
+            ))
 
             response_values = [  # (title, value)
                 ('ERROR', dispatcher_return_value.error_msg),
@@ -139,14 +139,14 @@ async def register_incident(request: qrbug.Request) -> web.StreamResponse:
             ]
             for title, response_value in response_values:
                 if response_value:
-                    await request.response.write((
+                    await request.write((
                         f'    <div style="padding-left: {INDENT_SIZE_PIXELS * 2}px;">\n'
                         f'        <h3>{title}</h3>\n'
                         f'        <div style="padding-left: {INDENT_SIZE_PIXELS * 3}px;">{response_value}</div>\n'
                         f'    </div>\n'
-                    ).encode('utf-8'))
-            await request.response.write(b'</div>\n')
-            await request.response.write(b'</p>\n')
+                    ))
+            await request.write('</div>\n')
+            await request.write('</p>\n')
 
     # return_string = (f"thing_id={thing_id}\n"
     #                  f"failure_id={failure_id}\n"
