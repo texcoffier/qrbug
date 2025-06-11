@@ -25,27 +25,37 @@ class TestAction(qrbug.TestCase):
         qrbug.action_update('echo', 'echo.py')
         qrbug.action_update('close', 'close.py')
 
-    def check(self, dispatcher, incident, expected):
+    def check(self, dispatcher, incident, expected, clean=True):
         request = qrbug.Request()
         asyncio.run(dispatcher.run(incident, request))
-        self.assertEqual(request.lines, expected)
+        # print(''.join(request.lines))
+        if clean:
+            lines = [line
+                    .split('<td', 1)[1]
+                    .split('>', 1)[1]
+                    .split('</tr>', 1)[0]
+                    .split('\n', 1)[0]
+                    .replace('<td>', ',')
+                    .replace('<br>', ' ')
+                    .replace('\xa0', '')
+                    .strip()
+                    for line in ''.join(request.lines).split('<tr')[1:]
+                    ]
+        else:
+            lines = request.lines
+        self.assertEqual(lines, expected)
 
     def test_simple_dispatch(self):
         d1 = qrbug.dispatcher_update('simple', action_id='echo', selector_id='true', incidents='')
         i1 = qrbug.Incident.open('thing_child', 'fail1', 'ip1', 'login1')
-        self.check(d1, i1, ['<pre>\n', 'Active thing_child,fail1,ip1,,login1,None\n', '</pre>\n'])
+        self.check(d1, i1, ['«thing_child» «fail1»', 'ip1,,login1'])
 
         i2 = qrbug.Incident.open('thing_child', 'fail1', 'ip2', 'login2')
-        self.check(d1, i2, ['<pre>\n', 'Active thing_child,fail1,ip1,,login1,None\n', 'Active thing_child,fail1,ip2,,login2,None\n', '</pre>\n'])
+        self.check(d1, i2, ['«thing_child» «fail1»', 'ip1,,login1', 'ip2,,login2'])
 
         # The 2 incidents are open, s</pre> all incidents to action
         d2 = qrbug.dispatcher_update('simple', action_id='echo', selector_id='true', incidents='true')
-        self.check(d2, i2, [
-            '<pre>\n',
-            'Active thing_child,fail1,ip1,,login1,None\n',
-            'Active thing_child,fail1,ip2,,login2,None\n',
-            '</pre>\n'
-            ])
+        self.check(d2, i2, ['«thing_child» «fail1»', 'ip1,,login1', 'ip2,,login2'])
 
         # The 2 incidents are open, s</pre> no incidents to action
         d2 = qrbug.dispatcher_update('simple', action_id='echo', selector_id='true', incidents='false')
@@ -64,35 +74,28 @@ class TestAction(qrbug.TestCase):
         # Close '07:00' after dispatching
         morning = qrbug.Incident.open('debug', '07:00', '', '')
         self.check(d1, morning, [
-            '<pre>\n',
-            'Active thing_child,fail1,ip1,,login1,None\n',
-            'Active thing_child,fail1,ip2,,login2,None\n',
-            'Active debug,07:00,,,,None\n',
-            '</pre>\n'
-            ])
-        self.check(close, morning, ['«Clôture de 07:00» «VALEUR_NON_DEFINIE POUR «07:00»»\n'])
+            '«thing_child» «fail1»',
+            'ip1,,login1',
+            'ip2,,login2',
+            '«debug» «07:00»',
+            ',,'])
+        self.check(close, morning, ['«Clôture de 07:00» «VALEUR_NON_DEFINIE POUR «07:00»»\n'], clean=False)
 
         # Close '07:00' after dispatching
         morning = qrbug.Incident.open('debug', '07:00', '', '')
         self.check(d1, morning, [
-            '<pre>\n',
-            'Active thing_child,fail1,ip1,,login1,None\n',
-            'Active thing_child,fail1,ip2,,login2,None\n',
-            'Active debug,07:00,,,,None\n',
-            'Pending feedback debug,07:00,,,,\n',
-            '</pre>\n'
-            ])
-        self.check(close, morning, ['«Clôture de 07:00» «VALEUR_NON_DEFINIE POUR «07:00»»\n'])
+            '«thing_child» «fail1»',
+            'ip1,,login1',
+            'ip2,,login2',
+            '«debug» «07:00»',
+            ',,',
+            ',,,'])
+        self.check(close, morning, ['«Clôture de 07:00» «VALEUR_NON_DEFINIE POUR «07:00»»\n'], clean=False)
 
         # Close '07:00' before dispatching
         morning = qrbug.Incident.open('debug', '07:00', '', '')
-        self.check(close, morning, ['«Clôture de 07:00» «VALEUR_NON_DEFINIE POUR «07:00»»\n'])
-        self.check(d1, morning, [
-            '<pre>\n',
-            'Active thing_child,fail1,ip1,,login1,None\n',
-            'Active thing_child,fail1,ip2,,login2,None\n',
-            '</pre>\n'
-            ])
+        self.check(close, morning, ['«Clôture de 07:00» «VALEUR_NON_DEFINIE POUR «07:00»»\n'], clean=False)
+        self.check(d1, morning, ['«thing_child» «fail1»', 'ip1,,login1', 'ip2,,login2'])
 
     def test_list_incident(self):
         qrbug.action_update('list', 'list.py')
@@ -102,37 +105,21 @@ class TestAction(qrbug.TestCase):
         trigger = qrbug.Incident.open('debug', 'list-Incident', 'ip2', 'login2')
         dispatcher = qrbug.dispatcher_update('show_incidents', action_id='echo',
             selector_id='true', incidents='true')
-
-        request = qrbug.Request()
-        asyncio.run(dispatcher.run(trigger, request))
-        self.assertEqual(request.lines, [
-            '<pre>\n',
-            'Active thing_child,fail1,ip1,,login1,None\n',
-            'Active debug,list-Incident,ip2,,login2,None\n',
-            '</pre>\n'
-            ])
+        self.check(dispatcher, trigger, [
+            '«thing_child» «fail1»',
+            'ip1,,login1',
+            '«debug» «list-Incident»',
+            'ip2,,login2'])
 
         # Fix the problem
         qrbug.Incident.close('thing_child', 'fail1', 'ip1', 'fixer_login')
-        request = qrbug.Request()
-        asyncio.run(dispatcher.run(trigger, request))
-        self.assertEqual(request.lines, [
-            '<pre>\n',
-            'Active debug,list-Incident,ip2,,login2,None\n',
-            '</pre>\n'
-            ])
+        self.check(dispatcher, trigger, ['«debug» «list-Incident»', 'ip2,,login2'])
 
         # Pending user feeback
         qrbug.selector_update('with-pending-feedback', '{"test": "pending_feedback"}')
         list_pending = qrbug.dispatcher_update('show_pending', action_id='echo',
             selector_id='true', incidents='with-pending-feedback')
-        request = qrbug.Request()
-        asyncio.run(list_pending.run(trigger, request))
-        self.assertEqual(request.lines, [
-            '<pre>\n',
-            'Pending feedback thing_child,fail1,ip1,,login1,fixer_login\n',
-            '</pre>\n'
-            ])
+        self.check(list_pending, trigger, ['«thing_child» «fail1»', 'ip1,,login1,fixer_login'])
 
         # Send pending feedback
         qrbug.action_update('pending_feedback', 'pending_feedback.py')

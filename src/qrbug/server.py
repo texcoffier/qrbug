@@ -90,6 +90,7 @@ async def register_incident(request: qrbug.Request) -> web.StreamResponse:
 
     if is_repaired_bool:
         current_incident = qrbug.Incident.close(thing_id, failure_id, user_ip, user_login)
+        return web.Response(status=200, text='<style>BODY {margin:0px}</style>👍', content_type='text/html')
     else:
         current_incident = qrbug.Incident.open(thing_id, failure_id, user_ip, user_login, additional_info)
         request.report = current_incident.active[-1]

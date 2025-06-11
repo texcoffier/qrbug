@@ -60,7 +60,7 @@ failure_update('misc', value="Divers", ask_confirm=False, restricted_to_group_id
 failure_add('top', 'misc')
 failure_update('pending-feedback', value="Feedbacks de réparation en attente d'envoi", ask_confirm=False, restricted_to_group_id="admin", display_type=DisplayTypes.button)
 failure_add('misc', 'pending-feedback')
-failure_update('send-pending-feedback', value="Envoit le feedback de réparation aux utilisateurs", ask_confirm=False, restricted_to_group_id="admin", display_type=DisplayTypes.button)
+failure_update('send-pending-feedback', value="Envoie le feedback de réparation aux utilisateurs", ask_confirm=False, restricted_to_group_id="admin", display_type=DisplayTypes.button)
 failure_add('misc', 'send-pending-feedback')
 
 failure_update('generate_qr_top', value='Générer un QR code :', ask_confirm=False, restricted_to_group_id="admin", display_type=DisplayTypes.text)
