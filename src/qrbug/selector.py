@@ -12,7 +12,7 @@ ITEMS = {
     'User': 'qrbug.User[incident.login]'           , # User triggering the incident
     'SourceThing': 'source.thing'                  , # Its thing
     'SourceFailure': 'source.failure'              , # Its failure
-    'SourceUser': 'qrbug.User.get(source.active[-1].login)', # User triggering the incident
+    'SourceUser': 'qrbug.User.get(report.login)', # User triggering the incident
     'Selector': 'qrbug.Selector[%ID%]'             , # Selector from 'id' attr
     # TODO :
     #   * Incident other attributes (IP, date...)
@@ -24,7 +24,7 @@ ATTRIBUTES = {
     'id'                     : '.id'                         , # Any
     'location'               : '.location'                   , # Thing
     'comment'                : '.comment'                    , # Thing
-    'is_ok'                  : '.is_ok(incident, source)'    , # Selector
+    'is_ok'                  :'.is_ok(incident,source,report)',# Selector
     'value'                  : '.value'                      , # Failure
     'display_type'           : '.display_type'               , # Failure
     'ask_confirm'            : '.ask_confirm'                , # Failure
@@ -75,7 +75,7 @@ class Selector(qrbug.Editable):
         self.expression = expression
         self.instances[selector_id] = self
 
-    def is_ok(self, incident: 'qrbug.Incident', source=None) -> bool:
+    def is_ok(self, incident: 'qrbug.Incident', source=None, report=None) -> bool:
         if not self.compiled:
             self.expr = compil_expr(ast.literal_eval(self.expression)) # For regtests
             self.compiled = compile(self.expr, '', 'eval')
@@ -85,7 +85,7 @@ class Selector(qrbug.Editable):
         if incident.failure is None:
             raise Exception(f'Unknown failure: «{incident.failure_id}»')
         # print(len(incident.active), source, self.expr)
-        return eval(self.compiled, {'incident': incident, 'qrbug': qrbug, 'source': source})
+        return eval(self.compiled, {'incident': incident, 'qrbug': qrbug, 'source': source, 'report': report})
 
     def __class_getitem__(cls, selector_id: str) -> Optional["Selector"]:
         return cls.instances.get(selector_id, None)

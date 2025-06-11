@@ -92,6 +92,7 @@ async def register_incident(request: web.Request) -> web.StreamResponse:
         current_incident = qrbug.Incident.close(thing_id, failure_id, user_ip, user_login)
     else:
         current_incident = qrbug.Incident.open(thing_id, failure_id, user_ip, user_login, additional_info)
+        request.report = current_incident.active[-1]
 
     # if failure.auto_close_incident:  # TODO: Move after dispatch_del
     #     qrbug.append_line_to_journal(f'incident_del({repr(thing_id)}, {repr(failure_id)}, {repr(user_ip)}, {timestamp}, {repr(user_login)})  # {current_date} {user_login}\n')

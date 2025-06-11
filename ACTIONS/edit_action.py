@@ -7,7 +7,7 @@ import qrbug
 async def run(incidents, request):
     incident = incidents[0]
     selector = incident.thing_id
-    value = incident.active[-1].comment # Valid because no 'await' before
+    value = request.report.comment
     if incident.failure_id == 'action-python_script':
         if Path('ACTIONS', value).exists():
             if value == qrbug.Action[selector].python_script:

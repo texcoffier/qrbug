@@ -141,7 +141,7 @@ class TestSelector(qrbug.TestCase):
         for user, expected in (('user_child', True), ('user_parent', True), ('somebody', False)):
             incident_trigger = qrbug.Incident.open(
                 'a_thing', 'fail1', login=user, ip='no-ip', additional_info='no-comment')
-            result = for_me.is_ok(incident, incident_trigger)
+            result = for_me.is_ok(incident, incident_trigger, incident_trigger.active[-1])
             self.assertEqual(result, expected, user)
 
     def test_pending_feedback(self):

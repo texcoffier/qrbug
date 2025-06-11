@@ -5,6 +5,10 @@ import html
 
 async def run(incidents, request):
     incident = incidents[0]
+    if request.report.comment:
+        comment = f'Vous avez précisé :<div>{html.escape(request.report.comment)}</div>'
+    else:
+        comment = ''
     await request.response.write(
         f"""
         <style>
@@ -18,4 +22,5 @@ async def run(incidents, request):
         <div>
         {html.escape(incident.thing_id)}
         </div>
+        {comment}
         <p>Quelqu'un s'en occupera prochainement.""".encode('utf-8'))
