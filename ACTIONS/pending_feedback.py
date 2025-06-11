@@ -10,7 +10,6 @@ await qrbug.send_mail(
 
 """
 from typing import Optional, List
-from aiohttp import web
 
 import qrbug
 

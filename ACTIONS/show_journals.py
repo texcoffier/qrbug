@@ -2,7 +2,6 @@ from pathlib import Path
 import asyncio
 import html
 from typing import Optional, List
-from aiohttp import web
 import qrbug
 
 FILENAME = {

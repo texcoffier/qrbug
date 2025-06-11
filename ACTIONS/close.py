@@ -2,7 +2,6 @@
 Display data on browser
 """
 from typing import Optional, List
-from aiohttp import web
 
 import qrbug
 

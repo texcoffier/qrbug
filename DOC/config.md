@@ -106,11 +106,10 @@ Actions are Python scripts in the `ACTIONS/` folder.
 - Second, paste the following boilerplate into it :
 ```py
 from typing import Optional
-from aiohttp import web
 
 import qrbug
 
-async def run(incidents: List[qrbug.Incident], request: web.Request) -> Optional[str]:
+async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Optional[str]:
     pass
 ```
 - The `run` function is the entry point of your program, and will be awaited when called.
