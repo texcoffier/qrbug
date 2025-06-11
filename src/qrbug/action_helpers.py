@@ -1,4 +1,9 @@
+from typing import Optional
+
+from aiohttp import web
+
 import qrbug
+
 
 class ActionReturnValue:
     """
@@ -14,7 +19,16 @@ class ActionReturnValue:
     def __bool__(self):
         return not self.is_empty()
 
+
+class Request(web.Request):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.response: Optional[web.StreamResponse] = None
+        self.ticket: Optional[str] = None
+
 def get_template():
     """The file containing JS helpers and style."""
     return qrbug.REPORT_FAILURE_TEMPLATE.read_text()
+
 qrbug.get_template = get_template
+qrbug.Request = Request

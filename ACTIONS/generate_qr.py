@@ -1,5 +1,4 @@
 from typing import Optional
-from aiohttp import web
 import base64
 from io import BytesIO
 import qrcode
@@ -22,7 +21,7 @@ def get_qr_gen_link(thing_id: qrbug.ThingId, ticket: str) -> str:
 #    failure: print qr code
 #    incidents: descendants of the thing
 
-async def run(incidents: list[qrbug.Incident], request: web.Request) -> Optional[qrbug.action_helpers.ActionReturnValue]:
+async def run(incidents: list[qrbug.Incident], request: qrbug.Request) -> Optional[qrbug.action_helpers.ActionReturnValue]:
     incident = incidents[0]
 
     requested_thing_id = incident.active[0].comment

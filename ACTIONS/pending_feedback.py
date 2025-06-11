@@ -14,7 +14,7 @@ from aiohttp import web
 
 import qrbug
 
-async def run(incidents: List[qrbug.Incident], request: web.Request) -> Optional[qrbug.action_helpers.ActionReturnValue]:
+async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Optional[qrbug.action_helpers.ActionReturnValue]:
     await request.response.write(b'<pre>\n')
     # Fusion messages in one mail per user
     for incident in incidents:

@@ -11,7 +11,7 @@ FILENAME = {
     'journal-incident': qrbug.INCIDENTS_FILE_PATH,
 }
 
-async def run(incidents: List[qrbug.Incident], request: web.Request) -> Optional[qrbug.action_helpers.ActionReturnValue]:
+async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Optional[qrbug.action_helpers.ActionReturnValue]:
     incident = incidents[0]
     FILE_CHUNK_SIZE_BYTES = 100_000
 

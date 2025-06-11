@@ -4,7 +4,7 @@ from aiohttp import web
 
 import qrbug
 
-async def run(incidents: List[qrbug.Incident], request: web.Request) -> Optional[qrbug.action_helpers.ActionReturnValue]:
+async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Optional[qrbug.action_helpers.ActionReturnValue]:
     incident = incidents[0]
 
     what = getattr(qrbug, incident.failure_id.split('-')[1])

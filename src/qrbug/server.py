@@ -20,7 +20,7 @@ WHAT = {
     'action': qrbug.Action,
 }
 
-async def show_failures_tree_route(request: web.Request) -> web.Response:
+async def show_failures_tree_route(request: qrbug.Request) -> web.Response:
     """
     Returns the webpage listing the failure hierarchy for the given thing.
     """
@@ -41,7 +41,7 @@ async def show_failures_tree_route(request: web.Request) -> web.Response:
     return web.Response(status=200, text=requested_thing.get_failures(), content_type='text/html')
 
 
-async def register_incident(request: web.Request) -> web.StreamResponse:
+async def register_incident(request: qrbug.Request) -> web.StreamResponse:
     """
     Registers an incident into the logs, then shows the user that the incident has been registered.
     """
