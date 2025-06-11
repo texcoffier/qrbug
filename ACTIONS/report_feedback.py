@@ -9,7 +9,7 @@ async def run(incidents, request):
         comment = f'Vous avez précisé :<div>{html.escape(request.report.comment)}</div>'
     else:
         comment = ''
-    await request.response.write(
+    await request.write(
         f"""
         <style>
         DIV {{ margin: 2em; font-weight: bold }}
@@ -23,4 +23,4 @@ async def run(incidents, request):
         {html.escape(incident.thing_id)}
         </div>
         {comment}
-        <p>Quelqu'un s'en occupera prochainement.""".encode('utf-8'))
+        <p>Quelqu'un s'en occupera prochainement.""")

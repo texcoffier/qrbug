@@ -20,4 +20,4 @@ async def run(incidents, request):
             feedback = f"Le script Python «{value}» n'existe pas.\n"
     else:
         feedback = "Unexpected edit failure for Action\n"
-    await request.response.write(b'<!DOCTYPE html>\n' + feedback.encode('utf-8'))
+    await request.write('<!DOCTYPE html>\n' + feedback)

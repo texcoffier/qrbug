@@ -47,6 +47,6 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
             except: # pylint: disabled=bare-except
                 texts.append(html.escape(str(node)) + '<br>')
 
-    await request.response.write(''.join(texts).encode('utf-8'))
+    await request.write(''.join(texts))
 
     return None

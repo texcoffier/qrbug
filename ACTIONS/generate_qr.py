@@ -43,21 +43,21 @@ async def run(incidents: list[qrbug.Incident], request: qrbug.Request) -> Option
         # sorted(Thing[id] for id in get_all_children_ids(), key=lambda x: x.path())
 
         # Writes the HTML of the QR code
-        await request.response.write((
+        await request.write(
             f'<div class="qr_block">'
             f'<h2>QR Code pour <a href="{get_qr_gen_link(thing_id, request.query.get("ticket", ""))}">{thing_id}</a></h2>'
             f'<div><img src="data:image/{IMAGE_FORMAT.lower()};base64,{img_base64.decode()}" /></div>'
             f'</div>'
-        ).encode('utf-8'))
-
-    await request.response.write((
-        b'<h3>Parents :</h3>'
-        b'<ul>'
-    ))
-    for parent_id in requested_thing.parent_ids:
-        await request.response.write(
-            f'<li><a href="{get_qr_gen_link(parent_id, request.query.get("ticket", ""))}">{parent_id}</a></li>'.encode('utf-8')
         )
-    await request.response.write(b'</ul>')
+
+    await request.write(
+        '<h3>Parents :</h3>'
+        '<ul>'
+    )
+    for parent_id in requested_thing.parent_ids:
+        await request.write(
+            f'<li><a href="{get_qr_gen_link(parent_id, request.query.get("ticket", ""))}">{parent_id}</a></li>'
+        )
+    await request.write('</ul>')
 
     return None

@@ -13,4 +13,4 @@ async def run(incidents, request):
         feedback = f"«{selector}»\n"
     else:
         feedback = "Unexpected edit failure for User\n"
-    await request.response.write(b'<!DOCTYPE html>\n' + feedback.encode('utf-8'))
+    await request.write('<!DOCTYPE html>\n' + feedback)

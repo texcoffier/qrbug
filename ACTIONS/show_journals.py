@@ -21,15 +21,15 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
                 if not text:
                     break
                 await stream.write(
-                    html.escape(text).encode('utf-8')
+                    html.escape(text)
                 )
                 await asyncio.sleep(0)
 
-    await request.response.write(
-        b'<style>pre { font-family: monospace, monospace; background: #FFC; }</style>\n\n'
+    await request.write(
+        '<style>pre { font-family: monospace, monospace; background: #FFC; }</style>\n\n'
     )
-    await request.response.write(f'<h2>{qrbug.Failure.instances[incident.failure_id].value} :</h2><pre>'.encode('utf-8'))
-    await stream_html_from_path(FILENAME[incident.failure_id], request.response)
-    await request.response.write('</pre>\n'.encode('utf-8'))
+    await request.write(f'<h2>{qrbug.Failure.instances[incident.failure_id].value} :</h2><pre>')
+    await stream_html_from_path(FILENAME[incident.failure_id], request)
+    await request.write('</pre>\n')
 
     return None

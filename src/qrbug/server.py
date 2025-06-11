@@ -32,6 +32,8 @@ async def show_failures_tree_route(request: qrbug.Request) -> web.Response:
     if requested_thing is None:
         return web.Response(status=404, text="Requested Thing does not exist")
 
+    request.write = lambda text: request.response.write(text.encode('utf-8'))
+
     # Creates the CAS login
     if ENABLE_AUTHENTICATION:
         user_login = await qrbug.handle_login(request, f'{what}={thing_id}')
@@ -107,6 +109,7 @@ async def register_incident(request: qrbug.Request) -> web.StreamResponse:
         status=200,
         headers={'Content-Type': 'text/html; charset=utf-8'},
     )
+    request.write = lambda text: request.response.write(text.encode('utf-8'))
     await request.response.prepare(request)
 
     # Dispatchers

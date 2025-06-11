@@ -26,6 +26,9 @@ class Request(web.Request):
         self.response: Optional[web.StreamResponse] = None
         self.ticket: Optional[str] = None
 
+    async def write(self, text: str):
+        await self.response.write(text.encode('utf-8'))
+
 def get_template():
     """The file containing JS helpers and style."""
     return qrbug.REPORT_FAILURE_TEMPLATE.read_text()

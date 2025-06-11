@@ -117,7 +117,7 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
   - The `request` parameter corresponds to the aiohttp request the user made to the server to register the incident
 - To send HTML back to the webpage displayed after your action is called, use the following code :
 ```py
-await request.response.write(my_html_string.encode('utf-8')) 
+await request.write("my_html_string")
 ```
 - To send data back to the program, return #TODO: TO UPDATE
 
