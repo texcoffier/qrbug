@@ -10,6 +10,10 @@ import qrbug
 IMAGE_FORMAT = 'PNG'
 REPORT_THING_URL = qrbug.SERVICE_URL + '/thing={}'
 
+
+def get_qr_gen_link(thing_id: qrbug.ThingId, ticket: str) -> str:
+    return f'/?thing-id=QR_GEN&failure-id=generate_qr&what=thing&is-repaired=0&&additional-info={thing_id}&ticket={ticket}'
+
 # Run by a dispatcher:
 #    thing: building, room, pc...
 #    failure: print qr code
@@ -38,8 +42,20 @@ async def run(incidents: list[qrbug.Incident], request: web.Request) -> Optional
 
         # Writes the HTML of the QR code
         await request.response.write((
-            f'<div class="qr_block"><h2>QR Code pour {thing_id}</h2>'
-            f'<div><img src="data:image/{IMAGE_FORMAT.lower()};base64,{img_base64.decode()}" /></div></div>'
+            f'<div class="qr_block">'
+            f'<h2>QR Code pour <a href="{get_qr_gen_link(thing_id, request.query.get("ticket", ""))}">{thing_id}</a></h2>'
+            f'<div><img src="data:image/{IMAGE_FORMAT.lower()};base64,{img_base64.decode()}" /></div>'
+            f'</div>'
         ).encode('utf-8'))
+
+    await request.response.write((
+        b'<h3>Parents :</h3>'
+        b'<ul>'
+    ))
+    for parent_id in requested_thing.parent_ids:
+        await request.response.write(
+            f'<li><a href="{get_qr_gen_link(parent_id, request.query.get("ticket", ""))}">{parent_id}</a></li>'.encode('utf-8')
+        )
+    await request.response.write(b'</ul>')
 
     return None
