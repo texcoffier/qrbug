@@ -60,8 +60,8 @@ class Tree(qrbug.Editable):
             if node.id in all_children:
                 return
             for child_id in node.children_ids:
-                all_children.add(child_id)
                 add_child_to_set(self.instances[child_id])
+                all_children.add(child_id)
 
         all_children = set()
         add_child_to_set(self)
