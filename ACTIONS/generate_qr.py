@@ -18,20 +18,28 @@ REPORT_THING_URL = qrbug.SERVICE_URL + '/thing={}'
 async def run(incidents: list[qrbug.Incident], request: web.Request) -> Optional[qrbug.action_helpers.ActionReturnValue]:
     incident = incidents[0]
 
-    requested_thing_id = incident.comment
-    url = REPORT_THING_URL.format(requested_thing_id)
+    requested_thing_id = incident.active[0].comment
+    requested_thing = qrbug.Thing[requested_thing_id]
 
-    img = qrcode.make(url)
+    if not requested_thing:
+        return qrbug.action_helpers.ActionReturnValue(error_msg=f"Thing {repr(requested_thing_id)} not found")
 
-    buffer = BytesIO()
-    img.save(buffer, format=IMAGE_FORMAT)
-    img_base64 = base64.b64encode(buffer.getvalue())
+    for thing_id in [requested_thing_id, *requested_thing.get_all_children_ids()]:
+        url = REPORT_THING_URL.format(thing_id)
 
-    # TODO : générer les QR codes de tous les objets fils de ceux passés en paramètre
-    # sorted(Thing[id] for id in get_all_children_ids(), key=lambda x: x.path())
+        img = qrcode.make(url)
 
-    # Writes the HTML of the QR code
-    await request.response.write((
-        f'<div class="qr_block"><h2>QR Code pour {requested_thing_id}</h2>'
-        f'<div><img src="data:image/{IMAGE_FORMAT.lower()};base64,{img_base64.decode()}" /></div></div>'
-    ).encode('utf-8'))
+        buffer = BytesIO()
+        img.save(buffer, format=IMAGE_FORMAT)
+        img_base64 = base64.b64encode(buffer.getvalue())
+
+        # TODO : générer les QR codes de tous les objets fils de ceux passés en paramètre
+        # sorted(Thing[id] for id in get_all_children_ids(), key=lambda x: x.path())
+
+        # Writes the HTML of the QR code
+        await request.response.write((
+            f'<div class="qr_block"><h2>QR Code pour {thing_id}</h2>'
+            f'<div><img src="data:image/{IMAGE_FORMAT.lower()};base64,{img_base64.decode()}" /></div></div>'
+        ).encode('utf-8'))
+
+    return None
