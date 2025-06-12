@@ -53,16 +53,20 @@ async def register_incident(request: qrbug.Request) -> web.StreamResponse:
     is_repaired: Optional[str] = request.query.get("is-repaired", None)
     additional_info: Optional[str] = request.query.get("additional-info", None)
 
-    query_variables = {
+    query_variables_required = {
         'what': what,
         'thing_id': thing_id,
         'failure_id': failure_id,
         'is_repaired': is_repaired,
     }
-    valid_request = all(query_variables.values())
+    query_variables_optional = {
+        'additional_info': additional_info,
+    }
+    query_variables = {**query_variables_required, **query_variables_optional}
+    valid_request = all(query_variables_required.values())
     if valid_request is False:
         return web.Response(status=404, text=f"Missing query parameters : " + ", ".join(
-            (query_param for query_param, query_param_value in query_variables.items() if query_param_value is None)
+            (query_param for query_param, query_param_value in query_variables_required.items() if query_param_value is None)
         ))
 
     # Checks for existence
