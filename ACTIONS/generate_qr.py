@@ -9,7 +9,7 @@ import qrbug
 
 
 IMAGE_FORMAT = 'PNG'
-REPORT_THING_URL = qrbug.SERVICE_URL + '/thing={}'
+REPORT_THING_URL = qrbug.SERVICE_URL + ('/' if not qrbug.SERVICE_URL.endswith('/') else '') + 'thing={}'
 
 QR_GEN_THING_ID = 'QR_GEN'
 QR_GEN_FAILURE_ID = 'generate_qr'
@@ -58,6 +58,7 @@ async def run(incidents: list[qrbug.Incident], request: qrbug.Request) -> Option
         await request.write(TEMPLATE_QR_BLOCK.format(
             qr_link    = get_qr_gen_link(thing_id, user_ticket),
             thing_id   = thing_id,
+            url        = url,
             img_format = IMAGE_FORMAT.lower(),
             img_b64    = img_base64.decode(),
         ))

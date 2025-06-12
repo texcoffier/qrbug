@@ -7,7 +7,7 @@
 }
 
 @media print {
-    .qr_info_title, .qr_parent_links, .qr_print_btn {
+    .qr_info_title, .qr_parent_links, .qr_print_btn, .qr_test_btn {
         display: none;
     }
 
