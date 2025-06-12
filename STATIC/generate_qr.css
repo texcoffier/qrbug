@@ -35,8 +35,8 @@ html, body {
     margin: 0;
     padding: 0;
     display: inline-block;
-    width: calc(var(--page-size-horizontal) / var(--columns));
-    height: calc(var(--page-size-vertical) / var(--rows));
+    width: calc(var(--page-size-horizontal) / var(--columns) - 1mm);
+    height: calc(var(--page-size-vertical) / var(--rows) - 1mm);
     /* background-color: green; */
 }
 
@@ -46,8 +46,8 @@ html, body {
     text-orientation: mixed;
     text-align: center;
     overflow-wrap: anywhere;
-    max-width: calc(var(--page-size-horizontal) / var(--columns));
-    max-height: calc(var(--page-size-vertical) / var(--rows));
+    max-width: calc(var(--page-size-horizontal) / var(--columns) - 1mm);
+    max-height: calc(var(--page-size-vertical) / var(--rows) - 1mm);
 }
 
 .qr_img img {
