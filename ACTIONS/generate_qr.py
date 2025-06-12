@@ -39,6 +39,7 @@ async def run(incidents: list[qrbug.Incident], request: qrbug.Request) -> Option
     TEMPLATE_CSS = f'<style>\n{TEMPLATE_CSS_PATH.read_text()}\n</style>'
     TEMPLATE_QR_BLOCK = TEMPLATE_QR_BLOCK_PATH.read_text()
     await request.write(TEMPLATE_CSS)
+    await request.write('<div class="qr_print_btn"><button type="button" onclick="window.print();">🖨️ Imprimer</button></div>')
     await request.write('<div class="qr_outer_block">')
 
     for thing_id in [requested_thing_id, *requested_thing.get_all_children_ids()]:
