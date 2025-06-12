@@ -59,7 +59,8 @@ html, body {
 .qr_side_by_side {
     display: flex;
     flex-direction: row;
-    justify-content: start;
+    align-content: center;
+    justify-content: center;
 }
 
 .qr_report_me {
