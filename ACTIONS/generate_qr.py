@@ -15,17 +15,40 @@ QR_GEN_FAILURE_ID = 'generate_qr'
 TEMPLATE_QR_BLOCK = """
 <div class="qr_inner_block">
     <h2 class="qr_info_title">QR Code pour <a href="{qr_link}">{thing_id}</a></h2>
-    <div class="qr_img">
-        <img src="data:image/{img_format};base64,{img_b64}" />
+    <div class="qr_side_by_side">
+        <div class="qr_img">
+            <img src="data:image/{img_format};base64,{img_b64}" />
+        </div>
+        <div class="qr_side_text">
+            <div>Scannez-moi pour signaler un incident&nbsp;!</div>
+            <div>{thing_id}</div>
+        </div>
     </div>
 </div>
 """
 
 TEMPLATE_CSS = """
 <style>
+:root {
+    --page-size-horizontal: 29.7cm;
+    --page-size-vertical: 21cm;
+    --columns: 4;
+    --rows: 4;
+}
+
 @media print {
     .qr_info_title, .qr_parent_links {
         display: none;
+    }
+    
+    .qr_side_text {
+        display: block;
+        writing-mode: vertical-rl;
+        text-orientation: mixed;
+        text-align: center;
+        overflow-wrap: anywhere;
+        max-width: calc(var(--page-size-horizontal) / var(--columns));
+        max-height: calc(var(--page-size-vertical) / var(--rows));
     }
 }
 
@@ -42,12 +65,24 @@ html, body {
 
 .qr_inner_block {
     display: inline-block;
+    width: calc(var(--page-size-horizontal) / var(--columns));
+    height: calc(var(--page-size-vertical) / var(--rows));
     /* background-color: green; */
+}
+
+.qr_side_text {
+    display: none;
 }
 
 .qr_img img {
     object-fit: contain;
     width: 100%;
+}
+
+.qr_side_by_side {
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
 }
 </style>
 """
