@@ -14,6 +14,13 @@
     .qr_side_text {
         display: block !important;
     }
+
+    .qr_inner_block {
+        padding: 0 !important;
+        margin: 0 !important;
+        width: calc(var(--page-size-horizontal) / var(--columns) - var(--size-safety-net));
+        height: calc(var(--page-size-vertical) / var(--rows) - var(--size-safety-net));
+    }
 }
 
 @page {
@@ -33,8 +40,8 @@ html, body {
 }
 
 .qr_inner_block {
-    margin: 0;
-    padding: 0;
+    margin: 4px;
+    padding: 4px;
     display: inline-block;
     width: calc(var(--page-size-horizontal) / var(--columns) - var(--size-safety-net));
     height: calc(var(--page-size-vertical) / var(--rows) - var(--size-safety-net));
