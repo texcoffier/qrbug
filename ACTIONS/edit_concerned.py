@@ -21,4 +21,4 @@ async def run(incidents, request):
             feedback = f"L'utilisateur/groupe «{html.escape(user)}» <b>n'était pas</b> concerné par le sélecteur «{html.escape(selector)}»\n"
     else:
         feedback = "Unexpected edit failure for Concerned\n"
-    await request.write('<!DOCTYPE html>\n' + encode('utf-8'))
+    await request.write('<!DOCTYPE html>\n' + feedback)

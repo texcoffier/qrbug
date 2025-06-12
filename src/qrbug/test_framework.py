@@ -34,7 +34,7 @@ class File:
     def __init__(self, lines):
         self.lines = lines
     async def write(self, data):
-        self.lines.append(data.decode('utf-8'))
+        self.lines.append(data)
 class Request:
     report = None
     def __init__(self, incident=None):
@@ -42,6 +42,7 @@ class Request:
         self.response = File(self.lines)
         if incident:
             self.report = incident.active[-1]
+        self.write = self.response.write
 
 qrbug.TestCase = TestCase
 qrbug.Request = Request
