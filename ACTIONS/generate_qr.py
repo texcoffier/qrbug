@@ -13,12 +13,43 @@ QR_GEN_THING_ID = 'QR_GEN'
 QR_GEN_FAILURE_ID = 'generate_qr'
 
 TEMPLATE_QR_BLOCK = """
-<div class="qr_block">
-    <h2>QR Code pour <a href="{qr_link}">{thing_id}</a></h2>
-    <div>
+<div class="qr_inner_block">
+    <h2 class="qr_info_title">QR Code pour <a href="{qr_link}">{thing_id}</a></h2>
+    <div class="qr_img">
         <img src="data:image/{img_format};base64,{img_b64}" />
     </div>
 </div>
+"""
+
+TEMPLATE_CSS = """
+<style>
+@media print {
+    .qr_info_title, .qr_parent_links {
+        display: none;
+    }
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+}
+
+.qr_outer_block {
+    /* background-color: red; */
+    margin: 0;
+    padding: 0;
+}
+
+.qr_inner_block {
+    display: inline-block;
+    /* background-color: green; */
+}
+
+.qr_img img {
+    object-fit: contain;
+    width: 100%;
+}
+</style>
 """
 
 
@@ -40,6 +71,8 @@ async def run(incidents: list[qrbug.Incident], request: qrbug.Request) -> Option
         return qrbug.action_helpers.ActionReturnValue(error_msg=f"Thing {repr(requested_thing_id)} not found")
 
     user_ticket = request.query.get("ticket", "")
+    await request.write(TEMPLATE_CSS)
+    await request.write('<div class="qr_outer_block">')
 
     for thing_id in [requested_thing_id, *requested_thing.get_all_children_ids()]:
         url = REPORT_THING_URL.format(thing_id)
@@ -61,14 +94,16 @@ async def run(incidents: list[qrbug.Incident], request: qrbug.Request) -> Option
             img_b64    = img_base64.decode(),
         ))
 
+    await request.write('</div>')
     await request.write(
-        '<h3>Parents :</h3>'
-        '<ul>'
+        '<div class="qr_parent_links">'
+        '   <h3>Parents :</h3>'
+        '   <ul>'
     )
     for parent_id in requested_thing.parent_ids:
         await request.write(
-            f'<li><a href="{get_qr_gen_link(parent_id, user_ticket)}">{parent_id}</a></li>'
+            f'      <li><a href="{get_qr_gen_link(parent_id, user_ticket)}">{parent_id}</a></li>'
         )
-    await request.write('</ul>')
+    await request.write('   </ul>\n</div>')
 
     return None
