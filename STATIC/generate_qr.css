@@ -3,6 +3,7 @@
     --page-size-vertical: 21cm;
     --columns: 4;
     --rows: 4;
+    --size-safety-net: 1mm;
 }
 
 @media print {
@@ -35,8 +36,8 @@ html, body {
     margin: 0;
     padding: 0;
     display: inline-block;
-    width: calc(var(--page-size-horizontal) / var(--columns) - 1mm);
-    height: calc(var(--page-size-vertical) / var(--rows) - 1mm);
+    width: calc(var(--page-size-horizontal) / var(--columns) - var(--size-safety-net));
+    height: calc(var(--page-size-vertical) / var(--rows) - var(--size-safety-net));
     /* background-color: green; */
 }
 
@@ -46,8 +47,8 @@ html, body {
     text-orientation: mixed;
     text-align: center;
     overflow-wrap: anywhere;
-    max-width: calc(var(--page-size-horizontal) / var(--columns) - 1mm);
-    max-height: calc(var(--page-size-vertical) / var(--rows) - 1mm);
+    max-width: calc(var(--page-size-horizontal) / var(--columns) - var(--size-safety-net));
+    max-height: calc(var(--page-size-vertical) / var(--rows) - var(--size-safety-net));
 }
 
 .qr_img img {
