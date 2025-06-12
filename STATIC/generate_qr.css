@@ -43,8 +43,6 @@ html, body {
     margin: 4px;
     padding: 4px;
     display: inline-block;
-    width: calc(var(--page-size-horizontal) / var(--columns) - var(--size-safety-net));
-    height: calc(var(--page-size-vertical) / var(--rows) - var(--size-safety-net));
     /* background-color: green; */
 }
 
