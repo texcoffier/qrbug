@@ -1,6 +1,8 @@
 from typing import Optional
 import base64
 from io import BytesIO
+from pathlib import Path
+
 import qrcode
 
 import qrbug
@@ -12,80 +14,8 @@ REPORT_THING_URL = qrbug.SERVICE_URL + '/thing={}'
 QR_GEN_THING_ID = 'QR_GEN'
 QR_GEN_FAILURE_ID = 'generate_qr'
 
-TEMPLATE_QR_BLOCK = """
-<div class="qr_inner_block">
-    <h2 class="qr_info_title">QR Code pour <a href="{qr_link}">{thing_id}</a></h2>
-    <div class="qr_side_by_side">
-        <div class="qr_img">
-            <img src="data:image/{img_format};base64,{img_b64}" />
-        </div>
-        <div class="qr_side_text">
-            <div>Scannez-moi pour signaler un incident&nbsp;!</div>
-            <div>{thing_id}</div>
-        </div>
-    </div>
-</div>
-"""
-
-TEMPLATE_CSS = """
-<style>
-:root {
-    --page-size-horizontal: 29.7cm;
-    --page-size-vertical: 21cm;
-    --columns: 4;
-    --rows: 4;
-}
-
-@media print {
-    .qr_info_title, .qr_parent_links {
-        display: none;
-    }
-    
-    .qr_side_text {
-        display: block;
-        writing-mode: vertical-rl;
-        text-orientation: mixed;
-        text-align: center;
-        overflow-wrap: anywhere;
-        max-width: calc(var(--page-size-horizontal) / var(--columns));
-        max-height: calc(var(--page-size-vertical) / var(--rows));
-    }
-}
-
-html, body {
-    margin: 0;
-    padding: 0;
-}
-
-.qr_outer_block {
-    /* background-color: red; */
-    margin: 0;
-    padding: 0;
-}
-
-.qr_inner_block {
-    display: inline-block;
-    width: calc(var(--page-size-horizontal) / var(--columns));
-    height: calc(var(--page-size-vertical) / var(--rows));
-    /* background-color: green; */
-}
-
-.qr_side_text {
-    display: none;
-}
-
-.qr_img img {
-    object-fit: contain;
-    width: 100%;
-}
-
-.qr_side_by_side {
-    display: flex;
-    flex-direction: row;
-    justify-content: start;
-}
-</style>
-"""
+TEMPLATE_CSS_PATH = Path('STATIC') / 'generate_qr.css'
+TEMPLATE_QR_BLOCK_PATH = Path('STATIC') / 'qr_inner_block.html'
 
 
 def get_qr_gen_link(thing_id: qrbug.ThingId, ticket: str) -> str:
@@ -106,6 +36,8 @@ async def run(incidents: list[qrbug.Incident], request: qrbug.Request) -> Option
         return qrbug.action_helpers.ActionReturnValue(error_msg=f"Thing {repr(requested_thing_id)} not found")
 
     user_ticket = request.query.get("ticket", "")
+    TEMPLATE_CSS = f'<style>\n{TEMPLATE_CSS_PATH.read_text()}\n</style>'
+    TEMPLATE_QR_BLOCK = TEMPLATE_QR_BLOCK_PATH.read_text()
     await request.write(TEMPLATE_CSS)
     await request.write('<div class="qr_outer_block">')
 
