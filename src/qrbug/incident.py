@@ -106,6 +106,7 @@ class Incident:
         for report in incident.active:
             report.remover_login = login
             incident.finished.append(report)
+        # Pending feedback is cleared on 'send-pending-feedback' failure dispatch
         incident.pending_feedback = incident.active
         incident.active = []
 

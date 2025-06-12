@@ -1,161 +1,231 @@
 # pylint: disable=undefined-variable,line-too-long
 
-action('none', 'none.py')
-action('close', 'close.py')
-action('close_auto', 'close_auto.py')
-action('generate_qrcode', 'generate_qr.py')
-action('echo', 'echo.py')
-action('journal', 'show_journals.py')
-action('list', 'list.py')
-action('pending_feedback', 'pending_feedback.py')
-action('report_feedback', 'report_feedback.py')
+# Link the action ID to the filename containing the action.
+# The Python file containing the action is reloaded on any usage.
+# So modification on the file are instantly taken into account.
+action('none'            ,'none.py')              # Do nothing
+action('close'           ,'close.py')             # The failure was fixed
+action('echo'            ,'echo.py')              # Display incidents in user friendly form
 
-selector('true', '{"class":"Thing", "attr":"id", "test":"true"}')
-selector('list', '{"class":"Failure", "test":"in", "value": "list"}')
-selector('journal', '{"class":"Failure", "test":"in", "value": "journal"}')
-selector('generate_qr', '{"class":"Failure", "attr":"id", "test":"=", "value": "generate_qr"}')
-selector('for-me', '{"class":"SourceUser", "test":"is_concerned"}')
-selector('personnal-for-me', '{"class":"Failure", "attr": "id", "test": "=", "value": "personnal-for-me"}')
-selector('backoffice', '{"class":"Failure", "test": "in", "value": "backoffice"}')
-selector('not-backoffice', '{"class":"Selector", "id": "backoffice", "attr": "is_ok", "test": "false"}')
-selector('pending-feedback', '{"class":"Failure", "attr": "id", "test": "=", "value": "pending-feedback"}')
-selector('send-pending-feedback', '{"class":"Failure", "attr": "id", "test": "=", "value": "send-pending-feedback"}')
-selector('with-pending-feedback', '[1, {"test": "pending_feedback"}, {"class":"Selector", "id": "backoffice", "attr": "is_ok", "test": "false"}]')
+# -----------------
+# Common selectors
+# -----------------
+
+selector('true'                 ,'{"class":"Thing"     ,"attr":"id"    ,"test":"true"}')
+selector('for-me'               ,'{"class":"SourceUser",                "test":"is_concerned"}')
+
+###############################################################################
+# General Backoffice
+###############################################################################
 
 user_add('admin', 'thierry.excoffier')
 user_add('admin', 'p2205989')
 
 failure_update('backoffice', value='')
+selector('backoffice'    ,'{"class":"Failure" ,                  "test":"in"   , "value":"backoffice"}')
+selector('not-backoffice','{"class":"Selector", "attr": "is_ok", "test":"false", "id"   :"backoffice"}')
 
 failure_update('top', value='')
 failure_add('backoffice', 'top')
 
-failure_update('list', value="Lister", ask_confirm=False, restricted_to_group_id="admin")
-failure_add('top', 'list')
-failure_update('list-User', value="Les utilisateurs", ask_confirm=False, restricted_to_group_id="admin", display_type=DisplayTypes.button)
+# The 'admin' thing displays the backoffice user interface
+thing_update('admin', comment="Interface d'administration")
+thing_add_failure('admin', "top")
+
+# Display the reporting (not fix) feedback
+action('report_feedback' ,'report_feedback.py')   # Send the report feedback to users
+dispatcher_update('report-feedback', action_id='report_feedback', selector_id='not-backoffice')
+
+# 'z' to be the last dispatched. It closes the API fake incident
+action('close_auto', 'close_auto.py')
+dispatcher_update('z-backoffice-close', action_id='close_auto', selector_id='backoffice')
+
+# 'admin' is concerned by every incident
+concerned_add('not-backoffice', 'admin')
+
+#------------------------------------------------------------------------------
+# Backoffice / lists
+#------------------------------------------------------------------------------
+
+failure_update('list'           , value="Lister"                , ask_confirm=False, restricted_to_group_id="admin")
+failure_update('list-User'      , value="Les utilisateurs"      , ask_confirm=False, restricted_to_group_id="admin", display_type=DisplayTypes.button)
+failure_update('list-Failure'   , value="Les pannes"            , ask_confirm=False, restricted_to_group_id="admin", display_type=DisplayTypes.button)
+failure_update('list-Thing'     , value="Les objets"            , ask_confirm=False, restricted_to_group_id="admin", display_type=DisplayTypes.button)
+failure_update('list-Selector'  , value="Les conditions"        , ask_confirm=False, restricted_to_group_id="admin", display_type=DisplayTypes.button)
+failure_update('list-Dispatcher', value="Les automatismes"      , ask_confirm=False, restricted_to_group_id="admin", display_type=DisplayTypes.button)
+failure_update('list-Action'    , value="Les actions"           , ask_confirm=False, restricted_to_group_id="admin", display_type=DisplayTypes.button)
+failure_update('list-Concerned' , value="Qui est concerné"      , ask_confirm=False, restricted_to_group_id="admin", display_type=DisplayTypes.button)
+failure_update('list-Incident'  , value="Les incidents en cours", ask_confirm=False, restricted_to_group_id="admin", display_type=DisplayTypes.button)
+
 failure_add('list', 'list-User')
-failure_update('list-Failure', value="Les pannes", ask_confirm=False, restricted_to_group_id="admin", display_type=DisplayTypes.button)
 failure_add('list', 'list-Failure')
-failure_update('list-Thing', value="Les objets", ask_confirm=False, restricted_to_group_id="admin", display_type=DisplayTypes.button)
 failure_add('list', 'list-Thing')
-failure_update('list-Selector', value="Les conditions", ask_confirm=False, restricted_to_group_id="admin", display_type=DisplayTypes.button)
 failure_add('list', 'list-Selector')
-failure_update('list-Dispatcher', value="Les automatismes", ask_confirm=False, restricted_to_group_id="admin", display_type=DisplayTypes.button)
 failure_add('list', 'list-Dispatcher')
-failure_update('list-Action', value="Les actions", ask_confirm=False, restricted_to_group_id="admin", display_type=DisplayTypes.button)
 failure_add('list', 'list-Action')
-failure_update('list-Concerned', value="Qui est concerné", ask_confirm=False, restricted_to_group_id="admin", display_type=DisplayTypes.button)
 failure_add('list', 'list-Concerned')
-failure_update('list-Incident', value="Les incidents en cours", ask_confirm=False, restricted_to_group_id="admin", display_type=DisplayTypes.button)
 failure_add('list', 'list-Incident')
+failure_add('top', 'list')
 
-failure_update('journal', value="Afficher", ask_confirm=False, restricted_to_group_id="admin")
-failure_add('top', 'journal')
-failure_update('journal-config', value="Journal de configuration", ask_confirm=False, restricted_to_group_id="admin", display_type=DisplayTypes.button)
+# Use the same selector and dispatcher for all the failure in 'list'
+# The 'list' action will check the failure ID to to the right thing.
+action('list', 'list.py')
+selector('list', '{"class":"Failure", "test":"in", "value": "list"}')
+dispatcher_update('admin-list', action_id='list', selector_id='list')
+
+#------------------------------------------------------------------------------
+# Backoffice / journals
+#------------------------------------------------------------------------------
+
+failure_update('journal'         , value="Afficher"                , ask_confirm=False, restricted_to_group_id="admin")
+failure_update('journal-config'  , value="Journal de configuration", ask_confirm=False, restricted_to_group_id="admin", display_type=DisplayTypes.button)
+failure_update('journal-incident', value="Journal des incidents"   , ask_confirm=False, restricted_to_group_id="admin", display_type=DisplayTypes.button)
+
 failure_add('journal', 'journal-config')
-failure_update('journal-incident', value="Journal des incidents", ask_confirm=False, restricted_to_group_id="admin", display_type=DisplayTypes.button)
 failure_add('journal', 'journal-incident')
+failure_add('top', 'journal')
 
-failure_update('misc', value="Divers", ask_confirm=False, restricted_to_group_id="admin")
-failure_add('top', 'misc')
-failure_update('pending-feedback', value="Feedbacks de réparation en attente d'envoi", ask_confirm=False, restricted_to_group_id="admin", display_type=DisplayTypes.button)
+# Use the same selector and dispatcher for all the journal in 'journal'
+# The 'journal' action will check the failure ID to to the right thing.
+action('journal', 'show_journals.py')
+selector('journal', '{"class":"Failure", "test":"in", "value": "journal"}')
+dispatcher_update('admin-journal', action_id='journal', selector_id='journal')
+
+#------------------------------------------------------------------------------
+# Backoffice / misc
+#------------------------------------------------------------------------------
+
+failure_update('misc'                 , value="Divers"                            , ask_confirm=False, restricted_to_group_id="admin")
+failure_update('pending-feedback'     , value="Feedbacks de réparation en attente", ask_confirm=False, restricted_to_group_id="admin", display_type=DisplayTypes.button)
+failure_update('send-pending-feedback', value="Envoie le feedback de réparation"  , ask_confirm=False, restricted_to_group_id="admin", display_type=DisplayTypes.button)
+
 failure_add('misc', 'pending-feedback')
-failure_update('send-pending-feedback', value="Envoie le feedback de réparation aux utilisateurs", ask_confirm=False, restricted_to_group_id="admin", display_type=DisplayTypes.button)
 failure_add('misc', 'send-pending-feedback')
+failure_add('top', 'misc')
+
+action('pending_feedback', 'pending_feedback.py')  # Send user feedback for failure fix
+selector('pending-feedback'     ,'{"class":"Failure", "attr":"id", "test":"=", "value": "pending-feedback"}')
+selector('send-pending-feedback','{"class":"Failure", "attr":"id", "test":"=", "value": "send-pending-feedback"}')
+selector('with-pending-feedback', '[1, {"test": "pending_feedback"}, {"class":"Selector", "id": "backoffice", "attr": "is_ok", "test": "false"}]')
+dispatcher_update('pending-feedback'     , action_id='echo'            , selector_id='pending-feedback'     , incidents="with-pending-feedback")
+dispatcher_update('send-pending-feedback', action_id='pending_feedback', selector_id='send-pending-feedback', incidents="with-pending-feedback")
+
+#------------------------------------------------------------------------------
+# Backoffice / personnal
+#------------------------------------------------------------------------------
+
+failure_update('personnal', value="Ce qui me concerne", ask_confirm=False, restricted_to_group_id="admin")
+failure_update('personnal-for-me', value="Les incidents que je dois traiter", ask_confirm=False, restricted_to_group_id="admin", display_type=DisplayTypes.button)
+
+failure_add('personnal', 'personnal-for-me')
+failure_add('top', 'personnal')
+
+selector('personnal-for-me'     ,'{"class":"Failure"   ,"attr":"id"    ,"test":"="           ,"value": "personnal-for-me"}')
+dispatcher_update('personnal-for-me', action_id='echo', selector_id='personnal-for-me', incidents="for-me")
+
+###############################################################################
+# Edit configuration
+###############################################################################
+
+failure_update('edit', value="API de l'éditeur de configuration, elle ne permet aucune modification mais affiche seulement les éléments modifiables pour chacun des types d'objet.", ask_confirm=False, restricted_to_group_id="admin")
+failure_add('backoffice', 'edit')
+
+# The 'editor-api' thing displays the editors API
+thing_update('editor-api', comment="Les API des éditeurs")
+thing_add_failure('editor-api', 'edit')
+
+# ---------------
+# Edit concerned
+# ---------------
+failure_update('concerned'    , value="Concerned"                    , ask_confirm=False, restricted_to_group_id="admin")
+failure_update('concerned-add', value="Ajouter un utilisateur/groupe", ask_confirm=False, restricted_to_group_id="admin", display_type=DisplayTypes.input)
+failure_update('concerned-del', value="Enlever un utilisateur/groupe", ask_confirm=False, restricted_to_group_id="admin", display_type=DisplayTypes.input)
+failure_add('concerned', 'concerned-add')
+failure_add('concerned', 'concerned-del')
+failure_add('edit', 'concerned')
+
+action('edit_concerned', 'edit_concerned.py')
+selector('edit-concerned', '{"class":"Failure", "test":"in_or_equal", "value": "concerned"}')
+dispatcher_update('edit-concerned', action_id='edit_concerned', selector_id='edit-concerned')
+
+# ---------------
+# Edit dispatcher
+# ---------------
+failure_update('dispatcher', value="Les dispatchers", ask_confirm=False, restricted_to_group_id="admin")
+failure_add('edit', 'dispatcher')
+
+action('edit_dispatcher', 'edit_dispatcher.py')
+selector('edit-dispatcher', '{"class":"Failure", "test":"in_or_equal", "value": "dispatcher"}')
+dispatcher_update('edit-dispatcher', action_id='edit_dispatcher', selector_id='edit-dispatcher')
+
+# ---------------
+# Edit failure
+# ---------------
+failure_update('failure', value="Les pannes", ask_confirm=False, restricted_to_group_id="admin")
+failure_add('edit', 'failure')
+
+action('edit_failure', 'edit_failure.py')
+selector('edit-failure', '{"class":"Failure", "test":"in_or_equal", "value": "failure"}')
+dispatcher_update('edit-failure', action_id='edit_failure', selector_id='edit-failure')
+
+# ---------------
+# Edit selector
+# ---------------
+failure_update('selector', value="Sélecteur d'incident", ask_confirm=False, restricted_to_group_id="admin")
+failure_add('edit', 'selector')
+
+action('edit_selector', 'edit_selector.py')
+selector('edit-selector', '{"class":"Failure", "test":"in_or_equal", "value": "selector"}')
+dispatcher_update('edit-selector', action_id='edit_selector', selector_id='edit-selector')
+
+# ---------------
+# Edit user
+# ---------------
+failure_update('user', value="Utilisateur", ask_confirm=False, restricted_to_group_id="admin")
+failure_add('edit', 'user')
+
+action('edit_user', 'edit_user.py')
+selector('edit-user', '{"class":"Failure", "test":"in_or_equal", "value": "user"}')
+dispatcher_update('edit-user', action_id='edit_user', selector_id='edit-user')
+
+# ---------------
+# Edit thing
+# ---------------
+failure_update('thing', value="Chose", ask_confirm=False, restricted_to_group_id="admin")
+failure_add('edit', 'thing')
+
+action('edit_thing', 'edit_thing.py')
+selector('edit-thing', '{"class":"Failure", "test":"in_or_equal", "value": "thing"}')
+dispatcher_update('edit-thing', action_id='edit_thing', selector_id='edit-thing')
+
+# ---------------
+# Edit action
+# ---------------
+failure_update('action', value="Action", ask_confirm=False, restricted_to_group_id="admin")
+failure_update('action-python_script', value="Le script Python à lancer", ask_confirm=False, restricted_to_group_id="admin", display_type=DisplayTypes.input)
+failure_add('action', 'action-python_script')
+failure_add('edit', 'action')
+
+action('edit_action', 'edit_action.py')
+selector('edit-action', '{"class":"Failure", "test":"in_or_equal", "value": "action"}')
+dispatcher_update('edit-action', action_id='edit_action', selector_id='edit-action')
+
+###############################################################################
+
+# ---------------
+# QRCode
+# ---------------
 
 failure_update('generate_qr_top', value='Générer un QR code :', ask_confirm=False, restricted_to_group_id="admin", display_type=DisplayTypes.text)
 failure_add('top', 'generate_qr_top')
 failure_update('generate_qr', value='Entrez le nom d\'une Thing', ask_confirm=True, restricted_to_group_id="admin", display_type=DisplayTypes.input)
 failure_add('generate_qr_top', 'generate_qr')
 
-failure_update('personnal', value="Ce qui me concerne", ask_confirm=False, restricted_to_group_id="admin")
-failure_add('top', 'personnal')
-failure_update('personnal-for-me', value="Les incidents que je dois traiter", ask_confirm=False, restricted_to_group_id="admin", display_type=DisplayTypes.button)
-failure_add('personnal', 'personnal-for-me')
-
-
-thing_update('admin', comment="Interface d'administration")
-thing_add_failure('admin', "top")
-thing_update('backoffice', comment="API du backoffice")
-thing_add_failure('backoffice', 'edit')
-
-dispatcher_update('admin-list', action_id='list', selector_id='list')
-dispatcher_update('admin-journal', action_id='journal', selector_id='journal')
-dispatcher_update('pending-feedback', action_id='echo', selector_id='pending-feedback', incidents="with-pending-feedback")
-dispatcher_update('send-pending-feedback', action_id='pending_feedback', selector_id='send-pending-feedback', incidents="with-pending-feedback")
+action('generate_qrcode', 'generate_qr.py')
+selector('generate_qr'          ,'{"class":"Failure"   ,"attr":"id"    ,"test":"="           ,"value": "generate_qr"}')
 dispatcher_update('generate-qr', action_id='generate_qrcode', selector_id='generate_qr')
-dispatcher_update('personnal-for-me', action_id='echo', selector_id='personnal-for-me', incidents="for-me")
 
-####################
-# Edit configuration
-####################
-failure_add('backoffice', 'edit')
-failure_update('edit', value="API de l'éditeur de configuration, elle ne permet aucune modification mais affiche seulement les éléments modifiables pour chacun des types d'objet.", ask_confirm=False, restricted_to_group_id="admin")
 
-# Edit concerned
-action('edit_concerned', 'edit_concerned.py')
-selector('edit-concerned', '{"class":"Failure", "test":"in_or_equal", "value": "concerned"}')
-failure_update('concerned', value="Concerned", ask_confirm=False, restricted_to_group_id="admin")
-failure_update('concerned-add', value="Ajouter un utilisateur/groupe", ask_confirm=False, restricted_to_group_id="admin", display_type=DisplayTypes.input)
-failure_add('concerned', 'concerned-add')
-failure_update('concerned-del', value="Enlever un utilisateur/groupe", ask_confirm=False, restricted_to_group_id="admin", display_type=DisplayTypes.input)
-failure_add('concerned', 'concerned-del')
-failure_add('edit', 'concerned')
-
-failure_update('selector-update', value="Selector", ask_confirm=False, restricted_to_group_id="admin", display_type=DisplayTypes.input)
-failure_add('edit', 'selector-update')
-dispatcher_update('edit-concerned', action_id='edit_concerned', selector_id='edit-concerned')
-
-# Edit dispatcher
-action('edit_dispatcher', 'edit_dispatcher.py')
-selector('edit-dispatcher', '{"class":"Failure", "test":"in_or_equal", "value": "dispatcher"}')
-failure_update('dispatcher', value="Les dispatchers", ask_confirm=False, restricted_to_group_id="admin")
-dispatcher_update('edit-dispatcher', action_id='edit_dispatcher', selector_id='edit-dispatcher')
-failure_add('edit', 'dispatcher')
-
-# Edit failure
-action('edit_failure', 'edit_failure.py')
-selector('edit-failure', '{"class":"Failure", "test":"in_or_equal", "value": "failure"}')
-failure_update('failure', value="Les pannes", ask_confirm=False, restricted_to_group_id="admin")
-dispatcher_update('edit-failure', action_id='edit_failure', selector_id='edit-failure')
-failure_add('edit', 'failure')
-
-# Edit selector
-action('edit_selector', 'edit_selector.py')
-selector('edit-selector', '{"class":"Failure", "test":"in_or_equal", "value": "selector"}')
-failure_update('selector', value="Sélecteur d'incident", ask_confirm=False, restricted_to_group_id="admin")
-dispatcher_update('edit-selector', action_id='edit_selector', selector_id='edit-selector')
-failure_add('edit', 'selector')
-
-# Edit user
-action('edit_user', 'edit_user.py')
-selector('edit-user', '{"class":"Failure", "test":"in_or_equal", "value": "user"}')
-failure_update('user', value="Utilisateur", ask_confirm=False, restricted_to_group_id="admin")
-dispatcher_update('edit-user', action_id='edit_user', selector_id='edit-user')
-failure_add('edit', 'user')
-
-# Edit thing
-action('edit_thing', 'edit_thing.py')
-selector('edit-thing', '{"class":"Failure", "test":"in_or_equal", "value": "thing"}')
-failure_update('thing', value="Chose", ask_confirm=False, restricted_to_group_id="admin")
-dispatcher_update('edit-thing', action_id='edit_thing', selector_id='edit-thing')
-failure_add('edit', 'thing')
-
-# Edit action
-action('edit_action', 'edit_action.py')
-selector('edit-action', '{"class":"Failure", "test":"in_or_equal", "value": "action"}')
-failure_update('action', value="Action", ask_confirm=False, restricted_to_group_id="admin")
-dispatcher_update('edit-action', action_id='edit_action', selector_id='edit-action')
-failure_update('action-python_script', value="Le script Python à lancer", ask_confirm=False, restricted_to_group_id="admin", display_type=DisplayTypes.input)
-failure_add('action', 'action-python_script')
-failure_add('edit', 'action')
-
-# Admin is concerned by all reports. This display the reporting (not fix) feedback
-dispatcher_update('report-feedback', action_id='report_feedback', selector_id='not-backoffice')
-# 'z' to be the last dispatched
-dispatcher_update('z-backoffice-close', action_id='close_auto', selector_id='backoffice')
-
-concerned_add('not-backoffice', 'admin')
 
 # selector('nautibus-hard', '[1, {"class":"Thing", "test": "inside", "value": "DOUA:Nautibus"}, [0, {"class":"Failure", "test": "in", "value": "MOUSE"}, {"class":"Failure", "test": "in", "value": "KEYBOARD"}, {"class":"Failure", "test": "in", "value": "SCREEN"}')
 # concerned_add('nautibus-hard', 'admin-Nautibus-hard')
