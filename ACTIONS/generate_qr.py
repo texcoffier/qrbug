@@ -40,6 +40,14 @@ async def run(incidents: list[qrbug.Incident], request: qrbug.Request) -> Option
     TEMPLATE_QR_BLOCK = TEMPLATE_QR_BLOCK_PATH.read_text()
     await request.write(TEMPLATE_CSS)
     await request.write(
+        '<div class="qr_infos_block">\n'
+        '    <h3>Informations supplémentaires</h3>\n'
+        '    <ul>\n'
+        '        <li>Les QR codes peuvent être cliqués pour les tester</li>\n'
+        '    </ul>\n'
+        '</div>\n'
+    )
+    await request.write(
         '<div class="qr_parent_links">\n'
         '   <h3>Parents :</h3>\n'
         '   <ul>\n'
