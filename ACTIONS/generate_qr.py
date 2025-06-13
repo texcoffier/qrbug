@@ -16,6 +16,7 @@ QR_GEN_FAILURE_ID = 'generate_qr'
 QR_GEN_STATIC_FILES_PATH = qrbug.STATIC_FILES_PATH / 'QR_GENERATION'
 TEMPLATE_CSS_PATH = QR_GEN_STATIC_FILES_PATH / 'generate_qr.css'
 TEMPLATE_QR_BLOCK_PATH = QR_GEN_STATIC_FILES_PATH / 'qr_inner_block.html'
+TEMPLATE_QR_CONFIG_BLOCK = QR_GEN_STATIC_FILES_PATH / 'qr_config.html'
 TEMPLATE_QR_INFOS_BLOCK = QR_GEN_STATIC_FILES_PATH / 'qr_infos_block.html'
 
 
@@ -54,6 +55,7 @@ async def run(incidents: list[qrbug.Incident], request: qrbug.Request) -> Option
         '   </ul>',
         '</div>'
     )
+    await request.write_newline(TEMPLATE_QR_CONFIG_BLOCK.read_text())
     await request.write_newline('<div class="qr_outer_block">')
 
     for thing_id in [requested_thing_id, *requested_thing.get_all_children_ids()]:

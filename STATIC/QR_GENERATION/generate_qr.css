@@ -10,7 +10,7 @@
 }
 
 @media print {
-    .qr_info_title, .qr_parent_links, .qr_infos_block {
+    .qr_info_title, .qr_parent_links, .qr_infos_block, .qr_config_block {
         display: none;
     }
 
@@ -88,6 +88,6 @@ html, body {
     font-style: italic;
 }
 
-.qr_parent_links, .qr_infos_block {
+.qr_parent_links, .qr_infos_block, .qr_config_block {
     margin: 6px;
 }
