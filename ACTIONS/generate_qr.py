@@ -39,6 +39,16 @@ async def run(incidents: list[qrbug.Incident], request: qrbug.Request) -> Option
     TEMPLATE_CSS = f'<style>\n{TEMPLATE_CSS_PATH.read_text()}\n</style>'
     TEMPLATE_QR_BLOCK = TEMPLATE_QR_BLOCK_PATH.read_text()
     await request.write(TEMPLATE_CSS)
+    await request.write(
+        '<div class="qr_parent_links">'
+        '   <h3>Parents :</h3>'
+        '   <ul>'
+    )
+    for parent_id in requested_thing.parent_ids:
+        await request.write(
+            f'      <li><a href="{get_qr_gen_link(parent_id, user_ticket)}">{parent_id}</a></li>'
+        )
+    await request.write('   </ul>\n</div>')
     await request.write('<div class="qr_outer_block">')
 
     for thing_id in [requested_thing_id, *requested_thing.get_all_children_ids()]:
@@ -63,15 +73,5 @@ async def run(incidents: list[qrbug.Incident], request: qrbug.Request) -> Option
         ))
 
     await request.write('</div>')
-    await request.write(
-        '<div class="qr_parent_links">'
-        '   <h3>Parents :</h3>'
-        '   <ul>'
-    )
-    for parent_id in requested_thing.parent_ids:
-        await request.write(
-            f'      <li><a href="{get_qr_gen_link(parent_id, user_ticket)}">{parent_id}</a></li>'
-        )
-    await request.write('   </ul>\n</div>')
 
     return None
