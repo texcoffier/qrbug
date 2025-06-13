@@ -43,6 +43,8 @@ async def run(incidents: list[qrbug.Incident], request: qrbug.Request) -> Option
         '    <h3>Informations supplémentaires</h3>\n'
         '    <ul>\n'
         '        <li>Les QR codes peuvent être cliqués pour les tester</li>\n'
+        '        <li>Les liens au-dessus des QR codes mènent à la page de génération des QR codes du QR code sélectionné et de ses enfants</li>\n'
+        '        <li>Imprimez cette page pour imprimer tous les QR codes. La mise en forme se fait automatiquement et n\'imprimera que les QR codes</li>\n'
         '    </ul>\n'
         '</div>\n'
     )
