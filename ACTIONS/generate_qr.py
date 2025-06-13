@@ -1,7 +1,6 @@
 from typing import Optional
 import base64
 from io import BytesIO
-from pathlib import Path
 
 import qrcode
 
@@ -14,8 +13,8 @@ REPORT_THING_URL = qrbug.SERVICE_URL + ('/' if not qrbug.SERVICE_URL.endswith('/
 QR_GEN_THING_ID = 'QR_GEN'
 QR_GEN_FAILURE_ID = 'generate_qr'
 
-TEMPLATE_CSS_PATH = Path('STATIC') / 'generate_qr.css'
-TEMPLATE_QR_BLOCK_PATH = Path('STATIC') / 'qr_inner_block.html'
+TEMPLATE_CSS_PATH = qrbug.STATIC_FILES_PATH / 'generate_qr.css'
+TEMPLATE_QR_BLOCK_PATH = qrbug.STATIC_FILES_PATH / 'qr_inner_block.html'
 
 
 def get_qr_gen_link(thing_id: qrbug.ThingId, ticket: str) -> str:
