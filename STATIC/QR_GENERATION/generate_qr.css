@@ -1,8 +1,8 @@
 :root {
     --page-size-horizontal: 21cm;
     --page-size-vertical: 29.7cm;
-    --columns: 4;
-    --rows: 4;
+    --columns: %cols%;
+    --rows: %rows%;
     --size-safety-net: 1mm;
 
     --page-format: A4;

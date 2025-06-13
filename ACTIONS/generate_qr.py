@@ -31,6 +31,12 @@ def get_qr_gen_link(thing_id: qrbug.ThingId, ticket: str) -> str:
 
 async def run(incidents: list[qrbug.Incident], request: qrbug.Request) -> Optional[qrbug.action_helpers.ActionReturnValue]:
     incident = incidents[0]
+    row_cols_number = incident.failure_id.lstrip(QR_GEN_FAILURE_ID).lstrip('_').lstrip('-')
+    if row_cols_number != '':
+        default_rows, default_cols = row_cols_number.split('x')
+    else:
+        default_rows = '4'
+        default_cols = '4'
 
     requested_thing_id = incident.active[0].comment
     requested_thing = qrbug.Thing[requested_thing_id]
@@ -39,7 +45,9 @@ async def run(incidents: list[qrbug.Incident], request: qrbug.Request) -> Option
         return qrbug.action_helpers.ActionReturnValue(error_msg=f"Thing {repr(requested_thing_id)} not found")
 
     user_ticket = request.query.get("ticket", "")
-    TEMPLATE_CSS = f'<style>\n{TEMPLATE_CSS_PATH.read_text()}\n</style>'
+    TEMPLATE_CSS = (f'<style>\n{TEMPLATE_CSS_PATH.read_text()}\n</style>'
+                    .replace('%cols%', default_cols)
+                    .replace('%rows%', default_rows))
     TEMPLATE_QR_BLOCK = TEMPLATE_QR_BLOCK_PATH.read_text()
     await request.write(TEMPLATE_CSS)
     await request.write_newline(TEMPLATE_QR_INFOS_BLOCK.read_text())
