@@ -127,6 +127,7 @@ async def register_incident(request: qrbug.Request) -> web.StreamResponse:
         headers={'Content-Type': 'text/html; charset=utf-8'},
     )
     request.write = lambda text: request.response.write(text.encode('utf-8'))
+    request.write_newline = lambda *text: request.write('\n'.join(text))
     await request.response.prepare(request)
 
     # Dispatchers

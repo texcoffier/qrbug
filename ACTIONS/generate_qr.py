@@ -38,27 +38,30 @@ async def run(incidents: list[qrbug.Incident], request: qrbug.Request) -> Option
     TEMPLATE_CSS = f'<style>\n{TEMPLATE_CSS_PATH.read_text()}\n</style>'
     TEMPLATE_QR_BLOCK = TEMPLATE_QR_BLOCK_PATH.read_text()
     await request.write(TEMPLATE_CSS)
-    await request.write(
-        '<div class="qr_infos_block">\n'
-        '    <h3>Informations supplémentaires</h3>\n'
-        '    <ul>\n'
-        '        <li>Les QR codes peuvent être cliqués pour les tester</li>\n'
-        '        <li>Les liens au-dessus des QR codes mènent à la page de génération des QR codes du QR code sélectionné et de ses enfants</li>\n'
-        '        <li>Imprimez cette page pour imprimer tous les QR codes. La mise en forme se fait automatiquement et n\'imprimera que les QR codes</li>\n'
-        '    </ul>\n'
-        '</div>\n'
+    await request.write_newline(
+        '<div class="qr_infos_block">',
+        '    <h3>Informations supplémentaires</h3>',
+        '    <ul>',
+        '        <li>Les QR codes peuvent être cliqués pour les tester</li>',
+        '        <li>Les liens au-dessus des QR codes mènent à la page de génération des QR codes du QR code sélectionné et de ses enfants</li>',
+        '        <li>Imprimez cette page pour imprimer tous les QR codes. La mise en forme se fait automatiquement et n\'imprimera que les QR codes</li>',
+        '    </ul>',
+        '</div>',
     )
-    await request.write(
-        '<div class="qr_parent_links">\n'
-        '   <h3>Parents :</h3>\n'
-        '   <ul>\n'
+    await request.write_newline(
+        '<div class="qr_parent_links">',
+        '   <h3>Parents :</h3>',
+        '   <ul>',
     )
     for parent_id in requested_thing.parent_ids:
-        await request.write(
-            f'      <li><a href="{get_qr_gen_link(parent_id, user_ticket)}">{parent_id}</a></li>\n'
+        await request.write_newline(
+            f'      <li><a href="{get_qr_gen_link(parent_id, user_ticket)}">{parent_id}</a></li>'
         )
-    await request.write('   </ul>\n</div>\n')
-    await request.write('<div class="qr_outer_block">\n')
+    await request.write_newline(
+        '   </ul>',
+        '</div>'
+    )
+    await request.write_newline('<div class="qr_outer_block">')
 
     for thing_id in [requested_thing_id, *requested_thing.get_all_children_ids()]:
         url = REPORT_THING_URL.format(thing_id)

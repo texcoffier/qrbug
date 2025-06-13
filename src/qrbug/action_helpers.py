@@ -27,7 +27,12 @@ class Request(web.Request):
         self.ticket: Optional[str] = None
 
     async def write(self, text: str):
+        """ Streams the given text to the web page """
         await self.response.write(text.encode('utf-8'))
+
+    async def write_newline(self, *text: str):
+        """ Streams the given text to the web page, and places a newline between each element """
+        await self.write('\n'.join(text))
 
 def get_template():
     """The file containing JS helpers and style."""
