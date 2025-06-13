@@ -284,7 +284,7 @@ thing_update('QR_GEN')
 thing_add_failure('QR_GEN', 'generate_qr_top')
 
 action('generate_qrcode', 'generate_qr.py')
-selector('generate_qr','{"class":"Failure", "test": "contains", "value": "generate_qr"}')
+selector('generate_qr','{"class":"Failure", "attr":"id", "test": "contains", "value": "generate_qr"}')
 dispatcher_update('generate-qr', action_id='generate_qrcode', selector_id='generate_qr')
 
 
