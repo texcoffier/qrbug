@@ -272,13 +272,19 @@ dispatcher_update('edit-action', action_id='edit_action', selector_id='edit-acti
 # QRCode
 # ---------------
 
-failure_update('generate_qr_top', value='Générer un QR code :', restricted_to_group_id="admin", display_type=Text)
+failure_update('generate_qr_top', value='Générer un QR code :', ask_confirm=False, restricted_to_group_id="admin", display_type=Text)
 failure_add('top', 'generate_qr_top')
 failure_update('generate_qr', value='Entrez le nom d\'une Thing', ask_confirm=True, restricted_to_group_id="admin", display_type=Input)
 failure_add('generate_qr_top', 'generate_qr')
+for rows in range(4, 9):
+    for cols in range(4, 9):
+        failure_update(f'generate_qr_{rows}x{cols}', value=f'En {rows}x{cols}', ask_confirm=True, restricted_to_group_id="admin", display_type=Input)
+        failure_add('generate_qr_top', f'generate_qr_{rows}x{cols}')
+thing_update('QR_GEN')
+thing_add_failure('QR_GEN', 'generate_qr_top')
 
 action('generate_qrcode', 'generate_qr.py')
-selector('generate_qr'          ,'{"class":"Failure", "test": "is", "value": "generate_qr"}')
+selector('generate_qr','{"class":"Failure", "test": "contains", "value": "generate_qr"}')
 dispatcher_update('generate-qr', action_id='generate_qrcode', selector_id='generate_qr')
 
 
