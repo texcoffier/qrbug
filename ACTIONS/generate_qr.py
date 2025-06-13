@@ -18,6 +18,7 @@ TEMPLATE_CSS_PATH = QR_GEN_STATIC_FILES_PATH / 'generate_qr.css'
 TEMPLATE_QR_BLOCK_PATH = QR_GEN_STATIC_FILES_PATH / 'qr_inner_block.html'
 TEMPLATE_QR_CONFIG_BLOCK = QR_GEN_STATIC_FILES_PATH / 'qr_config.html'
 TEMPLATE_QR_INFOS_BLOCK = QR_GEN_STATIC_FILES_PATH / 'qr_infos_block.html'
+TEMPLATE_QR_PARENT_LINKS = QR_GEN_STATIC_FILES_PATH / 'qr_parent_links.html'
 
 
 def get_qr_gen_link(thing_id: qrbug.ThingId, ticket: str) -> str:
