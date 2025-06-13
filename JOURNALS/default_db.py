@@ -104,14 +104,14 @@ failure_add('backoffice', 'hours') # To receive auto-close
 #------------------------------------------------------------------------------
 
 failure_update('list'           , value="Lister"                , restricted_to_group_id="admin")
-failure_update('list-User'      , value="Les utilisateurs"      , restricted_to_group_id="admin", display_type=DisplayTypes.button)
-failure_update('list-Failure'   , value="Les pannes"            , restricted_to_group_id="admin", display_type=DisplayTypes.button)
-failure_update('list-Thing'     , value="Les objets"            , restricted_to_group_id="admin", display_type=DisplayTypes.button)
-failure_update('list-Selector'  , value="Les conditions"        , restricted_to_group_id="admin", display_type=DisplayTypes.button)
-failure_update('list-Dispatcher', value="Les automatismes"      , restricted_to_group_id="admin", display_type=DisplayTypes.button)
-failure_update('list-Action'    , value="Les actions"           , restricted_to_group_id="admin", display_type=DisplayTypes.button)
-failure_update('list-Concerned' , value="Qui est concerné"      , restricted_to_group_id="admin", display_type=DisplayTypes.button)
-failure_update('list-Incident'  , value="Les incidents en cours", restricted_to_group_id="admin", display_type=DisplayTypes.button)
+failure_update('list-User'      , value="Les utilisateurs"      , restricted_to_group_id="admin", display_type=Button)
+failure_update('list-Failure'   , value="Les pannes"            , restricted_to_group_id="admin", display_type=Button)
+failure_update('list-Thing'     , value="Les objets"            , restricted_to_group_id="admin", display_type=Button)
+failure_update('list-Selector'  , value="Les conditions"        , restricted_to_group_id="admin", display_type=Button)
+failure_update('list-Dispatcher', value="Les automatismes"      , restricted_to_group_id="admin", display_type=Button)
+failure_update('list-Action'    , value="Les actions"           , restricted_to_group_id="admin", display_type=Button)
+failure_update('list-Concerned' , value="Qui est concerné"      , restricted_to_group_id="admin", display_type=Button)
+failure_update('list-Incident'  , value="Les incidents en cours", restricted_to_group_id="admin", display_type=Button)
 
 failure_add('list', 'list-User')
 failure_add('list', 'list-Failure')
@@ -134,8 +134,8 @@ dispatcher_update('admin-list', action_id='list', selector_id='list')
 #------------------------------------------------------------------------------
 
 failure_update('journal'         , value="Afficher"                , restricted_to_group_id="admin")
-failure_update('journal-config'  , value="Journal de configuration", restricted_to_group_id="admin", display_type=DisplayTypes.button)
-failure_update('journal-incident', value="Journal des incidents"   , restricted_to_group_id="admin", display_type=DisplayTypes.button)
+failure_update('journal-config'  , value="Journal de configuration", restricted_to_group_id="admin", display_type=Button)
+failure_update('journal-incident', value="Journal des incidents"   , restricted_to_group_id="admin", display_type=Button)
 
 failure_add('journal', 'journal-config')
 failure_add('journal', 'journal-incident')
@@ -152,8 +152,8 @@ dispatcher_update('admin-journal', action_id='journal', selector_id='journal')
 #------------------------------------------------------------------------------
 
 failure_update('misc'                 , value="Divers"                            , restricted_to_group_id="admin")
-failure_update('pending-feedback'     , value="Feedbacks de réparation en attente", restricted_to_group_id="admin", display_type=DisplayTypes.button)
-failure_update('send-pending-feedback', value="Envoie le feedback de réparation"  , restricted_to_group_id="admin", display_type=DisplayTypes.button)
+failure_update('pending-feedback'     , value="Feedbacks de réparation en attente", restricted_to_group_id="admin", display_type=Button)
+failure_update('send-pending-feedback', value="Envoie le feedback de réparation"  , restricted_to_group_id="admin", display_type=Button)
 
 failure_add('misc', 'pending-feedback')
 failure_add('misc', 'send-pending-feedback')
@@ -171,7 +171,7 @@ dispatcher_update('send-pending-feedback', action_id='pending_feedback', selecto
 #------------------------------------------------------------------------------
 
 failure_update('personnal', value="Ce qui me concerne", restricted_to_group_id="admin")
-failure_update('personnal-for-me', value="Les incidents que je dois traiter", restricted_to_group_id="admin", display_type=DisplayTypes.button)
+failure_update('personnal-for-me', value="Les incidents que je dois traiter", restricted_to_group_id="admin", display_type=Button)
 
 failure_add('personnal', 'personnal-for-me')
 failure_add('top', 'personnal')
@@ -194,8 +194,8 @@ thing_add_failure('editor-api', 'edit')
 # Edit concerned
 # ---------------
 failure_update('concerned'    , value="Concerned"                    , restricted_to_group_id="admin")
-failure_update('concerned-add', value="Ajouter un utilisateur/groupe", restricted_to_group_id="admin", display_type=DisplayTypes.input)
-failure_update('concerned-del', value="Enlever un utilisateur/groupe", restricted_to_group_id="admin", display_type=DisplayTypes.input)
+failure_update('concerned-add', value="Ajouter un utilisateur/groupe", restricted_to_group_id="admin", display_type=Input)
+failure_update('concerned-del', value="Enlever un utilisateur/groupe", restricted_to_group_id="admin", display_type=Input)
 failure_add('concerned', 'concerned-add')
 failure_add('concerned', 'concerned-del')
 failure_add('edit', 'concerned')
@@ -258,7 +258,7 @@ dispatcher_update('edit-thing', action_id='edit_thing', selector_id='edit-thing'
 # Edit action
 # ---------------
 failure_update('action', value="Action", restricted_to_group_id="admin")
-failure_update('action-python_script', value="Le script Python à lancer", restricted_to_group_id="admin", display_type=DisplayTypes.input)
+failure_update('action-python_script', value="Le script Python à lancer", restricted_to_group_id="admin", display_type=Input)
 failure_add('action', 'action-python_script')
 failure_add('edit', 'action')
 
@@ -272,9 +272,9 @@ dispatcher_update('edit-action', action_id='edit_action', selector_id='edit-acti
 # QRCode
 # ---------------
 
-failure_update('generate_qr_top', value='Générer un QR code :', restricted_to_group_id="admin", display_type=DisplayTypes.text)
+failure_update('generate_qr_top', value='Générer un QR code :', restricted_to_group_id="admin", display_type=Text)
 failure_add('top', 'generate_qr_top')
-failure_update('generate_qr', value='Entrez le nom d\'une Thing', ask_confirm=True, restricted_to_group_id="admin", display_type=DisplayTypes.input)
+failure_update('generate_qr', value='Entrez le nom d\'une Thing', ask_confirm=True, restricted_to_group_id="admin", display_type=Input)
 failure_add('generate_qr_top', 'generate_qr')
 
 action('generate_qrcode', 'generate_qr.py')

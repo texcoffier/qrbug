@@ -195,5 +195,5 @@ qrbug.failure_add = failure_add
 qrbug.failure_remove = failure_remove
 
 if __name__ == "__main__":
-    failure_update("0", value="Testing title", display_type=DisplayTypes.text)
+    failure_update("0", value="Testing title", display_type=Text)
     print(Failure.get("0").dump())

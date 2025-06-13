@@ -28,11 +28,11 @@ Each of these parameters *(besides `failure_id`)* is optional if you want to mod
 
 - **Value** (string) : The written value that will be displayed when presenting the failure.
 - **Display type** (DisplayType) : One of 4 available display types when presenting the failure to the user
-  - `DisplayType.text` : Just some text ; `value` will be presented as simple raw text. _This failure type cannot be manually triggered by a user._
-  - `DisplayType.button` : A button the user can click to report an incident ; `value` will be the text inside the button. 
-  - `DisplayType.redirect` : A link to something the user might want to know about ; `value` will be the link itself, e.g. https://example.com. _This failure type cannot be manually triggered by a user._
-  - `DisplayType.input` : A one line input box the user can write into to report an incident ;
-  - `DisplayType.textarea` : A multi-line box the user can write into to report an incident ;
+  - `Text` : Just some text ; `value` will be presented as simple raw text. _This failure type cannot be manually triggered by a user._
+  - `Button` : A button the user can click to report an incident ; `value` will be the text inside the button. 
+  - `Redirect` : A link to something the user might want to know about ; `value` will be the link itself, e.g. https://example.com. _This failure type cannot be manually triggered by a user._
+  - `Input` : A one line input box the user can write into to report an incident ;
+  - `Textarea` : A multi-line box the user can write into to report an incident ;
 - **Ask confirm** (bool) : Whether to present the user with a confirmation box before submitting the incident report for this failure.
 - **Restricted to group ID** (string) : Only the given group of users or their children can report this failure.
 
@@ -41,14 +41,14 @@ Parenting failures allows to create a hierarchy of failures that can be attached
 
 Here is such an example :
 ```py
-failure_update("PC_NO_BOOT", value="Le PC ne démarre pas", display_type=DisplayTypes.text, restricted_to_group_id="ROOT")
-failure_update("PC_NO_BOOT_BIOS_ERROR",   value="... et affiche un texte blanc sur écran noir", display_type=DisplayTypes.button, ask_confirm=True, restricted_to_group_id="ROOT")
-failure_update("PC_NO_BOOT_BLACK_SCREEN", value="... et l'écran ne s'allume pas non plus",      display_type=DisplayTypes.text, ask_confirm=True, restricted_to_group_id="ROOT")
-failure_update("PC_NO_BOOT_NO_POWER",     value="... et la diode sur le PC ne clignote pas",    display_type=DisplayTypes.button, ask_confirm=True, restricted_to_group_id="ROOT")
-failure_update("PC_NO_BOOT_OTHER", value="Autre chose ?", display_type=DisplayTypes.input, ask_confirm=True, restricted_to_group_id="ROOT")
-failure_update("PC_NO_BOOT_BLACK_SCREEN_UNPLUGGED_WIRE", value="... et un câble est débranché", display_type=DisplayTypes.button, ask_confirm=True, restricted_to_group_id="ROOT")
-failure_update("PC_NO_BOOT_BLACK_SCREEN_PLUGGED_WIRE", value="... et je ne peux pas voir les câbles", display_type=DisplayTypes.button, ask_confirm=True, restricted_to_group_id=None)
-failure_update("UNIV_WEBSITE", value="https://www.univ-lyon1.fr/", display_type=DisplayTypes.redirect, restricted_to_group_id="ROOT")
+failure_update("PC_NO_BOOT", value="Le PC ne démarre pas", display_type=Text, restricted_to_group_id="ROOT")
+failure_update("PC_NO_BOOT_BIOS_ERROR",   value="... et affiche un texte blanc sur écran noir", display_type=Button, ask_confirm=True, restricted_to_group_id="ROOT")
+failure_update("PC_NO_BOOT_BLACK_SCREEN", value="... et l'écran ne s'allume pas non plus", display_type=Text, ask_confirm=True, restricted_to_group_id="ROOT")
+failure_update("PC_NO_BOOT_NO_POWER",     value="... et la diode sur le PC ne clignote pas", display_type=Button, ask_confirm=True, restricted_to_group_id="ROOT")
+failure_update("PC_NO_BOOT_OTHER", value="Autre chose ?", display_type=Input, ask_confirm=True, restricted_to_group_id="ROOT")
+failure_update("PC_NO_BOOT_BLACK_SCREEN_UNPLUGGED_WIRE", value="... et un câble est débranché", display_type=Button, ask_confirm=True, restricted_to_group_id="ROOT")
+failure_update("PC_NO_BOOT_BLACK_SCREEN_PLUGGED_WIRE", value="... et je ne peux pas voir les câbles", display_type=Button, ask_confirm=True, restricted_to_group_id=None)
+failure_update("UNIV_WEBSITE", value="https://www.univ-lyon1.fr/", display_type=Redirect, restricted_to_group_id="ROOT")
 failure_add("PC_NO_BOOT", "PC_NO_BOOT_BIOS_ERROR")
 failure_add("PC_NO_BOOT", "PC_NO_BOOT_BLACK_SCREEN")
 failure_add("PC_NO_BOOT_BLACK_SCREEN", "PC_NO_BOOT_BLACK_SCREEN_PLUGGED_WIRE")
