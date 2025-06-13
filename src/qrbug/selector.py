@@ -37,6 +37,7 @@ TESTS = {
     '<=': '%ATTR% <= %VALUE%',
     '>=': '%ATTR% >= %VALUE%',
     '=': '%ATTR% == %VALUE%',
+    'is': '%ATTR%.id == %VALUE%',
     'in': '%ATTR%.inside(%VALUE%)',
     'in_or_equal': '%ATTR%.inside_or_equal(%VALUE%)',
     'is_concerned': 'incident.is_for(%ATTR%)',

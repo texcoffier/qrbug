@@ -109,11 +109,11 @@ class TestSelector(qrbug.TestCase):
         self.check(s, "user_child", "thing_child" , "fail1", 'thing_child')
 
         s = qrbug.selector_update('not thing_id or failure_id',
-            '[0, {"class":"Thing", "attr":"id", "test":"false"}, {"class":"Failure", "attr":"id", "test":"true"}]')
+            '[0, {"class":"Thing", "test":"false"}, {"class":"Failure", "attr":"id", "test":"true"}]')
         self.check(s, "user_child", "thing_child" , "fail1", 'fail1')
 
         s = qrbug.selector_update('not thing_id or not failure_id',
-            '[0, {"class":"Thing", "attr":"id", "test":"false"}, {"class":"Failure", "attr":"id", "test":"false"}]')
+            '[0, {"class":"Thing", "test":"false"}, {"class":"Failure", "test":"false"}]')
         self.check(s, "user_child", "thing_child" , "fail1", False)
 
         s = qrbug.selector_update('thing_id and failure_id',
@@ -121,11 +121,11 @@ class TestSelector(qrbug.TestCase):
         self.check(s, "user_child", "thing_child" , "fail1", 'fail1')
 
         s = qrbug.selector_update('not thing_id and failure_id',
-            '[1, {"class":"Thing", "attr":"id", "test":"false"}, {"class":"Failure", "attr":"id", "test":"true"}]')
+            '[1, {"class":"Thing", "test":"false"}, {"class":"Failure", "test":"true"}]')
         self.check(s, "user_child", "thing_child" , "fail1", False)
 
         s = qrbug.selector_update('not thing_id and not failure_id',
-            '[1, {"class":"Thing", "attr":"id", "test":"true"}, {"class":"Failure", "attr":"id", "test":"false"}]')
+            '[1, {"class":"Thing", "test":"true"}, {"class":"Failure", "test":"false"}]')
         self.check(s, "user_child", "thing_child" , "fail1", False)
 
 

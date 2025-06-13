@@ -11,8 +11,8 @@ action('echo'            ,'echo.py')              # Display incidents in user fr
 # Common selectors
 # -----------------
 
-selector('true'                 ,'{"class":"Thing"     ,"attr":"id"    ,"test":"true"}')
-selector('for-me'               ,'{"class":"SourceUser",                "test":"is_concerned"}')
+selector('true'  , '{"class":"Thing"     , "test":"true"}')
+selector('for-me', '{"class":"SourceUser", "test":"is_concerned"}')
 
 ###############################################################################
 # General Backoffice
@@ -160,8 +160,8 @@ failure_add('misc', 'send-pending-feedback')
 failure_add('top', 'misc')
 
 action('pending_feedback', 'pending_feedback.py')  # Send user feedback for failure fix
-selector('pending-feedback'     ,'{"class":"Failure", "attr":"id", "test":"=", "value": "pending-feedback"}')
-selector('send-pending-feedback','[0, {"class":"Failure", "test":"in", "value": "hours"}, {"class":"Failure", "attr":"id", "test":"=", "value": "send-pending-feedback"}]')
+selector('pending-feedback'     ,'{"class":"Failure", "test":"is", "value": "pending-feedback"}')
+selector('send-pending-feedback','[0, {"class":"Failure", "test":"in", "value": "hours"}, {"class":"Failure", "test":"is", "value": "send-pending-feedback"}]')
 selector('with-pending-feedback', '[1, {"test": "pending_feedback"}, {"class":"Selector", "id": "backoffice", "attr": "is_ok", "test": "false"}]')
 dispatcher_update('pending-feedback'     , action_id='echo'            , selector_id='pending-feedback'     , incidents="with-pending-feedback")
 dispatcher_update('send-pending-feedback', action_id='pending_feedback', selector_id='send-pending-feedback', incidents="with-pending-feedback")
@@ -176,7 +176,7 @@ failure_update('personnal-for-me', value="Les incidents que je dois traiter", re
 failure_add('personnal', 'personnal-for-me')
 failure_add('top', 'personnal')
 
-selector('personnal-for-me'     ,'{"class":"Failure"   ,"attr":"id"    ,"test":"="           ,"value": "personnal-for-me"}')
+selector('personnal-for-me'     ,'{"class":"Failure", "test":"is", "value": "personnal-for-me"}')
 dispatcher_update('personnal-for-me', action_id='echo', selector_id='personnal-for-me', incidents="for-me")
 
 ###############################################################################
@@ -278,7 +278,7 @@ failure_update('generate_qr', value='Entrez le nom d\'une Thing', ask_confirm=Tr
 failure_add('generate_qr_top', 'generate_qr')
 
 action('generate_qrcode', 'generate_qr.py')
-selector('generate_qr'          ,'{"class":"Failure"   ,"attr":"id"    ,"test":"="           ,"value": "generate_qr"}')
+selector('generate_qr'          ,'{"class":"Failure", "test": "is", "value": "generate_qr"}')
 dispatcher_update('generate-qr', action_id='generate_qrcode', selector_id='generate_qr')
 
 

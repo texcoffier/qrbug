@@ -19,9 +19,9 @@ class TestAction(qrbug.TestCase):
             restricted_to_group_id='group'
         )
         qrbug.failure_update('07:00', restricted_to_group_id='system')
-        qrbug.selector_update('true', '{"class": "Thing", "attr":"id", "test": "true"}')
-        qrbug.selector_update('false', '{"class": "Thing", "attr":"id", "test": "false"}')
-        qrbug.selector_update('07:00', '{"class": "Failure", "attr":"id", "test": "=", "value": "07:00"}')
+        qrbug.selector_update('true', '{"class": "Thing", "test": "true"}')
+        qrbug.selector_update('false', '{"class": "Thing", "test": "false"}')
+        qrbug.selector_update('07:00', '{"class": "Failure", "test": "is", "value": "07:00"}')
         qrbug.action_update('echo', 'echo.py')
         qrbug.action_update('close', 'close.py')
 
