@@ -1,9 +1,12 @@
 :root {
-    --page-size-horizontal: 29.7cm;
-    --page-size-vertical: 21cm;
+    --page-size-horizontal: 21cm;
+    --page-size-vertical: 29.7cm;
     --columns: 4;
     --rows: 4;
     --size-safety-net: 1mm;
+
+    --page-format: A4;
+    --page-orientation: portrait;
 }
 
 @media print {
@@ -24,7 +27,7 @@
 }
 
 @page {
-    size: A4 landscape;
+    size: var(--page-format) var(--page-orientation);
     margin: 0;
 }
 
@@ -56,6 +59,13 @@ html, body {
     overflow-wrap: anywhere;
     max-width: calc(var(--page-size-horizontal) / var(--columns) - var(--size-safety-net));
     max-height: calc(var(--page-size-vertical) / var(--rows) - var(--size-safety-net));
+}
+
+.qr_img {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
 }
 
 .qr_img img {
