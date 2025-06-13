@@ -71,6 +71,8 @@ html, body {
 .qr_img img {
     object-fit: contain;
     width: 100%;
+
+    transform: rotate(90deg);
 }
 
 .qr_side_by_side {
