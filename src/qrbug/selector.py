@@ -84,7 +84,7 @@ class Selector(qrbug.Editable):
         #     raise Exception(f'Unknown thing: «{incident.thing_id}»')
         if incident.failure is None:
             raise Exception(f'Unknown failure: «{incident.failure_id}»')
-        # print(len(incident.active), source, self.expr)
+        # print(len(incident.active), source, self.expr, eval(self.compiled, {'incident': incident, 'qrbug': qrbug, 'source': source, 'report': report}))
         return eval(self.compiled, {'incident': incident, 'qrbug': qrbug, 'source': source, 'report': report})
 
     def __class_getitem__(cls, selector_id: str) -> Optional["Selector"]:

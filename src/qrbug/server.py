@@ -2,6 +2,7 @@ import time
 from pathlib import Path
 from typing import Optional
 
+import asyncio
 from aiohttp import web
 
 import qrbug.init
@@ -19,6 +20,18 @@ WHAT = {
     'user': qrbug.User,
     'action': qrbug.Action,
 }
+
+async def hourly_task():
+    while True:
+        now = time.time()
+        next_hour = time.strftime('%Y%m%d%H', time.localtime(now + 3600))
+        wait_seconds = time.mktime(time.strptime(next_hour, '%Y%m%d%H')) - now
+        # wait_seconds = 1
+        await asyncio.sleep(wait_seconds)
+        incident = qrbug.Incident.open('backoffice', next_hour[-2:] + ':00', '', 'system', '')
+        request = qrbug.Request(incident)
+        for dispatcher in qrbug.Dispatcher.sorted_instances:
+            await dispatcher.run(incident, request)
 
 async def show_failures_tree_route(request: qrbug.Request) -> web.Response:
     """
@@ -209,6 +222,10 @@ def init_server(argv = None) -> tuple[web.Application, str, int]:
         web.get('/{what:thing|concerned|dispatcher|failure|selector|user|action}={thing_id:[^{}\?]+}', show_failures_tree_route),
         web.get('/', register_incident)
     ])
+    if ENABLE_AUTHENTICATION:
+        async def on_startup(_app):
+            asyncio.create_task(hourly_task())
+        app.on_startup.append(on_startup)
     return app, host, port
 
 def get_server(argv: list = None) -> web.Application:

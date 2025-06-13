@@ -43,6 +43,62 @@ dispatcher_update('z-backoffice-close', action_id='close_auto', selector_id='bac
 # 'admin' is concerned by every incident
 concerned_add('not-backoffice', 'admin')
 
+###############################################################################
+# Planified tasks
+###############################################################################
+
+failure_update('hours')
+failure_update('00:00', restricted_to_group_id="system")
+failure_update('01:00', restricted_to_group_id="system")
+failure_update('02:00', restricted_to_group_id="system")
+failure_update('03:00', restricted_to_group_id="system")
+failure_update('04:00', restricted_to_group_id="system")
+failure_update('05:00', restricted_to_group_id="system")
+failure_update('06:00', restricted_to_group_id="system")
+failure_update('07:00', restricted_to_group_id="system")
+failure_update('08:00', restricted_to_group_id="system")
+failure_update('09:00', restricted_to_group_id="system")
+failure_update('10:00', restricted_to_group_id="system")
+failure_update('11:00', restricted_to_group_id="system")
+failure_update('12:00', restricted_to_group_id="system")
+failure_update('13:00', restricted_to_group_id="system")
+failure_update('14:00', restricted_to_group_id="system")
+failure_update('15:00', restricted_to_group_id="system")
+failure_update('16:00', restricted_to_group_id="system")
+failure_update('17:00', restricted_to_group_id="system")
+failure_update('18:00', restricted_to_group_id="system")
+failure_update('19:00', restricted_to_group_id="system")
+failure_update('20:00', restricted_to_group_id="system")
+failure_update('21:00', restricted_to_group_id="system")
+failure_update('22:00', restricted_to_group_id="system")
+failure_update('23:00', restricted_to_group_id="system")
+
+failure_add('hours', '00:00')
+failure_add('hours', '01:00')
+failure_add('hours', '02:00')
+failure_add('hours', '03:00')
+failure_add('hours', '04:00')
+failure_add('hours', '05:00')
+failure_add('hours', '06:00')
+failure_add('hours', '07:00')
+failure_add('hours', '08:00')
+failure_add('hours', '09:00')
+failure_add('hours', '10:00')
+failure_add('hours', '11:00')
+failure_add('hours', '12:00')
+failure_add('hours', '13:00')
+failure_add('hours', '14:00')
+failure_add('hours', '15:00')
+failure_add('hours', '16:00')
+failure_add('hours', '17:00')
+failure_add('hours', '18:00')
+failure_add('hours', '19:00')
+failure_add('hours', '20:00')
+failure_add('hours', '21:00')
+failure_add('hours', '22:00')
+failure_add('hours', '23:00')
+failure_add('backoffice', 'hours') # To receive auto-close
+
 #------------------------------------------------------------------------------
 # Backoffice / lists
 #------------------------------------------------------------------------------
@@ -105,7 +161,7 @@ failure_add('top', 'misc')
 
 action('pending_feedback', 'pending_feedback.py')  # Send user feedback for failure fix
 selector('pending-feedback'     ,'{"class":"Failure", "attr":"id", "test":"=", "value": "pending-feedback"}')
-selector('send-pending-feedback','{"class":"Failure", "attr":"id", "test":"=", "value": "send-pending-feedback"}')
+selector('send-pending-feedback','[0, {"class":"Failure", "test":"in", "value": "hours"}, {"class":"Failure", "attr":"id", "test":"=", "value": "send-pending-feedback"}]')
 selector('with-pending-feedback', '[1, {"test": "pending_feedback"}, {"class":"Selector", "id": "backoffice", "attr": "is_ok", "test": "false"}]')
 dispatcher_update('pending-feedback'     , action_id='echo'            , selector_id='pending-feedback'     , incidents="with-pending-feedback")
 dispatcher_update('send-pending-feedback', action_id='pending_feedback', selector_id='send-pending-feedback', incidents="with-pending-feedback")
