@@ -26,6 +26,10 @@
         width: calc(var(--page-size-horizontal) / var(--columns) - var(--size-safety-net));
         height: calc(var(--page-size-vertical) / var(--rows) - var(--size-safety-net));
     }
+
+    .qr_img img {
+        transform: rotate(90deg);
+    }
 }
 
 @page {
@@ -75,8 +79,6 @@ html, body {
 .qr_img img {
     object-fit: contain;
     width: 100%;
-
-    transform: rotate(90deg);
 }
 
 .qr_side_by_side {
