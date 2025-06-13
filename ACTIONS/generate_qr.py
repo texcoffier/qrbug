@@ -13,8 +13,9 @@ REPORT_THING_URL = qrbug.SERVICE_URL + ('/' if not qrbug.SERVICE_URL.endswith('/
 QR_GEN_THING_ID = 'QR_GEN'
 QR_GEN_FAILURE_ID = 'generate_qr'
 
-TEMPLATE_CSS_PATH = qrbug.STATIC_FILES_PATH / 'generate_qr.css'
-TEMPLATE_QR_BLOCK_PATH = qrbug.STATIC_FILES_PATH / 'qr_inner_block.html'
+QR_GEN_STATIC_FILES_PATH = qrbug.STATIC_FILES_PATH / 'QR_GENERATION'
+TEMPLATE_CSS_PATH = QR_GEN_STATIC_FILES_PATH / 'generate_qr.css'
+TEMPLATE_QR_BLOCK_PATH = QR_GEN_STATIC_FILES_PATH / 'qr_inner_block.html'
 
 
 def get_qr_gen_link(thing_id: qrbug.ThingId, ticket: str) -> str:
