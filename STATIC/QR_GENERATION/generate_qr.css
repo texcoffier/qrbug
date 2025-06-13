@@ -5,6 +5,8 @@
     --rows: %rows%;
     --size-safety-net: 1mm;
 
+    --default-font-size: 1.1rem;
+
     --page-format: A4;
     --page-orientation: portrait;
 }
@@ -59,6 +61,8 @@ html, body {
     overflow-wrap: anywhere;
     max-width: calc(var(--page-size-horizontal) / var(--columns) - var(--size-safety-net));
     max-height: calc(var(--page-size-vertical) / var(--rows) - var(--size-safety-net));
+
+    font-size: calc(var(--default-font-size) - (var(--rows) * 0.05rem));
 }
 
 .qr_img {
