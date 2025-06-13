@@ -52,7 +52,7 @@ class Failure(qrbug.Tree):
     # Default values
     value                  : Optional[str]          = ''
     display_type           : Optional[DisplayTypes] = DisplayTypes.text
-    ask_confirm            : Optional[bool]         = True
+    ask_confirm            : Optional[bool]         = False
     restricted_to_group_id : Optional[qrbug.UserId] = None
 
     def init(self):
