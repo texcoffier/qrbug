@@ -17,7 +17,7 @@ failure_add("PC_NO_BOOT", "PC_NO_BOOT_NO_POWER")
 failure_add("PC_NO_BOOT", "PC_NO_BOOT_OTHER")
 failure_add("PC_NO_BOOT", "UNIV_WEBSITE")
 
-thing_update("b710pc0101", location="Nautibus 101")
+thing_update("b710pc0101")
 thing_add_failure("b710pc0101", ="PC_NO_BOOT")
 thing_update("b710pc0101", comment="3ème à gauche")
 

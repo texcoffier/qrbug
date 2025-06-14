@@ -23,7 +23,6 @@ ITEMS = {
 ATTRIBUTES = {
     'path'        : '.path()'                       , # Tree subclasses
     'id'          : '.id'                           , # Any
-    'location'    : '.location'                     , # Thing
     'comment'     : '.comment'                      , # Thing
     'is_ok'       : '.is_ok(incident,source,report)', # Selector
     'value'       : '.value'                        , # Failure

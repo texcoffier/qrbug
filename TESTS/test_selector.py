@@ -8,7 +8,6 @@ class TestSelector(qrbug.TestCase):
 
     def setUp(self):
         qrbug.thing_update('thing_child',
-            location='thing_child_location',
             comment='thing_child_comment')
         qrbug.user_add('user_parent', 'user_child')
         qrbug.thing_add('thing_parent', 'thing_child')
@@ -74,10 +73,6 @@ class TestSelector(qrbug.TestCase):
             '{"class":"Selector", "id":"thing_id contains p", "attr":"is_ok", "test":"true"}')
         self.check(s, "user_child", "thing_child" , "fail1", False)
         self.check(s, "user_child", "thing_parent", "fail1", True)
-
-        s = qrbug.selector_update('location',
-            '{"class":"Thing", "attr":"location", "test":"true"}')
-        self.check(s, "user_child", "thing_child" , "fail1", 'thing_child_location')
 
         s = qrbug.selector_update('comment',
             '{"class":"Thing", "attr":"comment", "test":"true"}')

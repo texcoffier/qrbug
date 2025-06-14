@@ -11,16 +11,13 @@ class Thing(qrbug.Tree):
     A Thing that can fail.
     """
     instances: dict[ThingId, "Thing"] = {}
-
-    # Default values
-    location    : Optional[str]         = None
-    comment     : Optional[str]         = ""
+    comment = ""
 
     def init(self):
         self.failure_ids:set[qrbug.FailureId] = []
 
     def _local_dump(self) -> str:
-        return f'loc:{self.location} failures:{self.failure_ids} comment:{repr(self.comment)}'
+        return f'failures:{self.failure_ids} comment:{repr(self.comment)}'
 
     def get_failures(self, as_html: bool = True) -> str:
         """
@@ -32,7 +29,6 @@ class Thing(qrbug.Tree):
             return f"""Il n'est possible de déclarer de panne pour
             <ul>
             <li> Identifiant : «{self.id}»
-            <li> Emplacement : «{self.location}»
             <li> Commentaire : «{self.comment}»
             </ul>"""
 
@@ -66,7 +62,6 @@ class Thing(qrbug.Tree):
         representation: list[str] = [
             '<div>',
             '  <ul>',
-            f'    <li>Emplacement : {html.escape(self.location) if self.location is not None else "[NON REMPLI]"}</li>',
             f'    <li>Commentaire : {html.escape(self.comment) if self.comment else "[NON REMPLI]"}</li>',
             f'    <li>ID : {html.escape(self.id) if self.id is not None else "[NON REMPLI]"}</li>',
             f'    <li>ID des pannes : {html.escape(repr(self.failure_ids))}</li>',
@@ -111,7 +106,6 @@ def thing_update(thing_id: ThingId, **kwargs) -> Thing:
     """
     Creates a new thing that can fail, or modifies an existing one.
     :param thing_id: The ID of this thing.
-    :param location: Where this thing is located.
     :param comment: Any comment on the thing.
     """
     return Thing.update_attributes(thing_id, **kwargs)
@@ -149,5 +143,5 @@ qrbug.thing_add_failure = Thing.add_failure
 qrbug.thing_del_failure = Thing.del_failure
 
 if __name__ == "__main__":
-    thing_update("0", location="Testing location", comment="This is a comment")
+    thing_update("0", comment="This is a comment")
     print(Thing.get("0").dump())

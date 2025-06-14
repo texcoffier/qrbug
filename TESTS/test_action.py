@@ -6,7 +6,6 @@ class TestAction(qrbug.TestCase):
 
     def setUp(self):
         qrbug.thing_update('thing_child',
-            location='thing_child_location',
             comment='thing_child_comment')
         qrbug.user_add('user_parent', 'user_child')
         qrbug.thing_add('thing_parent', 'thing_child')
