@@ -10,9 +10,6 @@ import qrbug
 IMAGE_FORMAT = 'PNG'
 REPORT_THING_URL = qrbug.SERVICE_URL + ('/' if not qrbug.SERVICE_URL.endswith('/') else '') + 'thing={}'
 
-QR_GEN_THING_ID = 'QR_GEN'
-QR_GEN_FAILURE_ID = 'generate_qr'
-
 QR_GEN_STATIC_FILES_PATH = qrbug.STATIC_FILES_PATH / 'QR_GENERATION'
 TEMPLATE_CSS_PATH = QR_GEN_STATIC_FILES_PATH / 'generate_qr.css'
 TEMPLATE_QR_BLOCK_PATH = QR_GEN_STATIC_FILES_PATH / 'qr_inner_block.html'
@@ -21,8 +18,8 @@ TEMPLATE_QR_INFOS_BLOCK = QR_GEN_STATIC_FILES_PATH / 'qr_infos_block.html'
 TEMPLATE_QR_PARENT_LINKS = QR_GEN_STATIC_FILES_PATH / 'qr_parent_links.html'
 
 
-def get_qr_gen_link(thing_id: qrbug.ThingId, ticket: str) -> str:
-    return f'/?thing-id={QR_GEN_THING_ID}&failure-id={QR_GEN_FAILURE_ID}&what=thing&is-repaired=0&&additional-info={thing_id}&ticket={ticket}'
+def get_qr_gen_link(thing_id: qrbug.ThingId, failure_id, ticket: str) -> str:
+    return f'/?thing-id={thing_id}&failure-id={failure_id}&what=thing&is-repaired=0&ticket={ticket}'
 
 # Run by a dispatcher:
 #    thing: building, room, pc...
@@ -31,7 +28,7 @@ def get_qr_gen_link(thing_id: qrbug.ThingId, ticket: str) -> str:
 
 async def run(incidents: list[qrbug.Incident], request: qrbug.Request) -> Optional[qrbug.action_helpers.ActionReturnValue]:
     incident = incidents[0]
-    row_cols_number = incident.failure_id.lstrip(QR_GEN_FAILURE_ID).lstrip('_').lstrip('-')
+    row_cols_number = incident.failure_id.split('_')[-1]
     if row_cols_number != '':
         default_rows, default_cols = row_cols_number.split('x')
     else:
@@ -57,7 +54,7 @@ async def run(incidents: list[qrbug.Incident], request: qrbug.Request) -> Option
     )
     for parent_id in requested_thing.parent_ids:
         await request.write_newline(
-            f'      <li><a href="{get_qr_gen_link(parent_id, user_ticket)}">{parent_id}</a></li>'
+            f'      <li><a href="{get_qr_gen_link(parent_id, incident.failure_id, user_ticket)}">{parent_id}</a></li>'
         )
     await request.write_newline(
         '   </ul>',
@@ -80,7 +77,7 @@ async def run(incidents: list[qrbug.Incident], request: qrbug.Request) -> Option
 
         # Writes the HTML of the QR code
         await request.write(TEMPLATE_QR_BLOCK.format(
-            qr_link    = get_qr_gen_link(thing_id, user_ticket),
+            qr_link    = get_qr_gen_link(thing_id, incident.failure_id, user_ticket),
             thing_id   = thing_id,
             url        = url,
             img_format = IMAGE_FORMAT.lower(),

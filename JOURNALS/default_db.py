@@ -284,8 +284,6 @@ for rows in (7, 8):
     for cols in (5, 6):
         failure_update(f'generate_qr_{rows}x{cols}', value=f'En {rows}x{cols}', allowed="admin", display_type=Input)
         failure_add('generate_qr', f'generate_qr_{rows}x{cols}')
-thing_update('QR_GEN')
-thing_add_failure('QR_GEN', 'generate_qr')
 
 action('generate_qrcode', 'generate_qr.py')
 selector('generate_qr','{"class":"Failure", "attr":"id", "test": "contains", "value": "generate_qr"}')
