@@ -65,9 +65,8 @@ class TestEdit(qrbug.TestCase):
         lines = self.runtest('thing', 'edit-thing')
         self.assertEqual(lines,
             ["<!DOCTYPE html>\nUnexpected edit failure for Thing\n"])
-
         self.assertTrue(qrbug.Failure['thing'].get_hierarchy_representation()
-            .count('ask_confirm') == 1)
+            .count('ask_confirm') == 2)
 
     def test_user(self):
         lines = self.runtest('user', 'edit-user')

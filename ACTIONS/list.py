@@ -10,13 +10,41 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
     texts = [f'<h1>{incident.failure.value}</h1>']
 
     if issubclass(what, qrbug.Tree):
-        def go_in(node):
-            texts.append(html.escape(node.dump()))
-            texts.append('<ul>')
-        def go_out(_node):
-            texts.append('</ul>')
+        if what is qrbug.Thing:
+            thing_comment = qrbug.Failure['thing-comment']
+            qr = 'QRCodes : ' + ' '.join(
+                f'<button onclick="qr(this)">{html.escape(failure.split("_")[-1])}</button>'
+                for failure in qrbug.Failure['generate_qr'].children_ids
+            )
+            texts.append('<table>')
+            def go_in(node):
+                texts.append('<tr><td>')
+                texts.append(go_in.indent)
+                texts.append('<a target="_blank" href="thing=')
+                texts.append(html.escape(node.id))
+                texts.append('">')
+                texts.append(html.escape(node.id))
+                texts.append('</a><td>')
+                texts.append(qrbug.element(thing_comment, node, in_place=True))
+                texts.append('<td>')
+                texts.append(qr)
+                texts.append('</tr>')
+                go_in.indent += '    '
+            def go_out(_node):
+                go_in.indent = go_in.indent[:-4]
+            go_in.indent = ''
+            footer = '</table>'
+        else:
+            def go_in(node):
+                texts.append(html.escape(node.dump()))
+                texts.append('<ul>')
+            def go_out(_node):
+                texts.append('</ul>')
+            footer = ''
         for tree in what.roots():
             tree.walk(go_in, go_out)
+        texts.append(footer)
+        texts = [qrbug.get_template().replace('%REPRESENTATION%', ''.join(texts))]
     elif issubclass(what, qrbug.Concerned):
         texts.append('<table border>')
         concerned_add = qrbug.Failure['concerned-add']

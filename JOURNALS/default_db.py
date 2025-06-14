@@ -251,7 +251,9 @@ dispatcher_update('edit-user', action_id='edit_user', selector_id='edit-user')
 # Edit thing
 # ---------------
 failure_update('thing', value="Chose", allowed="admin")
+failure_update('thing-comment', value="Changer le commentaire", allowed="admin", display_type=Input)
 failure_add('edit', 'thing')
+failure_add('thing', 'thing-comment')
 
 action('edit_thing', 'edit_thing.py')
 selector('edit-thing', '{"class":"Failure", "test":"in_or_equal", "value": "thing"}')
@@ -275,16 +277,15 @@ dispatcher_update('edit-action', action_id='edit_action', selector_id='edit-acti
 # QRCode
 # ---------------
 
-failure_update('generate_qr_top', value='Générer un QR code :', allowed="admin", display_type=Text)
-failure_add('top', 'generate_qr_top')
+failure_update('generate_qr', value='Générer un QR code :', allowed="admin", display_type=Text)
+failure_add('backoffice', 'generate_qr')
 failure_update('generate_qr', value='Entrez le nom d\'une Thing', ask_confirm=True, allowed="admin", display_type=Input)
-failure_add('generate_qr_top', 'generate_qr')
-for rows in range(4, 9):
-    for cols in range(4, 9):
+for rows in (7, 8):
+    for cols in (5, 6):
         failure_update(f'generate_qr_{rows}x{cols}', value=f'En {rows}x{cols}', allowed="admin", display_type=Input)
-        failure_add('generate_qr_top', f'generate_qr_{rows}x{cols}')
+        failure_add('generate_qr', f'generate_qr_{rows}x{cols}')
 thing_update('QR_GEN')
-thing_add_failure('QR_GEN', 'generate_qr_top')
+thing_add_failure('QR_GEN', 'generate_qr')
 
 action('generate_qrcode', 'generate_qr.py')
 selector('generate_qr','{"class":"Failure", "attr":"id", "test": "contains", "value": "generate_qr"}')

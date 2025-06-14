@@ -38,11 +38,10 @@ async def run(incidents: list[qrbug.Incident], request: qrbug.Request) -> Option
         default_rows = '4'
         default_cols = '4'
 
-    requested_thing_id = incident.active[0].comment
-    requested_thing = qrbug.Thing[requested_thing_id]
+    requested_thing = incident.thing
 
     if not requested_thing:
-        return qrbug.action_helpers.ActionReturnValue(error_msg=f"Thing {repr(requested_thing_id)} not found")
+        return qrbug.action_helpers.ActionReturnValue(error_msg=f"Thing {repr(requested_thing.id)} not found")
 
     user_ticket = request.query.get("ticket", "")
     TEMPLATE_CSS = (f'<style>\n{TEMPLATE_CSS_PATH.read_text()}\n</style>'
@@ -67,7 +66,7 @@ async def run(incidents: list[qrbug.Incident], request: qrbug.Request) -> Option
     #await request.write_newline(TEMPLATE_QR_CONFIG_BLOCK.read_text())
     await request.write_newline('<div class="qr_outer_block">')
 
-    for thing_id in [requested_thing_id, *requested_thing.get_all_children_ids()]:
+    for thing_id in [requested_thing.id, *requested_thing.get_all_children_ids()]:
         url = REPORT_THING_URL.format(thing_id)
 
         img = qrcode.make(url)

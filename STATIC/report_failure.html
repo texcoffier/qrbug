@@ -150,6 +150,16 @@
             document.getElementById('input').textContent = element.value;
             popup.showModal();
         }
+        function qr(element) {
+            let failure = 'generate_qr_' + element.textContent;
+            while(element.tagName != 'TR')
+                element = element.parentNode;
+            let thing = element.cells[0].firstElementChild.textContent;
+            window.location = '?what=thing'
+                + '&thing-id=' + encodeURIComponent(thing)
+                + '&failure-id=' + encodeURIComponent(failure)
+                + '&is-repaired=0';
+        }
     </script>
 </head>
 
