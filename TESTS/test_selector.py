@@ -17,7 +17,7 @@ class TestSelector(qrbug.TestCase):
             value='first failure',
             display_type=qrbug.DisplayTypes.text,
             ask_confirm=False,
-            restricted_to_group_id='group'
+            allowed='group'
         )
 
     def check(self, selector, login, thing_id, failure_id, expected):
@@ -97,8 +97,8 @@ class TestSelector(qrbug.TestCase):
             '{"class":"Failure", "attr":"ask_confirm", "test":"true"}')
         self.check(s, "user_child", "thing_child" , "fail1", False)
 
-        s = qrbug.selector_update('failure restricted_to_group_id',
-            '{"class":"Failure", "attr":"restricted_to_group_id", "test":"true"}')
+        s = qrbug.selector_update('failure allowed',
+            '{"class":"Failure", "attr":"allowed", "test":"true"}')
         self.check(s, "user_child", "thing_child" , "fail1", 'group')
 
 

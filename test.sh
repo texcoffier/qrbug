@@ -24,7 +24,7 @@ python3 -m unittest
 mv 'TESTS/xxx-incidents.py' 'TESTS/xxx-incidents-unittest.py'
 
 # Launches the server and tests the two routes
-python3 src/qrbug/server.py "$LAUNCH_HOST" "$LAUNCH_PORT" --test >/dev/null &
+python3 src/qrbug/server.py "$LAUNCH_HOST" "$LAUNCH_PORT" --test >TESTS/xxx-server.log 2>&1 &
 SERVER_PID="$!"
 
 BASE_URL="http://$LAUNCH_HOST:$LAUNCH_PORT"
@@ -32,6 +32,7 @@ TESTING_URL_GET="${BASE_URL}/thing=test_thing"
 TESTING_URL_REGISTER="${BASE_URL}/?thing-id=test_thing&failure-id=test&is-repaired=0&what=thing"
 TESTING_URL_CLOSE="${BASE_URL}/?thing-id=test_thing&failure-id=test&is-repaired=1&what=thing"
 
+EXIT_CODE='0'
 
 echo -n "TEST: load failures list of test_thing"
 OK='0'
@@ -71,12 +72,15 @@ then
       EXIT_CODE=2
     fi
   else
-    echo "content FAIL"
-    EXIT_CODE=2
+    echo "content FAIL :"
+    echo '---------------------'
+    cat TESTS/xxx-page-content
+    echo '---------------------'
+    EXIT_CODE=3
   fi
 else
     echo "load FAIL"
-    EXIT_CODE=2
+    EXIT_CODE=4
 fi
 
 echo -n "TEST: Close incident : "
@@ -88,20 +92,29 @@ then
       echo "OK"
     else
       echo "FAIL"
-      EXIT_CODE=2
+      EXIT_CODE=5
     fi
   else
     echo "content FAIL"
-    EXIT_CODE=2
+    EXIT_CODE=6
   fi
 else
     echo "load FAIL"
-    EXIT_CODE=2
+    EXIT_CODE=7
 fi
 
 
 # Kills the server
 kill $SERVER_PID
+
+if [ "$EXIT_CODE" != '0' ]
+then
+  echo "
+  ############################################# EXIT_CODE=$EXIT_CODE
+  The test failed, here is the server output:
+  "
+  cat TESTS/xxx-server.log
+fi >&2
 
 # Exits
 exit $EXIT_CODE

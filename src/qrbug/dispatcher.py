@@ -1,4 +1,3 @@
-import os
 import time
 import traceback
 from typing import Optional, TypeAlias
@@ -23,7 +22,7 @@ class Dispatcher(qrbug.Tree):
     def _local_dump(self) -> str:
         return f'action:{self.action_id} selector:{self.selector_id} incidents:{self.incidents}'
 
-    async def run(self, incident: qrbug.Incident, request) -> Optional[qrbug.action_helpers.ActionReturnValue]:
+    async def run(self, incident: qrbug.Incident, request, trace: list[str]) -> Optional[qrbug.action_helpers.ActionReturnValue]:
         """
         Returns a dict with keys being the thing_id and failure_id of an incident, and values being the returned HTML.
         """
@@ -31,6 +30,7 @@ class Dispatcher(qrbug.Tree):
 
         if not qrbug.Selector[self.selector_id].is_ok(incident):
             return None
+        trace.append(' selected')
 
         if self.incidents:
             selector = qrbug.Selector[self.incidents]
@@ -38,20 +38,21 @@ class Dispatcher(qrbug.Tree):
                          for i in qrbug.Incident.instances.values()
                          if selector.is_ok(i, incident, request.report)
                         ]
+            # trace.append(selector.expr)
+            # for i in qrbug.Incident.instances.values():
+            #     trace.append(f'--><!-- ==== {i.failure_id}:{len(i.pending_feedback)}:{qrbug.Selector["backoffice"].is_ok(i, incident,request.report)}')
         else:
             incidents = [incident]
+        trace.append(f' incidents={len(incidents)}')
 
         if not incidents:
             return
 
-        ################################################
-        # NO «await» ARE ALLOWED BEFORE THIS LINE
-        # It is done in order to get the last «Report»
-        ################################################
-
         try:
             return_value = await qrbug.Action[self.action_id].run(incidents, request)
-        except Exception as e:
+            trace.append(' run')
+        except Exception as e: # pylint: disable=bare-except
+            trace.append(' failure')
             retrieved_traceback = '\n'.join(traceback.format_exception(e))
             return_value = qrbug.action_helpers.ActionReturnValue(
                 error_msg=(

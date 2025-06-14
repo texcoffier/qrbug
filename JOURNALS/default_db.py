@@ -12,7 +12,10 @@ action('echo'            ,'echo.py')              # Display incidents in user fr
 # -----------------
 
 selector('true'  , '{"class":"Thing"     , "test":"true"}')
-selector('for-me', '{"class":"SourceUser", "test":"is_concerned"}')
+selector('admin' , '{"class":"User"      , "test":"in"    , "value": "admin"}')
+selector('system', '{"class":"SourceUser", "test":"inside", "value": "system"}')
+selector('for-me', '[1, {"test": "active"}, {"class":"SourceUser", "test":"is_concerned"}]')
+selector('active', '{                    , "test":"active"}')
 
 ###############################################################################
 # General Backoffice
@@ -48,30 +51,30 @@ concerned_add('not-backoffice', 'admin')
 ###############################################################################
 
 failure_update('hours')
-failure_update('00:00', restricted_to_group_id="system")
-failure_update('01:00', restricted_to_group_id="system")
-failure_update('02:00', restricted_to_group_id="system")
-failure_update('03:00', restricted_to_group_id="system")
-failure_update('04:00', restricted_to_group_id="system")
-failure_update('05:00', restricted_to_group_id="system")
-failure_update('06:00', restricted_to_group_id="system")
-failure_update('07:00', restricted_to_group_id="system")
-failure_update('08:00', restricted_to_group_id="system")
-failure_update('09:00', restricted_to_group_id="system")
-failure_update('10:00', restricted_to_group_id="system")
-failure_update('11:00', restricted_to_group_id="system")
-failure_update('12:00', restricted_to_group_id="system")
-failure_update('13:00', restricted_to_group_id="system")
-failure_update('14:00', restricted_to_group_id="system")
-failure_update('15:00', restricted_to_group_id="system")
-failure_update('16:00', restricted_to_group_id="system")
-failure_update('17:00', restricted_to_group_id="system")
-failure_update('18:00', restricted_to_group_id="system")
-failure_update('19:00', restricted_to_group_id="system")
-failure_update('20:00', restricted_to_group_id="system")
-failure_update('21:00', restricted_to_group_id="system")
-failure_update('22:00', restricted_to_group_id="system")
-failure_update('23:00', restricted_to_group_id="system")
+failure_update('00:00', allowed="system")
+failure_update('01:00', allowed="system")
+failure_update('02:00', allowed="system")
+failure_update('03:00', allowed="system")
+failure_update('04:00', allowed="system")
+failure_update('05:00', allowed="system")
+failure_update('06:00', allowed="system")
+failure_update('07:00', allowed="system")
+failure_update('08:00', allowed="system")
+failure_update('09:00', allowed="system")
+failure_update('10:00', allowed="system")
+failure_update('11:00', allowed="system")
+failure_update('12:00', allowed="system")
+failure_update('13:00', allowed="system")
+failure_update('14:00', allowed="system")
+failure_update('15:00', allowed="system")
+failure_update('16:00', allowed="system")
+failure_update('17:00', allowed="system")
+failure_update('18:00', allowed="system")
+failure_update('19:00', allowed="system")
+failure_update('20:00', allowed="system")
+failure_update('21:00', allowed="system")
+failure_update('22:00', allowed="system")
+failure_update('23:00', allowed="system")
 
 failure_add('hours', '00:00')
 failure_add('hours', '01:00')
@@ -103,15 +106,15 @@ failure_add('backoffice', 'hours') # To receive auto-close
 # Backoffice / lists
 #------------------------------------------------------------------------------
 
-failure_update('list'           , value="Lister"                , restricted_to_group_id="admin")
-failure_update('list-User'      , value="Les utilisateurs"      , restricted_to_group_id="admin", display_type=Button)
-failure_update('list-Failure'   , value="Les pannes"            , restricted_to_group_id="admin", display_type=Button)
-failure_update('list-Thing'     , value="Les objets"            , restricted_to_group_id="admin", display_type=Button)
-failure_update('list-Selector'  , value="Les conditions"        , restricted_to_group_id="admin", display_type=Button)
-failure_update('list-Dispatcher', value="Les automatismes"      , restricted_to_group_id="admin", display_type=Button)
-failure_update('list-Action'    , value="Les actions"           , restricted_to_group_id="admin", display_type=Button)
-failure_update('list-Concerned' , value="Qui est concerné"      , restricted_to_group_id="admin", display_type=Button)
-failure_update('list-Incident'  , value="Les incidents en cours", restricted_to_group_id="admin", display_type=Button)
+failure_update('list'           , value="Lister"                , allowed="admin")
+failure_update('list-User'      , value="Les utilisateurs"      , allowed="admin", display_type=Button)
+failure_update('list-Failure'   , value="Les pannes"            , allowed="admin", display_type=Button)
+failure_update('list-Thing'     , value="Les objets"            , allowed="admin", display_type=Button)
+failure_update('list-Selector'  , value="Les conditions"        , allowed="admin", display_type=Button)
+failure_update('list-Dispatcher', value="Les automatismes"      , allowed="admin", display_type=Button)
+failure_update('list-Action'    , value="Les actions"           , allowed="admin", display_type=Button)
+failure_update('list-Concerned' , value="Qui est concerné"      , allowed="admin", display_type=Button)
+failure_update('list-Incident'  , value="Tous les incidents"    , allowed="admin", display_type=Button)
 
 failure_add('list', 'list-User')
 failure_add('list', 'list-Failure')
@@ -133,9 +136,9 @@ dispatcher_update('admin-list', action_id='list', selector_id='list')
 # Backoffice / journals
 #------------------------------------------------------------------------------
 
-failure_update('journal'         , value="Afficher"                , restricted_to_group_id="admin")
-failure_update('journal-config'  , value="Journal de configuration", restricted_to_group_id="admin", display_type=Button)
-failure_update('journal-incident', value="Journal des incidents"   , restricted_to_group_id="admin", display_type=Button)
+failure_update('journal'         , value="Afficher"                , allowed="admin")
+failure_update('journal-config'  , value="Journal de configuration", allowed="admin", display_type=Button)
+failure_update('journal-incident', value="Journal des incidents"   , allowed="admin", display_type=Button)
 
 failure_add('journal', 'journal-config')
 failure_add('journal', 'journal-incident')
@@ -151,9 +154,9 @@ dispatcher_update('admin-journal', action_id='journal', selector_id='journal')
 # Backoffice / misc
 #------------------------------------------------------------------------------
 
-failure_update('misc'                 , value="Divers"                            , restricted_to_group_id="admin")
-failure_update('pending-feedback'     , value="Feedbacks de réparation en attente", restricted_to_group_id="admin", display_type=Button)
-failure_update('send-pending-feedback', value="Envoie le feedback de réparation"  , restricted_to_group_id="admin", display_type=Button)
+failure_update('misc'                 , value="Divers"                            , allowed="admin")
+failure_update('pending-feedback'     , value="Feedbacks de réparation en attente", allowed="admin", display_type=Button)
+failure_update('send-pending-feedback', value="Envoie le feedback de réparation"  , allowed="admin", display_type=Button)
 
 failure_add('misc', 'pending-feedback')
 failure_add('misc', 'send-pending-feedback')
@@ -170,8 +173,8 @@ dispatcher_update('send-pending-feedback', action_id='pending_feedback', selecto
 # Backoffice / personnal
 #------------------------------------------------------------------------------
 
-failure_update('personnal', value="Ce qui me concerne", restricted_to_group_id="admin")
-failure_update('personnal-for-me', value="Les incidents que je dois traiter", restricted_to_group_id="admin", display_type=Button)
+failure_update('personnal', value="Ce qui me concerne", allowed="admin")
+failure_update('personnal-for-me', value="Les incidents que je dois traiter", allowed="admin", display_type=Button)
 
 failure_add('personnal', 'personnal-for-me')
 failure_add('top', 'personnal')
@@ -183,7 +186,7 @@ dispatcher_update('personnal-for-me', action_id='echo', selector_id='personnal-f
 # Edit configuration
 ###############################################################################
 
-failure_update('edit', value="API de l'éditeur de configuration, elle ne permet aucune modification mais affiche seulement les éléments modifiables pour chacun des types d'objet.", restricted_to_group_id="admin")
+failure_update('edit', value="API de l'éditeur de configuration, elle ne permet aucune modification mais affiche seulement les éléments modifiables pour chacun des types d'objet.", allowed="admin")
 failure_add('backoffice', 'edit')
 
 # The 'editor-api' thing displays the editors API
@@ -193,9 +196,9 @@ thing_add_failure('editor-api', 'edit')
 # ---------------
 # Edit concerned
 # ---------------
-failure_update('concerned'    , value="Concerned"                    , restricted_to_group_id="admin")
-failure_update('concerned-add', value="Ajouter un utilisateur/groupe", restricted_to_group_id="admin", display_type=Input)
-failure_update('concerned-del', value="Enlever un utilisateur/groupe", restricted_to_group_id="admin", display_type=Input)
+failure_update('concerned'    , value="Concerned"                    , allowed="admin")
+failure_update('concerned-add', value="Ajouter un utilisateur/groupe", allowed="admin", display_type=Input)
+failure_update('concerned-del', value="Enlever un utilisateur/groupe", allowed="admin", display_type=Input)
 failure_add('concerned', 'concerned-add')
 failure_add('concerned', 'concerned-del')
 failure_add('edit', 'concerned')
@@ -207,7 +210,7 @@ dispatcher_update('edit-concerned', action_id='edit_concerned', selector_id='edi
 # ---------------
 # Edit dispatcher
 # ---------------
-failure_update('dispatcher', value="Les dispatchers", restricted_to_group_id="admin")
+failure_update('dispatcher', value="Les dispatchers", allowed="admin")
 failure_add('edit', 'dispatcher')
 
 action('edit_dispatcher', 'edit_dispatcher.py')
@@ -217,7 +220,7 @@ dispatcher_update('edit-dispatcher', action_id='edit_dispatcher', selector_id='e
 # ---------------
 # Edit failure
 # ---------------
-failure_update('failure', value="Les pannes", restricted_to_group_id="admin")
+failure_update('failure', value="Les pannes", allowed="admin")
 failure_add('edit', 'failure')
 
 action('edit_failure', 'edit_failure.py')
@@ -227,7 +230,7 @@ dispatcher_update('edit-failure', action_id='edit_failure', selector_id='edit-fa
 # ---------------
 # Edit selector
 # ---------------
-failure_update('selector', value="Sélecteur d'incident", restricted_to_group_id="admin")
+failure_update('selector', value="Sélecteur d'incident", allowed="admin")
 failure_add('edit', 'selector')
 
 action('edit_selector', 'edit_selector.py')
@@ -237,7 +240,7 @@ dispatcher_update('edit-selector', action_id='edit_selector', selector_id='edit-
 # ---------------
 # Edit user
 # ---------------
-failure_update('user', value="Utilisateur", restricted_to_group_id="admin")
+failure_update('user', value="Utilisateur", allowed="admin")
 failure_add('edit', 'user')
 
 action('edit_user', 'edit_user.py')
@@ -247,7 +250,7 @@ dispatcher_update('edit-user', action_id='edit_user', selector_id='edit-user')
 # ---------------
 # Edit thing
 # ---------------
-failure_update('thing', value="Chose", restricted_to_group_id="admin")
+failure_update('thing', value="Chose", allowed="admin")
 failure_add('edit', 'thing')
 
 action('edit_thing', 'edit_thing.py')
@@ -257,8 +260,8 @@ dispatcher_update('edit-thing', action_id='edit_thing', selector_id='edit-thing'
 # ---------------
 # Edit action
 # ---------------
-failure_update('action', value="Action", restricted_to_group_id="admin")
-failure_update('action-python_script', value="Le script Python à lancer", restricted_to_group_id="admin", display_type=Input)
+failure_update('action', value="Action", allowed="admin")
+failure_update('action-python_script', value="Le script Python à lancer", allowed="admin", display_type=Input)
 failure_add('action', 'action-python_script')
 failure_add('edit', 'action')
 
@@ -272,13 +275,13 @@ dispatcher_update('edit-action', action_id='edit_action', selector_id='edit-acti
 # QRCode
 # ---------------
 
-failure_update('generate_qr_top', value='Générer un QR code :', ask_confirm=False, restricted_to_group_id="admin", display_type=Text)
+failure_update('generate_qr_top', value='Générer un QR code :', allowed="admin", display_type=Text)
 failure_add('top', 'generate_qr_top')
-failure_update('generate_qr', value='Entrez le nom d\'une Thing', ask_confirm=True, restricted_to_group_id="admin", display_type=Input)
+failure_update('generate_qr', value='Entrez le nom d\'une Thing', ask_confirm=True, allowed="admin", display_type=Input)
 failure_add('generate_qr_top', 'generate_qr')
 for rows in range(4, 9):
     for cols in range(4, 9):
-        failure_update(f'generate_qr_{rows}x{cols}', value=f'En {rows}x{cols}', ask_confirm=True, restricted_to_group_id="admin", display_type=Input)
+        failure_update(f'generate_qr_{rows}x{cols}', value=f'En {rows}x{cols}', allowed="admin", display_type=Input)
         failure_add('generate_qr_top', f'generate_qr_{rows}x{cols}')
 thing_update('QR_GEN')
 thing_add_failure('QR_GEN', 'generate_qr_top')

@@ -13,7 +13,7 @@ class TestEdit(qrbug.TestCase):
             '{"class":"Failure", "test":"in_or_equal", "value": "%s"}' % failure)
         trigger = qrbug.Incident.open('a-selector', failure, 'ip2', 'login2', value)
         request = qrbug.Request(trigger)
-        asyncio.run(qrbug.Dispatcher[dispatcher].run(trigger, request))
+        asyncio.run(qrbug.Dispatcher[dispatcher].run(trigger, request, []))
         return request.lines
 
     def test_concerned(self):

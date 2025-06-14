@@ -50,24 +50,17 @@ class Failure(qrbug.Tree):
     instances: dict[FailureId, "Failure"] = {}
 
     # Default values
-    value                  : Optional[str]          = ''
-    display_type           : Optional[DisplayTypes] = DisplayTypes.text
-    ask_confirm            : Optional[bool]         = False
-    restricted_to_group_id : Optional[qrbug.UserId] = None
+    value       : str           = ''
+    display_type: DisplayTypes  = DisplayTypes.text
+    ask_confirm : bool          = False
+    allowed     : qrbug.UserId  = 'true' # No restriction
 
     def init(self):
         self.value = f"VALEUR_NON_DEFINIE POUR «{self.id}»"
 
     def _local_dump(self) -> str:
-        # short_names = {
-        #     'value': 'val',
-        #     'display_type': 'type',
-        #     'ask_confirm': 'confirm',
-        #     'restricted_to_group_id': 'group',
-        # }
-        # return self.get_representation(attributes_short=short_names)
         return f'val:{repr(self.value)} type:{self.display_type.name if self.display_type is not None else None} ' \
-               f'confirm:{self.ask_confirm} group:{self.restricted_to_group_id}'
+               f'confirm:{self.ask_confirm} allowed:{self.allowed}'
 
     def get_hierarchy_representation(self) -> str:
         """
@@ -99,12 +92,9 @@ class Failure(qrbug.Tree):
                     f"[{current_failure.display_type.name.center(DISPLAY_TYPE_WIDTH)}]\t"
                     f"[ask_confirm?={'YES' if current_failure.ask_confirm else 'NO '}]\t"
                 )
-                if current_failure.restricted_to_group_id is not None:
-                    representation.append(
-                        f"[group={current_failure.restricted_to_group_id.ljust(GROUP_JUSTIFICATION)}]"
+                representation.append(
+                        f"[allowed={current_failure.allowed.ljust(GROUP_JUSTIFICATION)}]"
                     )
-                else:
-                    representation.append(f"[{'No group'.center(GROUP_JUSTIFICATION + len('group='))}]")
             representation.append("\n")
 
             # We sort by display type then by value, so that the text failures are
@@ -164,7 +154,7 @@ def failure_update(failure_id: FailureId, **kwargs) -> Failure:
     :param value: The value of this failure.
     :param display_type: How to display this failure ? Text, button, message box... ?
     :param ask_confirm: Whether the user will have to confirm when pressing the button.
-    :param restricted_to_group_id: If only a single group can report this failure type.
+    :param allowed: The selector allowing to report the failure.
     """
     return Failure.update_attributes(failure_id, **kwargs)
 

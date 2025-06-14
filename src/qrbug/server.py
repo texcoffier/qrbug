@@ -1,4 +1,5 @@
 import time
+import html
 from pathlib import Path
 from typing import Optional
 
@@ -31,7 +32,7 @@ async def hourly_task():
         incident = qrbug.Incident.open('backoffice', next_hour[-2:] + ':00', '', 'system', '')
         request = qrbug.Request(incident)
         for dispatcher in qrbug.Dispatcher.sorted_instances:
-            await dispatcher.run(incident, request)
+            await dispatcher.run(incident, request, [])
 
 async def show_failures_tree_route(request: qrbug.Request) -> web.Response:
     """
@@ -94,7 +95,7 @@ async def register_incident(request: qrbug.Request) -> web.StreamResponse:
     user_token = request.query.get("token", None)
     user_login = ''
     if ENABLE_AUTHENTICATION:
-        if failure.restricted_to_group_id is not None:  # Only authenticate if failure requires it
+        if failure.allowed != 'true':  # Only authenticate if failure requires it
             if user_token is not None:
                 user_login = qrbug.get_login_from_token(user_token, request.remote)
             if not user_login:
@@ -103,6 +104,8 @@ async def register_incident(request: qrbug.Request) -> web.StreamResponse:
                 user_login = await qrbug.handle_login(request, f'?{params}')
                 if user_login is None:
                     return web.Response(status=403, text="Login ticket invalid")
+    else:
+        user_login = 'ROOT' # For tests
 
     is_repaired_bool: bool = is_repaired == '1'
     user_ip = request.remote
@@ -113,12 +116,7 @@ async def register_incident(request: qrbug.Request) -> web.StreamResponse:
     else:
         current_incident = qrbug.Incident.open(thing_id, failure_id, user_ip, user_login, additional_info)
         request.report = current_incident.active[-1]
-
-    # if failure.auto_close_incident:  # TODO: Move after dispatch_del
-    #     qrbug.append_line_to_journal(f'incident_del({repr(thing_id)}, {repr(failure_id)}, {repr(user_ip)}, {timestamp}, {repr(user_login)})  # {current_date} {user_login}\n')
-
-    # TODO: Run on incident repaired
-    # TODO: Envoyer un mail à la personne qui a signalé la panne
+        request.incident = current_incident
 
     # Starts preparing the response
     request.ticket = request.query.get('ticket', None)
@@ -132,9 +130,21 @@ async def register_incident(request: qrbug.Request) -> web.StreamResponse:
 
     # Dispatchers
     returned_html: dict[str, Optional[qrbug.action_helpers.ActionReturnValue]] = {}
+    trace = ['<!-- ',
+        html.escape(current_incident.thing_id), ' ',
+        html.escape(current_incident.failure_id), ' ',
+        html.escape(request.report.comment), ' ',
+        html.escape(request.report.login)]
     if not is_repaired_bool:
         for dispatcher in qrbug.Dispatcher.sorted_instances:
-            returned_html[dispatcher.id] = await dispatcher.run(current_incident, request)
+            trace.append(f' --><!-- {dispatcher.id}: ')
+            if failure.allowed != 'true':
+                if not qrbug.Selector[failure.allowed].is_ok(current_incident, report=request.report):
+                    continue
+            trace.append(' allowed')
+            returned_html[dispatcher.id] = await dispatcher.run(current_incident, request, trace)
+    trace.append('-->')
+    await request.write(''.join(trace))
 
     if any(value is not None for value in returned_html.values()):
         await request.write('Informations additionnelles :')

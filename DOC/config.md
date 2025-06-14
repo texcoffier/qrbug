@@ -22,7 +22,7 @@ It is what will be presented to the user when scanning some equipment's QR code.
 
 You can create/update a failure with the following code :
 ```py
-failure_update(failure_id, value, display_type, ask_confirm, restricted_to_group_id)
+failure_update(failure_id, value, display_type, ask_confirm, allowed)
 ```
 Each of these parameters *(besides `failure_id`)* is optional if you want to modify a failure.
 
@@ -34,21 +34,22 @@ Each of these parameters *(besides `failure_id`)* is optional if you want to mod
   - `Input` : A one line input box the user can write into to report an incident ;
   - `Textarea` : A multi-line box the user can write into to report an incident ;
 - **Ask confirm** (bool) : Whether to present the user with a confirmation box before submitting the incident report for this failure.
-- **Restricted to group ID** (string) : Only the given group of users or their children can report this failure.
+- **Allowed** (Selector) : Report allowed if incident+user matches the selector.
 
 You can parent a failure with `failure_add(parent_id, child_id)`.
 Parenting failures allows to create a hierarchy of failures that can be attached to any object, so the users can report exactly what went wrong.
 
 Here is such an example :
 ```py
-failure_update("PC_NO_BOOT", value="Le PC ne démarre pas", display_type=Text, restricted_to_group_id="ROOT")
-failure_update("PC_NO_BOOT_BIOS_ERROR",   value="... et affiche un texte blanc sur écran noir", display_type=Button, ask_confirm=True, restricted_to_group_id="ROOT")
-failure_update("PC_NO_BOOT_BLACK_SCREEN", value="... et l'écran ne s'allume pas non plus", display_type=Text, ask_confirm=True, restricted_to_group_id="ROOT")
-failure_update("PC_NO_BOOT_NO_POWER",     value="... et la diode sur le PC ne clignote pas", display_type=Button, ask_confirm=True, restricted_to_group_id="ROOT")
-failure_update("PC_NO_BOOT_OTHER", value="Autre chose ?", display_type=Input, ask_confirm=True, restricted_to_group_id="ROOT")
-failure_update("PC_NO_BOOT_BLACK_SCREEN_UNPLUGGED_WIRE", value="... et un câble est débranché", display_type=Button, ask_confirm=True, restricted_to_group_id="ROOT")
-failure_update("PC_NO_BOOT_BLACK_SCREEN_PLUGGED_WIRE", value="... et je ne peux pas voir les câbles", display_type=Button, ask_confirm=True, restricted_to_group_id=None)
-failure_update("UNIV_WEBSITE", value="https://www.univ-lyon1.fr/", display_type=Redirect, restricted_to_group_id="ROOT")
+selector('ROOT', '{"class": "SourceUser", "test": "in_or_equal", "value": "ROOT"}')
+failure_update("PC_NO_BOOT", value="Le PC ne démarre pas", display_type=Text, allowed="ROOT")
+failure_update("PC_NO_BOOT_BIOS_ERROR",   value="... et affiche un texte blanc sur écran noir", display_type=Button, ask_confirm=True, allowed="ROOT")
+failure_update("PC_NO_BOOT_BLACK_SCREEN", value="... et l'écran ne s'allume pas non plus", display_type=Text, ask_confirm=True, allowed="ROOT")
+failure_update("PC_NO_BOOT_NO_POWER",     value="... et la diode sur le PC ne clignote pas", display_type=Button, ask_confirm=True, allowed="ROOT")
+failure_update("PC_NO_BOOT_OTHER", value="Autre chose ?", display_type=Input, ask_confirm=True, allowed="ROOT")
+failure_update("PC_NO_BOOT_BLACK_SCREEN_UNPLUGGED_WIRE", value="... et un câble est débranché", display_type=Button, ask_confirm=True, allowed="ROOT")
+failure_update("PC_NO_BOOT_BLACK_SCREEN_PLUGGED_WIRE", value="... et je ne peux pas voir les câbles", display_type=Button, ask_confirm=True)
+failure_update("UNIV_WEBSITE", value="https://www.univ-lyon1.fr/", display_type=Redirect, allowed="ROOT")
 failure_add("PC_NO_BOOT", "PC_NO_BOOT_BIOS_ERROR")
 failure_add("PC_NO_BOOT", "PC_NO_BOOT_BLACK_SCREEN")
 failure_add("PC_NO_BOOT_BLACK_SCREEN", "PC_NO_BOOT_BLACK_SCREEN_PLUGGED_WIRE")
