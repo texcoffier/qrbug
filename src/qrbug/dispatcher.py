@@ -99,8 +99,13 @@ def dispatch(
     """
     #Dispatcher[dispatch_id].running_incidents.add((failure_id, thing_id))
     if dispatch_id == 'send-pending-feedback': # Not nice
-        for incident in qrbug.Incident.instances.values():
-            incident.pending_feedback = []
+        for i in qrbug.Incident.instances.values():
+            for incident in i.values():
+                incident.pending_feedback = []
+    elif action_id == 'close_auto':
+        incident = qrbug.Incident.instances[thing_id][failure_id]
+        incident.pending_feedback = []
+        incident.finished = []
 
 
 def dispatch_del(
