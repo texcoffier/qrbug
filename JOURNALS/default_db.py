@@ -253,7 +253,7 @@ dispatcher_update('edit-user', action_id='edit_user', selector_id='edit-user')
 # Edit thing
 # ---------------
 failure_update('thing', value="Chose", allowed="admin")
-failure_update('thing-comment', value="Changer le commentaire", allowed="admin", display_type=Input)
+failure_update('thing-comment', value="Commentaire", allowed="admin", display_type=Input)
 failure_add('edit', 'thing')
 failure_add('thing', 'thing-comment')
 

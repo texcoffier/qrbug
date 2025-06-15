@@ -17,7 +17,9 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
                 for failure in qrbug.Failure['generate_qr'].children_ids
             )
             texts.append('<table>')
-            texts.append('<tr><th>Objet<th>Commentaire<th>Pages QRCodes<th colspan="2">Active<br>Finished</tr>')
+            texts.append('<tr><th>Objet<th>')
+            texts.append(html.escape(thing_comment.value))
+            texts.append('<th>Pages QRCodes<th colspan="2">Active<br>Finished</tr>')
             def go_in(node):
                 texts.append('<tr><td>')
                 texts.append(go_in.indent)
