@@ -12,11 +12,12 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
     if issubclass(what, qrbug.Tree):
         if what is qrbug.Thing:
             thing_comment = qrbug.Failure['thing-comment']
-            qr = 'QRCodes : ' + ' '.join(
+            qr = ' '.join(
                 f'<button onclick="qr(this)">{html.escape(failure.split("_")[-1])}</button>'
                 for failure in qrbug.Failure['generate_qr'].children_ids
             )
             texts.append('<table>')
+            texts.append('<tr><th>Objet<th>Commentaire<th>Pages QRCodes<th colspan="2">Active<br>Finished</tr>')
             def go_in(node):
                 texts.append('<tr><td>')
                 texts.append(go_in.indent)
@@ -28,6 +29,18 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
                 texts.append(qrbug.element(thing_comment, node, in_place=True))
                 texts.append('<td>')
                 texts.append(qr)
+                texts.append('<td>')
+                thing_incident = qrbug.Incident.instances.get(node.id, None)
+                if thing_incident:
+                    active = sum(len(i.active) for i in thing_incident.values())
+                    finished = sum(len(i.finished) for i in thing_incident.values())
+                    if active:
+                        texts.append(str(active))
+                    texts.append('<td>')
+                    if finished:
+                        texts.append(str(finished))
+                else:
+                    texts.append('<td>')
                 texts.append('</tr>')
                 go_in.indent += '    '
             def go_out(_node):
