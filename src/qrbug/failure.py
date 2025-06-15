@@ -38,7 +38,7 @@ def element(failure: "Failure", thing, in_place=False):
     if display_type == DisplayTypes.input:
         return f'''<div class="input">{'' if in_place else failure.value}
         <div><input {common} value="{value}" autocomplete="off" onkeypress="if (event.key=='Enter') register_incident(this,{in_place})">
-        <button {common} onclick="register_incident(this, {in_place})">-&gt;</button></div></div>'''
+        <button {common} onclick="register_incident(this, {in_place})">⬆</button></div></div>'''
     raise ValueError("Unknown display type")
 
 qrbug.element = element
