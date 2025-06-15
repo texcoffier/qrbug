@@ -5,6 +5,7 @@ if [ "$1" = '-h' -o "$1" = '--help' ]; then
   exit 0
 fi
 
+. .venv/bin/activate
 
 # Gathers command line arguments
 LAUNCH_HOST="$1"
