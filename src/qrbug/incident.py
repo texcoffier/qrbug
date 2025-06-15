@@ -23,7 +23,7 @@ class Report:
         return f'Report({repr(self.ip)}, {self.timestamp}, {repr(self.comment)}, {repr(self.login)}, {repr(self.remover_login)})'
 
 class Incident:
-    instances: dict[Tuple["ThingID", "FailureID"], "Incident"] = {}
+    instances: dict["ThingID", dict["FailureID", "Incident"]] = {}
     pending_feedback:list[Report] = []
     def __init__(self, thing_id: str, failure_id: str):
         self.thing_id = thing_id
@@ -57,9 +57,11 @@ class Incident:
         Factory method, creates a new incident and stores it within the incident instances
         """
         key = (thing_id, failure_id)
-        if key not in cls.instances:
-            cls.instances[key] = Incident(thing_id, failure_id)
-        incident = cls.instances[key]
+        if thing_id not in cls.instances:
+            cls.instances[thing_id] = {}
+        if failure_id not in cls.instances[thing_id]:
+            cls.instances[thing_id][failure_id] = Incident(thing_id, failure_id)
+        incident = cls.instances[thing_id][failure_id]
         incident.active.append(Report(ip, timestamp, comment, login))
         return incident
 
@@ -102,79 +104,13 @@ class Incident:
         Deletes any given incident from the list of incidents
         :param login: The login of the user who removed the incident.
         """
-        incident = cls.instances[other_thing_id, other_failure_id]
+        incident = cls.instances[other_thing_id][other_failure_id]
         for report in incident.active:
             report.remover_login = login
             incident.finished.append(report)
         # Pending feedback is cleared on 'send-pending-feedback' failure dispatch
         incident.pending_feedback = incident.active
         incident.active = []
-
-    @classmethod
-    def filter(
-            cls, incidents: list["Incident"], *, thing_id: str = None, failure_id: str = None, ip: str = None,
-            login: str = None, timestamp_min: int = 0, timestamp_max: int = None, comment: str = None,
-            active: bool = True
-    ) -> list["Incident"]:
-        """
-        Returns the list of incidents matching the given criteria
-        :param incidents: The list of incidents to filter.
-        :param thing_id: The thing_id of the incident
-        :param failure_id: The failure_id of the incident
-        :param ip: The ip of the incident
-        :param login: The login of the incident
-        :param timestamp_min: The minimum timestamp of the incident
-        :param timestamp_max: The maximum timestamp of the incident
-        :param comment: A regex matching the given comment
-
-        :return: A tuple of the incidents matching the given criteria ;
-            first element is active incidents, second element is finished incidents
-        """
-        def condition_filter(incident) -> bool:
-            if thing_id is not None and thing_id != incident.thing_id:
-                return False
-            if failure_id is not None and failure_id != incident.failure_id:
-                return False
-            for report in incident.active if active else incident.finished:
-                if ip is not None and ip != incident.ip:
-                    continue
-                if login is not None and login != incident.login:
-                    continue
-                if incident.timestamp < timestamp_min:
-                    continue
-                if timestamp_max is not None and incident.timestamp > timestamp_max:
-                    continue
-                if comment is not None and re.match(comment, incident.comment) is None:
-                    continue
-                return True
-            return False
-        return list(filter(condition_filter, incidents))
-
-    @classmethod
-    def filter_both(cls, *args, **kwargs) -> tuple[list["Incident"], list["Incident"]]:
-        """
-        Filters both lsts of incidents (active and finished) separately
-        :return: A tuple of the incidents matching the given criteria ;
-            first element is active incidents, second element is finished incidents
-        """
-        return (list(cls.filter(cls.instances, *args, **kwargs, active=True)),
-                list(cls.filter(cls.instances, *args, **kwargs, active=False)))
-
-    @classmethod
-    def filter_active(cls, *args, **kwargs) -> list["Incident"]:
-        """ Runs the `filter` class method, but only returns active incidents """
-        return cls.filter(cls.instances, *args, **kwargs, active=True)
-
-    @classmethod
-    def filter_finished(cls, *args, **kwargs) -> list["Incident"]:
-        """ Runs the `filter` class method, but only returns finished incidents """
-        return cls.filter(cls.instances, *args, **kwargs, active=False)
-
-    @classmethod
-    def filter_all(cls, *args, **kwargs) -> list["Incident"]:
-        """ Runs the `filter` class method, and returns a flattened list of all incidents """
-        filtered_incidents = cls.filter_both(*args, **kwargs)
-        return [*filtered_incidents[0], *filtered_incidents[1]]
 
     @property
     def failure(self):
