@@ -89,8 +89,14 @@ class Tree(qrbug.Editable):
         """ Returns the given tree instance if it exists, or CREATES IT then returns it otherwise. """
         if tree_id not in cls.instances:
             cls.instances[tree_id] = cls(tree_id)
-            cls.sorted_instances = sorted(cls.instances.values(), key=lambda x: x.id)
+            cls.sorted_instances = None
         return cls.instances[tree_id]
+
+    @classmethod
+    def get_sorted_instances(cls) -> "List[Tree]":
+        if not cls.sorted_instances:
+            cls.sorted_instances = sorted(cls.instances.values(), key=lambda x: x.id)
+        return cls.sorted_instances
 
     def dump(self) -> str:
         base = f"{self.id} {sorted(self.children_ids)}"

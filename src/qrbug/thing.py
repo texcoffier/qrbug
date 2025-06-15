@@ -102,30 +102,6 @@ class Thing(qrbug.Tree):
     def del_failure(cls, thing_id, failure_id):
         cls.instances[thing_id].failure_ids.remove(failure_id)
 
-def thing_update(thing_id: ThingId, **kwargs) -> Thing:
-    """
-    Creates a new thing that can fail, or modifies an existing one.
-    :param thing_id: The ID of this thing.
-    :param comment: Any comment on the thing.
-    """
-    return Thing.update_attributes(thing_id, **kwargs)
-
-def thing_add(parent: ThingId, child: ThingId) -> None:
-    """
-    Adds a ting inside a thing.
-    :param parent: The ID of the thing to add the child to.
-    :param child: The ID of the child failure.
-    """
-    Thing.add_parenting_link(parent, child)
-
-def thing_remove(parent: ThingId, child: ThingId) -> None:
-    """
-    Removes the parenting link from a Thing to another.
-    :param parent: The ID of the Thing to remove the child from.
-    :param child: The ID of the Thing to be removed.
-    """
-    Thing.remove_parenting_link(parent, child)
-
 def thing_del(thing_id: ThingId) -> None:
     """
     Deletes an existing thing.
@@ -135,10 +111,10 @@ def thing_del(thing_id: ThingId) -> None:
 
 qrbug.Thing = Thing
 qrbug.ThingId = ThingId
-qrbug.thing_update = thing_update
+qrbug.thing_update = Thing.update_attributes
 qrbug.thing_del = thing_del
-qrbug.thing_remove = thing_remove
-qrbug.thing_add = thing_add
+qrbug.thing_remove = Thing.remove_parenting_link
+qrbug.thing_add = Thing.add_parenting_link
 qrbug.thing_add_failure = Thing.add_failure
 qrbug.thing_del_failure = Thing.del_failure
 

@@ -31,7 +31,7 @@ async def hourly_task():
         await asyncio.sleep(wait_seconds)
         incident = qrbug.Incident.open('backoffice', next_hour[-2:] + ':00', '', 'system', '')
         request = qrbug.Request(incident)
-        for dispatcher in qrbug.Dispatcher.sorted_instances:
+        for dispatcher in qrbug.Dispatcher.get_sorted_instances():
             await dispatcher.run(incident, request, [])
 
 async def show_failures_tree_route(request: qrbug.Request) -> web.Response:
@@ -132,7 +132,7 @@ async def register_incident(request: qrbug.Request) -> web.StreamResponse:
         html.escape(request.report.comment), ' ',
         html.escape(request.report.login)]
     if not is_repaired_bool:
-        for dispatcher in qrbug.Dispatcher.sorted_instances:
+        for dispatcher in qrbug.Dispatcher.get_sorted_instances():
             trace.append(f' --><!-- {dispatcher.id}: ')
             if failure.allowed != 'true':
                 if not qrbug.Selector[failure.allowed].is_ok(current_incident, report=request.report):
@@ -195,7 +195,11 @@ def parse_command_line_args(argv) -> tuple[str, int]:
         global ENABLE_AUTHENTICATION
 
         qrbug.DB_FILE_PATH = Path('TESTS/xxx-db.py')
-        qrbug.DB_FILE_PATH.write_bytes(Path('TESTS/test_server_db.conf').read_bytes())
+        if '--testload' in args:
+            qrbug.DB_FILE_PATH.write_bytes(Path('TESTS/xxx-testload.conf').read_bytes())
+            args.remove('--testload')
+        else:
+            qrbug.DB_FILE_PATH.write_bytes(Path('TESTS/test_server_db.conf').read_bytes())
         qrbug.INCIDENTS_FILE_PATH = Path('TESTS/xxx-incidents.py')
         ENABLE_AUTHENTICATION = False
         args.remove('--test')
