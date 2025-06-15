@@ -55,8 +55,7 @@ CONFIGS = {
 INCIDENT_FUNCTIONS = {
     "incident_new": qrbug.incident_new,
     "incident_del": qrbug.incident_del,
-    "dispatch": qrbug.dispatch,
-    "dispatch_del": qrbug.dispatch_del,
+    "dispatch"    : qrbug.dispatch,
 }
 
 

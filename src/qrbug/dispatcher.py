@@ -107,28 +107,11 @@ def dispatch(
         incident.pending_feedback = []
         incident.finished = []
 
-
-def dispatch_del(
-        dispatch_id: DispatcherId,
-        failure_id: qrbug.FailureId,
-        thing_id: qrbug.ThingId,
-        action_id: qrbug.ActionId,
-        timestamp: int
-) -> None:
-    """
-    The parameters (besides dispatch_id, thing_id, and failure_id) are useless, they only store information in the log file.
-    This functions marks a dispatcher as running and that it should not be run for these incidents only.
-    """
-    pass
-    #Dispatcher[dispatch_id].running_incidents.remove((failure_id, thing_id))
-
-
 qrbug.Dispatcher = Dispatcher
 qrbug.DispatcherId = DispatcherId
 qrbug.dispatcher_update = dispatcher_update
 qrbug.dispatcher_del = dispatcher_del
 qrbug.dispatch = dispatch
-qrbug.dispatch_del = dispatch_del
 
 if __name__ == "__main__":
     dispatcher_update("0", selector_id="0")
