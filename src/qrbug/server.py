@@ -61,27 +61,16 @@ async def register_incident(request: qrbug.Request) -> web.StreamResponse:
     """
     Registers an incident into the logs, then shows the user that the incident has been registered.
     """
-    what: Optional[str] = request.query.get("what", None)
+    what: Optional[str] = request.query.get("what", 'thing')
     thing_id: Optional[str] = request.query.get("thing-id", None)
     failure_id: Optional[str] = request.query.get("failure-id", None)
     is_repaired: Optional[str] = request.query.get("is-repaired", '0')
-    additional_info: Optional[str] = request.query.get("additional-info", None)
+    additional_info: Optional[str] = request.query.get("additional-info", '')
 
-    query_variables_required = {
-        'what': what,
-        'thing_id': thing_id,
-        'failure_id': failure_id,
-        'is_repaired': is_repaired,
-    }
-    query_variables_optional = {
-        'additional_info': additional_info,
-    }
-    query_variables = {**query_variables_required, **query_variables_optional}
-    valid_request = all(query_variables_required.values())
-    if valid_request is False:
-        return web.Response(status=404, text=f"Missing query parameters : " + ", ".join(
-            (query_param for query_param, query_param_value in query_variables_required.items() if query_param_value is None)
-        ))
+    if thing_id is None:
+        return web.Response(status=404, text=f"thing_id is undefined")
+    if failure_id is None:
+        return web.Response(status=404, text=f"failure_id is undefined")
 
     # Checks for existence
     failure = qrbug.Failure[failure_id]
@@ -99,6 +88,13 @@ async def register_incident(request: qrbug.Request) -> web.StreamResponse:
             if user_token is not None:
                 user_login = qrbug.get_login_from_token(user_token, request.remote)
             if not user_login:
+                query_variables = {
+                    'what': what,
+                    'thing_id': thing_id,
+                    'failure_id': failure_id,
+                    'is_repaired': is_repaired,
+                    'additional_info': additional_info,
+                }
                 params = '&'.join(f'{name.replace("_", "-")}={value}'
                                   for name, value in query_variables.items())
                 user_login = await qrbug.handle_login(request, f'?{params}')

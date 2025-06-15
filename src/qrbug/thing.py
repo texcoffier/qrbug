@@ -82,7 +82,7 @@ class Thing(qrbug.Tree):
             )
         else:
             representation.append(
-                f'  <a href="/?thing-id={self.id}&failure-id=generate_qr&is-repaired=0&additional-info={self.id}">Générer un QR code pour cet objet</a>'
+                f'  <a href="/?thing-id={self.id}&failure-id=generate_qr&additional-info={self.id}">Générer un QR code pour cet objet</a>'
             )
         representation.append('</div>')
 

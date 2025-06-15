@@ -35,14 +35,14 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
                     active = sum(len(i.active) for i in thing_incident.values())
                     finished = sum(len(i.finished) for i in thing_incident.values())
                     if active:
-                        texts.append('<a target="_blank" href="?what=thing&failure-id=thing-incidents-active&thing-id=')
+                        texts.append('<a target="_blank" href="?failure-id=thing-incidents-active&thing-id=')
                         texts.append(html.escape(node.id))
                         texts.append('">')
                         texts.append(str(active))
                         texts.append('</a>')
                     texts.append('<td>')
                     if finished:
-                        texts.append('<a target="_blank" href="?what=thing&failure-id=thing-incidents&thing-id=')
+                        texts.append('<a target="_blank" href="?failure-id=thing-incidents&thing-id=')
                         texts.append(html.escape(node.id))
                         texts.append('">')
                         texts.append(str(finished))

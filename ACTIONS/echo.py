@@ -38,11 +38,11 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
         failure = urllib.parse.quote(incident.failure_id)
         if incident.active:
             fix = f'''<button onclick="fix(this)"
-            url="?what=thing&thing-id={thing}&failure-id={failure}&is-repaired=1&ticket={ticket}"
+            url="?thing-id={thing}&failure-id={failure}&is-repaired=1&ticket={ticket}"
             >C'est réparé</button>'''
         elif incident.pending_feedback:
             fix = f'''<button onclick="fix(this)"
-            url="?what=thing&thing-id={thing}&failure-id={failure}&is-repaired=1&ticket={ticket}"
+            url="?thing-id={thing}&failure-id={failure}&is-repaired=1&ticket={ticket}"
             >Prévenir les utilisateurs que c'est réparé</button>
             '''
         else:

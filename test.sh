@@ -29,8 +29,8 @@ SERVER_PID="$!"
 
 BASE_URL="http://$LAUNCH_HOST:$LAUNCH_PORT"
 TESTING_URL_GET="${BASE_URL}/thing=test_thing"
-TESTING_URL_REGISTER="${BASE_URL}/?thing-id=test_thing&failure-id=test&is-repaired=0&what=thing"
-TESTING_URL_CLOSE="${BASE_URL}/?thing-id=test_thing&failure-id=test&is-repaired=1&what=thing"
+TESTING_URL_REGISTER="${BASE_URL}/?thing-id=test_thing&failure-id=test"
+TESTING_URL_CLOSE="${BASE_URL}/?thing-id=test_thing&failure-id=test&is-repaired=1"
 
 EXIT_CODE='0'
 

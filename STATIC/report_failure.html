@@ -113,7 +113,6 @@
             let url = '/?thing-id=' + element.getAttribute('thingid')
                 + '&failure-id=' + element.getAttribute('failureid')
                 + '&what=' + element.getAttribute('what')
-                + '&is-repaired=0'
                 + ticket
                 ;
             let input = document.getElementById('input')
@@ -162,10 +161,8 @@
             while(element.tagName != 'TR')
                 element = element.parentNode;
             let thing = element.cells[0].firstElementChild.textContent;
-            window.location = '?what=thing'
-                + '&thing-id=' + encodeURIComponent(thing)
-                + '&failure-id=' + encodeURIComponent(failure)
-                + '&is-repaired=0';
+            window.location = '?thing-id=' + encodeURIComponent(thing)
+                + '&failure-id=' + encodeURIComponent(failure);
         }
     </script>
 </head>

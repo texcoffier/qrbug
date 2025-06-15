@@ -19,7 +19,7 @@ TEMPLATE_QR_PARENT_LINKS = QR_GEN_STATIC_FILES_PATH / 'qr_parent_links.html'
 
 
 def get_qr_gen_link(thing_id: qrbug.ThingId, failure_id, ticket: str) -> str:
-    return f'/?thing-id={thing_id}&failure-id={failure_id}&what=thing&is-repaired=0&ticket={ticket}'
+    return f'/?thing-id={thing_id}&failure-id={failure_id}&ticket={ticket}'
 
 # Run by a dispatcher:
 #    thing: building, room, pc...
