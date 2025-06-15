@@ -124,9 +124,9 @@ class TestSelector(qrbug.TestCase):
         self.check(s, "user_child", "thing_child" , "fail1", False)
 
 
-    def test_is_concerned(self):
+    def test_is_for_user(self):
         # Record a report
-        for_me = qrbug.selector_update('for-me', '{"class":"SourceUser", "test":"is_concerned"}')
+        for_me = qrbug.selector_update('for-me', '{"class":"SourceUser", "test":"is_for_user"}')
         qrbug.selector_update('fail1', '{"class":"Failure", "test": "in_or_equal", "value": "fail1"}')
         qrbug.concerned_add('fail1', 'user_parent')
         incident = qrbug.Incident.open(
@@ -142,7 +142,7 @@ class TestSelector(qrbug.TestCase):
     def test_pending_feedback(self):
         # Record a report
         dispatcher = qrbug.dispatcher_update('xxx', selector_id="true", action_id="echo")
-        for_me = qrbug.selector_update('for-me', '{"class":"SourceUser", "test":"is_concerned"}')
+        for_me = qrbug.selector_update('for-me', '{"class":"SourceUser", "test":"is_for_user"}')
         incident = qrbug.Incident.open(
             'thing_child', 'fail1', login='no-login', ip='no-ip', additional_info='no-comment')
         incident.incident_del()

@@ -11,11 +11,13 @@ action('echo'            ,'echo.py')              # Display incidents in user fr
 # Common selectors
 # -----------------
 
-selector('true'  , '{"class":"Thing"     , "test":"true"}')
-selector('admin' , '{"class":"User"      , "test":"in"    , "value": "admin"}')
-selector('system', '{"class":"SourceUser", "test":"inside", "value": "system"}')
-selector('for-me', '[1, {"test": "active"}, {"class":"SourceUser", "test":"is_concerned"}]')
-selector('active', '{                    , "test":"active"}')
+selector('true'     , '{"class":"Thing"     , "test":"true"}')
+selector('admin'    , '{"class":"User"      , "test":"in"    , "value": "admin"}')
+selector('system'   , '{"class":"SourceUser", "test":"inside", "value": "system"}')
+selector('active'   , '{                    , "test":"active"}')
+selector('for-me'   , '[1, {"test": "active"}, {"class":"SourceUser", "test":"is_for_user"}]')
+selector('for-thing', '{                      "test":"is_for_thing"}')
+selector('for-thing-active', '[1, {"test": "active"}, {"test":"is_for_thing"}]')
 
 ###############################################################################
 # General Backoffice
@@ -258,6 +260,17 @@ failure_add('thing', 'thing-comment')
 action('edit_thing', 'edit_thing.py')
 selector('edit-thing', '{"class":"Failure", "test":"in_or_equal", "value": "thing"}')
 dispatcher_update('edit-thing', action_id='edit_thing', selector_id='edit-thing')
+
+
+failure_update('thing-incidents', value="Tous les incidents", allowed="admin")
+failure_update('thing-incidents-active', value="Incidents actifs", allowed="admin")
+failure_add('backoffice', 'thing-incidents')
+failure_add('backoffice', 'thing-incidents-active')
+
+selector('thing-incidents-active', '{"class":"Failure", "test":"is", "value": "thing-incidents-active"}')
+dispatcher_update('incidents-active-for-thing', action_id='echo', selector_id='thing-incidents-active', incidents='for-thing-active')
+selector('thing-incidents', '{"class":"Failure", "test":"is", "value": "thing-incidents"}')
+dispatcher_update('incidents-for-thing', action_id='echo', selector_id='thing-incidents', incidents='for-thing')
 
 # ---------------
 # Edit action

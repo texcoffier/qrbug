@@ -64,7 +64,7 @@ async def register_incident(request: qrbug.Request) -> web.StreamResponse:
     what: Optional[str] = request.query.get("what", None)
     thing_id: Optional[str] = request.query.get("thing-id", None)
     failure_id: Optional[str] = request.query.get("failure-id", None)
-    is_repaired: Optional[str] = request.query.get("is-repaired", None)
+    is_repaired: Optional[str] = request.query.get("is-repaired", '0')
     additional_info: Optional[str] = request.query.get("additional-info", None)
 
     query_variables_required = {

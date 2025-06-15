@@ -41,8 +41,8 @@ class Incident:
     def is_equal(self, other_thing_id, other_failure_id) -> bool:
         return self.thing_id == other_thing_id and self.failure_id == other_failure_id
 
-    def is_for(self, user: "User") -> bool:
-        """A dispatcher has been triggered for this user."""
+    def is_for_user(self, user: "User") -> bool:
+        """The user is concerned by the incident."""
         for concerned in qrbug.Concerned.instances.values():
             for u in concerned.users:
                 if user.inside_or_equal(u):
