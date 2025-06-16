@@ -150,16 +150,22 @@ class Tree(qrbug.Editable):
     @classmethod
     def update_attributes(cls, tree_id: str, **kwargs):
         # Gets the tree the user asked for (or creates one with the corresponding ID if it did not exist)
-        tree = cls.get_or_create(tree_id)
+        if tree_id in cls.instances:
+            if kwargs:
+                cls.instances[tree_id].__dict__.update(kwargs)
+        else:
+            cls.sorted_instances = None
+            if kwargs:
+                tree = cls.instances[tree_id] = cls(tree_id)
+                tree.__dict__.update(kwargs)
+            else:
+                 cls.instances[tree_id] = cls(tree_id)
 
         # Sets the new data of the tree
-        tree.__dict__.update(kwargs)
         # for arg, value in kwargs.items():
         #     assert hasattr(cls, arg), f"Class {cls.__name__} has no attribute '{arg}', do not attempt to update it"
         #     assert arg != "instances", f"Cannot update instances of {cls.__name__} class, please do not attempt"
         #     setattr(tree, arg, value)
-
-        return tree
 
     @classmethod
     def add_parenting_link(cls, parent_id: str, child_id: str, before_id: str=''):

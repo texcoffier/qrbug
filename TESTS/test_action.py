@@ -49,25 +49,28 @@ class TestAction(qrbug.TestCase):
         self.assertEqual(lines, expected)
 
     def test_simple_dispatch(self):
-        d1 = qrbug.dispatcher_update('simple', action_id='echo', selector_id='true', incidents='')
+        qrbug.dispatcher_update('simple', action_id='echo', selector_id='true', incidents='')
+        d1 = qrbug.Dispatcher['simple']
         i1 = qrbug.Incident.open('thing_child', 'fail1', 'ip1', 'login1')
         self.check(d1, i1, ['«thing_child» «fail1»', 'ip1,,login1'])
 
         i2 = qrbug.Incident.open('thing_child', 'fail1', 'ip2', 'login2')
         self.check(d1, i2, ['«thing_child» «fail1»', 'ip1,,login1', 'ip2,,login2'])
 
-        # The 2 incidents are open, s</pre> all incidents to action
-        d2 = qrbug.dispatcher_update('simple', action_id='echo', selector_id='true', incidents='active')
-        self.check(d2, i2, ['«thing_child» «fail1»', 'ip1,,login1', 'ip2,,login2'])
+        # The 2 incidents are open,  all incidents to action
+        qrbug.dispatcher_update('simple', action_id='echo', selector_id='true', incidents='active')
+        self.check(d1, i2, ['«thing_child» «fail1»', 'ip1,,login1', 'ip2,,login2'])
 
-        # The 2 incidents are open, s</pre> no incidents to action
-        d2 = qrbug.dispatcher_update('simple', action_id='echo', selector_id='true', incidents='false')
-        self.check(d2, i2, [])
+        # The 2 incidents are open,  no incidents to action
+        qrbug.dispatcher_update('simple', action_id='echo', selector_id='true', incidents='false')
+        self.check(d1, i2, [])
 
     def test_hour_dispatch(self):
-        d1 = qrbug.dispatcher_update('morning', action_id='echo', selector_id='07:00', incidents='active')
+        qrbug.dispatcher_update('morning', action_id='echo', selector_id='07:00', incidents='active')
+        d1 = qrbug.Dispatcher['morning']
 
-        close = qrbug.dispatcher_update('close', action_id='close', selector_id='07:00')
+        qrbug.dispatcher_update('close', action_id='close', selector_id='07:00')
+        close = qrbug.Dispatcher['close']
 
         i1 = qrbug.Incident.open('thing_child', 'fail1', 'ip1', 'login1')
         self.check(d1, i1, [])
@@ -106,8 +109,9 @@ class TestAction(qrbug.TestCase):
 
         qrbug.Incident.open('thing_child', 'fail1', 'ip1', 'login1')
         trigger = qrbug.Incident.open('debug', 'list-Incident', 'ip2', 'login2')
-        dispatcher = qrbug.dispatcher_update('show_incidents', action_id='echo',
+        qrbug.dispatcher_update('show_incidents', action_id='echo',
             selector_id='true', incidents='active')
+        dispatcher = qrbug.Dispatcher['show_incidents']
         self.check(dispatcher, trigger, [
             '«thing_child» «fail1»',
             'ip1,,login1',
@@ -120,14 +124,16 @@ class TestAction(qrbug.TestCase):
 
         # Pending user feeback
         qrbug.selector_update('with-pending-feedback', '{"test": "pending_feedback"}')
-        list_pending = qrbug.dispatcher_update('show_pending', action_id='echo',
+        qrbug.dispatcher_update('show_pending', action_id='echo',
             selector_id='true', incidents='with-pending-feedback')
+        list_pending = qrbug.Dispatcher['show_pending']
         self.check(list_pending, trigger, ['«thing_child» «fail1»', 'ip1,,login1,fixer_login'])
 
         # Send pending feedback
         qrbug.action_update('pending_feedback', 'pending_feedback.py')
-        send_pending = qrbug.dispatcher_update('send_pending', action_id='pending_feedback',
+        qrbug.dispatcher_update('send_pending', action_id='pending_feedback',
             selector_id='true', incidents='with-pending-feedback')
+        send_pending = qrbug.Dispatcher['send_pending']
         request = qrbug.Request()
         asyncio.run(send_pending.run(trigger, request, []))
         self.assertEqual(request.lines, [
