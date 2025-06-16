@@ -235,8 +235,10 @@ def init_server(argv = None) -> tuple[web.Application, str, int]:
         profile.run("qrbug.load_config(); qrbug.load_incidents()", sort=1)
     else:
         # Loads the config
+        start = time.time()
         qrbug.load_config()
         qrbug.load_incidents()
+        print(f'Load journals : {time.time() - start:.2f} seconds')
 
     # Creates the server
     app = web.Application()

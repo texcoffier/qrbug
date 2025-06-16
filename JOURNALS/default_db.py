@@ -162,17 +162,24 @@ dispatcher_update('admin-journal', action_id='journal', selector_id='journal')
 failure_update('misc'                 , value="Divers"                            , allowed="admin")
 failure_update('pending-feedback'     , value="Feedbacks de réparation en attente", allowed="admin", display_type=Button)
 failure_update('send-pending-feedback', value="Envoie le feedback de réparation"  , allowed="admin", display_type=Button)
+failure_update('stats'                , value="Statistiques"                      , allowed="admin", display_type=Button)
 
 failure_add('misc', 'pending-feedback')
 failure_add('misc', 'send-pending-feedback')
+failure_add('misc', 'stats')
 failure_add('top', 'misc')
 
 action('pending_feedback', 'pending_feedback.py')  # Send user feedback for failure fix
+action('stats'           , 'stats.py'           )  # Send user feedback for failure fix
+
 selector('pending-feedback'     ,'{"class":"Failure", "test":"is", "value": "pending-feedback"}')
 selector('send-pending-feedback','[0, {"class":"Failure", "test":"in", "value": "hours"}, {"class":"Failure", "test":"is", "value": "send-pending-feedback"}]')
 selector('with-pending-feedback', '[1, {"test": "pending_feedback"}, {"class":"Selector", "id": "backoffice", "attr": "is_ok", "test": "false"}]')
+selector('stats'                ,'{"class":"Failure", "test":"is", "value": "stats"}')
+
 dispatcher_update('pending-feedback'     , action_id='echo'            , selector_id='pending-feedback'     , incidents="with-pending-feedback")
 dispatcher_update('send-pending-feedback', action_id='pending_feedback', selector_id='send-pending-feedback', incidents="with-pending-feedback")
+dispatcher_update('stats'                , action_id='stats'           , selector_id='stats')
 
 #------------------------------------------------------------------------------
 # Backoffice / personnal
