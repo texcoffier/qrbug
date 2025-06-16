@@ -152,6 +152,7 @@ qrbug.DisplayTypes = DisplayTypes
 qrbug.failure_update = Failure.update_attributes
 qrbug.failure_add = Failure.add_parenting_link
 qrbug.failure_remove = Failure.remove_parenting_link
+qrbug.failure_move = Failure.move_before
 
 if __name__ == "__main__":
     failure_update("0", value="Testing title", display_type=Text)

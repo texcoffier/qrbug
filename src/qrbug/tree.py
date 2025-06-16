@@ -38,16 +38,16 @@ class Tree(qrbug.Editable):
         """Inside he group or is the group"""
         return self.inside(node) or self.id == node
 
-    def add_child(self, child: "Tree", before: str = '') -> None:
+    def add_child(self, child: "Tree") -> None:
+        """Assume the child is not present"""
+        self.children_ids.append(child.id)
+        child.parent_ids.add(self.id)
+
+    def move_child_before(self, child_id: "TreeId", before_id: "TreeId") -> None:
         # assert child.id not in self.children_ids, f"{child.id} is already a child of {self.id}"
         # assert child.id != self.id, f"Cannot make {child.id} a child of itself !"
-        if child.id in self.children_ids:
-            self.children_ids.remove(child.id)
-        if before and before in self.children_ids:
-            self.children_ids.insert(self.children_ids.index(before), child.id)
-        else:
-            self.children_ids.append(child.id)
-        child.parent_ids.add(self.id)
+        self.children_ids.remove(child_id)
+        self.children_ids.insert(self.children_ids.index(before_id), child_id)
 
     def remove_child(self, child: "Tree") -> None:
         # assert child.id in self.children_ids, f"{child.id} is not a child of {self.id}"
@@ -168,11 +168,15 @@ class Tree(qrbug.Editable):
         #     setattr(tree, arg, value)
 
     @classmethod
-    def add_parenting_link(cls, parent_id: str, child_id: str, before_id: str=''):
-        cls.instances[parent_id].add_child(cls.instances[child_id], before_id)
+    def add_parenting_link(cls, parent_id: str, child_id: str):
+        cls.instances[parent_id].add_child(cls.instances[child_id])
 
     @classmethod
     def remove_parenting_link(cls, parent_id: str, child_id: str):
         cls.instances[parent_id].remove_child(cls.instances[child_id])
+
+    @classmethod
+    def move_before(cls, parent_id: str, child_id: str, before_id: str):
+        cls.instances[parent_id].move_child_before(child_id, before_id)
 
 qrbug.Tree = Tree

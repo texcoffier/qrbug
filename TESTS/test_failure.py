@@ -58,3 +58,13 @@ class TestFailure(qrbug.TestCase):
         self.load_config()
         # Checks that there are two users in the DB
         self.check(qrbug.Failure, f"PC_NO_BOOT [] val:'Le PC ne démarre pas' type:text confirm:False allowed:ROOT")
+
+    def test_move_failure(self):
+        qrbug.failure_update('parent')
+        qrbug.failure_update('child1')
+        qrbug.failure_update('child2')
+        qrbug.failure_add('parent', 'child1')
+        qrbug.failure_add('parent', 'child2')
+        self.assertEqual(qrbug.Failure['parent'].children_ids, ['child1', 'child2'])
+        qrbug.failure_move('parent', 'child2', 'child1')
+        self.assertEqual(qrbug.Failure['parent'].children_ids, ['child2', 'child1'])
