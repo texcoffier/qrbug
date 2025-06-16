@@ -23,6 +23,9 @@ selector('for-thing-active', '[1, {"test": "active"}, {"test":"is_for_thing"}]')
 # General Backoffice
 ###############################################################################
 
+user_update('admin')
+user_update('thierry.excoffier')
+user_update('p2205989')
 user_add('admin', 'thierry.excoffier')
 user_add('admin', 'p2205989')
 

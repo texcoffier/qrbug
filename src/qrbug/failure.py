@@ -146,44 +146,13 @@ class Failure(qrbug.Tree):
         else:
             return ''.join(representation)
 
-
-def failure_update(failure_id: FailureId, **kwargs) -> Failure:
-    """
-    Creates a new failure type, or modifies an existing one.
-    :param failure_id: The ID of this failure type.
-    :param value: The value of this failure.
-    :param display_type: How to display this failure ? Text, button, message box... ?
-    :param ask_confirm: Whether the user will have to confirm when pressing the button.
-    :param allowed: The selector allowing to report the failure.
-    """
-    return Failure.update_attributes(failure_id, **kwargs)
-
-
-def failure_add(parent: FailureId, child: FailureId, before_id:str='') -> None:
-    """
-    Adds a new child to an existing failure.
-    :param parent: The ID of the failure to add the child to.
-    :param child: The ID of the child failure.
-    """
-    Failure.add_parenting_link(parent, child, before_id)
-
-
-def failure_remove(parent: FailureId, child: FailureId) -> None:
-    """
-    Removes the parenting link from a failure to another.
-    :param parent: The ID of the failure to remove the child from.
-    :param child: The ID of the failure to be removed.
-    """
-    Failure.remove_parenting_link(parent, child)
-
-
 qrbug.Failure = Failure
 qrbug.FailureId = FailureId
 qrbug.DisplayTypes = DisplayTypes
-qrbug.failure_update = failure_update
-qrbug.failure_add = failure_add
-qrbug.failure_remove = failure_remove
+qrbug.failure_update = Failure.update_attributes
+qrbug.failure_add = Failure.add_parenting_link
+qrbug.failure_remove = Failure.remove_parenting_link
 
 if __name__ == "__main__":
     failure_update("0", value="Testing title", display_type=Text)
-    print(Failure.get("0").dump())
+    print(Failure["0"].dump())

@@ -69,15 +69,6 @@ class Dispatcher(qrbug.Tree):
 
         return return_value
 
-
-def dispatcher_update(dispatch_id: str, **kwargs) -> Dispatcher:
-    """
-    Creates a new dispatcher, or modifies an existing one.
-    :param dispatch_id: The ID of this dispatcher.
-    """
-    return Dispatcher.update_attributes(dispatch_id, **kwargs)
-
-
 def dispatcher_del(dispatch_id: str) -> None:
     """
     Deletes an existing dispatcher.
@@ -109,10 +100,10 @@ def dispatch(
 
 qrbug.Dispatcher = Dispatcher
 qrbug.DispatcherId = DispatcherId
-qrbug.dispatcher_update = dispatcher_update
+qrbug.dispatcher_update = Dispatcher.update_attributes
 qrbug.dispatcher_del = dispatcher_del
 qrbug.dispatch = dispatch
 
 if __name__ == "__main__":
     dispatcher_update("0", selector_id="0")
-    print(Dispatcher.get("0").dump())
+    print(Dispatcher["0"].dump())

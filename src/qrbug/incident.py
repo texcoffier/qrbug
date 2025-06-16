@@ -125,10 +125,6 @@ class Incident:
         return qrbug.Concerned[self.thing_id]
 
 
-def incident_new(thing_id: qrbug.ThingId, failure_id: qrbug.FailureId, ip: str,
-        timestamp: int, comment: Optional[str] = None, login: Optional[str] = None) -> "Incident":
-    return Incident.create(thing_id, failure_id, ip, timestamp, comment, login)
-
 
 def incident_del(thing_id: qrbug.ThingId, failure_id: qrbug.FailureId, ip: str, timestamp: int, login: str) -> list["Incident"]:
     Incident.remove(thing_id, failure_id, login)
@@ -149,6 +145,6 @@ def get_incident_email_contents(incident: Incident) -> str:
 
 
 qrbug.Incident = Incident
-qrbug.incident_new = incident_new
+qrbug.incident_new = Incident.create
 qrbug.incident_del = incident_del
 qrbug.get_incident_email_contents = get_incident_email_contents

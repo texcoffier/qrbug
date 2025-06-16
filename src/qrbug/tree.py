@@ -43,7 +43,7 @@ class Tree(qrbug.Editable):
         # assert child.id != self.id, f"Cannot make {child.id} a child of itself !"
         if child.id in self.children_ids:
             self.children_ids.remove(child.id)
-        if before in self.children_ids:
+        if before and before in self.children_ids:
             self.children_ids.insert(self.children_ids.index(before), child.id)
         else:
             self.children_ids.append(child.id)
@@ -85,7 +85,7 @@ class Tree(qrbug.Editable):
                 yield node
 
     @classmethod
-    def get(cls, tree_id: str) -> "Tree":
+    def get_or_create(cls, tree_id: str) -> "Tree":
         """ Returns the given tree instance if it exists, or CREATES IT then returns it otherwise. """
         if tree_id not in cls.instances:
             cls.instances[tree_id] = cls(tree_id)
@@ -150,22 +150,23 @@ class Tree(qrbug.Editable):
     @classmethod
     def update_attributes(cls, tree_id: str, **kwargs):
         # Gets the tree the user asked for (or creates one with the corresponding ID if it did not exist)
-        tree = cls.get(tree_id)
+        tree = cls.get_or_create(tree_id)
 
         # Sets the new data of the tree
-        for arg, value in kwargs.items():
-            assert hasattr(cls, arg), f"Class {cls.__name__} has no attribute '{arg}', do not attempt to update it"
-            assert arg != "instances", f"Cannot update instances of {cls.__name__} class, please do not attempt"
-            setattr(tree, arg, value)
+        tree.__dict__.update(kwargs)
+        # for arg, value in kwargs.items():
+        #     assert hasattr(cls, arg), f"Class {cls.__name__} has no attribute '{arg}', do not attempt to update it"
+        #     assert arg != "instances", f"Cannot update instances of {cls.__name__} class, please do not attempt"
+        #     setattr(tree, arg, value)
 
         return tree
 
     @classmethod
     def add_parenting_link(cls, parent_id: str, child_id: str, before_id: str=''):
-        cls.get(parent_id).add_child(cls.get(child_id), before_id)
+        cls.instances[parent_id].add_child(cls.instances[child_id], before_id)
 
     @classmethod
     def remove_parenting_link(cls, parent_id: str, child_id: str):
-        cls.get(parent_id).remove_child(cls.get(child_id))
+        cls.instances[parent_id].remove_child(cls.instances[child_id])
 
 qrbug.Tree = Tree

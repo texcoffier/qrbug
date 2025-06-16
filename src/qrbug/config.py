@@ -27,6 +27,7 @@ ERROR_LOG_PREFIX = 'backtrace'
 
 # Dicts
 CONFIGS = {
+    "user_update"      : qrbug.user_update,
     "user_add"         : qrbug.user_add,
     "user_remove"      : qrbug.user_remove,
     "failure_update"   : qrbug.failure_update,

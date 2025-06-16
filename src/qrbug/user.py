@@ -17,30 +17,12 @@ class User(qrbug.Tree):
     def _local_dump(self) -> str:
         return '()'
 
-
-def user_add(parent: UserId, child: UserId) -> None:
-    """
-    Sets a new user to be the child of another user.
-    :param parent: The ID of the user to parent the new child to.
-    :param child: The ID of the child to add to the parent.
-    """
-    User.add_parenting_link(parent, child)
-
-
-def user_remove(parent: UserId, child: UserId) -> None:
-    """
-    Removes the parenting link from a user to another.
-    :param parent: The ID of the user to remove the child from.
-    :param child: The ID of the user to be removed.
-    """
-    User.remove_parenting_link(parent, child)
-
-
 qrbug.User = User
 qrbug.UserId = UserId
-qrbug.user_add = user_add
-qrbug.user_remove = user_remove
+qrbug.user_update = User.update_attributes
+qrbug.user_add = User.add_parenting_link
+qrbug.user_remove = User.remove_parenting_link
 
 if __name__ == "__main__":
     user_add("0", "1")
-    print(User.get("0").dump())
+    print(User["0"].dump())

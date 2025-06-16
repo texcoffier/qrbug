@@ -11,17 +11,13 @@ class TestThing(qrbug.TestCase):
         self.check(qrbug.Thing, f'{ID} [] failures:[] comment:\'\'')
 
     def test_update(self):
-        # Creates a thing (without using the thing_update()) method
-        qrbug.Thing.get(ID)
-
         # Updates said thing
         new_value = 'THIS IS A NEW VALUE FOR THE COMMENT'
         qrbug.thing_update(ID, comment=new_value)
         self.check(qrbug.Thing, f"{ID} [] failures:[] comment:'{new_value}'")
 
     def test_delete(self):
-        # Creates a thing (without using the thing_update()) method
-        qrbug.Thing.get(ID)
+        qrbug.thing_update(ID)
 
         # Tests around deleting an instance
         self.check(qrbug.Thing, f'{ID} [] failures:[] comment:\'\'')
@@ -33,7 +29,7 @@ class TestThing(qrbug.TestCase):
         self.check(qrbug.Thing, f"0 [] failures:[] comment:'A comment, it seems'")
 
     def test_add_failure(self):
-        qrbug.Thing.get(ID)
+        qrbug.thing_update(ID)
         qrbug.thing_add_failure(ID, 'test-failure1')
         self.check(qrbug.Thing, "0 [] failures:['test-failure1'] comment:''")
         qrbug.thing_add_failure(ID, 'test-failure2')

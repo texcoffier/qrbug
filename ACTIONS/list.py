@@ -32,7 +32,7 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
                 texts.append('<td>')
                 texts.append(qr)
                 texts.append('<td>')
-                thing_incident = qrbug.Incident.instances.get(node.id, None)
+                thing_incident = qrbug.Incident[node.id]
                 if thing_incident:
                     active = sum(len(i.active) for i in thing_incident.values())
                     finished = sum(len(i.finished) for i in thing_incident.values())

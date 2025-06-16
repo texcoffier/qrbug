@@ -1,3 +1,6 @@
+user_update("ROOT")
+user_update("root")
+user.update("P123456789")
 user_add("ROOT", "P123456789")
 selector('ROOT', '{"class": "SourceUser", "test": "in_or_equal", "value": "ROOT"}')
 

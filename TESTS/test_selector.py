@@ -7,6 +7,10 @@ import qrbug
 class TestSelector(qrbug.TestCase):
 
     def setUp(self):
+        qrbug.user_update('user_parent')
+        qrbug.user_update('user_child')
+        qrbug.thing_update('thing_parent')
+        qrbug.thing_update('thing_parent_parent')
         qrbug.thing_update('thing_child',
             comment='thing_child_comment')
         qrbug.user_add('user_parent', 'user_child')

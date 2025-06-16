@@ -14,7 +14,7 @@ ITEMS = {
     # The 3 next values
     'SourceThing': 'source.thing'               , # Its thing
     'SourceFailure': 'source.failure'           , # Its failure
-    'SourceUser': 'qrbug.User.get(report.login)', # User triggering the API incident
+    'SourceUser': 'qrbug.User.get_or_create(report.login)', # User triggering the API incident
     # TODO :
     #   * Incident other attributes (IP, date...)
     #   * Incident closed/open

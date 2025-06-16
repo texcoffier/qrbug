@@ -1,5 +1,6 @@
 import time
 import html
+import sys
 from pathlib import Path
 from typing import Optional
 
@@ -11,6 +12,7 @@ import qrbug
 
 
 ENABLE_AUTHENTICATION = True
+ENABLE_PROFILE = False
 
 WHAT = {
     'thing': qrbug.Thing,
@@ -53,7 +55,6 @@ async def show_failures_tree_route(request: qrbug.Request) -> web.Response:
         user_login = await qrbug.handle_login(request, f'{what}={thing_id}')
         if user_login is None:
             return web.Response(status=403, text="Login ticket invalid")
-
     return web.Response(status=200, text=requested_thing.get_failures(), content_type='text/html')
 
 
@@ -204,6 +205,11 @@ def parse_command_line_args(argv) -> tuple[str, int]:
         ENABLE_AUTHENTICATION = False
         args.remove('--test')
 
+    if '--profile' in sys.argv:
+        global ENABLE_PROFILE
+        ENABLE_PROFILE=True
+        args.remove('--profile')
+
     host = 'localhost'
     port = 8080
     if len(args) >= 2:
@@ -223,9 +229,14 @@ def init_server(argv = None) -> tuple[web.Application, str, int]:
 
     host, port = parse_command_line_args(argv)
 
-    # Loads the config
-    qrbug.load_config()
-    qrbug.load_incidents()
+    if ENABLE_PROFILE:
+        import profile
+        print("PROFILING LOADING CONFIG AND INCIDENTS")
+        profile.run("qrbug.load_config(); qrbug.load_incidents()", sort=1)
+    else:
+        # Loads the config
+        qrbug.load_config()
+        qrbug.load_incidents()
 
     # Creates the server
     app = web.Application()
@@ -250,13 +261,13 @@ def get_server(argv: list = None) -> web.Application:
         argv = []
     return init_server(argv)[0]
 
+def main():
+    server, host, port = init_server(sys.argv)
+    web.run_app(server, host=host, port=port)
+
 if __name__ == "__main__":
-    import sys
 
     if '-h' in sys.argv or '--help' in sys.argv:
         print("Usage: python -m qrbug.server [--test] [HOST] [PORT]")
         print("\n--test : Use the test databases.")
-        pass
-
-    server, host, port = init_server(sys.argv)
-    web.run_app(server, host=host, port=port)
+    main()

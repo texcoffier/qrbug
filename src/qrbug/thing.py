@@ -120,4 +120,4 @@ qrbug.thing_del_failure = Thing.del_failure
 
 if __name__ == "__main__":
     thing_update("0", comment="This is a comment")
-    print(Thing.get("0").dump())
+    print(Thing["0"].dump())
