@@ -51,10 +51,10 @@ async def run(incidents: list[qrbug.Incident], request: qrbug.Request) -> Option
         return qrbug.action_helpers.ActionReturnValue(error_msg=f"Thing {repr(requested_thing.id)} not found")
 
     user_ticket = request.query.get("ticket", "")
-    TEMPLATE_CSS = (f'<style>\n{TEMPLATE_CSS_PATH.read_text()}\n</style>'
+    TEMPLATE_CSS = (f'<style>\n{TEMPLATE_CSS_PATH.read_text()}\n</style>\n'
                     .replace('%cols%', default_cols)
                     .replace('%rows%', default_rows))
-    TEMPLATE_JS = f'<script>\n{TEMPLATE_JS_PATH.read_text()}\n</script>'
+    TEMPLATE_JS = f'<script>\n{TEMPLATE_JS_PATH.read_text()}\n</script>\n'
     TEMPLATE_QR_BLOCK = TEMPLATE_QR_BLOCK_PATH.read_text()
     await request.write(TEMPLATE_CSS)
     await request.write(TEMPLATE_JS)
@@ -88,6 +88,6 @@ async def run(incidents: list[qrbug.Incident], request: qrbug.Request) -> Option
             img_b64    = img_base64.decode(),
         ))
 
-    await request.write('</div>')
+    await request.write('</div>\n')
 
     return None
