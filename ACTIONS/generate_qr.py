@@ -27,6 +27,15 @@ def get_qr_gen_link(thing_id: qrbug.ThingId, failure_id, ticket: str) -> str:
 #    failure: print qr code
 #    incidents: descendants of the thing
 
+
+async def get_qr_code_b64_image(url: str) -> bytes:
+    img = qrcode.make(url)
+    buffer = BytesIO()
+    img.save(buffer, format=IMAGE_FORMAT)
+    img_base64 = base64.b64encode(buffer.getvalue())
+    return img_base64
+
+
 async def run(incidents: list[qrbug.Incident], request: qrbug.Request) -> Optional[qrbug.action_helpers.ActionReturnValue]:
     incident = incidents[0]
     row_cols_number = incident.failure_id.split('_')[-1]
@@ -68,15 +77,7 @@ async def run(incidents: list[qrbug.Incident], request: qrbug.Request) -> Option
 
     for thing_id in requested_thing.get_sorted_children_ids():
         url = REPORT_THING_URL.format(thing_id)
-
-        img = qrcode.make(url)
-
-        buffer = BytesIO()
-        img.save(buffer, format=IMAGE_FORMAT)
-        img_base64 = base64.b64encode(buffer.getvalue())
-
-        # TODO : générer les QR codes de tous les objets fils de ceux passés en paramètre
-        # sorted(Thing[id] for id in get_all_children_ids(), key=lambda x: x.path())
+        img_base64 = await get_qr_code_b64_image(url)
 
         # Writes the HTML of the QR code
         await request.write(TEMPLATE_QR_BLOCK.format(
