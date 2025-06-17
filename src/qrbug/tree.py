@@ -69,7 +69,7 @@ class Tree(qrbug.Editable):
 
     def get_sorted_children_ids(self, max_depth: int = -1) -> Generator[str, None, None]:
         def add_child_to_list(node, depth: int = 0):
-            if depth >= max_depth and max_depth != -1:
+            if max_depth != -1 and depth >= max_depth:
                 return
             for child_id in sorted(node.children_ids):
                 yield child_id
