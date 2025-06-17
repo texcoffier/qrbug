@@ -150,7 +150,7 @@ class TestSelector(qrbug.TestCase):
         incident = qrbug.Incident.open(
             'thing_child', 'fail1', login='no-login', ip='no-ip', additional_info='no-comment')
         incident.incident_del()
-        self.assertEqual(len(incident.pending_feedback), 1)
+        self.assertEqual(len(incident.pending_feedback['thing_child', 'fail1']), 1)
 
         selector = qrbug.selector_update('pending-feedback', '{"test":"pending_feedback"}')
         self.assertEqual(len(selector.is_ok(incident)), 1)

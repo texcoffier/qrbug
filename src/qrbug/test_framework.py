@@ -18,6 +18,7 @@ class TestCase(unittest.TestCase):
         qrbug.Failure.instances.clear()
         qrbug.Thing.instances.clear()
         qrbug.Incident.instances.clear()
+        qrbug.Incident.pending_feedback = {}
         qrbug.Concerned.instances.clear()
 
     def check(self, cls, value):

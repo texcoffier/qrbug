@@ -24,7 +24,7 @@ class Report:
 
 class Incident:
     instances: dict["ThingID", dict["FailureID", "Incident"]] = {}
-    pending_feedback:list[Report] = []
+    pending_feedback:dict[tuple["ThingID", "FailureID"], list[Report]] = {}
     def __init__(self, thing_id: str, failure_id: str):
         self.thing_id = thing_id
         self.failure_id = failure_id
@@ -109,7 +109,11 @@ class Incident:
             report.remover_login = login
             incident.finished.append(report)
         # Pending feedback is cleared on 'send-pending-feedback' failure dispatch
-        incident.pending_feedback = incident.active
+        key = (other_thing_id, other_failure_id)
+        if key not in incident.pending_feedback:
+            incident.pending_feedback[key] = incident.active
+        else:
+            incident.pending_feedback[key].extend(incident.active)
         incident.active = []
 
     @property

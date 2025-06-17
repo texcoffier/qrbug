@@ -12,7 +12,8 @@ async def run(_incidents, request):
     active = len([i for i in incidents if i.active])
     active_report = sum([len(i.active) for i in incidents])
     fixed_report = sum([len(i.finished) for i in incidents])
-    feedback_pending = sum([len(i.pending_feedback) for i in incidents])
+    feedback_pending = sum([len(i.pending_feedback.get((i.thing_id, i.failure_id), ()))
+                            for i in incidents])
     await request.write(
         f'''
         <table border>

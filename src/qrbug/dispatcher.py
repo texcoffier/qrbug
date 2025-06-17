@@ -39,9 +39,6 @@ class Dispatcher(qrbug.Tree):
                          for i in j.values()
                          if selector.is_ok(i, incident, request.report)
                         ]
-            # trace.append(selector.expr)
-            # for i in qrbug.Incident.instances.values():
-            #     trace.append(f'--><!-- ==== {i.failure_id}:{len(i.pending_feedback)}:{qrbug.Selector["backoffice"].is_ok(i, incident,request.report)}')
         else:
             incidents = [incident]
         trace.append(f' incidents={len(incidents)}')
@@ -90,13 +87,10 @@ def dispatch(
     """
     #Dispatcher[dispatch_id].running_incidents.add((failure_id, thing_id))
     if dispatch_id == 'send-pending-feedback': # Not nice
-        for i in qrbug.Incident.instances.values():
-            for incident in i.values():
-                incident.pending_feedback = []
+        qrbug.Incident.pending_feedback = {}
     elif action_id == 'close_auto':
-        incident = qrbug.Incident.instances[thing_id][failure_id]
-        incident.pending_feedback = []
-        incident.finished = []
+        qrbug.Incident.pending_feedback.pop((thing_id, failure_id))
+        qrbug.Incident.instances[thing_id][failure_id].finished = []
 
 qrbug.Dispatcher = Dispatcher
 qrbug.DispatcherId = DispatcherId

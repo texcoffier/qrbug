@@ -42,7 +42,7 @@ TESTS = {
     'in_or_equal': '{attr}.inside_or_equal({value})',
     'is_for_user': 'incident.is_for_user({attr})',
     'is_for_thing': 'incident.thing_id == source.thing.id',
-    'pending_feedback': 'incident.pending_feedback',
+    'pending_feedback': 'incident.pending_feedback.get((incident.thing_id, incident.failure_id), ())',
     'active': 'incident.active',
     'contains': '{value} in {attr}',
     'true': '{attr}',
