@@ -94,6 +94,20 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
             </tr>''')
         texts.append('</table>')
         texts = [qrbug.get_template().replace('%REPRESENTATION%', ''.join(texts))]
+    elif what is qrbug.Action:
+        action = qrbug.Failure['action-python_script']
+        texts.append('<table>')
+        texts.append('<tr><th>Action<th>')
+        texts.append(html.escape(action.value))
+        texts.append('</tr>')
+        for node in what.instances.values():
+            texts.append('<tr><td>')
+            texts.append(link_to_object('action', node.id))
+            texts.append('<td>')
+            texts.append(qrbug.element(action, node, in_place=True))
+            texts.append('</tr>')
+        texts.append('</table>')
+        texts = [qrbug.get_template().replace('%REPRESENTATION%', ''.join(texts))]
     elif what is qrbug.Incident:
         texts.append('<table border><tr><th>Objet<th>Actives<th>Réparés<th>Panne<th>Active<th>Réparées')
         for thing_id, failures in sorted(what.instances.items()):
