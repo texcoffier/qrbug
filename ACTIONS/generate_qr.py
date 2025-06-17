@@ -63,7 +63,7 @@ async def run(incidents: list[qrbug.Incident], request: qrbug.Request) -> Option
     #await request.write_newline(TEMPLATE_QR_CONFIG_BLOCK.read_text())
     await request.write_newline('<div class="qr_outer_block">')
 
-    for thing_id in [requested_thing.id, *requested_thing.get_all_children_ids()]:
+    for thing_id in requested_thing.get_sorted_children_ids():
         url = REPORT_THING_URL.format(thing_id)
 
         img = qrcode.make(url)
