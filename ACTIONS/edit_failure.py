@@ -37,13 +37,13 @@ async def run(incidents, request):
             feedback += "Car invalide."
     elif incident.failure_id == 'failure-allowed':
         if value != failure.allowed:
-            if value not in qrbug.User.instances:
-                feedback = f"Le groupe d'utilisateur «{value}» est inconnu, la valeur reste inchangée.\n"
+            if value not in qrbug.Selector.instances:
+                feedback = f"Le sélecteur «{value}» est inconnu, la valeur reste inchangée.\n"
             else:
                 qrbug.append_line_to_journal(
                         f'failure_update({repr(selector)}, allowed={repr(value)})\n', qrbug.Journals.DB)
                 if value:
-                    feedback = f"On doit faire partie du groupe {value} pour déclarer la panne «{selector}»\n"
+                    feedback = f"Le sélecteur «{value}» doit être vrai pour pouvoir déclarer la panne «{selector}»\n"
                 else:
                     feedback = f"Pas besoin de s'authentifier pour indiquer la panne «{selector}»\n"
     else:

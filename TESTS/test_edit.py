@@ -75,12 +75,12 @@ class TestEdit(qrbug.TestCase):
 
         lines = self.runtest('failure-allowed', 'edit-failure', 'BAD')
         self.assertEqual(lines,
-            ["<!DOCTYPE html>\nLe groupe d'utilisateur «BAD» est inconnu, la valeur reste inchangée.\n"])
+            ["<!DOCTYPE html>\nLe sélecteur «BAD» est inconnu, la valeur reste inchangée.\n"])
         self.assertEqual(qrbug.Failure.instances['a-selector'].allowed, 'true')
 
         lines = self.runtest('failure-allowed', 'edit-failure', 'admin')
         self.assertEqual(lines,
-            ["<!DOCTYPE html>\nOn doit faire partie du groupe admin pour déclarer la panne «a-selector»\n"])
+            ["<!DOCTYPE html>\nLe sélecteur «admin» doit être vrai pour pouvoir déclarer la panne «a-selector»\n"])
         self.assertEqual(qrbug.Failure.instances['a-selector'].allowed, 'admin')
 
         lines = self.runtest('failure', 'edit-failure')

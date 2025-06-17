@@ -35,7 +35,7 @@ def element(failure: "Failure", thing, in_place=False):
         value = html.escape(str(attr))
     in_place = int(in_place)
     if display_type == DisplayTypes.boolean:
-        element = f'<select {common} class="button" onchange="register_incident(this)"><option value="False">Non</option><option value="True">Oui</option></select></div>'
+        element = f'<select {common} class="button" onchange="register_incident(this,{in_place})"><option value="False">Non</option><option value="True">Oui</option></select></div>'
         if attr:
             element = element.replace('value="True"', 'value="True" selected')
         else:
@@ -44,7 +44,7 @@ def element(failure: "Failure", thing, in_place=False):
             element = f'<div class="input">{failure.value} : {element}</div>'
         return element
     if display_type == DisplayTypes.display:
-        element = [f'<select {common} class="button" onchange="register_incident(this)">']
+        element = [f'<select {common} class="button" onchange="register_incident(this,{in_place})">']
         for v in DisplayTypes:
             element.append(f'<option value="{v.name}"{" selected" if attr == v else ""}>{v.name}</option>')
         element.append('</select>')

@@ -60,6 +60,31 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
                 go_in.indent = go_in.indent[:-4]
             go_in.indent = ''
             footer = '</table>'
+        elif what is qrbug.Failure:
+            failure_value = qrbug.Failure['failure-value']
+            failure_ask_confirm = qrbug.Failure['failure-ask_confirm']
+            failure_display = qrbug.Failure['failure-display_type']
+            failure_allowed = qrbug.Failure['failure-allowed']
+            texts.append('<table>')
+            texts.append('<tr><th>Panne<th>Intitulé<th>Confirmation<th>Affichage<th>Autorisé pour</tr>')
+            def go_in(node):
+                texts.append('<tr><td>')
+                texts.append(go_in.indent)
+                texts.append(link_to_object('failure', node.id))
+                texts.append('<td>')
+                texts.append(qrbug.element(failure_value, node, in_place=True))
+                texts.append('<td>')
+                texts.append(qrbug.element(failure_ask_confirm, node, in_place=True))
+                texts.append('<td>')
+                texts.append(qrbug.element(failure_display, node, in_place=True))
+                texts.append('<td>')
+                texts.append(qrbug.element(failure_allowed, node, in_place=True))
+                texts.append('</tr>')
+                go_in.indent += '    '
+            def go_out(_node):
+                go_in.indent = go_in.indent[:-4]
+            go_in.indent = ''
+            footer = '</table>'
         else:
             def go_in(node):
                 texts.append(html.escape(node.dump()))
