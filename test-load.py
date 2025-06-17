@@ -49,24 +49,24 @@ incident_new('admin', 'personnal-for-me', '127.0.0.1', 1749979935, '', 'thierry.
 dispatch('personnal-for-me', 'personnal-for-me', 'admin', 'echo', 1749979935) # 2025-06-15 11:32:15 1 incidents
 
 # Close the API incident
-incident_del('admin', 'personnal-for-me', '127.0.0.1', 1749979935, 'thierry.excoffier') # 2025-06-15 11:32:15
+incident_del('admin', 'personnal-for-me', 'thierry.excoffier') # 2025-06-15 11:32:15 '127.0.0.1'
 
 # Cleanup needed feedback
 dispatch('z-backoffice-close', 'personnal-for-me', 'admin', 'close_auto', 1749979935) # 2025-06-15 11:32:15 1 incidents
 
 # Mark incident as fixed
-incident_del('{thing}', '{failure}', '127.0.0.1', 1749979935, 'thierry.excoffier') # 2025-06-15 11:32:15
+incident_del('{thing}', '{failure}', 'thierry.excoffier') # 2025-06-15 11:32:15 '127.0.0.1'
 
 # List waiting feedback
 incident_new('admin', 'pending-feedback', '127.0.0.1', 1750086416, '', 'thierry.excoffier') # 2025-06-16 17:06:56
 dispatch('pending-feedback', 'pending-feedback', 'admin', 'echo', 1750086416) # 2025-06-16 17:06:56 1 incidents
-incident_del('admin', 'pending-feedback', '127.0.0.1', 1750086416, 'thierry.excoffier') # 2025-06-16 17:06:56
+incident_del('admin', 'pending-feedback', 'thierry.excoffier') # 2025-06-16 17:06:56 '127.0.0.1'
 dispatch('z-backoffice-close', 'pending-feedback', 'admin', 'close_auto', 1750086416) # 2025-06-16 17:06:56 1 incidents
 
 # Send user feedback (erase list in memory)
 incident_new('admin', 'send-pending-feedback', '127.0.0.1', 1750086503, '', 'thierry.excoffier') # 2025-06-16 17:08:23
 dispatch('send-pending-feedback', 'send-pending-feedback', 'admin', 'pending_feedback', 1750086503) # 2025-06-16 17:08:23 1 incidents
-incident_del('admin', 'send-pending-feedback', '127.0.0.1', 1750086503, 'thierry.excoffier') # 2025-06-16 17:08:23
+incident_del('admin', 'send-pending-feedback', 'thierry.excoffier') # 2025-06-16 17:08:23 '127.0.0.1'
 dispatch('z-backoffice-close', 'send-pending-feedback', 'admin', 'close_auto', 1750086503) # 2025-06-16 17:08:23 1 incidents
 
 """)

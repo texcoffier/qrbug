@@ -71,8 +71,8 @@ class Incident:
         Closes the given incident AND writes it into the journal
         """
         return qrbug.append_line_to_journal(
-            f"incident_del({repr(thing_id)}, {repr(failure_id)}, {repr(ip)}, {int(time.time())}, {repr(login)})"
-            f" # {time.strftime('%Y-%m-%d %H:%M:%S')}\n"
+            f"incident_del({repr(thing_id)}, {repr(failure_id)}, {repr(login)})"
+            f" # {time.strftime('%Y-%m-%d %H:%M:%S')} {repr(ip)}\n"
         )
 
     def incident_del(self):
@@ -129,8 +129,10 @@ class Incident:
         return qrbug.Concerned[self.thing_id]
 
 
+# def incident_del(thing_id: qrbug.ThingId, failure_id: qrbug.FailureId, ip: str, timestamp: int, login: str) -> list["Incident"]:
+#     Incident.remove(thing_id, failure_id, login)
 
-def incident_del(thing_id: qrbug.ThingId, failure_id: qrbug.FailureId, ip: str, timestamp: int, login: str) -> list["Incident"]:
+def incident_del(thing_id: qrbug.ThingId, failure_id: qrbug.FailureId, login: str) -> list["Incident"]:
     Incident.remove(thing_id, failure_id, login)
 
 
