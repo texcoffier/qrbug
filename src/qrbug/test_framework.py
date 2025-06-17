@@ -44,6 +44,12 @@ class Request:
         if incident:
             self.report = incident.active[-1]
         self.write = self.response.write
+        if not incident:
+            class FakeIncident:
+                thing_id = 'Fake Thing ID'
+                failure_id = 'Fake Failure ID'
+            incident = FakeIncident
+        self.incident = incident
 
 qrbug.TestCase = TestCase
 qrbug.Request = Request

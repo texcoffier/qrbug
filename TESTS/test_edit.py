@@ -46,12 +46,49 @@ class TestEdit(qrbug.TestCase):
             .count('ask_confirm') == 1)
 
     def test_failure(self):
+        qrbug.failure_update('a-selector') # Failure to edit
+
+        lines = self.runtest('failure-value', 'edit-failure', 'New value')
+        self.assertEqual(lines,
+            ["<!DOCTYPE html>\nLe titre de la panne «a-selector» est maintenant «New value»\n"])
+        self.assertEqual(qrbug.Failure.instances['a-selector'].value, 'New value')
+
+        lines = self.runtest('failure-display_type', 'edit-failure', 'BAD')
+        self.assertEqual(lines,
+            ["<!DOCTYPE html>\nLa valeur de «a-selector . failure-display_type» est inchangé.\nCar invalide."])
+        self.assertEqual(qrbug.Failure.instances['a-selector'].value, 'New value')
+
+        lines = self.runtest('failure-display_type', 'edit-failure', 'button')
+        self.assertEqual(lines,
+            ["<!DOCTYPE html>\nLe type d'affichage de «a-selector» est maintenant «button»\n"])
+        self.assertEqual(qrbug.Failure.instances['a-selector'].display_type.name, 'button')
+
+        lines = self.runtest('failure-ask_confirm', 'edit-failure', 'BAD')
+        self.assertEqual(lines,
+            ["<!DOCTYPE html>\nLa valeur de «a-selector . failure-ask_confirm» est inchangé.\nCar invalide."])
+        self.assertEqual(qrbug.Failure.instances['a-selector'].ask_confirm, False)
+
+        lines = self.runtest('failure-ask_confirm', 'edit-failure', 'True')
+        self.assertEqual(lines,
+            ["<!DOCTYPE html>\nOn demande confirmation avant d'envoyer la panne «a-selector»\n"])
+        self.assertEqual(qrbug.Failure.instances['a-selector'].ask_confirm, True)
+
+        lines = self.runtest('failure-allowed', 'edit-failure', 'BAD')
+        self.assertEqual(lines,
+            ["<!DOCTYPE html>\nLe groupe d'utilisateur «BAD» est inconnu, la valeur reste inchangée.\n"])
+        self.assertEqual(qrbug.Failure.instances['a-selector'].allowed, 'true')
+
+        lines = self.runtest('failure-allowed', 'edit-failure', 'admin')
+        self.assertEqual(lines,
+            ["<!DOCTYPE html>\nOn doit faire partie du groupe admin pour déclarer la panne «a-selector»\n"])
+        self.assertEqual(qrbug.Failure.instances['a-selector'].allowed, 'admin')
+
         lines = self.runtest('failure', 'edit-failure')
         self.assertEqual(lines,
             ["<!DOCTYPE html>\nUnexpected edit failure for Failure\n"])
 
         self.assertTrue(qrbug.Failure['failure'].get_hierarchy_representation()
-            .count('ask_confirm') == 1)
+            .count('ask_confirm') == 6)
 
     def test_selector(self):
         lines = self.runtest('selector', 'edit-selector')

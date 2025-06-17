@@ -16,6 +16,8 @@ class DisplayTypes(enum.Enum):
     redirect = enum.auto()
     textarea = enum.auto()
     input    = enum.auto()
+    boolean  = enum.auto()
+    display  = enum.auto()
 
 def element(failure: "Failure", thing, in_place=False):
     display_type = failure.display_type
@@ -30,9 +32,26 @@ def element(failure: "Failure", thing, in_place=False):
     value = ''
     if failure.inside('edit') and '-' in failure.id:
         attr = getattr(thing, failure.id.split('-', 1)[1], None)
-        if attr is not None:
-            value = html.escape(attr)
+        value = html.escape(str(attr))
     in_place = int(in_place)
+    if display_type == DisplayTypes.boolean:
+        element = f'<select {common} class="button" onchange="register_incident(this)"><option value="False">Non</option><option value="True">Oui</option></select></div>'
+        if attr:
+            element = element.replace('value="True"', 'value="True" selected')
+        else:
+            element = element.replace('value="False"', 'value="True" selected')
+        if not in_place:
+            element = f'<div class="input">{failure.value} : {element}</div>'
+        return element
+    if display_type == DisplayTypes.display:
+        element = [f'<select {common} class="button" onchange="register_incident(this)">']
+        for v in DisplayTypes:
+            element.append(f'<option value="{v.name}"{" selected" if attr == v else ""}>{v.name}</option>')
+        element.append('</select>')
+        element = ''.join(element)
+        if not in_place:
+            element = f'<div class="input">{failure.value} : {element}</div>'
+        return element
     if display_type == DisplayTypes.textarea:
         return f'<div {common} class="button" value="{value}" onclick="ask_value(this,{in_place})"><BOX>{failure.value}</BOX></div>'
     if display_type == DisplayTypes.input:

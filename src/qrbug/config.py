@@ -39,6 +39,8 @@ CONFIGS = {
     "Redirect"         : qrbug.DisplayTypes.redirect,
     "Textarea"         : qrbug.DisplayTypes.textarea,
     "Input"            : qrbug.DisplayTypes.input,
+    "Boolean"          : qrbug.DisplayTypes.boolean,
+    "Display"          : qrbug.DisplayTypes.display,
     "thing_update"     : qrbug.thing_update,
     "thing_del"        : qrbug.thing_del,
     "thing_remove"     : qrbug.thing_remove,
