@@ -12,6 +12,7 @@ REPORT_THING_URL = qrbug.SERVICE_URL + ('/' if not qrbug.SERVICE_URL.endswith('/
 
 QR_GEN_STATIC_FILES_PATH = qrbug.STATIC_FILES_PATH
 TEMPLATE_CSS_PATH = QR_GEN_STATIC_FILES_PATH / 'qr_stylesheet.css'
+TEMPLATE_JS_PATH = QR_GEN_STATIC_FILES_PATH / 'qr_script.js'
 TEMPLATE_QR_BLOCK_PATH = QR_GEN_STATIC_FILES_PATH / 'qr_inner_block.html'
 TEMPLATE_QR_CONFIG_BLOCK = QR_GEN_STATIC_FILES_PATH / 'qr_config.html'
 TEMPLATE_QR_INFOS_BLOCK = QR_GEN_STATIC_FILES_PATH / 'qr_infos_block.html'
@@ -44,8 +45,10 @@ async def run(incidents: list[qrbug.Incident], request: qrbug.Request) -> Option
     TEMPLATE_CSS = (f'<style>\n{TEMPLATE_CSS_PATH.read_text()}\n</style>'
                     .replace('%cols%', default_cols)
                     .replace('%rows%', default_rows))
+    TEMPLATE_JS = f'<script>{TEMPLATE_JS_PATH.read_text()}</script>'
     TEMPLATE_QR_BLOCK = TEMPLATE_QR_BLOCK_PATH.read_text()
     await request.write(TEMPLATE_CSS)
+    await request.write(TEMPLATE_JS)
     # await request.write_newline(TEMPLATE_QR_INFOS_BLOCK.read_text())
     # await request.write_newline(
     #     '<div class="qr_parent_links">',

@@ -12,7 +12,7 @@
 }
 
 @media print {
-    .qr_info_title, .qr_parent_links, .qr_infos_block, .qr_config_block {
+    .qr_info_title, .qr_parent_links, .qr_infos_block, .qr_config_block, .qr_selection_options {
         display: none;
     }
 
@@ -29,6 +29,10 @@
 
     .qr_img img {
         transform: rotate(90deg);
+    }
+
+    .qr_inner_block:not(.qr_selected) {
+        display: none;
     }
 }
 
@@ -55,6 +59,14 @@ html, body {
     padding: 4px;
     display: inline-block;
     /* background-color: green; */
+}
+
+.qr_inner_block:not(.qr_selected) {
+    opacity: 0.4;
+}
+
+.qr_selection_options {
+    text-align: center;
 }
 
 .qr_side_text {
