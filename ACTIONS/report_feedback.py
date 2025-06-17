@@ -14,6 +14,7 @@ async def run(incidents, request):
         <style>
         DIV {{ margin: 2em; font-weight: bold }}
         </style>
+        <title>Rapport {html.escape(incident.thing_id)} {html.escape(incident.failure_id)}</title>
         Merci d'avoir signalé l'incident :
         <div>
         {html.escape(incident.failure.value)}

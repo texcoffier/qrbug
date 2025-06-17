@@ -3,11 +3,29 @@ from typing import Optional, List
 
 import qrbug
 
+def link_to_object(what, thing_id, label=None):
+    thing_id = html.escape(thing_id)
+    if label is None:
+        label = thing_id
+    return f'<a target="_blank" href="{what}={thing_id}">{label}</a>'
+
+def link_to_active(thing_id):
+    active = sum(len(i.active) for i in qrbug.Incident.instances[thing_id].values())
+    if not active:
+        return ''
+    return f'<a target="_blank" href="?failure-id=thing-incidents-active&thing-id={thing_id}">{active}</a>'
+
+def link_to_finished(thing_id):
+    finished = sum(len(i.finished) for i in qrbug.Incident.instances[thing_id].values())
+    if not finished:
+        return ''
+    return f'<a target="_blank" href="?failure-id=thing-incidents&thing-id={thing_id}">{finished}</a>'
+
 async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Optional[qrbug.action_helpers.ActionReturnValue]:
     incident = incidents[0]
 
     what = getattr(qrbug, incident.failure_id.split('-')[1])
-    texts = [f'<h1>{incident.failure.value}</h1>']
+    texts = [f'<title>{incident.failure.value}</title><h1>{incident.failure.value}</h1>']
 
     if issubclass(what, qrbug.Tree):
         if what is qrbug.Thing:
@@ -23,32 +41,17 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
             def go_in(node):
                 texts.append('<tr><td>')
                 texts.append(go_in.indent)
-                texts.append('<a target="_blank" href="thing=')
-                texts.append(html.escape(node.id))
-                texts.append('">')
-                texts.append(html.escape(node.id))
-                texts.append('</a><td>')
+                texts.append(link_to_object('thing', node.id))
+                texts.append('<td>')
                 texts.append(qrbug.element(thing_comment, node, in_place=True))
                 texts.append('<td>')
                 texts.append(qr)
                 texts.append('<td>')
                 thing_incident = qrbug.Incident.instances.get(node.id, None)
                 if thing_incident:
-                    active = sum(len(i.active) for i in thing_incident.values())
-                    finished = sum(len(i.finished) for i in thing_incident.values())
-                    if active:
-                        texts.append('<a target="_blank" href="?failure-id=thing-incidents-active&thing-id=')
-                        texts.append(html.escape(node.id))
-                        texts.append('">')
-                        texts.append(str(active))
-                        texts.append('</a>')
+                    texts.append(link_to_active(node.id))
                     texts.append('<td>')
-                    if finished:
-                        texts.append('<a target="_blank" href="?failure-id=thing-incidents&thing-id=')
-                        texts.append(html.escape(node.id))
-                        texts.append('">')
-                        texts.append(str(finished))
-                        texts.append('</a>')
+                    texts.append(link_to_finished(node.id))
                 else:
                     texts.append('<td>')
                 texts.append('</tr>')
@@ -91,6 +94,21 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
             </tr>''')
         texts.append('</table>')
         texts = [qrbug.get_template().replace('%REPRESENTATION%', ''.join(texts))]
+    elif what is qrbug.Incident:
+        texts.append('<table border><tr><th>Objet<th>Actives<th>Réparés<th>Panne<th>Active<th>Réparées')
+        for thing_id, failures in sorted(what.instances.items()):
+            texts.append(f'''<tr><td rowspan="{len(failures)}">
+            {link_to_object("thing", thing_id)}
+            <td rowspan="{len(failures)}">{link_to_active(thing_id)}
+            <td rowspan="{len(failures)}">{link_to_finished(thing_id) or "0"}''')
+            prefix = ''
+            for failure_id, failure in failures.items():
+                texts.append(f'''{prefix}<td>{link_to_object("failure", failure_id)}
+                <td>{len(failure.active)}
+                <td>{len(failure.finished)}
+                </tr>
+                ''')
+        texts.append('</table>')
     else:
         for node in what.instances.values() if hasattr(what, 'instances') else what.active:
             try:

@@ -31,7 +31,10 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
         TABLE, TABLE TD { border: 1px solid #DDD }
         TABLE TR.title { background: #F8F8F8 }
         TABLE TD { vertical-align: top; }
-        </style><table>''')
+        </style>
+        <title>Incidents %s</title>
+        <h1>Liste d'incidents (%s)</h1>
+        <table>''' % (request.incident.failure_id, request.incident.failure_id))
     ticket = getattr(request, 'ticket', '')
     for incident in incidents:
         thing = urllib.parse.quote(incident.thing_id)
