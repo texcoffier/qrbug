@@ -54,7 +54,7 @@ async def run(incidents: list[qrbug.Incident], request: qrbug.Request) -> Option
     TEMPLATE_CSS = (f'<style>\n{TEMPLATE_CSS_PATH.read_text()}\n</style>'
                     .replace('%cols%', default_cols)
                     .replace('%rows%', default_rows))
-    TEMPLATE_JS = f'<script>{TEMPLATE_JS_PATH.read_text()}</script>'
+    TEMPLATE_JS = f'<script>\n{TEMPLATE_JS_PATH.read_text()}\n</script>'
     TEMPLATE_QR_BLOCK = TEMPLATE_QR_BLOCK_PATH.read_text()
     await request.write(TEMPLATE_CSS)
     await request.write(TEMPLATE_JS)
