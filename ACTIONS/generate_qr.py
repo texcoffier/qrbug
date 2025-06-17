@@ -46,20 +46,20 @@ async def run(incidents: list[qrbug.Incident], request: qrbug.Request) -> Option
                     .replace('%rows%', default_rows))
     TEMPLATE_QR_BLOCK = TEMPLATE_QR_BLOCK_PATH.read_text()
     await request.write(TEMPLATE_CSS)
-    await request.write_newline(TEMPLATE_QR_INFOS_BLOCK.read_text())
-    await request.write_newline(
-        '<div class="qr_parent_links">',
-        '   <h3>Parents :</h3>',
-        '   <ul>',
-    )
-    for parent_id in requested_thing.parent_ids:
-        await request.write_newline(
-            f'      <li><a href="{get_qr_gen_link(parent_id, incident.failure_id, user_ticket)}">{parent_id}</a></li>'
-        )
-    await request.write_newline(
-        '   </ul>',
-        '</div>'
-    )
+    # await request.write_newline(TEMPLATE_QR_INFOS_BLOCK.read_text())
+    # await request.write_newline(
+    #     '<div class="qr_parent_links">',
+    #     '   <h3>Parents :</h3>',
+    #     '   <ul>',
+    # )
+    # for parent_id in requested_thing.parent_ids:
+    #     await request.write_newline(
+    #         f'      <li><a href="{get_qr_gen_link(parent_id, incident.failure_id, user_ticket)}">{parent_id}</a></li>'
+    #     )
+    # await request.write_newline(
+    #     '   </ul>',
+    #     '</div>'
+    # )
     #await request.write_newline(TEMPLATE_QR_CONFIG_BLOCK.read_text())
     await request.write_newline('<div class="qr_outer_block">')
 
