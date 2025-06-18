@@ -15,6 +15,7 @@ TEMPLATE_CSS_PATH = QR_GEN_STATIC_FILES_PATH / 'qr_stylesheet.css'
 TEMPLATE_JS_PATH = QR_GEN_STATIC_FILES_PATH / 'qr_script.js'
 TEMPLATE_QR_BLOCK_PATH = QR_GEN_STATIC_FILES_PATH / 'qr_inner_block.html'
 TEMPLATE_QR_CONFIG_BLOCK = QR_GEN_STATIC_FILES_PATH / 'qr_config.html'
+TEMPLATE_QR_DISPLAY_CONFIG_BLOCK = QR_GEN_STATIC_FILES_PATH / 'qr_display_config.html'
 TEMPLATE_QR_INFOS_BLOCK = QR_GEN_STATIC_FILES_PATH / 'qr_infos_block.html'
 TEMPLATE_QR_PARENT_LINKS = QR_GEN_STATIC_FILES_PATH / 'qr_parent_links.html'
 
@@ -58,6 +59,7 @@ async def run(incidents: list[qrbug.Incident], request: qrbug.Request) -> Option
     TEMPLATE_QR_BLOCK = TEMPLATE_QR_BLOCK_PATH.read_text()
     await request.write(TEMPLATE_CSS)
     await request.write(TEMPLATE_JS)
+    await request.write(TEMPLATE_QR_DISPLAY_CONFIG_BLOCK.read_text())
     # await request.write_newline(TEMPLATE_QR_INFOS_BLOCK.read_text())
     # await request.write_newline(
     #     '<div class="qr_parent_links">',
@@ -75,17 +77,25 @@ async def run(incidents: list[qrbug.Incident], request: qrbug.Request) -> Option
     #await request.write_newline(TEMPLATE_QR_CONFIG_BLOCK.read_text())
     await request.write_newline('<div class="qr_outer_block">')
 
-    for thing_id in requested_thing.get_sorted_children_ids():
+    for thing_id, depth in requested_thing.get_sorted_children_ids():
         url = REPORT_THING_URL.format(thing_id)
         img_base64 = await get_qr_code_b64_image(url)
 
+        if depth == 0:
+            depth_class = 'root'
+        elif depth == 1:
+            depth_class = 'child'
+        else:
+            depth_class = 'descendant'
+
         # Writes the HTML of the QR code
         await request.write(TEMPLATE_QR_BLOCK.format(
-            qr_link    = get_qr_gen_link(thing_id, incident.failure_id, user_ticket),
-            thing_id   = thing_id,
-            url        = url,
-            img_format = IMAGE_FORMAT.lower(),
-            img_b64    = img_base64.decode(),
+            qr_link     = get_qr_gen_link(thing_id, incident.failure_id, user_ticket),
+            thing_id    = thing_id,
+            url         = url,
+            img_format  = IMAGE_FORMAT.lower(),
+            img_b64     = img_base64.decode(),
+            depth_class = depth_class
         ))
 
     await request.write('</div>\n')

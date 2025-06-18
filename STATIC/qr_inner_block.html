@@ -1,4 +1,4 @@
-<div class="qr_inner_block qr_selected qr_children qr_descendants">
+<div class="qr_inner_block qr_{depth_class}">
     <h2 class="qr_info_title">QR Code pour <a href="{qr_link}">{thing_id}</a></h2>
     <div class="qr_side_by_side">
         <div class="qr_img">
@@ -8,8 +8,5 @@
             <div class="qr_report_me">Scannez-moi pour signaler un problème&nbsp;!</div>
             <div class="qr_thing_id">{thing_id}</div>
         </div>
-    </div>
-    <div class="qr_selection_options">
-        <label><input type="checkbox" class="qr_selection_options__selected" checked onclick="toggleQrSelection(this);"/> Sélectionné</label>
     </div>
 </div>

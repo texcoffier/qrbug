@@ -1,10 +1,9 @@
-function toggleQrSelection(element) {
-    const className = 'qr_selected';
-    const parentElement = element.parentElement.parentElement.parentElement;
-    if (element.checked) {
-        parentElement.classList.add(className);
+function toggleQrSelection(checked, name) {
+    const className = `qr_no_display_${name}`;
+    if (!checked) {
+        document.body.classList.add(className);
     } else {
-        parentElement.classList.remove(className);
+        document.body.classList.remove(className);
     }
     return false;
 }
