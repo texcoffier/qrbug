@@ -11,3 +11,4 @@ JOURNALS/incidents.py
 
 xxx*
 *.pyc
+.env
