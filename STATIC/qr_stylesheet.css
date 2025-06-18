@@ -51,6 +51,14 @@ html, body {
     display: none;
 }
 
+.qr_display_config {
+    position: sticky;
+    top: 0;
+    width: 100%;
+    background-color: white;
+    padding: 6px;
+}
+
 .qr_outer_block {
     /* background-color: red; */
     margin: 0;
