@@ -30,14 +30,16 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
     if issubclass(what, qrbug.Tree):
         if what is qrbug.Thing:
             thing_comment = qrbug.Failure['thing-comment']
-            qr = ' '.join(
+            texts.append(f'<p>Générer une feuille de QR codes : ')
+            texts.append(' '.join(
                 f'<button onclick="qr(this)">{html.escape(failure.split("_")[-1])}</button>'
                 for failure in qrbug.Failure['generate_qr'].children_ids
-            )
+            ))
+            texts.append(f'<p id="qr_code_gen_error_field"></p></p>')
             texts.append('<table>')
             texts.append('<tr><th>Objet<th>')
             texts.append(html.escape(thing_comment.value))
-            texts.append('<th>Pages QRCodes<th colspan="2">Active<br>Finished</tr>')
+            texts.append('<th>En faire un QR code<th colspan="2">Active<br>Finished</tr>')
             def go_in(node):
                 texts.append('<tr><td>')
                 texts.append(go_in.indent)
@@ -45,7 +47,7 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
                 texts.append('<td>')
                 texts.append(qrbug.element(thing_comment, node, in_place=True))
                 texts.append('<td>')
-                texts.append(qr)
+                texts.append(f'<input type="checkbox" onclick="qr_select(this.checked, {repr(node.id)});" />')
                 texts.append('<td>')
                 thing_incident = qrbug.Incident.instances.get(node.id, None)
                 if thing_incident:

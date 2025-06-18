@@ -157,13 +157,32 @@
             document.getElementById('input').textContent = element.value;
             popup.showModal();
         }
+
+        let selected_things_for_qr = [];
+
         function qr(element) {
+            if (selected_things_for_qr.length === 0) {
+                const errorField = document.getElementById('qr_code_gen_error_field');
+                errorField.textContent = 'Veuillez sélectionner des objets !';
+                errorField.style = "background-color: rgba(255, 0, 0, 0.4); padding: 4px; border-radius: 2px; display: inline-block;";
+                setTimeout(() => {
+                    errorField.textContent = '';
+                    errorField.style = '';
+                }, 2000);
+                return;
+            }
             let failure = 'generate_qr_' + element.textContent;
-            while(element.tagName != 'TR')
-                element = element.parentNode;
-            let thing = element.cells[0].firstElementChild.textContent;
-            window.location = '?thing-id=' + encodeURIComponent(thing)
-                + '&failure-id=' + encodeURIComponent(failure);
+            window.location = '?thing-id=' + encodeURIComponent(selected_things_for_qr[0])
+                + '&failure-id=' + encodeURIComponent(failure)
+                + '&additional-info=' + encodeURIComponent(selected_things_for_qr.slice(1).join(','));
+        }
+
+        function qr_select(checked, thing_id) {
+            if (checked) {
+                selected_things_for_qr.push(thing_id);
+            } else {
+                selected_things_for_qr.splice(selected_things_for_qr.indexOf(thing_id), 1);
+            }
         }
     </script>
 </head>
