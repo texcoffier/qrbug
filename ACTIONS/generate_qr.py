@@ -8,6 +8,7 @@ import qrbug
 
 
 IMAGE_FORMAT = 'PNG'
+IS_WYSIWYG = True
 REPORT_THING_URL = qrbug.SERVICE_URL + ('/' if not qrbug.SERVICE_URL.endswith('/') else '') + 'thing={}'
 
 QR_GEN_STATIC_FILES_PATH = qrbug.STATIC_FILES_PATH
@@ -54,7 +55,11 @@ async def run(incidents: list[qrbug.Incident], request: qrbug.Request) -> Option
     user_ticket = request.query.get("ticket", "")
     TEMPLATE_CSS = (f'<style>\n{TEMPLATE_CSS_PATH.read_text()}\n</style>\n'
                     .replace('%cols%', default_cols)
-                    .replace('%rows%', default_rows))
+                    .replace('%rows%', default_rows)
+                    .replace('%qr_info_title_display%', 'none' if IS_WYSIWYG else 'block')
+                    .replace('%qr_side_text_display%',  'block' if IS_WYSIWYG else 'none')
+                    .replace('%qr_img_max_width%',      'var(--qr-width)' if IS_WYSIWYG else 'auto')
+                    )
     TEMPLATE_JS = f'<script>\n{TEMPLATE_JS_PATH.read_text()}\n</script>\n'
     TEMPLATE_QR_BLOCK = TEMPLATE_QR_BLOCK_PATH.read_text()
     await request.write(TEMPLATE_CSS)
