@@ -47,10 +47,18 @@ async def run(incidents: list[qrbug.Incident], request: qrbug.Request) -> Option
         default_rows = '4'
         default_cols = '4'
 
-    requested_thing = incident.thing
+    requested_things = [incident.thing]
+    additional_things = incident.active[0].comment.split(',')
+    if incident.active[0].comment:
+        requested_things.extend(qrbug.Thing[thing_id] for thing_id in additional_things)
 
-    if not requested_thing:
-        return qrbug.action_helpers.ActionReturnValue(error_msg=f"Thing {repr(requested_thing.id)} not found")
+    for i, requested_thing in enumerate(requested_things):
+        if not requested_thing:
+            if i == 0:
+                requested_thing_id = incident.thing_id
+            else:
+                requested_thing_id = additional_things[i - 1]
+            return qrbug.action_helpers.ActionReturnValue(error_msg=f"Thing {repr(requested_thing_id)} not found")
 
     user_ticket = request.query.get("ticket", "")
     TEMPLATE_CSS = (f'<style>\n{TEMPLATE_CSS_PATH.read_text()}\n</style>\n'
@@ -82,26 +90,27 @@ async def run(incidents: list[qrbug.Incident], request: qrbug.Request) -> Option
     #await request.write_newline(TEMPLATE_QR_CONFIG_BLOCK.read_text())
     await request.write_newline('<div class="qr_outer_block">')
 
-    for thing_id, depth in requested_thing.get_sorted_children_ids():
-        url = REPORT_THING_URL.format(thing_id)
-        img_base64 = await get_qr_code_b64_image(url)
+    for requested_thing in requested_things:
+        for thing_id, depth in requested_thing.get_sorted_children_ids():
+            url = REPORT_THING_URL.format(thing_id)
+            img_base64 = await get_qr_code_b64_image(url)
 
-        if depth == 0:
-            depth_class = 'root'
-        elif depth == 1:
-            depth_class = 'child'
-        else:
-            depth_class = 'descendant'
+            if depth == 0:
+                depth_class = 'root'
+            elif depth == 1:
+                depth_class = 'child'
+            else:
+                depth_class = 'descendant'
 
-        # Writes the HTML of the QR code
-        await request.write(TEMPLATE_QR_BLOCK.format(
-            qr_link     = get_qr_gen_link(thing_id, incident.failure_id, user_ticket),
-            thing_id    = thing_id,
-            url         = url,
-            img_format  = IMAGE_FORMAT.lower(),
-            img_b64     = img_base64.decode(),
-            depth_class = depth_class
-        ))
+            # Writes the HTML of the QR code
+            await request.write(TEMPLATE_QR_BLOCK.format(
+                qr_link     = get_qr_gen_link(thing_id, incident.failure_id, user_ticket),
+                thing_id    = thing_id,
+                url         = url,
+                img_format  = IMAGE_FORMAT.lower(),
+                img_b64     = img_base64.decode(),
+                depth_class = depth_class
+            ))
 
     await request.write('</div>\n')
 
