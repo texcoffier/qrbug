@@ -251,7 +251,9 @@ dispatcher_update('edit-failure', action_id='edit_failure', selector_id='edit-fa
 # Edit selector
 # ---------------
 failure_update('selector', value="Sélecteur d'incident", allowed="admin")
+failure_update('selector-expression', value="Expression", allowed="admin", display_type=Input)
 failure_add('edit', 'selector')
+failure_add('edit', 'selector-expression')
 
 action('edit_selector', 'edit_selector.py')
 selector('edit-selector', '{"class":"Failure", "test":"in_or_equal", "value": "selector"}')

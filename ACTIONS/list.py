@@ -170,8 +170,10 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
             texts.append('<tr><td>')
             texts.append(html.escape(selector.id))
             texts.append('</td><td>')
-            texts.append(html.escape(selector.expression))
+            texts.append(qrbug.element(qrbug.Failure['selector-expression'], selector, in_place=True))
+            # texts.append(html.escape(selector.expression))
             texts.append('</td></tr>')
+        texts = [qrbug.get_template().replace('%REPRESENTATION%', ''.join(texts))]
     else:
         for node in what.instances.values() if hasattr(what, 'instances') else what.active:
             try:
