@@ -150,6 +150,15 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
                 </tr>
                 ''')
         texts.append('</table>')
+    elif what is qrbug.Selector:
+        texts.append('<table>')
+        texts.append('<tr><th>ID</th><th>Expression</th></tr>')
+        for selector in what.instances.values():
+            texts.append('<tr><td>')
+            texts.append(html.escape(selector.id))
+            texts.append('</td><td>')
+            texts.append(html.escape(selector.expression))
+            texts.append('</td></tr>')
     else:
         for node in what.instances.values() if hasattr(what, 'instances') else what.active:
             try:
