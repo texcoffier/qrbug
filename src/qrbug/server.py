@@ -1,6 +1,7 @@
 import time
 import html
 import sys
+from io import BytesIO
 from pathlib import Path
 from typing import Optional
 
@@ -187,6 +188,14 @@ async def register_incident(request: qrbug.Request) -> web.StreamResponse:
     return request.response
 
 
+async def get_favicon(_request: web.Request) -> web.Response:
+    return web.Response(
+        status=200,
+        body=qrbug.FAVICON_PATH.read_bytes(),
+        content_type='image/ico'
+    )
+
+
 def parse_command_line_args(argv) -> tuple[str, int]:
     """
     Parses the command line args and returns them.
@@ -247,7 +256,8 @@ def init_server(argv = None) -> tuple[web.Application, str, int]:
     app = web.Application()
     app.add_routes([
         web.get('/{what:thing|concerned|dispatcher|failure|selector|user|action}={thing_id:[^{}?]+}', show_failures_tree_route),
-        web.get('/', register_incident)
+        web.get('/', register_incident),
+        web.get('/favicon.ico', get_favicon)
     ])
     if ENABLE_AUTHENTICATION:
         async def on_startup(_app):
