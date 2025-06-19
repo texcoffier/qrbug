@@ -124,9 +124,9 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
     elif what is qrbug.Action:
         action = qrbug.Failure['action-python_script']
         texts.append('<table>')
-        texts.append('<tr><th>Action<th>')
+        texts.append('<tr><th>Action</th><th>')
         texts.append(html.escape(action.value))
-        texts.append('</tr>')
+        texts.append('</th></tr>')
         for node in what.instances.values():
             texts.append('<tr><td>')
             texts.append(link_to_object('action', node.id))
