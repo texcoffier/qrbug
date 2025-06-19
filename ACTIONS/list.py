@@ -87,6 +87,19 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
                 go_in.indent = go_in.indent[:-4]
             go_in.indent = ''
             footer = '</table>'
+        elif what is qrbug.User:
+            texts.append('<table>')
+            texts.append('<tr><th>ID</th></tr>')
+            def go_in(user):
+                texts.append('<tr><td>')
+                texts.append(go_in.indent)
+                texts.append(html.escape(user.id))
+                texts.append('</td></tr>')
+                go_in.indent += '    '
+            def go_out(_node):
+                go_in.indent = go_in.indent[:-4]
+            go_in.indent = ''
+            footer = '</table>'
         else:
             def go_in(node):
                 texts.append(html.escape(node.dump()))
