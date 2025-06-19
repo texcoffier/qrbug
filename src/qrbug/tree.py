@@ -89,6 +89,17 @@ class Tree(qrbug.Editable):
             go_out(node)
         walk_(self)
 
+    async def walk_async(self, go_in, go_out):
+        done = set()
+        async def walk_(node):
+            await go_in(node)
+            if node.id not in done:
+                done.add(node.id)
+                for child_id in node.children_ids:
+                    await walk_(node.instances[child_id])
+            await go_out(node)
+        await walk_(self)
+
     @classmethod
     def roots(self):
         for node in self.instances.values():

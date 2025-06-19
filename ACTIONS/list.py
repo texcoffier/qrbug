@@ -25,40 +25,41 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
     incident = incidents[0]
 
     what = getattr(qrbug, incident.failure_id.split('-')[1])
-    texts = [f'<title>{incident.failure.value}</title><h1>{incident.failure.value}</h1>']
+    await request.write(f'<style>{qrbug.BASE_STYLE_TEMPLATE.read_text()}</style>')
+    await request.write(f'<title>{incident.failure.value}</title><h1>{incident.failure.value}</h1>')
 
     if issubclass(what, qrbug.Tree):
         if what is qrbug.Thing:
             thing_comment = qrbug.Failure['thing-comment']
-            texts.append(f'<p>Générer une feuille de QR codes : ')
-            texts.append(' '.join(
+            await request.write(f'<p>Générer une feuille de QR codes : ')
+            await request.write(' '.join(
                 f'<button onclick="qr(this)">{html.escape(failure.split("_")[-1])}</button>'
                 for failure in qrbug.Failure['generate_qr'].children_ids
             ))
-            texts.append(f'<p id="qr_code_gen_error_field"></p></p>')
-            texts.append('<table>')
-            texts.append('<tr><th>Objet<th>')
-            texts.append(html.escape(thing_comment.value))
-            texts.append('<th>En faire un QR code<th colspan="2">Active<br>Finished</tr>')
-            def go_in(node):
-                texts.append('<tr><td>')
-                texts.append(go_in.indent)
-                texts.append(link_to_object('thing', node.id))
-                texts.append('<td>')
-                texts.append(qrbug.element(thing_comment, node, in_place=True))
-                texts.append('<td>')
-                texts.append(f'<input type="checkbox" onclick="qr_select(this.checked, {repr(node.id)});" />')
-                texts.append('<td>')
+            await request.write(f'<p id="qr_code_gen_error_field"></p></p>')
+            await request.write('<table>')
+            await request.write('<tr><th>Objet<th>')
+            await request.write(html.escape(thing_comment.value))
+            await request.write('<th>En faire un QR code<th colspan="2">Active<br>Finished</tr>')
+            async def go_in(node):
+                await request.write('<tr><td>')
+                await request.write(go_in.indent)
+                await request.write(link_to_object('thing', node.id))
+                await request.write('<td>')
+                await request.write(qrbug.element(thing_comment, node, in_place=True))
+                await request.write('<td>')
+                await request.write(f'<input type="checkbox" onclick="qr_select(this.checked, {repr(node.id)});" />')
+                await request.write('<td>')
                 thing_incident = qrbug.Incident.instances.get(node.id, None)
                 if thing_incident:
-                    texts.append(link_to_active(node.id))
-                    texts.append('<td>')
-                    texts.append(link_to_finished(node.id))
+                    await request.write(link_to_active(node.id))
+                    await request.write('<td>')
+                    await request.write(link_to_finished(node.id))
                 else:
-                    texts.append('<td>')
-                texts.append('</tr>')
+                    await request.write('<td>')
+                await request.write('</tr>')
                 go_in.indent += '    '
-            def go_out(_node):
+            async def go_out(_node):
                 go_in.indent = go_in.indent[:-4]
             go_in.indent = ''
             footer = '</table>'
@@ -67,55 +68,54 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
             failure_ask_confirm = qrbug.Failure['failure-ask_confirm']
             failure_display = qrbug.Failure['failure-display_type']
             failure_allowed = qrbug.Failure['failure-allowed']
-            texts.append('<table>')
-            texts.append('<tr><th>Panne<th>Intitulé<th>Confirmation<th>Affichage<th>Autorisé pour</tr>')
-            def go_in(node):
-                texts.append('<tr><td>')
-                texts.append(go_in.indent)
-                texts.append(link_to_object('failure', node.id))
-                texts.append('<td>')
-                texts.append(qrbug.element(failure_value, node, in_place=True))
-                texts.append('<td>')
-                texts.append(qrbug.element(failure_ask_confirm, node, in_place=True))
-                texts.append('<td>')
-                texts.append(qrbug.element(failure_display, node, in_place=True))
-                texts.append('<td>')
-                texts.append(qrbug.element(failure_allowed, node, in_place=True))
-                texts.append('</tr>')
+            await request.write('<table>')
+            await request.write('<tr><th>Panne<th>Intitulé<th>Confirmation<th>Affichage<th>Autorisé pour</tr>')
+            async def go_in(node):
+                await request.write('<tr><td>')
+                await request.write(go_in.indent)
+                await request.write(link_to_object('failure', node.id))
+                await request.write('<td>')
+                await request.write(qrbug.element(failure_value, node, in_place=True))
+                await request.write('<td>')
+                await request.write(qrbug.element(failure_ask_confirm, node, in_place=True))
+                await request.write('<td>')
+                await request.write(qrbug.element(failure_display, node, in_place=True))
+                await request.write('<td>')
+                await request.write(qrbug.element(failure_allowed, node, in_place=True))
+                await request.write('</tr>')
                 go_in.indent += '    '
-            def go_out(_node):
+            async def go_out(_node):
                 go_in.indent = go_in.indent[:-4]
             go_in.indent = ''
             footer = '</table>'
         elif what is qrbug.User:
-            texts.append('<table>')
-            texts.append('<tr><th>ID</th></tr>')
-            def go_in(user):
-                texts.append('<tr><td>')
-                texts.append(go_in.indent)
-                texts.append(html.escape(user.id))
-                texts.append('</td></tr>')
+            await request.write('<table>')
+            await request.write('<tr><th>ID</th></tr>')
+            async def go_in(user):
+                await request.write('<tr><td>')
+                await request.write(go_in.indent)
+                await request.write(html.escape(user.id))
+                await request.write('</td></tr>')
                 go_in.indent += '    '
-            def go_out(_node):
+            async def go_out(_node):
                 go_in.indent = go_in.indent[:-4]
             go_in.indent = ''
             footer = '</table>'
         else:
-            def go_in(node):
-                texts.append(html.escape(node.dump()))
-                texts.append('<ul>')
-            def go_out(_node):
-                texts.append('</ul>')
+            async def go_in(node):
+                await request.write(html.escape(node.dump()))
+                await request.write('<ul>')
+            async def go_out(_node):
+                await request.write('</ul>')
             footer = ''
         for tree in what.roots():
-            tree.walk(go_in, go_out)
-        texts.append(footer)
-        texts = [qrbug.get_template().replace('%REPRESENTATION%', ''.join(texts))]
+            await tree.walk_async(go_in, go_out)
+        await request.write(footer)
     elif issubclass(what, qrbug.Concerned):
-        texts.append('<table border>')
+        await request.write('<table border>')
         concerned_add = qrbug.Failure['concerned-add']
         concerned_del = qrbug.Failure['concerned-del']
-        texts.append(f'''<tr>
+        await request.write(f'''<tr>
             <th>Le selecteur d'incident
             <th>Personne/groupe concernés
             <th>{html.escape(concerned_add.value)}
@@ -126,59 +126,55 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
                 f'<a href="user={user}?ticket={request.ticket}">{html.escape(user)}</a>'
                 for user in concerned.users
                 ]
-            texts.append(f'''<tr>
+            await request.write(f'''<tr>
             <td><a href="selector={selector_id}?ticket={request.ticket}">{html.escape(selector_id)}</a>
             <td>{' '.join(users)}
             <td>{qrbug.element(concerned_add, concerned, in_place=True)}
             <td>{qrbug.element(concerned_del, concerned, in_place=True)}
             </tr>''')
-        texts.append('</table>')
-        texts = [qrbug.get_template().replace('%REPRESENTATION%', ''.join(texts))]
+        await request.write('</table>')
     elif what is qrbug.Action:
         action = qrbug.Failure['action-python_script']
-        texts.append('<table>')
-        texts.append('<tr><th>Action</th><th>')
-        texts.append(html.escape(action.value))
-        texts.append('</th></tr>')
+        await request.write('<table>')
+        await request.write('<tr><th>Action</th><th>')
+        await request.write(html.escape(action.value))
+        await request.write('</th></tr>')
         for node in what.instances.values():
-            texts.append('<tr><td>')
-            texts.append(link_to_object('action', node.id))
-            texts.append('<td>')
-            texts.append(qrbug.element(action, node, in_place=True))
-            texts.append('</tr>')
-        texts.append('</table>')
-        texts = [qrbug.get_template().replace('%REPRESENTATION%', ''.join(texts))]
+            await request.write('<tr><td>')
+            await request.write(link_to_object('action', node.id))
+            await request.write('<td>')
+            await request.write(qrbug.element(action, node, in_place=True))
+            await request.write('</tr>')
+        await request.write('</table>')
     elif what is qrbug.Incident:
-        texts.append('<table border><tr><th>Objet<th>Actives<th>Réparés<th>Panne<th>Active<th>Réparées')
+        await request.write('<table border><tr><th>Objet<th>Actives<th>Réparés<th>Panne<th>Active<th>Réparées')
         for thing_id, failures in sorted(what.instances.items()):
-            texts.append(f'''<tr><td rowspan="{len(failures)}">
+            await request.write(f'''<tr><td rowspan="{len(failures)}">
             {link_to_object("thing", thing_id)}
             <td rowspan="{len(failures)}">{link_to_active(thing_id)}
             <td rowspan="{len(failures)}">{link_to_finished(thing_id) or "0"}''')
             prefix = ''
             for failure_id, failure in failures.items():
-                texts.append(f'''{prefix}<td>{link_to_object("failure", failure_id)}
+                await request.write(f'''{prefix}<td>{link_to_object("failure", failure_id)}
                 <td>{len(failure.active)}
                 <td>{len(failure.finished)}
                 </tr>
                 ''')
-        texts.append('</table>')
+        await request.write('</table>')
     elif what is qrbug.Selector:
-        texts.append('<table>')
-        texts.append('<tr><th>ID</th><th>Expression</th></tr>')
+        await request.write('<table>')
+        await request.write('<tr><th>ID</th><th>Expression</th></tr>')
         for selector in what.instances.values():
-            texts.append('<tr><td>')
-            texts.append(html.escape(selector.id))
-            texts.append('</td><td>')
-            texts.append(html.escape(selector.expression))
-            texts.append('</td></tr>')
+            await request.write('<tr><td>')
+            await request.write(html.escape(selector.id))
+            await request.write('</td><td>')
+            await request.write(html.escape(selector.expression))
+            await request.write('</td></tr>')
     else:
         for node in what.instances.values() if hasattr(what, 'instances') else what.active:
             try:
-                texts.append(html.escape(node.dump()) + '<br>')
+                await request.write(html.escape(node.dump()) + '<br>')
             except: # pylint: disabled=bare-except
-                texts.append(html.escape(str(node)) + '<br>')
-
-    await request.write(''.join(texts))
+                await request.write(html.escape(str(node)) + '<br>')
 
     return None

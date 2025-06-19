@@ -36,7 +36,7 @@ class Request(web.Request):
 
 def get_template():
     """The file containing JS helpers and style."""
-    return qrbug.REPORT_FAILURE_TEMPLATE.read_text()
+    return qrbug.REPORT_FAILURE_TEMPLATE.read_text().replace('%BASE_STYLE%', qrbug.BASE_STYLE_TEMPLATE.read_text())
 
 qrbug.get_template = get_template
 qrbug.Request = Request
