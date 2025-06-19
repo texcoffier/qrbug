@@ -1,0 +1,266 @@
+<style>
+    BODY {
+        font-family: sans-serif
+    }
+
+    TH,
+    TD {
+        vertical-align: top;
+        padding: 0.4em;
+    }
+
+    .phone {
+        background: #DFD;
+    }
+
+    .admin {
+        background: #FFC;
+    }
+
+    TABLE {
+        border-spacing: 0px
+    }
+
+    TABLE,
+    TH,
+    TD {
+        border: 1px solid #BBB
+    }
+
+    TD:first-child {
+        width: 30em;
+        text-align: justify;
+    }
+    TD:nth-child(2) {
+        width: 40em;
+        text-align: justify;
+    }
+</style>
+<table>
+    <tr>
+        <th>
+            <p>
+                <span class="phone">Demandeur</span> / Serveur / <span class="admin">Réparateur</span>
+            </p>
+        <th>
+            <p>
+                <a target="_blank" href="http://qrbug.univ-lyon1.fr:8080/thing=admin">Backoffice</a>
+            </p>
+    </tr>
+    <tr>
+        <td class="phone">
+            <p>
+                L'utilisateur scanne le QRCode.
+            </p>
+        <td>
+            <p>
+                <a target="_blank"
+                    href="http://qrbug.univ-lyon1.fr:8080/?what=thing&amp;thing-id=admin&amp;failure-id=list-Thing">
+                    Imprimer les QRCodes/
+                </a>
+            </p>
+    </tr>
+    <tr>
+        <td class="phone">
+            <p>
+                Le téléphone visite :
+                <tt>https:.../thing=ID</tt>
+            </p>
+        <td>
+    </tr>
+    <tr>
+        <td>
+            <p>
+                Génération de la liste des "pannes" possibles pour cet objet.
+                C'est la concaténation de plusieurs arbres de "pannes".
+            </p>
+        <td>
+            <p>
+                <a target="_blank"
+                    href="http://qrbug.univ-lyon1.fr:8080/?what=thing&amp;thing-id=admin&amp;failure-id=list-Failure">
+                    Création de l'arbre des "pannes"
+                </a> (il peut y avoir des "pannes" communes).
+            </p>
+            <p>
+                <a target="_blank"
+                    href="http://qrbug.univ-lyon1.fr:8080/?what=thing&amp;thing-id=admin&amp;failure-id=list-Thing">
+                    Ajouter/enlever des arbres de "pannes" à l'objet.
+                </a>
+            </p>
+
+    </tr>
+    <tr>
+        <td class="phone">
+            <p>
+                Affiche arbre des &quot;pannes&quot; :
+                <a target="_blank" href="http://qrbug.univ-lyon1.fr:8080/thing=b751pc0101.univ-lyon1.fr">une
+                    machine</a>,
+                <a target="_blank" href="http://qrbug.univ-lyon1.fr:8080/thing=DOUA Ariane TP01">une salle</a>, ...
+            </p>
+        <td>
+    </tr>
+    <tr>
+        <td class="phone">
+            <p>
+                L'utilisateur indique sa &quot;panne&quot;.<br>
+                <tt>https:.../?what=thing&amp;thing=ID&amp;failure_id=ID&amp;additional_info=...</tt>
+            </p>
+        <td>
+    </tr>
+    <tr>
+        <td class="phone">
+            <p>
+                Demande de confirmation possible.
+            </p>
+        <td>
+            <p>
+                <a target="_blank"
+                    href="http://qrbug.univ-lyon1.fr:8080/?what=thing&amp;thing-id=admin&amp;failure-id=list-Failure">
+                    Indiquer si la confirmation est nécessaire.
+                </a>
+            </p>
+    </tr>
+    <tr>
+        <td>
+            <p>
+                Si la &quot;panne&quot; nécessite une authentification,
+                redirige le navigateur web vers CAS.
+            </p>
+        <td>
+            <p>
+                <a target="_blank"
+                    href="http://qrbug.univ-lyon1.fr:8080/?what=thing&amp;thing-id=admin&amp;failure-id=list-Failure">
+                    Indiquer la valeur «Autorisé pour».
+                </a>
+            </p>
+            <p>
+                <a target="_blank"
+                    href="http://qrbug.univ-lyon1.fr:8080/?what=thing&amp;thing-id=admin&amp;failure-id=list-User">
+                    Modifier les groupes d'utilisateurs.
+                </a>
+            </p>
+    </tr>
+    <tr>
+        <td>
+            <p>
+                Vérifie que le selecteur «Autorisé pour» de la panne autorise l'exécution.
+            </p>
+        <td>
+            <p>
+                <a target="_blank"
+                    href="http://qrbug.univ-lyon1.fr:8080/?what=thing&amp;thing-id=admin&amp;failure-id=list-Selector">
+                    Modifier les sélecteurs
+                </a>
+            </p>
+    </tr>
+    <tr>
+        <td>
+            <p>
+                Enregistre l'incident dans le journal.
+            </p>
+        <td>
+    </tr>
+    <tr>
+        <td>
+            <p>
+                Le serveur parcourt tous les automatismes :
+            </p>
+            <ul>
+                <li>
+                    <p>
+                        Vérifie si la selecteur de l'automatisme autorise son exécution.
+                    </p>
+                </li>
+                <li>
+                    <p>
+                        Construit la liste des incidents à traiter,
+                        un seul dans le cas d'une déclaration de panne classique.
+                    </p>
+                </li>
+                <li>
+                    <p>
+                        Lance l'action en indiquant le déclencheur
+                        et la liste des incidents à traiter.
+                    </p>
+                </li>
+                <li>
+                    <p>
+                        Pour chaque incident traité l'action peut évaluer un sélecteur
+                        afin de déterminer quels réparateurs sont concernés par l'incident.
+                    </p>
+                </li>
+            </ul>
+            <p>
+                Un des automatismes fait le feedback de l'enregistrement de l'incident
+                sur le téléphone de la personne qui a flashé le QRCode.
+            </p>
+
+        <td>
+            <p>
+                <a target="_blank"
+                    href="http://qrbug.univ-lyon1.fr:8080/?what=thing&amp;thing-id=admin&amp;failure-id=list-Dispatcher">
+                    Modifier les automatismes
+                </a>
+            </p>
+            <p>
+                <a target="_blank"
+                    href="http://qrbug.univ-lyon1.fr:8080/?what=thing&amp;thing-id=admin&amp;failure-id=list-Action">
+                    Modifier les actions
+                </a>
+            </p>
+            <p>
+                <a target="_blank"
+                    href="http://qrbug.univ-lyon1.fr:8080/?what=thing&amp;thing-id=admin&amp;failure-id=list-Concerned">
+                    Modifier les personnes concernées par un incident
+                </a>
+            </p>
+    </tr>
+    <tr>
+        <td class="admin">
+            <p>
+                Le réparateur a reçu un résumé des pannes par mail.
+            </p>
+        <td>
+            <p>
+                <a href="http://qrbug.univ-lyon1.fr:8080/?thing-id=admin&failure-id=personnal-for-me">
+                    Les incidents que je dois traiter</a>
+            </p>
+    </tr>
+    <tr>
+        <td class="admin">
+            <p>
+                Le réparateur clique sur «C'est réparé»
+                pour clôturer tous les tickets déposés pour cette panne.
+            </p>
+        <td>
+            <p>
+                On peut ajouter un automatisme clôturant toutes les pannes
+                d'une salle ou d'un bâtiment, il n'y a rien à programmer.
+            </p>
+            <!--
+            <ul>
+                <li> Ajouter une panne room-fix au backoffice</li>
+                <li> Et un automatisme qui pour cette panne,
+                    appelle l'action clôturant les incidents
+                    filtrés en fonction de la salle demandée.
+                </li>
+                <li> La panne apparaîtra sur la page d'accueil du backoffice
+                    et il faudra saisir le nom de la salle.
+                </li>
+            </ul>
+            -->
+    </tr>
+    <tr>
+        <td>
+            <p>
+                Toutes les heures un incident «Heure» est déclenché.
+                Cela déclenche un automatisme qui prévient les utilisateurs
+                en leur indiquant les pannes qui ont été réparées.
+            </p>
+            <p>
+                On peut l'utiliser si les réparateurs veulent recevoir
+                la liste des incidents à traiter chaque matin.
+            </p>
+        <td>
+    </tr>
+</table>
