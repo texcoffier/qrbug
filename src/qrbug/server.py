@@ -125,6 +125,13 @@ async def register_incident(request: qrbug.Request) -> web.StreamResponse:
     request.write_newline = lambda *text: request.write('\n'.join(text))
     await request.response.prepare(request)
 
+    if failure.allowed != 'true':
+        # XXX The incident is recorded. It must not be
+        if not qrbug.Selector[failure.allowed].is_ok(current_incident, report=request.report):
+            await request.write("Vous n'êtes pas autorisé à déclarer cette panne")
+            await request.response.write_eof()
+            return request.response
+    
     # Dispatchers
     returned_html: dict[str, Optional[qrbug.action_helpers.ActionReturnValue]] = {}
     trace = ['<!-- ',
@@ -135,10 +142,6 @@ async def register_incident(request: qrbug.Request) -> web.StreamResponse:
     if not is_repaired_bool:
         for dispatcher in qrbug.Dispatcher.get_sorted_instances():
             trace.append(f' --><!-- {dispatcher.id}: ')
-            if failure.allowed != 'true':
-                if not qrbug.Selector[failure.allowed].is_ok(current_incident, report=request.report):
-                    continue
-            trace.append(' allowed')
             returned_html[dispatcher.id] = await dispatcher.run(current_incident, request, trace)
     trace.append('-->')
     await request.write(''.join(trace))
