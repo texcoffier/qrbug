@@ -71,8 +71,6 @@ This Thing becomes a part of the equipment monitored by QRbug.
 To create/update a thing, you can use the following method : `thing_update(thing_id, comment)`  
 Each of these parameters *(besides `thing_id`)* is optional if you want to modify a thing.
 
-- **Location** (string) : Where this Thing is on your grounds. _Example : "Building C, Floor 4, Room 408"_
-  - Please note this is simply a hint for the maintenance people repairing the incident, and serves no purpose to QRbug by itself.
 - **Failure ID** (FailureID) : The root failure for which failures can be presented for this thing.
   - The children of this failure should represent _how_ this Thing should fail.
 - **Comment** (string) : Just a comment about this thing for the maintenance people.
@@ -93,9 +91,10 @@ A selector is a filter that can be used by Dispatchers (see later) to know which
 You can create/update a selector with the following method : `selector(selector_id, expression)`
 
 - **Expression** (string) : A Python expression that evaluates to a boolean (whether the dispatcher can run). The following variables are accessible in this expression :
-  - `user` : An instance of the User class. The User who declared this incident belongs to this group.
-  - `thing` : An instance of the Thing class. Represents the Thing that the incident happened on.
-  - `failure` : An instance of the Failure class. Represents the Failure that was reported in the incident.
+  - `incident` : The incident to check, and so the Thing and the Failure.
+  - `source` : The incident that triggered the dispatcher.
+  - `report` : The report that triggered the dispatcher.
+  - `qrbug` : To have access to useful functions and data.
 
 #### Action
 An Action is a piece of code that runs when a dispatcher (see later) calls it.
@@ -116,10 +115,14 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
 - The `run` function is the entry point of your program, and will be awaited when called.
   - Its `incidents` parameter is the list of incident to process.
   - The `request` parameter corresponds to the aiohttp request the user made to the server to register the incident
+      - `request.incident` to get the triggering incident.
+      - `request.report` to get the triggering report.
+      - `request.ticket` to get the session ticket.
 - To send HTML back to the webpage displayed after your action is called, use the following code :
 ```py
 await request.write("my_html_string")
 ```
+
 - To send data back to the program, return #TODO: TO UPDATE
 
 #### Dispatcher
