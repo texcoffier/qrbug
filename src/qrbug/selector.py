@@ -90,6 +90,9 @@ class Selector(qrbug.Editable):
     def __class_getitem__(cls, selector_id: str) -> Optional["Selector"]:
         return cls.instances.get(selector_id, None)
 
+    def dump(self):
+        return f"Selector(id:{repr(self.id)}, expr:{repr(self.expression)})"
+
 
 def selector(selector_id: str, expression: str) -> Selector:
     return Selector(selector_id, expression)
