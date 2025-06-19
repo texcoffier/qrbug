@@ -32,7 +32,10 @@ def element(failure: "Failure", thing, in_place=False):
     value = ''
     if failure.inside('edit') and '-' in failure.id:
         attr = getattr(thing, failure.id.split('-', 1)[1], None)
-        value = html.escape(str(attr))
+        if attr is None:
+            value = ''
+        else:
+            value = html.escape(str(attr))
     in_place = int(in_place)
     if display_type == DisplayTypes.boolean:
         element = f'<select {common} class="button" onchange="register_incident(this,{in_place})"><option value="False">Non</option><option value="True">Oui</option></select></div>'
