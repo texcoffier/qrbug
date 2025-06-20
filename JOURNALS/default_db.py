@@ -225,9 +225,11 @@ dispatcher_update('edit-concerned', action_id='edit_concerned', selector_id='edi
 failure_update('dispatcher', value="Les dispatchers", allowed="admin")
 failure_update('dispatcher-action_id', value="ID de l'action lancée", allowed="admin", display_type=Input)
 failure_update('dispatcher-selector_id', value="ID du sélecteur", allowed="admin", display_type=Input)
+failure_update('dispatcher-incidents', value="ID du sélecteur d'incidents", allowed="admin", display_type=Input)
 failure_add('edit', 'dispatcher')
 failure_add('dispatcher', 'dispatcher-action_id')
 failure_add('dispatcher', 'dispatcher-selector_id')
+failure_add('dispatcher', 'dispatcher-incidents')
 
 action('edit_dispatcher', 'edit_dispatcher.py')
 selector('edit-dispatcher', '{"class":"Failure", "test":"in_or_equal", "value": "dispatcher"}')

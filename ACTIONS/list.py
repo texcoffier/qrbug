@@ -104,16 +104,19 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
             texts.append('<table>')
             texts.append(
                 f'<tr><th>ID</th>'
-                f'<th>{qrbug.Failure["dispatcher-action_id"].value}</th>'
-                f'<th>{qrbug.Failure["dispatcher-selector_id"].value}</th></tr>'
+                f'<th>{qrbug.Failure["dispatcher-selector_id"].value}</th>'
+                f'<th>{qrbug.Failure["dispatcher-incidents"].value}</th>'
+                f'<th>{qrbug.Failure["dispatcher-action_id"].value}</th></tr>'
             )
             def go_in(dispatcher):
                 texts.append('<tr><td>')
                 texts.append(html.escape(dispatcher.id))
                 texts.append('</td><td>')
-                texts.append(qrbug.element(qrbug.Failure['dispatcher-action_id'], dispatcher, in_place=True))
-                texts.append('</td><td>')
                 texts.append(qrbug.element(qrbug.Failure['dispatcher-selector_id'], dispatcher, in_place=True))
+                texts.append('</td><td>')
+                texts.append(qrbug.element(qrbug.Failure['dispatcher-incidents'], dispatcher, in_place=True))
+                texts.append('</td><td>')
+                texts.append(qrbug.element(qrbug.Failure['dispatcher-action_id'], dispatcher, in_place=True))
                 texts.append('</td></tr>')
             def go_out(_node):
                 pass
