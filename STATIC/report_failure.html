@@ -169,7 +169,8 @@
             let failure = 'generate_qr_' + element.textContent;
             window.location = '?thing-id=' + encodeURIComponent(selected_things_for_qr[0])
                 + '&failure-id=' + encodeURIComponent(failure)
-                + '&additional-info=' + encodeURIComponent(selected_things_for_qr.slice(1).join(','));
+                + '&additional-info=' + encodeURIComponent(selected_things_for_qr.slice(1).join(','))
+                + '&secret=' + secret;
         }
 
         function qr_select(checked, thing_id) {
