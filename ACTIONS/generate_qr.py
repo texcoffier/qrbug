@@ -21,8 +21,8 @@ TEMPLATE_QR_INFOS_BLOCK = QR_GEN_STATIC_FILES_PATH / 'qr_infos_block.html'
 TEMPLATE_QR_PARENT_LINKS = QR_GEN_STATIC_FILES_PATH / 'qr_parent_links.html'
 
 
-def get_qr_gen_link(thing_id: qrbug.ThingId, failure_id, ticket: str) -> str:
-    return f'/?thing-id={thing_id}&failure-id={failure_id}&ticket={ticket}'
+def get_qr_gen_link(thing_id: qrbug.ThingId, failure_id, secret: str) -> str:
+    return f'/?thing-id={thing_id}&failure-id={failure_id}&secret={secret}'
 
 # Run by a dispatcher:
 #    thing: building, room, pc...
@@ -60,7 +60,6 @@ async def run(incidents: list[qrbug.Incident], request: qrbug.Request) -> Option
                 requested_thing_id = additional_things[i - 1]
             return qrbug.action_helpers.ActionReturnValue(error_msg=f"Thing {repr(requested_thing_id)} not found")
 
-    user_ticket = request.query.get("ticket", "")
     TEMPLATE_CSS = (f'<style>\n{TEMPLATE_CSS_PATH.read_text()}\n</style>\n'
                     .replace('%cols%', default_cols)
                     .replace('%rows%', default_rows)
@@ -104,7 +103,7 @@ async def run(incidents: list[qrbug.Incident], request: qrbug.Request) -> Option
 
             # Writes the HTML of the QR code
             await request.write(TEMPLATE_QR_BLOCK.format(
-                qr_link     = get_qr_gen_link(thing_id, incident.failure_id, user_ticket),
+                qr_link     = get_qr_gen_link(thing_id, incident.failure_id, request.secret.secret),
                 thing_id    = thing_id,
                 url         = url,
                 img_format  = IMAGE_FORMAT.lower(),

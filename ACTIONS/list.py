@@ -110,7 +110,7 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
         for tree in what.roots():
             tree.walk(go_in, go_out)
         texts.append(footer)
-        texts = [qrbug.get_template().replace('%REPRESENTATION%', ''.join(texts))]
+        texts = [qrbug.get_template(request).replace('%REPRESENTATION%', ''.join(texts))]
     elif issubclass(what, qrbug.Concerned):
         texts.append('<table border>')
         concerned_add = qrbug.Failure['concerned-add']
@@ -123,17 +123,17 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
             </tr>''')
         for selector_id, concerned in what.instances.items():
             users = [
-                f'<a href="user={user}?ticket={request.ticket}">{html.escape(user)}</a>'
+                f'<a href="user={user}?secret={request.secret.secret}">{html.escape(user)}</a>'
                 for user in concerned.users
                 ]
             texts.append(f'''<tr>
-            <td><a href="selector={selector_id}?ticket={request.ticket}">{html.escape(selector_id)}</a>
+            <td><a href="selector={selector_id}?secret={request.secret.secret}">{html.escape(selector_id)}</a>
             <td>{' '.join(users)}
             <td>{qrbug.element(concerned_add, concerned, in_place=True)}
             <td>{qrbug.element(concerned_del, concerned, in_place=True)}
             </tr>''')
         texts.append('</table>')
-        texts = [qrbug.get_template().replace('%REPRESENTATION%', ''.join(texts))]
+        texts = [qrbug.get_template(request).replace('%REPRESENTATION%', ''.join(texts))]
     elif what is qrbug.Action:
         action = qrbug.Failure['action-python_script']
         texts.append('<table>')
@@ -147,7 +147,7 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
             texts.append(qrbug.element(action, node, in_place=True))
             texts.append('</tr>')
         texts.append('</table>')
-        texts = [qrbug.get_template().replace('%REPRESENTATION%', ''.join(texts))]
+        texts = [qrbug.get_template(request).replace('%REPRESENTATION%', ''.join(texts))]
     elif what is qrbug.Incident:
         texts.append('<table border><tr><th>Objet<th>Actives<th>Réparés<th>Panne<th>Active<th>Réparées')
         for thing_id, failures in sorted(what.instances.items()):
@@ -173,7 +173,7 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
             texts.append(qrbug.element(qrbug.Failure['selector-expression'], selector, in_place=True))
             # texts.append(html.escape(selector.expression))
             texts.append('</td></tr>')
-        texts = [qrbug.get_template().replace('%REPRESENTATION%', ''.join(texts))]
+        texts = [qrbug.get_template(request).replace('%REPRESENTATION%', ''.join(texts))]
     else:
         for node in what.instances.values() if hasattr(what, 'instances') else what.active:
             try:

@@ -19,14 +19,14 @@ class Thing(qrbug.Tree):
     def _local_dump(self) -> str:
         return f'failures:{self.failure_ids} comment:{repr(self.comment)}'
 
-    def get_failures(self, as_html: bool = True) -> str:
+    def get_failures(self, secret = 0, as_html: bool = True) -> str:
         """
         Returns the representation of the failure of the given thing, as HTML or raw text.
         :param as_html: If True, return an HTML representation of the failure. Otherwise, returns as raw text.
         """
         # Gets the failure for this thing
         if not self.failure_ids:
-            return f"""Il n'est possible de déclarer de panne pour
+            return f"""Il n'est pas possible de déclarer de panne pour
             <ul>
             <li> Identifiant : «{self.id}»
             <li> Commentaire : «{self.comment}»
@@ -37,7 +37,7 @@ class Thing(qrbug.Tree):
         for failure_id in self.failure_ids:
             failure = qrbug.Failure[failure_id]
             if as_html:
-                texts.append(failure.get_hierarchy_representation_html(self, use_template=False, done=done))
+                texts.append(failure.get_hierarchy_representation_html(self, secret, use_template=False, done=done))
             else:
                 texts.append(failure.get_hierarchy_representation(done))
         if as_html:

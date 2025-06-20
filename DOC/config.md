@@ -117,7 +117,7 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
   - The `request` parameter corresponds to the aiohttp request the user made to the server to register the incident
       - `request.incident` to get the triggering incident.
       - `request.report` to get the triggering report.
-      - `request.ticket` to get the session ticket.
+      - `request.secret.secret` to get the session ticket.
 - To send HTML back to the webpage displayed after your action is called, use the following code :
 ```py
 await request.write("my_html_string")

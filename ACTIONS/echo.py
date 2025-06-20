@@ -35,18 +35,17 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
         <title>Incidents %s</title>
         <h1>Liste d'incidents (%s)</h1>
         <table>''' % (request.incident.failure_id, request.incident.failure_id))
-    ticket = getattr(request, 'ticket', '')
     for incident in incidents:
         thing = urllib.parse.quote(incident.thing_id)
         failure = urllib.parse.quote(incident.failure_id)
         pending_feedbacks = incident.pending_feedback.get((incident.thing_id, incident.failure_id), ())
         if incident.active:
             fix = f'''<button onclick="fix(this)"
-            url="?thing-id={thing}&failure-id={failure}&is-repaired=1&ticket={ticket}"
+            url="?thing-id={thing}&failure-id={failure}&is-repaired=1&secret={request.secret.secret}"
             >C'est réparé</button>'''
         elif pending_feedbacks:
             fix = f'''<button onclick="fix(this)"
-            url="?thing-id={thing}&failure-id={failure}&is-repaired=1&ticket={ticket}"
+            url="?thing-id={thing}&failure-id={failure}&is-repaired=1&secret={request.secret.secret}"
             >Prévenir les utilisateurs que c'est réparé</button>
             '''
         else:

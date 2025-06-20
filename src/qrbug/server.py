@@ -1,7 +1,7 @@
 import time
 import html
 import sys
-from io import BytesIO
+import random
 from pathlib import Path
 from typing import Optional
 
@@ -41,54 +41,61 @@ async def show_failures_tree_route(request: qrbug.Request) -> web.Response:
     """
     Returns the webpage listing the failure hierarchy for the given thing.
     """
+    print(request.path_qs)
     what: Optional[str] = request.match_info.get("what", None)
     thing_id: Optional[str] = request.match_info.get('thing_id', None)
+    secret: Optional[str] = request.query.get('secret', None)
     if thing_id is None:
         return web.Response(status=404, text="No thing ID provided")
     requested_thing = WHAT[what][thing_id]
     if requested_thing is None:
         return web.Response(status=404, text="Requested Thing does not exist")
 
+    request.secret = qrbug.update_secret(secret)
     request.write = lambda text: request.response.write(text.encode('utf-8'))
-
-    # Creates the CAS login
-    if ENABLE_AUTHENTICATION:
-        user_login = await qrbug.handle_login(request, f'{what}={thing_id}')
-        if user_login is None:
-            return web.Response(status=403, text="Login ticket invalid")
-    return web.Response(status=200, text=requested_thing.get_failures(), content_type='text/html')
+    return web.Response(status=200, text=requested_thing.get_failures(request.secret), content_type='text/html')
 
 
 async def register_incident(request: qrbug.Request) -> web.StreamResponse:
     """
     Registers an incident into the logs, then shows the user that the incident has been registered.
     """
+    print(request.path_qs)
     what: Optional[str] = request.query.get("what", 'thing')
     thing_id: Optional[str] = request.query.get("thing-id", None)
     failure_id: Optional[str] = request.query.get("failure-id", None)
     is_repaired: Optional[str] = request.query.get("is-repaired", '0')
+    secret: Optional[str] = request.query.get("secret", None)
     additional_info: Optional[str] = request.query.get("additional-info", '')
 
+    secret = qrbug.check_secret(secret)
+    if ENABLE_AUTHENTICATION:
+        if not secret:
+            return web.Response(status=404,
+                text="Votre session a expiré, rechargez la page listant les pannes.")
+    else:
+        if not secret:
+            secret = qrbug.update_secret('unittest_secret')
+            secret.login = 'ROOT'
+
     if thing_id is None:
-        return web.Response(status=404, text=f"thing_id is undefined")
+        return web.Response(status=404, text="thing_id is undefined")
     if failure_id is None:
-        return web.Response(status=404, text=f"failure_id is undefined")
+        return web.Response(status=404, text="failure_id is undefined")
 
     # Checks for existence
     failure = qrbug.Failure[failure_id]
     if failure is None:
-        return web.Response(status=404, text=f"Failure does not exist")
+        return web.Response(status=404, text="Failure does not exist")
 
     if not WHAT[what][thing_id]:
         return web.Response(status=404, text=f"{what}[{thing_id}] does not exist")
 
     # Cas authentication
-    user_token = request.query.get("token", None)
     user_login = ''
     if ENABLE_AUTHENTICATION:
         if failure.allowed != 'true':  # Only authenticate if failure requires it
-            if user_token is not None:
-                user_login = qrbug.get_login_from_token(user_token, request.remote)
+            user_login = await qrbug.get_login(secret.secret, request.query, request.path_qs)
             if not user_login:
                 query_variables = {
                     'what': what,
@@ -96,15 +103,16 @@ async def register_incident(request: qrbug.Request) -> web.StreamResponse:
                     'failure_id': failure_id,
                     'is_repaired': is_repaired,
                     'additional_info': additional_info,
+                    'secret': secret.secret
                 }
+                # REDIRECT CAS
                 params = '&'.join(f'{name.replace("_", "-")}={value}'
                                   for name, value in query_variables.items())
-                user_login = await qrbug.handle_login(request, f'?{params}')
-                if user_login is None:
-                    return web.Response(status=403, text="Login ticket invalid")
+                qrbug.redirect(f'?{params}')
+                raise Exception("Redirection failed")
     else:
         user_login = 'ROOT' # For tests
-
+        secret.login = user_login
     is_repaired_bool: bool = is_repaired == '1'
     user_ip = request.remote
 
@@ -117,7 +125,7 @@ async def register_incident(request: qrbug.Request) -> web.StreamResponse:
         request.incident = current_incident
 
     # Starts preparing the response
-    request.ticket = request.query.get('ticket', None)
+    request.secret = secret
     request.response = web.StreamResponse(
         status=200,
         headers={'Content-Type': 'text/html; charset=utf-8'},
@@ -206,6 +214,7 @@ def parse_command_line_args(argv) -> tuple[str, int]:
 
     if '--test' in args:  # The --test flag allows for serialized testing with test.sh
         global ENABLE_AUTHENTICATION
+        ENABLE_AUTHENTICATION = False
 
         qrbug.DB_FILE_PATH = Path('TESTS/xxx-db.py')
         if '--testload' in args:
@@ -214,7 +223,6 @@ def parse_command_line_args(argv) -> tuple[str, int]:
         else:
             qrbug.DB_FILE_PATH.write_bytes(Path('TESTS/test_server_db.conf').read_bytes())
         qrbug.INCIDENTS_FILE_PATH = Path('TESTS/xxx-incidents.py')
-        ENABLE_AUTHENTICATION = False
         args.remove('--test')
 
     if '--profile' in sys.argv:
@@ -277,6 +285,7 @@ def get_server(argv: list = None) -> web.Application:
     return init_server(argv)[0]
 
 def main():
+    random.seed()
     server, host, port = init_server(sys.argv)
     web.run_app(server, host=host, port=port)
 

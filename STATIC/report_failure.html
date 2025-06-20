@@ -105,15 +105,10 @@
         function register_incident(element, in_place) {
             while ( ! element.getAttribute('thingid') )
                 element = element.parentNode;
-            let ticket = location.search.toString().split('ticket=')[1]
-            if(ticket)
-                ticket = '&ticket=' + ticket.split('&')[0];
-            else
-                ticket = '';
             let url = '/?thing-id=' + element.getAttribute('thingid')
                 + '&failure-id=' + element.getAttribute('failureid')
                 + '&what=' + element.getAttribute('what')
-                + ticket
+                + '&secret=' + secret
                 ;
             let input = document.getElementById('input')
                 || (element.tagName == 'INPUT' ? element : undefined)

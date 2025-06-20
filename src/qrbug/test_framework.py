@@ -50,6 +50,7 @@ class Request:
                 failure_id = 'Fake Failure ID'
             incident = FakeIncident
         self.incident = incident
+        self.secret = qrbug.update_secret('unittest_secret')
 
 qrbug.TestCase = TestCase
 qrbug.Request = Request

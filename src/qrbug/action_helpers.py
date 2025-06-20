@@ -34,9 +34,12 @@ class Request(web.Request):
         """ Streams the given text to the web page, and places a newline between each element """
         await self.write('\n'.join(text))
 
-def get_template():
+def get_template(request=None):
     """The file containing JS helpers and style."""
-    return qrbug.REPORT_FAILURE_TEMPLATE.read_text()
+    template = qrbug.REPORT_FAILURE_TEMPLATE.read_text()
+    if request:
+        template += f'<script>var secret="{request.secret.secret}";</script>'
+    return template
 
 qrbug.get_template = get_template
 qrbug.Request = Request
