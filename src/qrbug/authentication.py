@@ -89,6 +89,7 @@ class Secret:
 qrbug.update_secret = Secret.update_secret
 qrbug.check_secret = Secret.get
 qrbug.get_login = Secret.get_login
+qrbug.Secret = Secret
 
 def redirect(extra_url: str = '') -> Optional[str]:
     raise web.HTTPTemporaryRedirect(redirect_url(extra_url))
