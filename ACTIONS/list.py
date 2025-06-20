@@ -100,6 +100,24 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
                 go_in.indent = go_in.indent[:-4]
             go_in.indent = ''
             footer = '</table>'
+        elif what is qrbug.Dispatcher:
+            texts.append('<table>')
+            texts.append(
+                f'<tr><th>ID</th>'
+                f'<th>{qrbug.Failure["dispatcher-action_id"].value}</th>'
+                f'<th>{qrbug.Failure["dispatcher-selector_id"].value}</th></tr>'
+            )
+            def go_in(dispatcher):
+                texts.append('<tr><td>')
+                texts.append(html.escape(dispatcher.id))
+                texts.append('</td><td>')
+                texts.append(qrbug.element(qrbug.Failure['dispatcher-action_id'], dispatcher, in_place=True))
+                texts.append('</td><td>')
+                texts.append(qrbug.element(qrbug.Failure['dispatcher-selector_id'], dispatcher, in_place=True))
+                texts.append('</td></tr>')
+            def go_out(_node):
+                pass
+            footer = '</table>'
         else:
             def go_in(node):
                 texts.append(html.escape(node.dump()))
