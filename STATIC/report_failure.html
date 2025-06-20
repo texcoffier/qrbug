@@ -188,4 +188,12 @@
 
 <body>
     %REPRESENTATION%
+
+    <script defer>
+        for (const checkbox of document.querySelectorAll('.qr_thing_checkboxes')) {
+            if (checkbox.checked) {
+                selected_things_for_qr.push(checkbox.id.replace('qr_thing_checkbox_', ''));
+            }
+        }
+    </script>
 </body>

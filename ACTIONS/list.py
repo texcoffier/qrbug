@@ -42,7 +42,7 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
             texts.append('<th colspan="2">Active<br>Finished</tr>')
             def go_in(node):
                 texts.append('<tr><td>')
-                texts.append(f'<input type="checkbox" onclick="qr_select(this.checked, {repr(node.id)});" />')
+                texts.append(f'<input type="checkbox" class="qr_thing_checkboxes" id="qr_thing_checkbox_{node.id}" onclick="qr_select(this.checked, {repr(node.id)});" />')
                 texts.append('<td>')
                 texts.append(go_in.indent)
                 texts.append(link_to_object('thing', node.id))
