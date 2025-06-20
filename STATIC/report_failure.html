@@ -124,6 +124,9 @@
                 iframe = document.createElement('IFRAME');
                 iframe.src = url;
                 element.parentNode.appendChild(iframe);
+                setTimeout(() => {
+                    iframe.remove();
+                }, 3000);
             } else {
                 window.location = url;
             }
