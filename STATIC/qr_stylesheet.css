@@ -4,14 +4,15 @@
     --columns: %cols%;
     --rows: %rows%;
     --size-safety-net: 1mm;
+    --page-margins: 0.25cm;
 
     --default-font-size: 1.1rem;
 
     --page-format: A4;
     --page-orientation: portrait;
 
-    --qr-width: calc(var(--page-size-horizontal) / var(--columns) - var(--size-safety-net));
-    --qr-height: calc(var(--page-size-vertical) / var(--rows) - var(--size-safety-net));
+    --qr-width: calc((var(--page-size-horizontal) - var(--page-margins)) / var(--columns) - var(--size-safety-net));
+    --qr-height: calc((var(--page-size-vertical) - var(--page-margins)) / var(--rows) - var(--size-safety-net));
 }
 
 @media print {
@@ -37,7 +38,7 @@
 
 @page {
     size: var(--page-format) var(--page-orientation);
-    margin: 0;
+    margin: var(--page-margins);
 }
 
 html, body {
