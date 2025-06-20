@@ -1,5 +1,5 @@
 import enum
-from typing import Generator, Optional, List
+from typing import Generator, Optional, List, Callable
 from io import StringIO
 
 import qrbug
@@ -78,13 +78,13 @@ class Tree(qrbug.Editable):
         yield self.id, 0
         yield from add_child_to_list(self)
 
-    def walk(self, go_in, go_out):
+    def walk(self, go_in: Callable[["Tree"], None], go_out: Callable[["Tree"], None], do_sort: bool = False):
         done = set()
         def walk_(node):
             go_in(node)
             if node.id not in done:
                 done.add(node.id)
-                for child_id in node.children_ids:
+                for child_id in (node.children_ids if not do_sort else sorted(node.children_ids)):
                     walk_(node.instances[child_id])
             go_out(node)
         walk_(self)

@@ -129,7 +129,7 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
                 texts.append('</ul>')
             footer = ''
         for tree in what.roots():
-            tree.walk(go_in, go_out)
+            tree.walk(go_in, go_out, do_sort=True)
         texts.append(footer)
         texts = [qrbug.get_template(request).replace('%REPRESENTATION%', ''.join(texts))]
     elif issubclass(what, qrbug.Concerned):
@@ -142,7 +142,7 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
             <th>{html.escape(concerned_add.value)}
             <th>{html.escape(concerned_del.value)}
             </tr>''')
-        for selector_id, concerned in what.instances.items():
+        for selector_id, concerned in sorted(what.instances.items(), key=lambda e: e[0]):
             users = [
                 f'<a href="user={user}?secret={request.secret.secret}">{html.escape(user)}</a>'
                 for user in concerned.users
@@ -161,7 +161,7 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
         texts.append('<tr><th>Action</th><th>')
         texts.append(html.escape(action.value))
         texts.append('</th></tr>')
-        for node in what.instances.values():
+        for node in sorted(what.instances.values(), key=lambda e: e.id):
             texts.append('<tr><td>')
             texts.append(link_to_object('action', node.id))
             texts.append('<td>')
@@ -187,7 +187,7 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
     elif what is qrbug.Selector:
         texts.append('<table>')
         texts.append('<tr><th>ID</th><th>Expression</th></tr>')
-        for selector in what.instances.values():
+        for selector in sorted(what.instances.values(), key=lambda e: e.id):
             texts.append('<tr><td>')
             texts.append(html.escape(selector.id))
             texts.append('</td><td>')
