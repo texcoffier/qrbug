@@ -14,7 +14,7 @@ action('echo'            ,'echo.py')              # Display incidents in user fr
 selector('true'     , '{"class":"Thing"     , "test":"true"}')
 selector('admin'    , '{"class":"User"      , "test":"in"    , "value": "admin"}')
 selector('system'   , '{"class":"SourceUser", "test":"inside", "value": "system"}')
-selector('active'   , '{                    , "test":"active"}')
+selector('active'   , '[1, {"test":"active"}, {"class":"Selector", "attr": "is_ok", "test":"false", "id":"backoffice"}]', )
 selector('for-me'   , '[1, {"test": "active"}, {"class":"SourceUser", "test":"is_for_user"}]')
 selector('for-thing', '{                      "test":"is_for_thing"}')
 selector('for-thing-active', '[1, {"test": "active"}, {"test":"is_for_thing"}]')
@@ -163,23 +163,30 @@ failure_update('misc'                 , value="Divers"                          
 failure_update('pending-feedback'     , value="Feedbacks de réparation en attente", allowed="admin", display_type=Button)
 failure_update('send-pending-feedback', value="Envoie le feedback de réparation"  , allowed="admin", display_type=Button)
 failure_update('stats'                , value="Statistiques"                      , allowed="admin", display_type=Button)
+failure_update('report-mail'          , value="Envoie mails de rappel à tous"     , allowed="admin", display_type=Button)
 
 failure_add('misc', 'pending-feedback')
 failure_add('misc', 'send-pending-feedback')
 failure_add('misc', 'stats')
+failure_add('misc', 'report-mail')
 failure_add('top', 'misc')
 
 action('pending_feedback', 'pending_feedback.py')  # Send user feedback for failure fix
 action('stats'           , 'stats.py'           )  # Send user feedback for failure fix
+action('report_mail'     , 'report_mail.py'     )  # Send mail to remind every active incident
 
 selector('pending-feedback'     ,'{"class":"Failure", "test":"is", "value": "pending-feedback"}')
 selector('send-pending-feedback','[0, {"class":"Failure", "test":"in", "value": "hours"}, {"class":"Failure", "test":"is", "value": "send-pending-feedback"}]')
 selector('with-pending-feedback', '[1, {"test": "pending_feedback"}, {"class":"Selector", "id": "backoffice", "attr": "is_ok", "test": "false"}]')
 selector('stats'                ,'{"class":"Failure", "test":"is", "value": "stats"}')
+selector('report-mail'          ,'{"class":"Failure", "test":"is", "value": "report-mail"}')
 
 dispatcher_update('pending-feedback'     , action_id='echo'            , selector_id='pending-feedback'     , incidents="with-pending-feedback")
 dispatcher_update('send-pending-feedback', action_id='pending_feedback', selector_id='send-pending-feedback', incidents="with-pending-feedback")
 dispatcher_update('stats'                , action_id='stats'           , selector_id='stats')
+
+
+dispatcher_update('report_mail', action_id='report_mail', selector_id='report-mail', incidents='active')
 
 #------------------------------------------------------------------------------
 # Backoffice / personnal
