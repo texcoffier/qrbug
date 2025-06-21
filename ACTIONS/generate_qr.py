@@ -9,7 +9,7 @@ import qrbug
 
 IMAGE_FORMAT = 'PNG'
 IS_WYSIWYG = True
-REPORT_THING_URL = qrbug.SERVICE_URL + ('/' if not qrbug.SERVICE_URL.endswith('/') else '') + 'thing={}'
+REPORT_THING_URL = qrbug.SERVICE_URL + '/thing={}'
 
 QR_GEN_STATIC_FILES_PATH = qrbug.STATIC_FILES_PATH
 TEMPLATE_CSS_PATH = QR_GEN_STATIC_FILES_PATH / 'qr_stylesheet.css'

@@ -6,19 +6,28 @@ import qrbug
 # SETTINGS
 TOKEN_LOGIN_TIMEOUT = 60
 CAS_URL = 'https://cas.univ-lyon1.fr/cas'
-SERVICE_URL = 'http://qrbug.univ-lyon1.fr:8080/'
+SERVICE_URL = 'http://qrbug.univ-lyon1.fr:8080'
 HOST = 'localhost'
 PORT = 8080
+SMTP_SERVER = ['smtp1.your.domain', 'smtp2.your.domain']
+SMTP_DEFAULT_SENDER = 'do-not-reply@nowhere.in.the.world'
+DEFAULT_EMAIL_TO = 'do-not-reply@nowhere.in.the.world' # if unknown recipient
 
 try:
     from settings import *
 except ModuleNotFoundError:
     print("«src/qrbug/settings.py» not found, use default values")
+print()
 print(f"TOKEN_LOGIN_TIMEOUT: {TOKEN_LOGIN_TIMEOUT}")
 print(f"            CAS_URL: {CAS_URL}")
 print(f"        SERVICE_URL: {SERVICE_URL}")
 print(f"               HOST: {HOST}")
 print(f"               PORT: {PORT}")
+print(f"        SMTP_SERVER: {SMTP_SERVER}")
+print(f"SMTP_DEFAULT_SENDER: {SMTP_DEFAULT_SENDER}")
+print(f"   DEFAULT_EMAIL_TO: {DEFAULT_EMAIL_TO}")
+
+SERVICE_URL = SERVICE_URL.rstrip('/')
 
 # Journal files
 JOURNALS_FILE_PATH = Path("JOURNALS")
@@ -97,3 +106,6 @@ qrbug.INCIDENT_FUNCTIONS = INCIDENT_FUNCTIONS
 
 qrbug.HOST = HOST
 qrbug.PORT = PORT
+qrbug.SMTP_SERVER = SMTP_SERVER
+qrbug.SMTP_DEFAULT_SENDER = SMTP_DEFAULT_SENDER
+qrbug.DEFAULT_EMAIL_TO = DEFAULT_EMAIL_TO

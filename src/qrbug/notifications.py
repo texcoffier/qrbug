@@ -1,25 +1,20 @@
 import asyncio
 import email.header
 import email.utils
-import html
-import os
-import re
-import time
 from typing import Union, Optional
-
+import smtplib
 import qrbug
 
+def open_smtp_session(server):
+    if ':' in server:
+        server, port = server.rsplit(':', 1)
+    else:
+        port = 0
+    send_mail.session = smtplib.SMTP(server, port, timeout=15)
 
 async def send_mail_smtp(sender: str, recipients: Union[tuple[str, ...], list[str]], body: bytes):
-    import smtplib
-
     smtp_result = 'NotSent'
-    for server in re.split(' +', os.getenv('QRBUG_SMTP_SERVER')) * 2:
-        if ':' in server:
-            server, port = server.rsplit(':', 1)
-        else:
-            port = 0
-
+    for server in qrbug.SMTP_SERVER: # Try each SMTP server if failure
         try:
             try:
                 smtp_result = send_mail.session.sendmail(sender, recipients, body)
@@ -28,7 +23,7 @@ async def send_mail_smtp(sender: str, recipients: Union[tuple[str, ...], list[st
             except (AttributeError, # because 'session' is None the first time
                     smtplib.SMTPServerDisconnected,
                     smtplib.SMTPSenderRefused):
-                send_mail.session = smtplib.SMTP(server, port, timeout=15)
+                open_smtp_session(server)
                 smtp_result = send_mail.session.sendmail(sender, recipients, body)
                 break # Mail sent
         except smtplib.SMTPRecipientsRefused:
@@ -51,17 +46,18 @@ async def send_mail_smtp(sender: str, recipients: Union[tuple[str, ...], list[st
 
 
 async def send_mail(
-        to: str, subject: str, message: str, sender: Optional[str] = None,
-        show_to: bool = False, reply_to: Optional[str] = None,
-        error_to: Optional[str] = None, cc: tuple[str] = tuple()
-):
+    to      : str,
+    subject : str,
+    message : str,
+    sender  : Optional[str] = None,
+    show_to : bool          = False,
+    reply_to: Optional[str] = None,
+    error_to: Optional[str] = None,
+    cc      : tuple[str]    = ()
+    ):
 
     def encode(x):
         return email.header.Header(x.strip()).encode()
-
-    def decode(x):  # pragma: no cover
-        txt, enc = email.header.decode_header(x)[0]
-        return txt.decode(enc)
 
     def cleanup(x):
         return [encode(addr)
@@ -72,7 +68,7 @@ async def send_mail(
     if isinstance(to, str):
         to = [to]
     if sender is None:
-        sender = os.getenv('QRBUG_SMTP_DEFAULT_SENDER')
+        sender = qrbug.SMTP_DEFAULT_SENDER
 
     to = cleanup(to)
     cc = cleanup(cc)
@@ -116,7 +112,7 @@ send_mail.session = None
 
 
 def get_user_from_login(login: str) -> str:
-    return os.getenv('QRBUG_DEFAULT_EMAIL_TO')  # TODO: Remplacer ça
+    return qrbug.DEFAULT_EMAIL_TO  # TODO: Remplacer ça
 
 
 qrbug.send_mail = send_mail

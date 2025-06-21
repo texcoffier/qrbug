@@ -9,6 +9,9 @@ LOGS/
 JOURNALS/db.py
 JOURNALS/incidents.py
 
+src/qrbug/settings.py
+*@*
+
 xxx*
 *.pyc
 .env

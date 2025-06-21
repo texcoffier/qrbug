@@ -12,7 +12,7 @@ def safe(txt: str) -> str:
     return re.sub("[^-_.a-zA-Z0-9/:,]", "_", txt)
 
 def service_url(extra_url):
-    return f'{qrbug.SERVICE_URL.rstrip("/")}/{extra_url.lstrip("/")}'
+    return f'{qrbug.SERVICE_URL}/{extra_url.lstrip("/")}'
 
 def redirect_url(extra_url):
     return f'{qrbug.CAS_URL}/login?service={urllib.parse.quote(service_url(extra_url))}'
