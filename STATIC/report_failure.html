@@ -105,7 +105,7 @@
         function register_incident(element, in_place) {
             while ( ! element.getAttribute('thingid') )
                 element = element.parentNode;
-            let url = '/?thing-id=' + element.getAttribute('thingid')
+            let url = './?thing-id=' + element.getAttribute('thingid')
                 + '&failure-id=' + element.getAttribute('failureid')
                 + '&what=' + element.getAttribute('what')
                 + '&secret=' + secret
