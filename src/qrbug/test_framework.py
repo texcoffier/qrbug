@@ -7,6 +7,7 @@ import qrbug
 class TestCase(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
+        qrbug.Request = qrbug.FakeRequest
         qrbug.INCIDENTS_FILE_PATH = Path("TESTS", "xxx-incidents.py")
         qrbug.DB_FILE_PATH = Path("TESTS", "xxx-db.py")
         if qrbug.DB_FILE_PATH.exists():
@@ -36,9 +37,9 @@ class File:
         self.lines = lines
     async def write(self, data):
         self.lines.append(data)
-class Request:
+class FakeRequest:
     report = None
-    def __init__(self, incident=None):
+    def __init__(self, incident=None, create_secret=True):
         self.lines = []
         self.response = File(self.lines)
         if incident:
@@ -50,7 +51,8 @@ class Request:
                 failure_id = 'Fake Failure ID'
             incident = FakeIncident
         self.incident = incident
-        self.secret = qrbug.update_secret('unittest_secret')
+        if create_secret:
+            self.secret = qrbug.update_secret('unittest_secret')
 
 qrbug.TestCase = TestCase
-qrbug.Request = Request
+qrbug.FakeRequest = FakeRequest

@@ -46,6 +46,13 @@ class Secret:
         return time.time() - self.timestamp < qrbug.TOKEN_LOGIN_TIMEOUT
 
     @classmethod
+    def cleanup(cls) -> None:
+        oldest = time.time() - 1 # qrbug.TOKEN_LOGIN_TIMEOUT
+        for secret, ticket in tuple(cls.instances.items()):
+            if ticket.timestamp < oldest:
+                del cls.instances[secret]
+
+    @classmethod
     def get(cls, secret: str) -> Optional["Secret"]:
         """
         Return the secret if valid

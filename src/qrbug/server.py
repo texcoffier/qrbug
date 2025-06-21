@@ -33,9 +33,10 @@ async def hourly_task():
         # wait_seconds = 1
         await asyncio.sleep(wait_seconds)
         incident = qrbug.Incident.open('backoffice', next_hour[-2:] + ':00', '', 'system', '')
-        request = qrbug.Request(incident)
+        request = qrbug.FakeRequest(incident, create_secret=False)
         for dispatcher in qrbug.Dispatcher.get_sorted_instances():
             await dispatcher.run(incident, request, [])
+        qrbug.Secret.cleanup()
 
 async def show_failures_tree_route(request: qrbug.Request) -> web.Response:
     """
