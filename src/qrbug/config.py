@@ -7,6 +7,18 @@ import qrbug
 TOKEN_LOGIN_TIMEOUT = 60
 CAS_URL = 'https://cas.univ-lyon1.fr/cas'
 SERVICE_URL = 'http://qrbug.univ-lyon1.fr:8080/'
+HOST = 'localhost'
+PORT = 8080
+
+try:
+    from settings import *
+except ModuleNotFoundError:
+    print("«src/qrbug/settings.py» not found, use default values")
+print(f"TOKEN_LOGIN_TIMEOUT: {TOKEN_LOGIN_TIMEOUT}")
+print(f"            CAS_URL: {CAS_URL}")
+print(f"        SERVICE_URL: {SERVICE_URL}")
+print(f"               HOST: {HOST}")
+print(f"               PORT: {PORT}")
 
 # Journal files
 JOURNALS_FILE_PATH = Path("JOURNALS")
@@ -82,3 +94,6 @@ qrbug.ERROR_LOG_PREFIX = ERROR_LOG_PREFIX
 
 qrbug.CONFIGS = CONFIGS
 qrbug.INCIDENT_FUNCTIONS = INCIDENT_FUNCTIONS
+
+qrbug.HOST = HOST
+qrbug.PORT = PORT

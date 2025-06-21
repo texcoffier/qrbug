@@ -230,8 +230,8 @@ def parse_command_line_args(argv) -> tuple[str, int]:
         ENABLE_PROFILE=True
         args.remove('--profile')
 
-    host = 'localhost'
-    port = 8080
+    host = qrbug.HOST
+    port = qrbug.PORT
     if len(args) >= 2:
         host = args[1]
     if len(args) >= 3:
