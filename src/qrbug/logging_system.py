@@ -19,7 +19,7 @@ def log(log_folder_path: Path, content: Union[str, bytes]):
     if isinstance(content, bytes):
         filename.write_bytes(content)
     else:
-        filename.write(content, encoding='utf-8')
+        filename.write_text(content, encoding='utf-8')
 
 def log_email(content: bytes):
     return log(qrbug.EMAIL_LOG_DIRECTORY, content)
