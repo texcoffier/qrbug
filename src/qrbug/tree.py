@@ -25,6 +25,23 @@ class Tree(qrbug.Editable):
             return f'{parent.path()} {self.id.removeprefix(parent.id)}'
         return f'{self.id}'
 
+    def path_names(self, path):
+        """Return a clean list of path components"""
+        if self.parent_ids:
+            self.instances[next(iter(self.parent_ids))].path_names(path)
+        value = self.value if hasattr(self, 'value') else self.id
+        if path:
+            for word in path:
+                value = value.replace(word + ' ', '')
+        if value:
+            path.append(value)
+
+    def name(self) -> str:
+        """Return create a human friendly name using 'value' and 'id'"""
+        path = []
+        self.path_names(path)
+        return '/'.join(path)
+
     def inside(self, node: "TreeId"):
         """Consider that a node is not inside itself"""
         for parent in self.parent_ids:
