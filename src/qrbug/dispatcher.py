@@ -44,6 +44,7 @@ class Dispatcher(qrbug.Tree):
         trace.append(f' incidents={len(incidents)}')
 
         if not incidents:
+            await request.write(f"L'automatisme «{self.id}» n'a rien à faire, il n'est donc pas lancé")
             return
 
         try:
