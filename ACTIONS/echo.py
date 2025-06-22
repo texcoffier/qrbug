@@ -44,10 +44,7 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
             url="?thing-id={thing}&failure-id={failure}&is-repaired=1&secret={request.secret.secret}"
             >C'est réparé</button>'''
         elif pending_feedbacks:
-            fix = f'''<button onclick="fix(this)"
-            url="?thing-id={thing}&failure-id={failure}&is-repaired=1&secret={request.secret.secret}"
-            >Prévenir les utilisateurs que c'est réparé</button>
-            '''
+            fix = 'Utilisateur non prévenu'
         else:
             fix = ''
 

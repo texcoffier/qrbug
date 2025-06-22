@@ -16,6 +16,7 @@ selector('admin'    , '{"class":"User"      , "test":"in"    , "value": "admin"}
 selector('system'   , '{"class":"SourceUser", "test":"inside", "value": "system"}')
 selector('active'   , '[1, {"test":"active"}, {"class":"Selector", "attr": "is_ok", "test":"false", "id":"backoffice"}]', )
 selector('for-me'   , '[1, {"test": "active"}, {"class":"SourceUser", "test":"is_for_user"}]')
+selector('for-me-all','{"class":"SourceUser", "test":"is_for_user"}')
 selector('for-thing', '{                      "test":"is_for_thing"}')
 selector('for-thing-active', '[1, {"test": "active"}, {"test":"is_for_thing"}]')
 
@@ -194,12 +195,17 @@ dispatcher_update('report_mail', action_id='report_mail', selector_id='report-ma
 
 failure_update('personnal', value="Ce qui me concerne", allowed="admin")
 failure_update('personnal-for-me', value="Les incidents que je dois traiter", allowed="admin", display_type=Button)
+failure_update('personnal-for-me-all', value="Tous les incidents dont je m'occupe", allowed="admin", display_type=Button)
 
 failure_add('personnal', 'personnal-for-me')
+failure_add('personnal', 'personnal-for-me-all')
 failure_add('top', 'personnal')
 
 selector('personnal-for-me'     ,'{"class":"Failure", "test":"is", "value": "personnal-for-me"}')
+selector('personnal-for-me-all' ,'{"class":"Failure", "test":"is", "value": "personnal-for-me-all"}')
+
 dispatcher_update('personnal-for-me', action_id='echo', selector_id='personnal-for-me', incidents="for-me")
+dispatcher_update('personnal-for-me-all', action_id='echo', selector_id='personnal-for-me-all', incidents="for-me-all")
 
 ###############################################################################
 # Edit configuration
