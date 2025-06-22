@@ -136,11 +136,8 @@ class TestAction(qrbug.TestCase):
         send_pending = qrbug.Dispatcher['send_pending']
         request = qrbug.Request()
         asyncio.run(send_pending.run(trigger, request, []))
-        self.assertEqual(request.lines, [
-            '<pre>\n',
-            'SEND FEEDBACK FOR thing_child,fail1,ip1,,login1,fixer_login\n',
-            '</pre>\n'
-            ])
+        self.assertTrue("login1<ul><li> thing_parent_parent/thing_parent/thing_child : first failure"
+            in ''.join(request.lines))
 
         # Pending user feeback
         request = qrbug.Request()
