@@ -142,4 +142,4 @@ class TestAction(qrbug.TestCase):
         # Pending user feeback
         request = qrbug.Request()
         asyncio.run(list_pending.run(trigger, request, []))
-        self.assertEqual(request.lines, [])
+        self.assertEqual(request.lines, ["L'automatisme «show_pending» n'a rien à faire, il n'est donc pas lancé"])

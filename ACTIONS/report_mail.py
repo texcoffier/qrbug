@@ -10,7 +10,7 @@ import qrbug
 
 async def run(incidents: list[qrbug.Incident], request: qrbug.Request) -> None:
     incidents_per_user = collections.defaultdict(list)
-    for concerned_id, concerned in qrbug.Concerned.instances.items():
+    for concerned_id, concerned in tuple(qrbug.Concerned.instances.items()):
         for incident in incidents:
             if qrbug.Selector[concerned_id].is_ok(incident, request.incident, request.report):
                 for user in concerned.users:
@@ -42,4 +42,6 @@ async def run(incidents: list[qrbug.Incident], request: qrbug.Request) -> None:
             "QRBUG : vos incidents actifs",
             '\n'.join(message),
             show_to=True)
+        await request.write(f'<p>Envoit un mail à {user} à propos de {len(incidents)} incidents')
+    await request.write("<p>C'est fini")
 
