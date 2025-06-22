@@ -4,7 +4,7 @@ import qrbug
 
 
 # SETTINGS
-TOKEN_LOGIN_TIMEOUT = 60
+TOKEN_LOGIN_TIMEOUT = 600
 CAS_URL = 'https://cas.univ-lyon1.fr/cas'
 SERVICE_URL = 'http://qrbug.univ-lyon1.fr:8080'
 HOST = 'localhost'
