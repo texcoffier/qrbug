@@ -111,6 +111,9 @@ async def register_incident(request: qrbug.Request) -> web.StreamResponse:
                                   for name, value in query_variables.items())
                 qrbug.redirect(f'?{params}')
                 raise Exception("Redirection failed")
+        else:
+            if secret:
+                user_login = secret.login
     else:
         user_login = 'ROOT' # For tests
         secret.login = user_login
