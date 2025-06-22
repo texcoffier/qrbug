@@ -294,8 +294,12 @@ dispatcher_update('edit-user', action_id='edit_user', selector_id='edit-user')
 # ---------------
 failure_update('thing', value="Chose", allowed="admin")
 failure_update('thing-comment', value="Commentaire", allowed="admin", display_type=Input)
+failure_update('thing-del-failure', value="Panne à enlever", allowed="admin", display_type=Input)
+failure_update('thing-add-failure', value="Panne à ajouter", allowed="admin", display_type=Input)
 failure_add('edit', 'thing')
 failure_add('thing', 'thing-comment')
+failure_add('thing', 'thing-del-failure')
+failure_add('thing', 'thing-add-failure')
 
 action('edit_thing', 'edit_thing.py')
 selector('edit-thing', '{"class":"Failure", "test":"in_or_equal", "value": "thing"}')

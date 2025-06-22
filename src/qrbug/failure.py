@@ -19,7 +19,7 @@ class DisplayTypes(enum.Enum):
     boolean  = enum.auto()
     display  = enum.auto()
 
-def element(failure: "Failure", thing, in_place=False):
+def element(failure: "Failure", thing, in_place=False, destroy=None):
     display_type = failure.display_type
     common = f'failureid="{failure.id}" thingid="{thing.id}" what="{thing.__class__.__name__.lower()}"'
     if display_type == DisplayTypes.text:
@@ -58,6 +58,9 @@ def element(failure: "Failure", thing, in_place=False):
     if display_type == DisplayTypes.textarea:
         return f'<div {common} class="button" value="{value}" onclick="ask_value(this,{in_place})"><BOX>{failure.value}</BOX></div>'
     if display_type == DisplayTypes.input:
+        if destroy:
+            common += f' value="{html.escape(destroy)}"'
+            return f'''<div class="input" style="display:inline-block"><div><button {common} onclick="register_incident(this,1)">×</button></div></div>'''
         return f'''<div class="input">{'' if in_place else failure.value}
         <div><input {common} value="{value}" autocomplete="off" onkeypress="if (event.key=='Enter') register_incident(this,{in_place})">
         <button {common} onclick="register_incident(this, {in_place})">⬆</button></div></div>'''

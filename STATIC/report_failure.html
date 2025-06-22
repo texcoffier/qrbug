@@ -113,6 +113,7 @@
             let input = document.getElementById('input')
                 || (element.tagName == 'INPUT' ? element : undefined)
                 || (element.tagName == 'SELECT' ? element : undefined)
+                || (element.tagName == 'BUTTON' ? element : undefined)
                 || (element.previousElementSibling
                     && element.previousElementSibling.tagName == 'INPUT'
                     ? element.previousElementSibling : undefined)

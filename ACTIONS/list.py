@@ -39,7 +39,9 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
             texts.append('<table>')
             texts.append('<tr><th> <th>Objet<th>')
             texts.append(html.escape(thing_comment.value))
-            texts.append('<th colspan="2">Active<br>Finished</tr>')
+            texts.append('<th colspan="2">Active<br>Finished<th>Pannes<th>Ajouter une panne</tr>')
+            failure_del = qrbug.Failure['thing-del-failure']
+            failure_add = qrbug.Failure['thing-add-failure']
             def go_in(node):
                 texts.append('<tr><td>')
                 texts.append(f'<input type="checkbox" class="qr_thing_checkboxes" id="qr_thing_checkbox_{node.id}" onclick="qr_select(this.checked, {repr(node.id)});" />')
@@ -56,6 +58,12 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
                     texts.append(link_to_finished(node.id, request))
                 else:
                     texts.append('<td>')
+                texts.append('<td>')
+                for failure_id in node.failure_ids:
+                    texts.append(qrbug.element(failure_del, node, destroy=failure_id))
+                    texts.append(f'<a target="_blank" href="./failure={html.escape(failure_id)}">{html.escape(failure_id)}</a> ')
+                texts.append('<td>')
+                texts.append(qrbug.element(failure_add, node, in_place=True))
                 texts.append('</tr>')
                 go_in.indent += '    '
             def go_out(_node):
