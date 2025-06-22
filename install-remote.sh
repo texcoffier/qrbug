@@ -16,9 +16,11 @@ else
     echo "
 TOKEN_LOGIN_TIMEOUT = 86400
 PORT = 8099
+CAS_URL = 'https://cas.your.domain/cas'
 SERVICE_URL = 'https://qrbug.your.domain/'
-QRBUG_SMTP_SERVER = ['smtp1.your.domain', 'smtp2.your.domain']
-QRBUG_SMTP_DEFAULT_SENDER = 'do-not-reply@nowhere.in.the.world'
+SMTP_SERVER = ['smtp1.your.domain', 'smtp2.your.domain']
+SMTP_DEFAULT_SENDER = 'do-not-reply@nowhere.in.the.world'
+DEFAULT_EMAIL_TO = 'an-administrator@your.domain' # if recipient without email
 " >$H.py
     echo "==== QRBUG ==== Missing remote configuration, you must edit:"
     echo "==== QRBUG ====     $H.py"

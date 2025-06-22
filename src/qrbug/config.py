@@ -11,7 +11,7 @@ HOST = 'localhost'
 PORT = 8080
 SMTP_SERVER = ['smtp1.your.domain', 'smtp2.your.domain']
 SMTP_DEFAULT_SENDER = 'do-not-reply@nowhere.in.the.world'
-DEFAULT_EMAIL_TO = 'do-not-reply@nowhere.in.the.world' # if unknown recipient
+DEFAULT_EMAIL_TO = 'an-administrator@your.domain' # if recipient without email
 
 try:
     from qrbug.settings import *
