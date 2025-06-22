@@ -14,7 +14,7 @@ SMTP_DEFAULT_SENDER = 'do-not-reply@nowhere.in.the.world'
 DEFAULT_EMAIL_TO = 'do-not-reply@nowhere.in.the.world' # if unknown recipient
 
 try:
-    from settings import *
+    from qrbug.settings import *
 except ModuleNotFoundError:
     print("«src/qrbug/settings.py» not found, use default values")
 print()
