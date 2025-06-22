@@ -18,11 +18,9 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
     await request.write('''
         <script>
         function fix(element) {
-            let iframe = document.createElement('IFRAME');
-            iframe.src = element.getAttribute('url');
-            iframe.style = "height:1.5em; width:1.5em; border:0px;vertical-align:middle";
+            let iframe = element.nextSibling;
+            iframe.contentWindow.location.replace(element.getAttribute('url'));
             iframe.onload = function() { element.remove(); };
-            element.insertAdjacentElement('afterend', iframe);
         }
         </script>
         <style>
@@ -31,6 +29,7 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
         TABLE, TABLE TD { border: 1px solid #DDD }
         TABLE TR.title { background: #F8F8F8 }
         TABLE TD { vertical-align: top; }
+        IFRAME { height:1.5em; width:1.5em; border:0px; vertical-align:middle }
         </style>
         <title>Incidents %s</title>
         <h1>Liste d'incidents (%s)</h1>
@@ -42,7 +41,7 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
         if incident.active:
             fix = f'''<button onclick="fix(this)"
             url="?thing-id={thing}&failure-id={failure}&is-repaired=1&secret={request.secret.secret}"
-            >C'est réparé</button>'''
+            >C'est réparé</button><iframe></iframe>'''
         elif pending_feedbacks:
             fix = 'Utilisateur non prévenu'
         else:
