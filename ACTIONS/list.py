@@ -170,19 +170,55 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
         texts.append('</table>')
         texts = [qrbug.get_template(request).replace('%REPRESENTATION%', ''.join(texts))]
     elif what is qrbug.Incident:
-        texts.append('<table border><tr><th>Objet<th>Actives<th>Réparés<th>Panne<th>Active<th>Réparées')
+        texts.append('''
+        <BODY class="real">
+        <style>
+        #api:checked ~ TABLE TR TD.real, #real:checked ~ TABLE TR TD.api { display: none;}
+        TD.api { opacity: 0.5;}
+        LABEL:hover { background: #EEE }
+        TABLE { border-spacing: 0px }
+        TABLE, TABLE TD, TABLE TH { border: 1px solid #BBB }
+        </style>
+        <input id="real" type="radio" name="what" checked>
+        <label for="real">vrais incidents.</label>
+        <input id="api" type="radio" name="what">
+        <label for="api">appels à l'API.</label>
+        <input id="all" type="radio" name="what">
+        <label for="all">tous les incidents.</label>
+        <table><tr><th>Objet<th>Actives<th>Réparés<th>Panne<th>Active<th>Réparée
+        ''')
         for thing_id, failures in sorted(what.instances.items()):
-            texts.append(f'''<tr><td rowspan="{len(failures)}">
+            active = link_to_active(thing_id, request)
+            finished = link_to_finished(thing_id, request)
+            is_real = False
+            is_api = False
+            for failure in failures.values():
+                if failure.active or failure.finished:
+                    is_real = True
+                else:
+                    is_api = True
+            if is_real and not is_api:
+                classe = '<td class="real"'
+            elif not is_real and is_api:
+                classe = '<td class="api"'
+            else:
+                classe = '<td '
+            texts.append(f'''<tr>{classe} rowspan="{len(failures)}">
             {link_to_object("thing", thing_id, request)}
-            <td rowspan="{len(failures)}">{link_to_active(thing_id, request)}
-            <td rowspan="{len(failures)}">{link_to_finished(thing_id, request) or "0"}''')
+            {classe} rowspan="{len(failures)}">{active}
+            {classe} rowspan="{len(failures)}">{finished}''')
             prefix = ''
             for failure_id, failure in failures.items():
-                texts.append(f'''{prefix}<td>{link_to_object("failure", failure_id, request)}
-                <td>{len(failure.active)}
-                <td>{len(failure.finished)}
+                if failure.active or failure.finished:
+                    classe = '<td class="real">'
+                else:
+                    classe = '<td class="api">'
+                texts.append(f'''{prefix}{classe}{link_to_object("failure", failure_id, request)}
+                {classe}{len(failure.active)}
+                {classe}{len(failure.finished)}
                 </tr>
                 ''')
+            prefix = classe
         texts.append('</table>')
     elif what is qrbug.Selector:
         texts.append('<table>')
