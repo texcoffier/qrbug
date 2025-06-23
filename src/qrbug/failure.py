@@ -60,7 +60,9 @@ def element(failure: "Failure", thing, in_place=False, destroy=None):
     if display_type == DisplayTypes.input:
         if destroy:
             common += f' value="{html.escape(destroy)}"'
-            return f'''<div class="input" style="display:inline-block"><div><button {common} onclick="register_incident(this,1)">×</button></div></div>'''
+            return f'''<div {common} class="delete" style="display:inline-block"
+                ><a onclick="javascript:show(this)">{html.escape(destroy)}</a>
+                <button onclick="register_incident(this,1)">×</button></div>'''
         return f'''<div class="input">{'' if in_place else failure.value}
         <div><input {common} value="{value}" autocomplete="off" onkeypress="if (event.key=='Enter') register_incident(this,{in_place})"
         ><button {common} onclick="register_incident(this, {in_place})">⬆</button></div></div>'''

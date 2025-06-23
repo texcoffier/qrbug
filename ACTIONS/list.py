@@ -60,8 +60,8 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
                     texts.append('<td>')
                 texts.append('<td>')
                 for failure_id in node.failure_ids:
+                    texts.append(' ')
                     texts.append(qrbug.element(failure_del, node, destroy=failure_id))
-                    texts.append(f'<a target="_blank" href="./failure={html.escape(failure_id)}">{html.escape(failure_id)}</a> ')
                 texts.append('<td>')
                 texts.append(qrbug.element(failure_add, node, in_place=True))
                 texts.append('</tr>')
@@ -152,7 +152,6 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
         for selector_id, concerned in sorted(what.instances.items(), key=lambda e: e[0]):
             users = [
                 f'{qrbug.element(concerned_del, concerned, destroy=user)}'
-                f'<a href="user={user}?secret={request.secret.secret}">{html.escape(user)}</a>'
                 for user in concerned.users
                 ]
             texts.append(f'''<tr>

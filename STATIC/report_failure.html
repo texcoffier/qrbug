@@ -64,6 +64,29 @@
             height: 5em;
         }
 
+        DIV.delete {
+            background: #FFF;
+            border: 1px solid #888;
+            border-radius: 0.3em;
+            padding: 0px;
+            padding-left: 0.2em;
+            overflow: hidden;
+            font-size: 1em;
+            white-space: nowrap;
+        }
+        DIV.delete A {
+            color: #00F;
+            cursor: pointer;
+        }
+        DIV.delete BUTTON {
+            font-size: 1em;
+            border: 0px;
+            background: #EEE;
+        }
+        DIV.delete BUTTON:hover {
+            background: #DDD;
+        }
+
         @media (orientation: portrait) {
             BODY, BUTTON {
                 font-size: 5vw;
@@ -113,12 +136,21 @@
     </style>
 
     <script>
-        function register_incident(element, in_place) {
+        function get_infos(element) {
             while ( ! element.getAttribute('thingid') )
                 element = element.parentNode;
-            let url = './?thing-id=' + element.getAttribute('thingid')
-                + '&failure-id=' + element.getAttribute('failureid')
-                + '&what=' + element.getAttribute('what')
+            return [element,
+                element.getAttribute('thingid'),
+                element.getAttribute('failureid'),
+                element.getAttribute('what'),
+                element.getAttribute('value')
+            ] ;
+        }
+        function register_incident(event_element, in_place) {
+            let [element, thingid, failureid, what, predefined_value] = get_infos(event_element);
+            let url = './?thing-id=' + thingid
+                + '&failure-id=' + failureid
+                + '&what=' + what
                 + '&secret=' + secret
                 ;
             let input = document.getElementById('input')
@@ -129,7 +161,7 @@
                     && element.previousElementSibling.tagName == 'INPUT'
                     ? element.previousElementSibling : undefined)
                 ;
-            let value = input ? input.value : undefined;
+            let value = predefined_value || (input ? input.value : undefined);
             if (value)
                 url += '&additional-info=' + encodeURIComponent(value);
             if(in_place) {
@@ -139,6 +171,16 @@
             } else {
                 window.location = url;
             }
+        }
+        function show(event_element) {
+            let [_element, _thingid, failureid, _what, value] = get_infos(event_element);
+            if ( failureid.includes('failure') )
+                what = 'failure';
+            else if ( failureid.includes('concerned') )
+                what = 'user';
+            else
+                alert('bug');
+            window.location = './' + what + '=' + value + '?secret=' + secret;
         }
         function close_dialog(event) {
             document.getElementById('popup').remove();
