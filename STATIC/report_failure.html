@@ -34,15 +34,26 @@
             background: #DDD;
         }
 
-        input {
-            font-size: 1.2em;
-            padding-right: 1.5em;
+        INPUT, INPUT + BUTTON {
+            border: 1px solid #888;
+            height: 24px;
+            font-size: 1em;
+            box-sizing: border-box ;
+            vertical-align: bottom;
+        }
+
+        INPUT {
+            border-top-left-radius: 0.2em;
+            border-bottom-left-radius: 0.2em;
+            border-right: 0px;
         }
 
         INPUT + BUTTON {
-            margin-left: -3em ;
-            margin-right: 1em;
+            border-left: 0px;
             vertical-align: text-top;
+            border-top-right-radius: 0.2em;
+            border-bottom-right-radius: 0.2em;
+
         }
 
         IFRAME {

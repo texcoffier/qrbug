@@ -62,8 +62,8 @@ def element(failure: "Failure", thing, in_place=False, destroy=None):
             common += f' value="{html.escape(destroy)}"'
             return f'''<div class="input" style="display:inline-block"><div><button {common} onclick="register_incident(this,1)">×</button></div></div>'''
         return f'''<div class="input">{'' if in_place else failure.value}
-        <div><input {common} value="{value}" autocomplete="off" onkeypress="if (event.key=='Enter') register_incident(this,{in_place})">
-        <button {common} onclick="register_incident(this, {in_place})">⬆</button></div></div>'''
+        <div><input {common} value="{value}" autocomplete="off" onkeypress="if (event.key=='Enter') register_incident(this,{in_place})"
+        ><button {common} onclick="register_incident(this, {in_place})">⬆</button></div></div>'''
     raise ValueError("Unknown display type")
 
 qrbug.element = element
