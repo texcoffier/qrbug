@@ -4,6 +4,7 @@ import email.utils
 from typing import Union, Optional
 import smtplib
 import qrbug
+import threading
 
 def open_smtp_session(server):
     if ':' in server:
@@ -12,7 +13,7 @@ def open_smtp_session(server):
         port = 0
     send_mail.session = smtplib.SMTP(server, port, timeout=15)
 
-async def send_mail_smtp(sender: str, recipients: Union[tuple[str, ...], list[str]], body: bytes):
+def send_mail_smtp(sender: str, recipients: Union[tuple[str, ...], list[str]], body: bytes):
     smtp_result = 'NotSent'
     for server in qrbug.SMTP_SERVER: # Try each SMTP server if failure
         try:
@@ -29,7 +30,6 @@ async def send_mail_smtp(sender: str, recipients: Union[tuple[str, ...], list[st
         except smtplib.SMTPRecipientsRefused:
             # Next server
             pass
-        await asyncio.sleep(0)
 
     if smtp_result == 'NotSent':
         if isinstance(recipients, str):
@@ -106,7 +106,9 @@ async def send_mail(
     # Logs the mail to the logs folder
     qrbug.log_email(body)
 
-    return await send_mail_smtp(sender, recipients, body)  # TODO: Spawn un subprocess
+    thread = threading.Thread(target=send_mail_smtp, args=(sender, recipients, body))
+    thread.start()
+    return None
 
 send_mail.session = None
 
