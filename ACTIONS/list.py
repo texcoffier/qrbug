@@ -148,10 +148,10 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
             <th>Le selecteur d'incident
             <th>Personne/groupe concernés
             <th>{html.escape(concerned_add.value)}
-            <th>{html.escape(concerned_del.value)}
             </tr>''')
         for selector_id, concerned in sorted(what.instances.items(), key=lambda e: e[0]):
             users = [
+                f'{qrbug.element(concerned_del, concerned, destroy=user)}'
                 f'<a href="user={user}?secret={request.secret.secret}">{html.escape(user)}</a>'
                 for user in concerned.users
                 ]
@@ -159,7 +159,6 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
             <td><a href="selector={selector_id}?secret={request.secret.secret}">{html.escape(selector_id)}</a>
             <td>{' '.join(users)}
             <td>{qrbug.element(concerned_add, concerned, in_place=True)}
-            <td>{qrbug.element(concerned_del, concerned, in_place=True)}
             </tr>''')
         texts.append('</table>')
         texts = [qrbug.get_template(request).replace('%REPRESENTATION%', ''.join(texts))]
