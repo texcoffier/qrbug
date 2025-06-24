@@ -17,6 +17,8 @@ LDAP_PASSWORD = 'admin_password'
 LDAP_DC = 'DC=your,DC=domain'
 LDAP_ID = 'sAMAccountName'
 DEFAULT_EMAIL_TO = 'an-administrator@your.domain' # if recipient without email
+LOG_FORMAT = '%Y%m%d%H%M%S'  # The format for the log files
+LOG_FILE_EXTENSION = ''
 
 try:
     from qrbug.settings import *
@@ -127,3 +129,5 @@ qrbug.LDAP_LOGIN = LDAP_LOGIN
 qrbug.LDAP_PASSWORD = LDAP_PASSWORD
 qrbug.LDAP_DC = LDAP_DC
 qrbug.LDAP_ID = LDAP_ID
+qrbug.LOG_FORMAT = LOG_FORMAT
+qrbug.LOG_FILE_EXTENSION = LOG_FILE_EXTENSION
