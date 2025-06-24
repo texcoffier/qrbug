@@ -1,3 +1,4 @@
 aiohttp==3.11.18
 qrcode[pil]==8.2
 aiohttp-devtools==1.1.2
+python-ldap==3.2

@@ -37,11 +37,12 @@ async def run(incidents: list[qrbug.Incident], request: qrbug.Request) -> None:
         if last_path:
             message.append('</ul>')
         message.append('</html>')
+        email = await qrbug.get_mail_from_login(user)
         await qrbug.send_mail(
-            user,
+            email,
             "QRBUG : vos incidents actifs",
             '\n'.join(message),
             show_to=True)
-        await request.write(f'<p>Envoit un mail à {user} à propos de {len(incidents)} incidents')
+        await request.write(f'<p>Envoit un mail à {email} ({user}) à propos de {len(incidents)} incidents')
     await request.write("<p>C'est fini")
 

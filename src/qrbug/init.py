@@ -8,6 +8,7 @@ import qrbug.selector
 import qrbug.concerned
 import qrbug.incident
 import qrbug.notifications
+import qrbug.get_mail
 import qrbug.action_helpers
 import qrbug.action
 import qrbug.dispatcher

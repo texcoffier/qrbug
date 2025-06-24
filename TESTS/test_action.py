@@ -136,7 +136,7 @@ class TestAction(qrbug.TestCase):
         send_pending = qrbug.Dispatcher['send_pending']
         request = qrbug.Request()
         asyncio.run(send_pending.run(trigger, request, []))
-        self.assertTrue("login1<ul><li> thing_parent_parent/thing_parent/thing_child : first failure"
+        self.assertTrue("login1@? (login1) <ul><li> thing_parent_parent/thing_parent/thing_child : first failure"
             in ''.join(request.lines))
 
         # Pending user feeback

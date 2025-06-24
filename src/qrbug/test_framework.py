@@ -4,6 +4,9 @@ from pathlib import Path
 
 import qrbug
 
+async def nothing(x):
+    return f'{x}@?'
+
 class TestCase(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -12,6 +15,7 @@ class TestCase(unittest.TestCase):
         qrbug.DB_FILE_PATH = Path("TESTS", "xxx-db.py")
         if qrbug.DB_FILE_PATH.exists():
             qrbug.DB_FILE_PATH.unlink()
+        qrbug.get_mail_from_login = nothing
 
 
     def tearDown(self):

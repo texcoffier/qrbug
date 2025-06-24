@@ -11,6 +11,11 @@ HOST = 'localhost'
 PORT = 8080
 SMTP_SERVER = ['smtp1.your.domain', 'smtp2.your.domain']
 SMTP_DEFAULT_SENDER = 'do-not-reply@nowhere.in.the.world'
+LDAP_SERVER = 'ldaps:ldap.your.domain'
+LDAP_LOGIN = 'admin_login'
+LDAP_PASSWORD = 'admin_password'
+LDAP_DC = 'DC=your,DC=domain'
+LDAP_ID = 'sAMAccountName'
 DEFAULT_EMAIL_TO = 'an-administrator@your.domain' # if recipient without email
 
 try:
@@ -26,6 +31,12 @@ print(f"               PORT: {PORT}")
 print(f"        SMTP_SERVER: {SMTP_SERVER}")
 print(f"SMTP_DEFAULT_SENDER: {SMTP_DEFAULT_SENDER}")
 print(f"   DEFAULT_EMAIL_TO: {DEFAULT_EMAIL_TO}")
+print(f"        LDAP_SERVER: {LDAP_SERVER}")
+print(f"         LDAP_LOGIN: {LDAP_LOGIN}")
+print(f"      LDAP_PASSWORD: {LDAP_PASSWORD}")
+print(f"            LDAP_DC: {LDAP_DC}")
+print(f"            LDAP_ID: {LDAP_ID}")
+
 
 SERVICE_URL = SERVICE_URL.rstrip('/')
 
@@ -111,3 +122,8 @@ qrbug.SMTP_SERVER = SMTP_SERVER
 qrbug.SMTP_DEFAULT_SENDER = SMTP_DEFAULT_SENDER
 qrbug.DEFAULT_EMAIL_TO = DEFAULT_EMAIL_TO
 qrbug.ACTIONS_FOLDER = ACTIONS_FOLDER
+qrbug.LDAP_SERVER = LDAP_SERVER
+qrbug.LDAP_LOGIN = LDAP_LOGIN
+qrbug.LDAP_PASSWORD = LDAP_PASSWORD
+qrbug.LDAP_DC = LDAP_DC
+qrbug.LDAP_ID = LDAP_ID

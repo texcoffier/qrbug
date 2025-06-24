@@ -30,15 +30,12 @@ Les incidents suivants que vous avez déclaré ont été réparés :
 Ceci est un message automatique.
 </html>
 '''
-        await request.write(f'<p>{user}{message}\n')
-        try:
-            await qrbug.send_mail(
-            user,
+        email = await qrbug.get_mail_from_login(user)
+        await request.write(f'<p>{email} ({user}) {message}\n')
+        await qrbug.send_mail(
+            email,
             f"QRBUG : {len(incidents)} pannes ont été réparées",
             body,
             show_to=True)
-        except ValueError:
-            await request.write(
-                '<p style="background:#F88"><p>L\'envoie du message précédent a échoué.\n')
     await request.write("<p>C'est fini.\n")
     qrbug.Incident.pending_feedback = {} # Only for unittests

@@ -126,10 +126,4 @@ async def send_mail(
 
 send_mail.session = None
 
-
-def get_user_from_login(login: str) -> str:
-    return qrbug.DEFAULT_EMAIL_TO  # TODO: Remplacer ça
-
-
 qrbug.send_mail = send_mail
-qrbug.get_user_from_login = get_user_from_login

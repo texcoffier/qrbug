@@ -43,6 +43,7 @@ async def show_failures_tree_route(request: qrbug.Request) -> web.Response:
     Returns the webpage listing the failure hierarchy for the given thing.
     """
     print(request.path_qs)
+
     what: Optional[str] = request.match_info.get("what", None)
     thing_id: Optional[str] = request.match_info.get('thing_id', None)
     secret: Optional[str] = request.query.get('secret', None)
