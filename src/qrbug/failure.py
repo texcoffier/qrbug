@@ -19,8 +19,10 @@ class DisplayTypes(enum.Enum):
     boolean  = enum.auto()
     display  = enum.auto()
     checkbox = enum.auto()
+    datalist = enum.auto()
 
-def element(failure: "Failure", thing, in_place=False, destroy=None):
+
+def element(failure: "Failure", thing, in_place=False, destroy=None, datalist_id: str = None):
     display_type = failure.display_type
     ask_confirm = html.escape(failure.ask_confirm or '')
     common = f'failureid="{html.escape(failure.id)}" thingid="{html.escape(thing.id)}" what="{thing.__class__.__name__.lower()}" ask_confirm="{ask_confirm}"'
@@ -66,14 +68,17 @@ def element(failure: "Failure", thing, in_place=False, destroy=None):
         if not in_place:
             element = f'<div class="input">{failure.value} : {element}</div>'
         return element
-    if display_type == DisplayTypes.input:
+    if display_type == DisplayTypes.input or display_type == DisplayTypes.datalist:
         if destroy:
             common += f' value="{html.escape(destroy)}"'
             return f'''<div {common} class="delete" style="display:inline-block"
                 ><a onclick="javascript:show(this)">{html.escape(destroy)}</a>
                 <button onclick="register_incident(this,1)">×</button></div>'''
+        input_list_id = ''
+        if display_type == DisplayTypes.datalist:
+            input_list_id = f' list="datalist_{datalist_id}"'
         return f'''<div class="input">{'' if in_place else failure.value}
-        <div><input {common} value="{value}" autocomplete="off" onkeypress="if (event.key=='Enter') register_incident(this,{in_place})"
+        <div><input {common}{input_list_id} value="{value}" autocomplete="off" onkeypress="if (event.key=='Enter') register_incident(this,{in_place})"
         ><button {common} onclick="register_incident(this, {in_place})">⬆</button></div></div>'''
     raise ValueError("Unknown display type")
 

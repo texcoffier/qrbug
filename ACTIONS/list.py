@@ -63,13 +63,14 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
                     texts.append(' ')
                     texts.append(qrbug.element(failure_del, node, destroy=failure_id))
                 texts.append('<td>')
-                texts.append(qrbug.element(failure_add, node, in_place=True))
+                texts.append(qrbug.element(failure_add, node, in_place=True, datalist_id="Failure"))
                 texts.append('</tr>')
                 go_in.indent += '    '
             def go_out(_node):
                 go_in.indent = go_in.indent[:-4]
             go_in.indent = ''
             footer = '</table>'
+            datalists_to_load = ("Failure",)
         elif what is qrbug.Failure:
             failure_value = qrbug.Failure['failure-value']
             failure_ask_confirm = qrbug.Failure['failure-ask_confirm']
@@ -104,6 +105,7 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
                 go_in.indent = go_in.indent[:-4]
             go_in.indent = ''
             footer = '</table>'
+            datalists_to_load = tuple()
         elif what is qrbug.User:
             texts.append('<table>')
             texts.append('<tr><th>ID</th></tr>')
@@ -117,6 +119,7 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
                 go_in.indent = go_in.indent[:-4]
             go_in.indent = ''
             footer = '</table>'
+            datalists_to_load = tuple()
         elif what is qrbug.Dispatcher:
             texts.append('<table>')
             texts.append(
@@ -129,15 +132,16 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
                 texts.append('<tr><td>')
                 texts.append(html.escape(dispatcher.id))
                 texts.append('</td><td>')
-                texts.append(qrbug.element(qrbug.Failure['dispatcher-selector_id'], dispatcher, in_place=True))
+                texts.append(qrbug.element(qrbug.Failure['dispatcher-selector_id'], dispatcher, in_place=True, datalist_id='Selector'))
                 texts.append('</td><td>')
-                texts.append(qrbug.element(qrbug.Failure['dispatcher-incidents'], dispatcher, in_place=True))
+                texts.append(qrbug.element(qrbug.Failure['dispatcher-incidents'], dispatcher, in_place=True, datalist_id='Selector'))
                 texts.append('</td><td>')
-                texts.append(qrbug.element(qrbug.Failure['dispatcher-action_id'], dispatcher, in_place=True))
+                texts.append(qrbug.element(qrbug.Failure['dispatcher-action_id'], dispatcher, in_place=True, datalist_id='Action'))
                 texts.append('</td></tr>')
             def go_out(_node):
                 pass
             footer = '</table>'
+            datalists_to_load = ('Selector', 'Action')
         else:
             def go_in(node):
                 texts.append(html.escape(node.dump()))
@@ -145,10 +149,11 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
             def go_out(_node):
                 texts.append('</ul>')
             footer = ''
+            datalists_to_load = tuple()
         for tree in what.roots():
             tree.walk(go_in, go_out, do_sort=True)
         texts.append(footer)
-        texts = [qrbug.get_template(request).replace('%REPRESENTATION%', ''.join(texts))]
+        texts = [qrbug.get_template(request, datalists_to_load).replace('%REPRESENTATION%', ''.join(texts))]
     elif issubclass(what, qrbug.Concerned):
         texts.append('<table border>')
         concerned_add = qrbug.Failure['concerned-add']
@@ -166,10 +171,10 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
             texts.append(f'''<tr>
             <td><a href="selector={selector_id}?secret={request.secret.secret}">{html.escape(selector_id)}</a>
             <td>{' '.join(users)}
-            <td>{qrbug.element(concerned_add, concerned, in_place=True)}
+            <td>{qrbug.element(concerned_add, concerned, in_place=True, datalist_id="User")}
             </tr>''')
         texts.append('</table>')
-        texts = [qrbug.get_template(request).replace('%REPRESENTATION%', ''.join(texts))]
+        texts = [qrbug.get_template(request, ("User",)).replace('%REPRESENTATION%', ''.join(texts))]
     elif what is qrbug.Action:
         action = qrbug.Failure['action-python_script']
         texts.append('<table>')
@@ -180,10 +185,10 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
             texts.append('<tr><td>')
             texts.append(link_to_object('action', node.id, request))
             texts.append('<td>')
-            texts.append(qrbug.element(action, node, in_place=True))
+            texts.append(qrbug.element(action, node, in_place=True, datalist_id='ActionScripts'))
             texts.append('</tr>')
         texts.append('</table>')
-        texts = [qrbug.get_template(request).replace('%REPRESENTATION%', ''.join(texts))]
+        texts = [qrbug.get_template(request, ("ActionScripts",)).replace('%REPRESENTATION%', ''.join(texts))]
     elif what is qrbug.Incident:
         texts.append('''
         <BODY class="real">

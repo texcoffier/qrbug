@@ -1,10 +1,8 @@
-from pathlib import Path
 from typing import TypeAlias, Optional, List
 
 import qrbug
 
 ActionId: TypeAlias = str
-ACTIONS_FOLDER = Path('ACTIONS/')
 
 
 class Action(qrbug.Editable):
@@ -21,7 +19,7 @@ class Action(qrbug.Editable):
         self.instances[action_id] = self
 
     async def run(self, incidents: List[qrbug.Incident], request) -> Optional[qrbug.action_helpers.ActionReturnValue]:
-        module_vars = qrbug.exec_code_file(ACTIONS_FOLDER / self.python_script, {})
+        module_vars = qrbug.exec_code_file(qrbug.ACTIONS_FOLDER / self.python_script, {})
         # We assume that the run function is present in the action so the
         # server throws an exception if it is not the case
         return await module_vars['run'](incidents, request)

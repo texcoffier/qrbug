@@ -34,12 +34,25 @@ class Request(web.Request):
         """ Streams the given text to the web page, and places a newline between each element """
         await self.write('\n'.join(text))
 
-def get_template(request=None):
+def get_template(request=None, datalists_to_load=tuple()):
     """The file containing JS helpers and style."""
     template = qrbug.REPORT_FAILURE_TEMPLATE.read_text()
     if request:
         template += f'<script>var secret="{request.secret.secret}";</script>'
-    return template
+
+    datalist_text = []
+    for datatype in datalists_to_load:
+        datalist_text.append(f'<datalist id="datalist_{datatype}">')
+        if datatype == "ActionScripts":
+            for file in qrbug.ACTIONS_FOLDER.glob('*.py'):
+                datalist_text.append(f'<option>{file.name}</option>')
+        else:
+            cls = getattr(qrbug, datatype)
+            for instance in cls.instances:
+                datalist_text.append(f'<option>{instance}</option>')
+        datalist_text.append(f'</datalist>')
+
+    return template.replace('%DATALISTS%', ''.join(datalist_text))
 
 qrbug.get_template = get_template
 qrbug.Request = Request

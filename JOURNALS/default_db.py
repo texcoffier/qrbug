@@ -222,7 +222,7 @@ thing_add_failure('editor-api', 'edit')
 # Edit concerned
 # ---------------
 failure_update('concerned'    , value="Concerned"                    , allowed="admin")
-failure_update('concerned-add', value="Ajouter un utilisateur/groupe", allowed="admin", display_type=Input)
+failure_update('concerned-add', value="Ajouter un utilisateur/groupe", allowed="admin", display_type=Datalist)
 failure_update('concerned-del', value="Enlever un utilisateur/groupe", allowed="admin", display_type=Input)
 failure_add('concerned', 'concerned-add')
 failure_add('concerned', 'concerned-del')
@@ -236,9 +236,9 @@ dispatcher_update('edit-concerned', action_id='edit_concerned', selector_id='edi
 # Edit dispatcher
 # ---------------
 failure_update('dispatcher', value="Les dispatchers", allowed="admin")
-failure_update('dispatcher-action_id', value="ID de l'action lancée", allowed="admin", display_type=Input)
-failure_update('dispatcher-selector_id', value="ID du sélecteur", allowed="admin", display_type=Input)
-failure_update('dispatcher-incidents', value="ID du sélecteur d'incidents", allowed="admin", display_type=Input)
+failure_update('dispatcher-action_id', value="ID de l'action lancée", allowed="admin", display_type=Datalist)
+failure_update('dispatcher-selector_id', value="ID du sélecteur", allowed="admin", display_type=Datalist)
+failure_update('dispatcher-incidents', value="ID du sélecteur d'incidents", allowed="admin", display_type=Datalist)
 failure_add('edit', 'dispatcher')
 failure_add('dispatcher', 'dispatcher-action_id')
 failure_add('dispatcher', 'dispatcher-selector_id')
@@ -295,7 +295,7 @@ dispatcher_update('edit-user', action_id='edit_user', selector_id='edit-user')
 failure_update('thing', value="Chose", allowed="admin")
 failure_update('thing-comment', value="Commentaire", allowed="admin", display_type=Input)
 failure_update('thing-del-failure', value="Panne à enlever", allowed="admin", display_type=Input)
-failure_update('thing-add-failure', value="Panne à ajouter", allowed="admin", display_type=Input)
+failure_update('thing-add-failure', value="Panne à ajouter", allowed="admin", display_type=Datalist)
 failure_add('edit', 'thing')
 failure_add('thing', 'thing-comment')
 failure_add('thing', 'thing-del-failure')
@@ -320,7 +320,7 @@ dispatcher_update('incidents-for-thing', action_id='echo', selector_id='thing-in
 # Edit action
 # ---------------
 failure_update('action', value="Action", allowed="admin")
-failure_update('action-python_script', value="Le script Python à lancer", allowed="admin", display_type=Input)
+failure_update('action-python_script', value="Le script Python à lancer", allowed="admin", display_type=Datalist)
 failure_add('action', 'action-python_script')
 failure_add('edit', 'action')
 

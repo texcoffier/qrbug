@@ -45,6 +45,9 @@ LOG_DIRECTORY = Path('LOGS')
 EMAIL_LOG_DIRECTORY = LOG_DIRECTORY / 'MAIL'
 ERROR_LOG_DIRECTORY = LOG_DIRECTORY / 'ERROR'
 
+# Directories
+ACTIONS_FOLDER = Path('ACTIONS')
+
 # Dicts
 CONFIGS = {
     "user_update"      : qrbug.user_update,
@@ -62,6 +65,7 @@ CONFIGS = {
     "Boolean"          : qrbug.DisplayTypes.boolean,
     "Display"          : qrbug.DisplayTypes.display,
     "Checkbox"         : qrbug.DisplayTypes.checkbox,
+    "Datalist"         : qrbug.DisplayTypes.datalist,
     "thing_update"     : qrbug.thing_update,
     "thing_del"        : qrbug.thing_del,
     "thing_remove"     : qrbug.thing_remove,
@@ -106,3 +110,4 @@ qrbug.PORT = PORT
 qrbug.SMTP_SERVER = SMTP_SERVER
 qrbug.SMTP_DEFAULT_SENDER = SMTP_DEFAULT_SENDER
 qrbug.DEFAULT_EMAIL_TO = DEFAULT_EMAIL_TO
+qrbug.ACTIONS_FOLDER = ACTIONS_FOLDER
