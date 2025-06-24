@@ -254,7 +254,7 @@ dispatcher_update('edit-dispatcher', action_id='edit_dispatcher', selector_id='e
 failure_update('failure', value="Les pannes", allowed="admin")
 failure_update('failure-value', value="Intitulé", allowed="admin", display_type=Input)
 failure_update('failure-display_type', value="Type d'affichage", allowed="admin", display_type=Display)
-failure_update('failure-ask_confirm', value="Confirmation avant d'envoyer la panne", allowed="admin", display_type=Boolean)
+failure_update('failure-ask_confirm', value="Confirmation avant d'envoyer la panne", allowed="admin", display_type=Checkbox)
 failure_update('failure-allowed', value="Groupe autorisé à déclaré la panne", allowed="admin", display_type=Input)
 failure_add('edit', 'failure')
 failure_add('failure', 'failure-value')

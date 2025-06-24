@@ -161,7 +161,13 @@
                     && element.previousElementSibling.tagName == 'INPUT'
                     ? element.previousElementSibling : undefined)
                 ;
-            let value = predefined_value || (input ? input.value : undefined);
+            let value = predefined_value;
+            if ( !value && input ) {
+                if ( input.type == 'checkbox')
+                    value = input.checked ? '1' : '0';
+                else
+                    value = input.value;
+            }
             if (value)
                 url += '&additional-info=' + encodeURIComponent(value);
             if(in_place) {

@@ -61,6 +61,7 @@ CONFIGS = {
     "Input"            : qrbug.DisplayTypes.input,
     "Boolean"          : qrbug.DisplayTypes.boolean,
     "Display"          : qrbug.DisplayTypes.display,
+    "Checkbox"         : qrbug.DisplayTypes.checkbox,
     "thing_update"     : qrbug.thing_update,
     "thing_del"        : qrbug.thing_del,
     "thing_remove"     : qrbug.thing_remove,

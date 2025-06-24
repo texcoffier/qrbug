@@ -75,8 +75,17 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
             failure_ask_confirm = qrbug.Failure['failure-ask_confirm']
             failure_display = qrbug.Failure['failure-display_type']
             failure_allowed = qrbug.Failure['failure-allowed']
-            texts.append('<table>')
-            texts.append('<tr><th>Panne<th>Intitulé<th>Confirmation<th>Affichage<th>Autorisé pour</tr>')
+            texts.append('''
+            <style>
+            .vert { writing-mode: sideways-lr; font-weight: normal; font-size: 60%; }
+            </style>
+            <table>
+            <tr>
+            <th>Panne
+            <th>Intitulé
+            <th class="vert">Confirmation
+            <th class="vert">Affichage
+            <th>Autorisé pour</tr>''')
             def go_in(node):
                 texts.append('<tr><td>')
                 texts.append(go_in.indent)

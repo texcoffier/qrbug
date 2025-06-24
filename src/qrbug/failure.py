@@ -18,6 +18,7 @@ class DisplayTypes(enum.Enum):
     input    = enum.auto()
     boolean  = enum.auto()
     display  = enum.auto()
+    checkbox = enum.auto()
 
 def element(failure: "Failure", thing, in_place=False, destroy=None):
     display_type = failure.display_type
@@ -57,6 +58,13 @@ def element(failure: "Failure", thing, in_place=False, destroy=None):
         return element
     if display_type == DisplayTypes.textarea:
         return f'<div {common} class="button" value="{value}" onclick="ask_value(this,{in_place})"><BOX>{failure.value}</BOX></div>'
+    if display_type == DisplayTypes.checkbox:
+        element = f'<input {common} type="checkbox" autocomplete="off" onclick="register_incident(this,{in_place})">'
+        if attr:
+            element = element.replace('<input', '<input checked')
+        if not in_place:
+            element = f'<div class="input">{failure.value} : {element}</div>'
+        return element
     if display_type == DisplayTypes.input:
         if destroy:
             common += f' value="{html.escape(destroy)}"'
