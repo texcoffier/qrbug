@@ -87,6 +87,11 @@
             background: #DDD;
         }
 
+        .changed_and_unsaved {
+            /*outline: 4px dotted red;*/
+            background-color: rgba(255, 153, 0, 0.2);
+        }
+
         @media (orientation: portrait) {
             BODY, BUTTON {
                 font-size: 5vw;
@@ -175,6 +180,8 @@
                 iframe = document.createElement('IFRAME');
                 iframe.src = url;
                 element.parentNode.appendChild(iframe);
+
+                element.parentNode.querySelector('.changed_and_unsaved').classList.remove('changed_and_unsaved');
             } else {
                 if ( ask_confirm ) {
                     if ( confirm(ask_confirm) )
