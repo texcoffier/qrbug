@@ -22,7 +22,8 @@ class DisplayTypes(enum.Enum):
 
 def element(failure: "Failure", thing, in_place=False, destroy=None):
     display_type = failure.display_type
-    common = f'failureid="{failure.id}" thingid="{thing.id}" what="{thing.__class__.__name__.lower()}"'
+    ask_confirm = html.escape(failure.ask_confirm or '')
+    common = f'failureid="{html.escape(failure.id)}" thingid="{html.escape(thing.id)}" what="{thing.__class__.__name__.lower()}" ask_confirm="{ask_confirm}"'
     if display_type == DisplayTypes.text:
         return  f'<p {common}>{failure.value}</p>'
     if display_type == DisplayTypes.redirect:

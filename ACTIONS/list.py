@@ -85,7 +85,7 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
             <th>Intitulé
             <th class="vert">Confirmation
             <th class="vert">Affichage
-            <th>Autorisé pour</tr>''')
+            <th>Déclaration autorisée<br>si la condition est vraie</tr>''')
             def go_in(node):
                 texts.append('<tr><td>')
                 texts.append(go_in.indent)

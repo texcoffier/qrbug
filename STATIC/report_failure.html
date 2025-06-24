@@ -143,11 +143,12 @@
                 element.getAttribute('thingid'),
                 element.getAttribute('failureid'),
                 element.getAttribute('what'),
-                element.getAttribute('value')
+                element.getAttribute('value'),
+                element.getAttribute('ask_confirm'),
             ] ;
         }
         function register_incident(event_element, in_place) {
-            let [element, thingid, failureid, what, predefined_value] = get_infos(event_element);
+            let [element, thingid, failureid, what, predefined_value, ask_confirm] = get_infos(event_element);
             let url = './?thing-id=' + thingid
                 + '&failure-id=' + failureid
                 + '&what=' + what
@@ -175,11 +176,16 @@
                 iframe.src = url;
                 element.parentNode.appendChild(iframe);
             } else {
-                window.location = url;
+                if ( ask_confirm ) {
+                    if ( confirm(ask_confirm) )
+                        window.location = url;
+                }
+                else
+                    window.location = url;
             }
         }
         function show(event_element) {
-            let [_element, _thingid, failureid, _what, value] = get_infos(event_element);
+            let [_element, _thingid, failureid, _what, value, _ask_confirm] = get_infos(event_element);
             if ( failureid.includes('failure') )
                 what = 'failure';
             else if ( failureid.includes('concerned') )
