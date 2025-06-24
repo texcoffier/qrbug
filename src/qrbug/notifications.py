@@ -5,6 +5,21 @@ from typing import Union, Optional
 import smtplib
 import qrbug
 import threading
+import queue
+
+
+QRBUG_EMAIL_QUEUE = queue.Queue()
+
+
+def smtp_loop():
+    while True:
+        sender, recipients, body = QRBUG_EMAIL_QUEUE.get()
+        send_mail_smtp(sender, recipients, body)
+
+
+QRBUG_SMTP_THREAD = threading.Thread(target=smtp_loop, daemon=True)
+QRBUG_SMTP_THREAD.start()
+
 
 def open_smtp_session(server):
     if ':' in server:
@@ -106,8 +121,7 @@ async def send_mail(
     # Logs the mail to the logs folder
     qrbug.log_email(body)
 
-    thread = threading.Thread(target=send_mail_smtp, args=(sender, recipients, body))
-    thread.start()
+    QRBUG_EMAIL_QUEUE.put((sender, recipients, body))
     return None
 
 send_mail.session = None
