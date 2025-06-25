@@ -338,7 +338,7 @@ failure_update('generate_qr', value='Générer un QR code :', allowed="admin", d
 failure_add('backoffice', 'generate_qr')
 failure_update('generate_qr', value='Entrez le nom d\'une Thing', ask_confirm=True, allowed="admin", display_type=Input)
 for rows in (7, 8):
-    for cols in (5, 6):
+    for cols in (4, 5, 6):
         failure_update(f'generate_qr_{rows}x{cols}', value=f'En {rows}x{cols}', allowed="admin", display_type=Input)
         failure_add('generate_qr', f'generate_qr_{rows}x{cols}')
 

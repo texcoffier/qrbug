@@ -1,25 +1,16 @@
 from typing import Optional
 import base64
 from io import BytesIO
-
 import qrcode
-
 import qrbug
 
-
 IMAGE_FORMAT = 'PNG'
-IS_WYSIWYG = True
 REPORT_THING_URL = qrbug.SERVICE_URL + '/thing={}'
 
 QR_GEN_STATIC_FILES_PATH = qrbug.STATIC_FILES_PATH
 TEMPLATE_CSS_PATH = QR_GEN_STATIC_FILES_PATH / 'qr_stylesheet.css'
-TEMPLATE_JS_PATH = QR_GEN_STATIC_FILES_PATH / 'qr_script.js'
 TEMPLATE_QR_BLOCK_PATH = QR_GEN_STATIC_FILES_PATH / 'qr_inner_block.html'
-TEMPLATE_QR_CONFIG_BLOCK = QR_GEN_STATIC_FILES_PATH / 'qr_config.html'
 TEMPLATE_QR_DISPLAY_CONFIG_BLOCK = QR_GEN_STATIC_FILES_PATH / 'qr_display_config.html'
-TEMPLATE_QR_INFOS_BLOCK = QR_GEN_STATIC_FILES_PATH / 'qr_infos_block.html'
-TEMPLATE_QR_PARENT_LINKS = QR_GEN_STATIC_FILES_PATH / 'qr_parent_links.html'
-
 
 def get_qr_gen_link(thing_id: qrbug.ThingId, failure_id, secret: str) -> str:
     return f'/?thing-id={thing_id}&failure-id={failure_id}&secret={secret}'
@@ -31,7 +22,7 @@ def get_qr_gen_link(thing_id: qrbug.ThingId, failure_id, secret: str) -> str:
 
 
 async def get_qr_code_b64_image(url: str) -> bytes:
-    img = qrcode.make(url)
+    img = qrcode.make(url, border=0)
     buffer = BytesIO()
     img.save(buffer, format=IMAGE_FORMAT)
     img_base64 = base64.b64encode(buffer.getvalue())
@@ -63,31 +54,13 @@ async def run(incidents: list[qrbug.Incident], request: qrbug.Request) -> Option
     TEMPLATE_CSS = (f'<style>\n{TEMPLATE_CSS_PATH.read_text()}\n</style>\n'
                     .replace('%cols%', default_cols)
                     .replace('%rows%', default_rows)
-                    .replace('%qr_info_title_display%', 'none' if IS_WYSIWYG else 'block')
-                    .replace('%qr_side_text_display%',  'block' if IS_WYSIWYG else 'none')
-                    .replace('%qr_img_max_width%',      'var(--qr-width)' if IS_WYSIWYG else 'auto')
                     )
-    TEMPLATE_JS = f'<script>\n{TEMPLATE_JS_PATH.read_text()}\n</script>\n'
     TEMPLATE_QR_BLOCK = TEMPLATE_QR_BLOCK_PATH.read_text()
     await request.write(TEMPLATE_CSS)
-    await request.write(TEMPLATE_JS)
-    await request.write(TEMPLATE_QR_DISPLAY_CONFIG_BLOCK.read_text())
-    # await request.write_newline(TEMPLATE_QR_INFOS_BLOCK.read_text())
-    # await request.write_newline(
-    #     '<div class="qr_parent_links">',
-    #     '   <h3>Parents :</h3>',
-    #     '   <ul>',
-    # )
-    # for parent_id in requested_thing.parent_ids:
-    #     await request.write_newline(
-    #         f'      <li><a href="{get_qr_gen_link(parent_id, incident.failure_id, user_ticket)}">{parent_id}</a></li>'
-    #     )
-    # await request.write_newline(
-    #     '   </ul>',
-    #     '</div>'
-    # )
-    #await request.write_newline(TEMPLATE_QR_CONFIG_BLOCK.read_text())
-    await request.write_newline('<div class="qr_outer_block">')
+    await request.write(TEMPLATE_QR_DISPLAY_CONFIG_BLOCK.read_text()
+        .replace(f'<option>{default_cols}</option>', f'<option selected>{default_cols}</option>')
+        .replace(f'<option>{default_rows}.</option>', f'<option selected>{default_rows}.</option>')
+        )
 
     for requested_thing in requested_things:
         for thing_id, depth in requested_thing.get_sorted_children_ids():
@@ -110,7 +83,4 @@ async def run(incidents: list[qrbug.Incident], request: qrbug.Request) -> Option
                 img_b64     = img_base64.decode(),
                 depth_class = depth_class
             ))
-
-    await request.write('</div>\n')
-
     return None

@@ -1,12 +1,1 @@
-<div class="qr_inner_block qr_{depth_class}">
-    <h2 class="qr_info_title">QR Code pour <a href="{qr_link}">{thing_id}</a></h2>
-    <div class="qr_side_by_side">
-        <div class="qr_img">
-            <a href="{url}"><img src="data:image/{img_format};base64,{img_b64}" /></a>
-        </div>
-        <div class="qr_side_text">
-            <div class="qr_report_me">Scannez-moi pour signaler un problème&nbsp;!</div>
-            <div class="qr_thing_id">{thing_id}</div>
-        </div>
-    </div>
-</div>
+<a href="{url}" target="_blank" class="qr_inner_block qr_{depth_class}"><div class="qr_report_me">Scannez-moi pour<br>signaler un problème&nbsp;!</div><div class="qr_thing_id">{thing_id}</div><img src="data:image/{img_format};base64,{img_b64}"></a>
