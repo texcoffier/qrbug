@@ -111,6 +111,11 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
             user_del_child = qrbug.Failure['user-del-child']
             user_add_parent = qrbug.Failure['user-add-parent']
             user_del_parent = qrbug.Failure['user-del-parent']
+            # texts.append(
+            #     '<style>'
+            #     'td { margin-top: 0; padding-top: 0; }'
+            #     '</style>'
+            # )
             texts.append('<div class="button" onclick="location.reload()">RAFRAÎCHIR</div>')
             texts.append('<table>')
             texts.append(
@@ -119,7 +124,8 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
             )
             def go_in(user):
                 texts.append('<tr><td>')
-                texts.append(go_in.indent)
+                go_in.start_text_len = len(texts)
+                texts.append(go_in.indent[::-1].replace('┃', '┣', 1)[::-1])
                 texts.append(html.escape(user.id))
                 texts.append('<td>')
                 texts.append(qrbug.element(user_add_child, user, in_place=True, datalist_id='User'))
@@ -130,10 +136,13 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
                 texts.append('<td>')
                 texts.append(qrbug.element(user_del_parent, user, in_place=True, datalist_id='User'))
                 texts.append('</tr>')
-                go_in.indent += '    '
+                go_in.indent += '┃ '
             def go_out(_node):
-                go_in.indent = go_in.indent[:-4]
+                go_in.indent = go_in.indent[:-2]
+                if texts[go_in.start_text_len].count(' ') != go_in.indent.count(' '):
+                    texts[go_in.start_text_len] = texts[go_in.start_text_len].replace('┣', '┗')
             go_in.indent = ''
+            go_in.start_text_len = len(texts)
             footer = '</table>'
             datalists_to_load = ('User',)
         elif what is qrbug.Dispatcher:
