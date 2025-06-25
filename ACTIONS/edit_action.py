@@ -1,13 +1,14 @@
 """
 In this case, the thing is an action ID to edit
 """
+import html
 from pathlib import Path
 import qrbug
 
 async def run(incidents, request):
     incident = incidents[0]
     selector = incident.thing_id
-    value = request.report.comment
+    value = html.escape(request.report.comment)
     if incident.failure_id == 'action-python_script':
         if Path('ACTIONS', value).exists():
             if value == qrbug.Action[selector].python_script:

@@ -2,12 +2,14 @@
 In this case, the thing is a failure ID to edit
 """
 import ast
+import html
+
 import qrbug
 
 async def run(incidents, request):
     incident = incidents[0]
     selector = incident.thing_id
-    value = request.report.comment
+    value = html.escape(request.report.comment)
     feedback = f"La valeur de «{selector} . {incident.failure_id}» est inchangé.\n"
     failure = qrbug.Failure[selector]
     if incident.failure_id == 'failure-value':

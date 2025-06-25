@@ -1,6 +1,8 @@
 """
 In this case, the thing is a dispatcher ID to edit
 """
+import html
+
 import qrbug
 
 BEACON_NAME = 'pre'
@@ -9,7 +11,7 @@ FULL_BEACON = f'<{BEACON_NAME} style="display: inline;">'
 async def run(incidents, request):
     incident = incidents[0]
     dispatcher_id = incident.thing_id
-    value = request.report.comment
+    value = html.escape(request.report.comment)
     if incident.failure_id == 'dispatcher-action_id':
         qrbug.append_line_to_journal(
                 f'dispatcher_update({repr(dispatcher_id)}, action_id={repr(value)})\n', qrbug.Journals.DB)
