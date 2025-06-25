@@ -111,6 +111,7 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
             user_del_child = qrbug.Failure['user-del-child']
             user_add_parent = qrbug.Failure['user-add-parent']
             user_del_parent = qrbug.Failure['user-del-parent']
+            texts.append('<div class="button" onclick="location.reload()">RAFRAÎCHIR</div>')
             texts.append('<table>')
             texts.append(
                 f'<tr><th>ID<th>{user_add_child.value}<th>{user_del_child.value}'
