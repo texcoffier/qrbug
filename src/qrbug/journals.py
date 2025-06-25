@@ -27,6 +27,9 @@ def load_config(db_config_path: Path = None, default_db_path: Path = None) -> No
     # Loads the default DB
     exec_code_file(default_db_path if default_db_path is not None else qrbug.DEFAULT_DB_PATH, qrbug.CONFIGS)
 
+    # Loads the generated DB with initial administrators
+    exec_code_file(qrbug.GENERATED_DB_PATH, qrbug.CONFIGS)
+
     # Loads the DB
     exec_code_file(db_config_path if db_config_path is not None else qrbug.DB_FILE_PATH, qrbug.CONFIGS)
 

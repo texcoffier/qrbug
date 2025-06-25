@@ -25,10 +25,6 @@ selector('for-thing-active', '[1, {"test": "active"}, {"test":"is_for_thing"}]')
 ###############################################################################
 
 user_update('admin')
-user_update('thierry.excoffier')
-user_update('p2205989')
-user_add('admin', 'thierry.excoffier')
-user_add('admin', 'p2205989')
 
 failure_update('backoffice', value='')
 selector('backoffice'    ,'{"class":"Failure" ,                  "test":"in"   , "value":"backoffice"}')
@@ -355,12 +351,10 @@ selector('generate_qr','{"class":"Failure", "attr":"id", "test": "contains", "va
 dispatcher_update('generate-qr', action_id='generate_qrcode', selector_id='generate_qr')
 
 # ----------------------------------------------
-# Send QRBug backtraces to the administrator
+# Define QRBug backtrace failure and dispatcher
 # ----------------------------------------------
 
 failure_update('backtrace', value='QRBug server backtrace')
-# failure_add('backoffice', 'backtrace')
-concerned_add('backtrace', 'thierry.excoffier')
 selector('backtrace','{"class":"Failure", "test":"is", "value": "backtrace"}')
 dispatcher_update('backtrace', action_id='report_mail', selector_id='backtrace')
 

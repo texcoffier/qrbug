@@ -17,7 +17,7 @@ def log(log_folder_path: Path, content: Union[str, bytes], log_prefix: str = '')
     attempts_count = 1
     while os.path.exists(filename):
         attempts_count += 1
-        filename = log_folder_path / f'{current_time}-{attempts_count}{qrbug.LOG_FILE_EXTENSION}'
+        filename = log_folder_path / f'{current_time}-{attempts_count}'
 
     if isinstance(content, bytes):
         filename.write_bytes(content)
