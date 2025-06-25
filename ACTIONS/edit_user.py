@@ -9,7 +9,16 @@ async def run(incidents, request):  # TODO: Force refresh of the page upon edit
     incident = incidents[0]
     user_id = incident.thing_id
     value = html.escape(request.report.comment)
-    if incident.failure_id == 'user-add-child':
+
+
+    if incident.failure_id == 'user-rename':
+        try:
+            qrbug.append_line_to_journal(f'user_rename({repr(user_id)}, {repr(value)})\n', qrbug.Journals.DB)
+        except IndexError:
+            feedback = f"<b>ERREUR :</b> Cet ID d'utilisateur existe déjà !"
+        else:
+            feedback = f"Utilisateur «{user_id}» renommé en «{value}»\n"
+    elif incident.failure_id == 'user-add-child':
         if value == user_id:
             feedback = f"<b>ERREUR :</b> Impossible d'assigner le même ID à un parent et un enfant"
         elif value in qrbug.User[user_id].get_all_children_ids():
