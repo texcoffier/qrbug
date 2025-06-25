@@ -107,19 +107,25 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
             footer = '</table>'
             datalists_to_load = tuple()
         elif what is qrbug.User:
+            user_add_child = qrbug.Failure['user-add-child']
+            user_del_child = qrbug.Failure['user-del-child']
             texts.append('<table>')
-            texts.append('<tr><th>ID</th></tr>')
+            texts.append(f'<tr><th>ID<th>{user_add_child.value}<th>{user_del_child.value}</tr>')
             def go_in(user):
                 texts.append('<tr><td>')
                 texts.append(go_in.indent)
                 texts.append(html.escape(user.id))
-                texts.append('</td></tr>')
+                texts.append('<td>')
+                texts.append(qrbug.element(user_add_child, user, in_place=True, datalist_id='User'))
+                texts.append('<td>')
+                texts.append(qrbug.element(user_del_child, user, in_place=True, datalist_id='User'))
+                texts.append('</tr>')
                 go_in.indent += '    '
             def go_out(_node):
                 go_in.indent = go_in.indent[:-4]
             go_in.indent = ''
             footer = '</table>'
-            datalists_to_load = tuple()
+            datalists_to_load = ('User',)
         elif what is qrbug.Dispatcher:
             texts.append('<table>')
             texts.append(
