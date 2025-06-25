@@ -32,7 +32,7 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
             thing_comment = qrbug.Failure['thing-comment']
             texts.append('<p>Générer une feuille de QR codes (lignes × colonne) : ')
             texts.append(' '.join(
-                f'<button onclick="qr(this)">{html.escape(failure.split("_")[-1])}</button>'
+                f'<div class="button" style="display: inline;" onclick="qr(this)">{html.escape(failure.split("_")[-1])}</div>'
                 for failure in qrbug.Failure['generate_qr'].children_ids
             ))
             texts.append('<p id="qr_code_gen_error_field"></p></p>')
