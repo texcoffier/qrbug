@@ -53,11 +53,14 @@ def append_line_to_journal(line: str, journal: Journals = Journals.INCIDENTS) ->
     else:
         raise ValueError(f"Unknown journal {journal}")
 
+    line_vars = {}
+    exec(compile('current_incident = ' + line, 'no file', 'exec'), given_globals, line_vars)
+
+    # We write to the journal AFTER executing the line to prevent adding it to the journal if it throws an error
+    # during execution
     with open(journal_path, 'a', encoding='utf-8') as f:
         f.write(line)
 
-    line_vars = {}
-    exec(compile('current_incident = ' + line, 'no file', 'exec'), given_globals, line_vars)
     return line_vars['current_incident']
 
 
