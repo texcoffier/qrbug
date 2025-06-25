@@ -5,21 +5,15 @@ import qrcode
 import qrbug
 
 IMAGE_FORMAT = 'PNG'
-REPORT_THING_URL = qrbug.SERVICE_URL + '/thing={}'
 
 QR_GEN_STATIC_FILES_PATH = qrbug.STATIC_FILES_PATH
 TEMPLATE_CSS_PATH = QR_GEN_STATIC_FILES_PATH / 'qr_stylesheet.css'
-TEMPLATE_QR_BLOCK_PATH = QR_GEN_STATIC_FILES_PATH / 'qr_inner_block.html'
 TEMPLATE_QR_DISPLAY_CONFIG_BLOCK = QR_GEN_STATIC_FILES_PATH / 'qr_display_config.html'
-
-def get_qr_gen_link(thing_id: qrbug.ThingId, failure_id, secret: str) -> str:
-    return f'/?thing-id={thing_id}&failure-id={failure_id}&secret={secret}'
 
 # Run by a dispatcher:
 #    thing: building, room, pc...
 #    failure: print qr code
 #    incidents: descendants of the thing
-
 
 async def get_qr_code_b64_image(url: str) -> bytes:
     img = qrcode.make(url, border=0)
@@ -27,7 +21,6 @@ async def get_qr_code_b64_image(url: str) -> bytes:
     img.save(buffer, format=IMAGE_FORMAT)
     img_base64 = base64.b64encode(buffer.getvalue())
     return img_base64
-
 
 async def run(incidents: list[qrbug.Incident], request: qrbug.Request) -> Optional[qrbug.action_helpers.ActionReturnValue]:
     incident = incidents[0]
@@ -55,7 +48,7 @@ async def run(incidents: list[qrbug.Incident], request: qrbug.Request) -> Option
                     .replace('%cols%', default_cols)
                     .replace('%rows%', default_rows)
                     )
-    TEMPLATE_QR_BLOCK = TEMPLATE_QR_BLOCK_PATH.read_text()
+    TEMPLATE_QR_BLOCK = '<a href="{url}" target="_blank" class="qr_inner_block qr_{depth_class}"><div class="qr_report_me">Scannez-moi pour<br>signaler un problème&nbsp;!</div><div class="qr_thing_id">{thing_id}</div><img src="data:image/{img_format};base64,{img_b64}"></a>'
     await request.write(TEMPLATE_CSS)
     await request.write(TEMPLATE_QR_DISPLAY_CONFIG_BLOCK.read_text()
         .replace(f'<option>{default_cols}</option>', f'<option selected>{default_cols}</option>')
@@ -64,23 +57,20 @@ async def run(incidents: list[qrbug.Incident], request: qrbug.Request) -> Option
 
     for requested_thing in requested_things:
         for thing_id, depth in requested_thing.get_sorted_children_ids():
-            url = REPORT_THING_URL.format(thing_id)
-            img_base64 = await get_qr_code_b64_image(url)
-
+            url = f'{qrbug.SERVICE_URL}/thing={thing_id}'
             if depth == 0:
                 depth_class = 'root'
             elif depth == 1:
                 depth_class = 'child'
             else:
                 depth_class = 'descendant'
-
             # Writes the HTML of the QR code
             await request.write(TEMPLATE_QR_BLOCK.format(
-                qr_link     = get_qr_gen_link(thing_id, incident.failure_id, request.secret.secret),
+                qr_link     =  f'/?thing-id={thing_id}&failure-id={incident.failure_id}&secret={request.secret.secret}',
                 thing_id    = thing_id,
                 url         = url,
                 img_format  = IMAGE_FORMAT.lower(),
-                img_b64     = img_base64.decode(),
+                img_b64     = (await get_qr_code_b64_image(url)).decode(),
                 depth_class = depth_class
             ))
     return None
