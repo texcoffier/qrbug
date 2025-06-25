@@ -6,7 +6,12 @@ import queue
 import threading
 import time
 import ldap
+import traceback
+import re
 import qrbug
+
+def safe(txt):
+    return re.sub('[^-a-zA-Z0-9_.]', '_', txt)
 
 QUEUE = queue.Queue()
 MAILS = {}
@@ -30,12 +35,12 @@ def thread_mail():
                 login = QUEUE.get()
                 infos = session.search_s(
                     qrbug.LDAP_DC, ldap.SCOPE_SUBTREE,
-                    f'({qrbug.LDAP_ID}={login})', ('mail',))
+                    f'({qrbug.LDAP_ID}={safe(login)})', ('mail',))
                 for i in infos:
                     if i[0]:
                         MAILS[login] = i[1]['mail'][0].decode('utf-8')
         except ValueError:
-            pass
+            qrbug.Incident.open('admin', 'backtrace', '', '', '\n'.join(traceback.format_exc()))
 
 MAILS_THREAD = threading.Thread(target=thread_mail, daemon=True)
 MAILS_THREAD.start()

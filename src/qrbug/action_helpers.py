@@ -1,9 +1,7 @@
+import traceback
 from typing import Optional
-
 from aiohttp import web
-
 import qrbug
-
 
 class ActionReturnValue:
     """
@@ -18,7 +16,6 @@ class ActionReturnValue:
 
     def __bool__(self):
         return not self.is_empty()
-
 
 class Request(web.Request):
     def __init__(self, *args, **kwargs):

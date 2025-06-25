@@ -52,11 +52,13 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
             <td rowspan="{len(incident.active)+len(pending_feedbacks)+1}">«{escape(incident.thing_id)}»<br>«{escape(incident.failure_id)}»<br>
             {fix}<td>IP demandeur<td>Commentaire<td>Qui a demandé<td>Réparateur</tr>\n''')
         for report in incident.active:
+            comment = escape(report.comment).replace("\n", "<br>").replace(' ', ' ')
             await request.write(
-                f'<tr><td>{escape(report.ip)}<td>{escape(report.comment)}<td>{escape(report.login)}</tr>'
+                f'<tr><td>{escape(report.ip)}<td>{comment}<td>{escape(report.login)}</tr>'
             )
         for report in pending_feedbacks:
+            comment = escape(report.comment).replace("\n", "<br>").replace(' ', ' ')
             await request.write(
-                f'<tr><td>{escape(report.ip)}<td>{escape(report.comment)}<td>{escape(report.login)}<td>{escape(report.remover_login)}</tr>'
+                f'<tr><td>{escape(report.ip)}<td>{comment}<td>{escape(report.login)}<td>{escape(report.remover_login)}</tr>'
             )
     await request.write('</table>\n')

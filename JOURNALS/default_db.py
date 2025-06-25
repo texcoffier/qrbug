@@ -354,6 +354,16 @@ action('generate_qrcode', 'generate_qr.py')
 selector('generate_qr','{"class":"Failure", "attr":"id", "test": "contains", "value": "generate_qr"}')
 dispatcher_update('generate-qr', action_id='generate_qrcode', selector_id='generate_qr')
 
+# ----------------------------------------------
+# Send QRBug backtraces to the administrator
+# ----------------------------------------------
+
+failure_update('backtrace', value='QRBug server backtrace')
+# failure_add('backoffice', 'backtrace')
+concerned_add('backtrace', 'thierry.excoffier')
+selector('backtrace','{"class":"Failure", "test":"is", "value": "backtrace"}')
+dispatcher_update('backtrace', action_id='report_mail', selector_id='backtrace')
+
 
 
 # selector('nautibus-hard', '[1, {"class":"Thing", "test": "inside", "value": "DOUA:Nautibus"}, [0, {"class":"Failure", "test": "in", "value": "MOUSE"}, {"class":"Failure", "test": "in", "value": "KEYBOARD"}, {"class":"Failure", "test": "in", "value": "SCREEN"}')
