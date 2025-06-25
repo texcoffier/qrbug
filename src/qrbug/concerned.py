@@ -2,7 +2,7 @@ import html
 import qrbug
 
 class Concerned(qrbug.Editable):
-    instances: dict["SelectorId", set['UserId']] = {}
+    instances: dict["SelectorId", "Concerned"] = {}
 
     def __init__(self, selector_id):
         self.id = selector_id

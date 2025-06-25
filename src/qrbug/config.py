@@ -80,6 +80,7 @@ qrbug.CONFIGS = {
     "user_update"      : qrbug.user_update,
     "user_add"         : qrbug.user_add,
     "user_remove"      : qrbug.user_remove,
+    "user_rename"      : qrbug.user_rename,
     "failure_update"   : qrbug.failure_update,
     "failure_add"      : qrbug.failure_add,
     "failure_remove"   : qrbug.failure_remove,
