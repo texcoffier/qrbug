@@ -17,3 +17,9 @@ import qrbug.config
 import qrbug.test_framework
 import qrbug.authentication
 import qrbug.journals
+
+# Caches in memory the webpage template
+import time
+start = time.time()
+qrbug.get_template(force_load=True)
+print(f'Load template : {time.time() - start:.4f} seconds')
