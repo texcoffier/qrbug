@@ -143,3 +143,20 @@ class TestAction(qrbug.TestCase):
         request = qrbug.Request()
         asyncio.run(list_pending.run(trigger, request, []))
         self.assertEqual(request.lines, ["L'automatisme «show_pending» n'a rien à faire, il n'est donc pas lancé"])
+
+    def test_get_file(self):
+        qrbug.action_update('get_file', 'get_file.py')
+        qrbug.dispatcher_update('get_file', action_id='get_file', selector_id='true')
+        dispatcher = qrbug.Dispatcher['get_file']
+
+        request = qrbug.Request()
+        qrbug.failure_update('do_not_exist')
+        trigger = qrbug.Incident.open('debug', 'do_not_exist', 'ip', 'login')
+        asyncio.run(dispatcher.run(trigger, request, []))
+        self.assertEqual(request.lines, ['«STATIC/do_not_exist does not exists'])
+
+        request = qrbug.Request()
+        qrbug.failure_update('report_failure.html')
+        trigger = qrbug.Incident.open('debug', 'report_failure.html', 'ip', 'login')
+        asyncio.run(dispatcher.run(trigger, request, []))
+        self.assertTrue('%REPRESENTATION%' in ''.join(request.lines))

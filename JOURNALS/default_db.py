@@ -360,6 +360,20 @@ failure_update('backtrace', value='QRBug server backtrace')
 selector('backtrace','{"class":"Failure", "test":"is", "value": "backtrace"}')
 dispatcher_update('backtrace', action_id='report_mail', selector_id='backtrace')
 
+# ----------------------------------------------
+# Define a STATIC file getter
+# ----------------------------------------------
+
+action('get_file', 'get_file.py')
+failure_update('get_file', value='QRBug server get_file')
+failure_add('backoffice', 'get_file')
+selector('get_file','{"class":"Failure", "test":"is", "value": "get_file"}')
+dispatcher_update('get_file', action_id='get_file', selector_id='get_file')
+
+failure_update('flow.html', value='Présentation de QRBug', display_type=Button)
+failure_add('misc', 'flow.html')
+selector('flow.html','{"class":"Failure", "test":"is", "value": "flow.html"}')
+dispatcher_update('flow.html', action_id='get_file', selector_id='flow.html')
 
 
 # selector('nautibus-hard', '[1, {"class":"Thing", "test": "inside", "value": "DOUA:Nautibus"}, [0, {"class":"Failure", "test": "in", "value": "MOUSE"}, {"class":"Failure", "test": "in", "value": "KEYBOARD"}, {"class":"Failure", "test": "in", "value": "SCREEN"}')

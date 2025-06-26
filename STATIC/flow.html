@@ -37,6 +37,18 @@
         text-align: justify;
     }
 </style>
+<script>
+    function go(url) {
+        var secret = location.search.split('secret=')[1];
+        if(secret) {
+            secret = secret.split('&')[0];
+            console.log('./' + url + (url.includes('?') ? '&' : '?') + 'secret=' + secret);
+            window.open('./' + url + (url.includes('?') ? '&' : '?') + 'secret=' + secret);
+            console.log('done');
+        } else
+            window.open('http://qrbug.univ-lyon1.fr:8080/' + url);
+    }
+</script>
 <table>
     <tr>
         <th>
@@ -45,7 +57,7 @@
             </p>
         <th>
             <p>
-                <a target="_blank" href="http://qrbug.univ-lyon1.fr:8080/thing=admin">Backoffice</a>
+                <a href="javascript:go('thing=admin')">Backoffice</a>
             </p>
     </tr>
     <tr>
@@ -55,8 +67,7 @@
             </p>
         <td>
             <p>
-                <a target="_blank"
-                    href="http://qrbug.univ-lyon1.fr:8080/?what=thing&amp;thing-id=admin&amp;failure-id=list-Thing">
+                <a href="javascript:go('?what=thing&thing-id=admin&failure-id=list-Thing')">
                     Imprimer les QRCodes/
                 </a>
             </p>
@@ -77,14 +88,12 @@
             </p>
         <td>
             <p>
-                <a target="_blank"
-                    href="http://qrbug.univ-lyon1.fr:8080/?what=thing&amp;thing-id=admin&amp;failure-id=list-Failure">
+                <a href="javascript:go('?what=thing&thing-id=admin&failure-id=list-Failure')">
                     Création de l'arbre des "pannes"
                 </a> (il peut y avoir des "pannes" communes).
             </p>
             <p>
-                <a target="_blank"
-                    href="http://qrbug.univ-lyon1.fr:8080/?what=thing&amp;thing-id=admin&amp;failure-id=list-Thing">
+                <a href="javascript:go('?what=thing&thing-id=admin&failure-id=list-Thing')">
                     Ajouter/enlever des arbres de "pannes" à l'objet.
                 </a>
             </p>
@@ -94,9 +103,9 @@
         <td class="phone">
             <p>
                 Affiche arbre des &quot;pannes&quot; :
-                <a target="_blank" href="http://qrbug.univ-lyon1.fr:8080/thing=b751pc0101.univ-lyon1.fr">une
+                <a href="javascript:go('thing=b751pc0101.univ-lyon1.fr')">une
                     machine</a>,
-                <a target="_blank" href="http://qrbug.univ-lyon1.fr:8080/thing=DOUA Ariane TP01">une salle</a>, ...
+                <a href="javascript:go('thing=DOUA Ariane TP01')">une salle</a>, ...
             </p>
         <td>
     </tr>
@@ -115,8 +124,7 @@
             </p>
         <td>
             <p>
-                <a target="_blank"
-                    href="http://qrbug.univ-lyon1.fr:8080/?what=thing&amp;thing-id=admin&amp;failure-id=list-Failure">
+                <a href="javascript:go('?what=thing&thing-id=admin&failure-id=list-Failure')">
                     Indiquer si la confirmation est nécessaire.
                 </a>
             </p>
@@ -129,14 +137,12 @@
             </p>
         <td>
             <p>
-                <a target="_blank"
-                    href="http://qrbug.univ-lyon1.fr:8080/?what=thing&amp;thing-id=admin&amp;failure-id=list-Failure">
+                <a href="javascript:go('?what=thing&thing-id=admin&failure-id=list-Failure')">
                     Indiquer la valeur «Autorisé pour».
                 </a>
             </p>
             <p>
-                <a target="_blank"
-                    href="http://qrbug.univ-lyon1.fr:8080/?what=thing&amp;thing-id=admin&amp;failure-id=list-User">
+                <a href="javascript:go('?what=thing&thing-id=admin&failure-id=list-User')">
                     Modifier les groupes d'utilisateurs.
                 </a>
             </p>
@@ -148,8 +154,7 @@
             </p>
         <td>
             <p>
-                <a target="_blank"
-                    href="http://qrbug.univ-lyon1.fr:8080/?what=thing&amp;thing-id=admin&amp;failure-id=list-Selector">
+                <a href="javascript:go('?what=thing&thing-id=admin&failure-id=list-Selector')">
                     Modifier les sélecteurs
                 </a>
             </p>
@@ -198,20 +203,17 @@
 
         <td>
             <p>
-                <a target="_blank"
-                    href="http://qrbug.univ-lyon1.fr:8080/?what=thing&amp;thing-id=admin&amp;failure-id=list-Dispatcher">
+                <a href="javascript:go('?what=thing&thing-id=admin&failure-id=list-Dispatcher')">
                     Modifier les automatismes
                 </a>
             </p>
             <p>
-                <a target="_blank"
-                    href="http://qrbug.univ-lyon1.fr:8080/?what=thing&amp;thing-id=admin&amp;failure-id=list-Action">
+                <a href="javascript:go('?what=thing&thing-id=admin&failure-id=list-Action')">
                     Modifier les actions
                 </a>
             </p>
             <p>
-                <a target="_blank"
-                    href="http://qrbug.univ-lyon1.fr:8080/?what=thing&amp;thing-id=admin&amp;failure-id=list-Concerned">
+                <a href="javascript:go('?what=thing&thing-id=admin&failure-id=list-Concerned')">
                     Modifier les personnes concernées par un incident
                 </a>
             </p>
@@ -223,7 +225,7 @@
             </p>
         <td>
             <p>
-                <a href="http://qrbug.univ-lyon1.fr:8080/?thing-id=admin&failure-id=personnal-for-me">
+                <a href="javascript:go('?thing-id=admin&failure-id=personnal-for-me')">
                     Les incidents que je dois traiter</a>
             </p>
     </tr>
