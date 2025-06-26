@@ -16,7 +16,7 @@ TEMPLATE_QR_DISPLAY_CONFIG_BLOCK = QR_GEN_STATIC_FILES_PATH / 'qr_display_config
 #    incidents: descendants of the thing
 
 async def get_qr_code_b64_image(url: str) -> bytes:
-    img = qrcode.make(url, border=2)
+    img = qrcode.make(url, border=0)
     buffer = BytesIO()
     img.save(buffer, format=IMAGE_FORMAT)
     img_base64 = base64.b64encode(buffer.getvalue())

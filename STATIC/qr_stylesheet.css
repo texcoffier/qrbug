@@ -10,6 +10,7 @@ BODY {
 
     --qr-width: calc((var(--page-size-horizontal) - var(--size-safety-net)) / var(--columns));
     --qr-height: calc((var(--page-size-vertical) - var(--size-safety-net)) / var(--rows));
+
     width: var(--page-size-horizontal);
     height: var(--page-size-vertical);
 }
@@ -17,6 +18,10 @@ BODY {
 @media print {
     .qr_infos_block, .qr_config_block, .qr_selection_options, .qr_display_config {
         display: none;
+    }
+
+    body {
+        padding-top: 2mm;
     }
 }
 
@@ -27,7 +32,7 @@ BODY {
 
 html, body {
     margin: 0;
-    padding: 0;
+    padding: 0 0 0 2mm;
 
     font-family: Helvetica, sans-serif;
 }
