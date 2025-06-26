@@ -20,11 +20,11 @@ async def run(incidents, request):  # TODO: Force refresh of the page upon edit
     elif incident.failure_id == 'user-del-child':
         if value == user_id:
             feedback = f"<b>ERREUR :</b> L'ID du parent est identique à celui de l'enfant"
-        elif value not in qrbug.User[user_id].children_ids:
+        elif user_id not in qrbug.User[value].children_ids:
             feedback = f"<b>ERREUR :</b> «{value}» n'est pas un enfant de «{user_id}»"
         else:
-            qrbug.append_line_to_journal(f'user_remove({repr(user_id)}, {repr(value)})\n', qrbug.Journals.DB)
-            feedback = f"Retiré l'enfant «{value}» à «{user_id}»\n"
+            qrbug.append_line_to_journal(f'user_remove({repr(value)}, {repr(user_id)})\n', qrbug.Journals.DB)
+            feedback = f"Retiré l'enfant «{user_id}» à «{value}»\n"
     else:
         feedback = "Unexpected edit failure for User\n"
     await request.write('<!DOCTYPE html>\n' + feedback)

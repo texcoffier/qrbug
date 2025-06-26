@@ -281,7 +281,7 @@ dispatcher_update('edit-selector', action_id='edit_selector', selector_id='edit-
 # ---------------
 failure_update('user', value="Utilisateur", allowed="admin")
 failure_update('user-add-child', value="Enfant à ajouter", allowed="admin", display_type=Datalist)
-failure_update('user-del-child', value="Enfant à retirer", allowed="admin", display_type=Datalist)
+failure_update('user-del-child', value="Enfants à retirer", allowed="admin", display_type=Button)
 failure_add('edit', 'user')
 failure_add('user', 'user-add-child')
 failure_add('user', 'user-del-child')
