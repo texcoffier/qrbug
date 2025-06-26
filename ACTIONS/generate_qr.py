@@ -22,6 +22,16 @@ async def get_qr_code_b64_image(url: str) -> bytes:
     img_base64 = base64.b64encode(buffer.getvalue())
     return img_base64
 
+def get_css_template(force_load: bool = False) -> str:
+    template_css_last_modified = TEMPLATE_CSS_PATH.stat().st_mtime
+    if force_load or get_css_template._template_last_modified_timestamp != template_css_last_modified:
+        template = TEMPLATE_CSS_PATH.read_text()
+        get_css_template._template_last_modified_timestamp = template_css_last_modified
+        get_css_template._template_cached_string = template
+    else:
+        template = get_css_template._template_cached_string
+    return template
+
 async def run(incidents: list[qrbug.Incident], request: qrbug.Request) -> Optional[qrbug.action_helpers.ActionReturnValue]:
     incident = incidents[0]
     row_cols_number = incident.failure_id.split('_')[-1]
@@ -44,7 +54,7 @@ async def run(incidents: list[qrbug.Incident], request: qrbug.Request) -> Option
                 requested_thing_id = additional_things[i - 1]
             return qrbug.action_helpers.ActionReturnValue(error_msg=f"Thing {repr(requested_thing_id)} not found")
 
-    TEMPLATE_CSS = (f'<style>\n{TEMPLATE_CSS_PATH.read_text()}\n</style>\n'
+    TEMPLATE_CSS = (f'<style>\n{get_css_template()}\n</style>\n'
                     .replace('%cols%', default_cols)
                     .replace('%rows%', default_rows)
                     )
@@ -77,3 +87,6 @@ async def run(incidents: list[qrbug.Incident], request: qrbug.Request) -> Option
                 line_2      = qrbug.message('qrcode_line_2'),
             ))
     return None
+
+
+get_css_template(force_load=True)
