@@ -10,18 +10,16 @@ async def run(incidents, request):  # TODO: Force refresh of the page upon edit
     user_id = incident.thing_id
     value = html.escape(request.report.comment)
     if incident.failure_id == 'user-add-child':
-        if value == user_id:
-            feedback = f"<b>ERREUR :</b> Impossible d'assigner le même ID à un parent et un enfant"
-        elif value in qrbug.User[user_id].get_all_children_ids():
-            feedback = f"<b>ERREUR :</b> «{value}» est déjà un enfant de «{user_id}»"
+        can_add_child, message = qrbug.User[user_id].can_add_child(value)
+        if not can_add_child:
+            feedback = f"<b>ERREUR :</b> {message}"
         else:
             qrbug.append_line_to_journal(f'user_add({repr(user_id)}, {repr(value)})\n', qrbug.Journals.DB)
             feedback = f"Ajouté l'enfant «{value}» à «{user_id}»\n"
     elif incident.failure_id == 'user-del-child':
-        if value == user_id:
-            feedback = f"<b>ERREUR :</b> L'ID du parent est identique à celui de l'enfant"
-        elif user_id not in qrbug.User[value].children_ids:
-            feedback = f"<b>ERREUR :</b> «{value}» n'est pas un enfant de «{user_id}»"
+        can_remove_child, message = qrbug.User[value].can_remove_child(user_id)
+        if not can_remove_child:
+            feedback = f"<b>ERREUR :</b> {message}"
         else:
             qrbug.append_line_to_journal(f'user_remove({repr(value)}, {repr(user_id)})\n', qrbug.Journals.DB)
             feedback = f"Retiré l'enfant «{user_id}» à «{value}»\n"
