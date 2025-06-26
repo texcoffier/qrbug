@@ -20,6 +20,10 @@ fi
 
 # Runs the normal tests
 python3 -m unittest
+UNITTEST_EXIT_CODE="$?"
+if [ "$UNITTEST_EXIT_CODE" -ne '0' ]; then
+  exit $UNITTEST_EXIT_CODE
+fi
 
 # Preps the DB
 mv 'TESTS/xxx-incidents.py' 'TESTS/xxx-incidents-unittest.py'
