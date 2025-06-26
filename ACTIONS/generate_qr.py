@@ -48,7 +48,8 @@ async def run(incidents: list[qrbug.Incident], request: qrbug.Request) -> Option
                     .replace('%cols%', default_cols)
                     .replace('%rows%', default_rows)
                     )
-    TEMPLATE_QR_BLOCK = '<a href="{url}" target="_blank" class="qr_inner_block qr_{depth_class}"><div class="qr_report_me">Scannez-moi pour<br>signaler un problème&nbsp;!</div><div class="qr_thing_id">{thing_id}</div><img src="data:image/{img_format};base64,{img_b64}"></a>'
+
+    TEMPLATE_QR_BLOCK = '<a href="{url}" target="_blank" class="qr_inner_block qr_{depth_class}"><div class="qr_report_me">{line_1}<br>{line_2}</div><div class="qr_thing_id">{thing_id}</div><img src="data:image/{img_format};base64,{img_b64}"></a>'
     await request.write(TEMPLATE_CSS)
     await request.write(TEMPLATE_QR_DISPLAY_CONFIG_BLOCK.read_text()
         .replace(f'<option>{default_cols}</option>', f'<option selected>{default_cols}</option>')
@@ -71,6 +72,8 @@ async def run(incidents: list[qrbug.Incident], request: qrbug.Request) -> Option
                 url         = url,
                 img_format  = IMAGE_FORMAT.lower(),
                 img_b64     = (await get_qr_code_b64_image(url)).decode(),
-                depth_class = depth_class
+                depth_class = depth_class,
+                line_1      = qrbug.message('qrcode_line_1'),
+                line_2      = qrbug.message('qrcode_line_2'),
             ))
     return None

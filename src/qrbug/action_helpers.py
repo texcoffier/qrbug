@@ -57,5 +57,6 @@ def get_template(request=None, datalists_to_load=tuple(), force_load:bool=False)
 
     return template.replace('%DATALISTS%', ''.join(datalist_text))
 
+qrbug.message = lambda msg_id: qrbug.Failure[msg_id].value
 qrbug.get_template = get_template
 qrbug.Request = Request

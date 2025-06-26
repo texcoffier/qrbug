@@ -1,3 +1,4 @@
+import pathlib
 # pylint: disable=undefined-variable,line-too-long
 
 # Link the action ID to the filename containing the action.
@@ -375,6 +376,17 @@ failure_add('misc', 'flow.html')
 selector('flow.html','{"class":"Failure", "test":"is", "value": "flow.html"}')
 dispatcher_update('flow.html', action_id='get_file', selector_id='flow.html')
 
+# ----------------------------------------------
+# Messages
+# ----------------------------------------------
+
+failure_update('messages', value='Modifiez les messages affichés')
+failure_add('backoffice', 'messages')
+
+for message in pathlib.Path(MESSAGES).read_text(encoding='utf-8').split('\n'):
+    failure_id, value = message.split(' ', 1)
+    failure_update(failure_id, value=value)
+    failure_add('messages', failure_id)
 
 # selector('nautibus-hard', '[1, {"class":"Thing", "test": "inside", "value": "DOUA:Nautibus"}, [0, {"class":"Failure", "test": "in", "value": "MOUSE"}, {"class":"Failure", "test": "in", "value": "KEYBOARD"}, {"class":"Failure", "test": "in", "value": "SCREEN"}')
 # concerned_add('nautibus-hard', 'admin-Nautibus-hard')

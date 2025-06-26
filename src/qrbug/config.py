@@ -19,6 +19,7 @@ SETTINGS = { # Do not modify these settings.
 'LOG_FORMAT'         : ['%Y%m%d%H%M%S'                   ,'filename of LOGS'],
 'QRBUG_ADMINS'       : [['thierry.excoffier', 'p2205989'],'Logins of QRBUG managers'],
 'QRBUG_BACKTRACE'    : [['thierry.excoffier']            ,'Logins concerned by QRBUG backtrace'],
+'MESSAGES'           : ['STATIC/messages_fr'             ,'File containing the default messages'],
 }
 
 def nice():
@@ -106,6 +107,7 @@ qrbug.CONFIGS = {
     "dispatcher_del"   : qrbug.dispatcher_del,
     "concerned_add"    : qrbug.concerned_add,
     "concerned_del"    : qrbug.concerned_del,
+    "MESSAGES"         : qrbug.MESSAGES,
 }
 qrbug.INCIDENT_FUNCTIONS = {
     "incident_new": qrbug.incident_new,
