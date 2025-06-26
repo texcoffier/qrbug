@@ -109,8 +109,6 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
         elif what is qrbug.User:
             user_add_child = qrbug.Failure['user-add-child']
             user_del_child = qrbug.Failure['user-del-child']
-            user_add_parent = qrbug.Failure['user-add-parent']
-            user_del_parent = qrbug.Failure['user-del-parent']
             # texts.append(
             #     '<style>'
             #     'td { margin-top: 0; padding-top: 0; }'
@@ -119,8 +117,7 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
             texts.append('<div class="button" onclick="location.reload()">RAFRAÎCHIR L\'INTERFACE</div>')
             texts.append('<table>')
             texts.append(
-                f'<tr><th>ID<th>{user_add_child.value}<th>{user_del_child.value}'
-                f'<th>{user_add_parent.value}<th>{user_del_parent.value}</tr>'
+                f'<tr><th>ID<th>{user_add_child.value}<th>{user_del_child.value}</tr>'
             )
             def go_in(user):
                 texts.append('<tr><td>')
@@ -131,10 +128,6 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
                 texts.append(qrbug.element(user_add_child, user, in_place=True, datalist_id='User'))
                 texts.append('<td>')
                 texts.append(qrbug.element(user_del_child, user, in_place=True, datalist_id='User'))
-                texts.append('<td>')
-                texts.append(qrbug.element(user_add_parent, user, in_place=True, datalist_id='User'))
-                texts.append('<td>')
-                texts.append(qrbug.element(user_del_parent, user, in_place=True, datalist_id='User'))
                 texts.append('</tr>')
                 go_in.indent += '┃ '
             def go_out(_node):

@@ -25,22 +25,6 @@ async def run(incidents, request):  # TODO: Force refresh of the page upon edit
         else:
             qrbug.append_line_to_journal(f'user_remove({repr(user_id)}, {repr(value)})\n', qrbug.Journals.DB)
             feedback = f"Retiré l'enfant «{value}» à «{user_id}»\n"
-    elif incident.failure_id == 'user-add-parent':
-        if value == user_id:
-            feedback = f"<b>ERREUR :</b> Impossible d'assigner le même ID à un parent et un enfant"
-        elif qrbug.User[user_id].inside(qrbug.User[value]):
-            feedback = f"<b>ERREUR :</b> «{user_id}» est déjà un enfant de «{value}»"
-        else:
-            qrbug.append_line_to_journal(f'user_add({repr(value)}, {repr(user_id)})\n', qrbug.Journals.DB)
-            feedback = f"Ajouté l'enfant «{user_id}» à «{value}»\n"
-    elif incident.failure_id == 'user-del-parent':
-        if value == user_id:
-            feedback = f"<b>ERREUR :</b> L'ID du parent est identique à celui de l'enfant"
-        elif value not in qrbug.User[user_id].parent_ids:
-            feedback = f"<b>ERREUR :</b> «{value}» n'est pas un enfant de «{user_id}»"
-        else:
-            qrbug.append_line_to_journal(f'user_remove({repr(value)}, {repr(user_id)})\n', qrbug.Journals.DB)
-            feedback = f"Retiré l'enfant «{user_id}» à «{value}»\n"
     else:
         feedback = "Unexpected edit failure for User\n"
     await request.write('<!DOCTYPE html>\n' + feedback)
