@@ -70,7 +70,7 @@ def element(failure: "Failure", thing, in_place=False, destroy=None, datalist_id
         return element
     if display_type == DisplayTypes.input or display_type == DisplayTypes.datalist:
         if destroy:
-            common += f' value="{html.escape(destroy)}"'
+            common += f' predefined_value="{html.escape(destroy)}"'
             return f'''<div {common} class="delete" style="display:inline-block"
                 ><a onclick="javascript:show(this)">{html.escape(destroy)}</a>
                 <button onclick="register_incident(this,1)">×</button></div>'''
