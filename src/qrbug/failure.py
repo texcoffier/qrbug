@@ -77,9 +77,8 @@ def element(failure: "Failure", thing, in_place=False, destroy=None, datalist_id
         input_list_id = ''
         if display_type == DisplayTypes.datalist:
             input_list_id = f' list="datalist_{datalist_id}"'
-        onchange_value = "if (this.value !== this.getAttribute('value')) { this.classList.add('changed_and_unsaved') }"
         return f'''<div class="input">{'' if in_place else failure.value}
-        <div><input {common}{input_list_id} value="{value}" autocomplete="off" onchange="{onchange_value}" onkeypress="if (event.key=='Enter') register_incident(this,{in_place})"
+        <div><input {common}{input_list_id} value="{value}" autocomplete="off" onkeypress="if (event.key=='Enter') register_incident(this,{in_place})"
         ><button {common} onclick="register_incident(this, {in_place})">⬆</button></div></div>'''
     raise ValueError("Unknown display type")
 

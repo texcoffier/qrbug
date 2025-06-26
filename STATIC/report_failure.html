@@ -180,9 +180,9 @@
             if(in_place) {
                 iframe = document.createElement('IFRAME');
                 iframe.src = url;
+                iframe.onload = function() { element.classList.remove('changed_and_unsaved'); } ;
                 element.parentNode.appendChild(iframe);
-
-                element.parentNode.querySelector('.changed_and_unsaved').classList.remove('changed_and_unsaved');
+                element.classList.add('changed_and_unsaved');
             } else {
                 if ( ask_confirm ) {
                     if ( confirm(ask_confirm) )
