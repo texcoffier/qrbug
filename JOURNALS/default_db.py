@@ -284,13 +284,11 @@ failure_update('user-add-child', value="Enfant à ajouter", allowed="admin", dis
 failure_update('user-del-child', value="Enfant à retirer", allowed="admin", display_type=Datalist)
 failure_update('user-add-parent', value="Parent à ajouter", allowed="admin", display_type=Datalist)
 failure_update('user-del-parent', value="Parent à retirer", allowed="admin", display_type=Datalist)
-failure_update('user-rename', value="Renommer", allowed="admin", display_type=Input)
 failure_add('edit', 'user')
 failure_add('user', 'user-add-child')
 failure_add('user', 'user-del-child')
 failure_add('user', 'user-add-parent')
 failure_add('user', 'user-del-parent')
-failure_add('user', 'user-rename')
 
 action('edit_user', 'edit_user.py')
 selector('edit-user', '{"class":"Failure", "test":"in_or_equal", "value": "user"}')
