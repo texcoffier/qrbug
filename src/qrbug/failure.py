@@ -22,16 +22,20 @@ class DisplayTypes(enum.Enum):
     datalist = enum.auto()
 
 
-def element(failure: "Failure", thing, in_place=False, destroy=None, datalist_id: str = None):
+def element(failure: "Failure", thing, in_place=False, destroy=None, datalist_id: str = None, force_value: str = None):
     display_type = failure.display_type
     ask_confirm = html.escape(failure.ask_confirm or '')
     common = f'failureid="{html.escape(failure.id)}" thingid="{html.escape(thing.id)}" what="{thing.__class__.__name__.lower()}" ask_confirm="{ask_confirm}"'
+    failure_value = force_value if force_value else failure.value
     if display_type == DisplayTypes.text:
-        return  f'<p {common}>{failure.value}</p>'
+        return  f'<p {common}>{failure_value}</p>'
     if display_type == DisplayTypes.redirect:
-        return  f'<a {common} href="{failure.value}">{failure.value}</p>'
+        return  f'<a {common} href="{failure_value}">{failure_value}</p>'
     if display_type == DisplayTypes.button:
-        return f'<div {common} class="button" onclick="register_incident(this)"><BOX>{failure.value}</BOX></div>'
+        destroy_val = ''
+        if destroy:
+            destroy_val = f' predefined_value="{html.escape(destroy)}"'
+        return f'<div {common}{destroy_val} class="button" onclick="register_incident(this,{int(in_place)})"><BOX>{failure_value}</BOX></div>'
 
     value = ''
     if failure.inside('edit') and '-' in failure.id:
@@ -48,7 +52,7 @@ def element(failure: "Failure", thing, in_place=False, destroy=None, datalist_id
         else:
             element = element.replace('value="False"', 'value="True" selected')
         if not in_place:
-            element = f'<div class="input">{failure.value} : {element}</div>'
+            element = f'<div class="input">{failure_value} : {element}</div>'
         return element
     if display_type == DisplayTypes.display:
         element = [f'<select {common} class="button" onchange="register_incident(this,{in_place})">']
@@ -57,16 +61,16 @@ def element(failure: "Failure", thing, in_place=False, destroy=None, datalist_id
         element.append('</select>')
         element = ''.join(element)
         if not in_place:
-            element = f'<div class="input">{failure.value} : {element}</div>'
+            element = f'<div class="input">{failure_value} : {element}</div>'
         return element
     if display_type == DisplayTypes.textarea:
-        return f'<div {common} class="button" value="{value}" onclick="ask_value(this,{in_place})"><BOX>{failure.value}</BOX></div>'
+        return f'<div {common} class="button" value="{value}" onclick="ask_value(this,{in_place})"><BOX>{failure_value}</BOX></div>'
     if display_type == DisplayTypes.checkbox:
         element = f'<input {common} type="checkbox" autocomplete="off" onclick="register_incident(this,{in_place})">'
         if attr:
             element = element.replace('<input', '<input checked')
         if not in_place:
-            element = f'<div class="input">{failure.value} : {element}</div>'
+            element = f'<div class="input">{failure_value} : {element}</div>'
         return element
     if display_type == DisplayTypes.input or display_type == DisplayTypes.datalist:
         if destroy:
@@ -77,7 +81,7 @@ def element(failure: "Failure", thing, in_place=False, destroy=None, datalist_id
         input_list_id = ''
         if display_type == DisplayTypes.datalist:
             input_list_id = f' list="datalist_{datalist_id}"'
-        return f'''<div class="input">{'' if in_place else failure.value}
+        return f'''<div class="input">{'' if in_place else failure_value}
         <div><input {common}{input_list_id} value="{value}" autocomplete="off" onkeypress="if (event.key=='Enter') register_incident(this,{in_place})"
         ><button {common} onclick="register_incident(this, {in_place})">⬆</button></div></div>'''
     raise ValueError("Unknown display type")
