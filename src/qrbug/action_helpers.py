@@ -33,12 +33,14 @@ class Request(web.Request):
 
 def get_template(request=None, datalists_to_load=tuple(), force_load:bool=False):
     """The file containing JS helpers and style."""
-    if force_load or get_template._template_last_modified_timestamp != qrbug.REPORT_FAILURE_TEMPLATE.stat().st_mtime:
+    modified_timestamp = qrbug.REPORT_FAILURE_TEMPLATE.stat().st_mtime
+    if force_load or get_template._template_last_modified_timestamp != modified_timestamp:
         template = qrbug.REPORT_FAILURE_TEMPLATE.read_text()
-        get_template._template_last_modified_timestamp = qrbug.REPORT_FAILURE_TEMPLATE.stat().st_mtime
+        get_template._template_last_modified_timestamp = modified_timestamp
         get_template._template_cached_string = template
     else:
         template = get_template._template_cached_string
+    del modified_timestamp
 
     if request:
         template += f'<script>var secret="{request.secret.secret}";</script>'
