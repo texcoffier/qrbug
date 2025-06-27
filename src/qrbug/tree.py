@@ -55,7 +55,11 @@ class Tree(qrbug.Editable):
         """Inside he group or is the group"""
         return self.inside(node) or self.id == node
 
-    def can_add_child(self, child_id: "TreeId") -> tuple[bool, str]:
+    def can_add_child(self, child_id: "TreeId") -> str:
+        """
+        Returns an empty string if this new child can be added to this tree.
+        Otherwise, returns an error message.
+        """
         if self.id == child_id:
             return False, "Same ID"
         if self.inside(child_id):
@@ -64,7 +68,11 @@ class Tree(qrbug.Editable):
             return False, f"{repr(child_id)} is already a child of {repr(self.id)}"
         return True, ''
 
-    def can_remove_child(self, child_id: "TreeId") -> tuple[bool, str]:
+    def can_remove_child(self, child_id: "TreeId") -> str:
+        """
+        Returns an empty string if this new child can be removed from this tree.
+        Otherwise, returns an error message.
+        """
         if self.id == child_id:
             return False, "Same ID"
         if not child_id in self.children_ids:
