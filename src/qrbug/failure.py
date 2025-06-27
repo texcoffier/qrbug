@@ -23,6 +23,11 @@ class DisplayTypes(enum.Enum):
 
 
 def element(failure: "Failure", thing, in_place=False, destroy=None, datalist_id: str = None, force_value: str = None, is_popup: bool = False):
+    """
+    :param destroy: usually sets up the predefined value of an element, in order to facilitate its destruction.
+    :param force_value: actually sets the value of the element.
+        WARNING: force_value is not escaped ! It is YOUR job to call html.escape() on it beforehand !
+    """
     display_type = failure.display_type
     ask_confirm = html.escape(failure.ask_confirm or '')
     common = f'failureid="{html.escape(failure.id)}" thingid="{html.escape(thing.id)}" what="{thing.__class__.__name__.lower()}" ask_confirm="{ask_confirm}"'
