@@ -116,7 +116,7 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
             texts.append('<div class="button" onclick="location.reload()">RAFRAÎCHIR L\'INTERFACE</div>')
             texts.append('<table>')
             texts.append(
-                f'<tr><th>ID<th class="vert">{user_del_child.value}<th>{user_add_child.value}</tr>'
+                f'<tr><th>ID<th class="vert">{user_del_child.value}<th class="vert">{user_add_child.value}</tr>'
             )
             def go_in(user):
                 go_in.parent.append(user.id)
@@ -135,7 +135,7 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
                         destroy=go_in.parent[-2]
                     ))
                 texts.append('<td>')
-                texts.append(qrbug.element(user_add_child, user, in_place=True, datalist_id='User'))
+                texts.append(qrbug.element(user_add_child, user, in_place=True, datalist_id='User', is_popup=True, force_value="+"))
                 texts.append('</tr>')
                 go_in.indent += '┃ '
             def go_out(_node):

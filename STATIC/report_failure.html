@@ -210,21 +210,38 @@
             document.getElementById('popup').remove();
             event.stopPropagation();
         }
-        function ask_value(element, in_place) {
+        const ASK_VALUE_TYPE_TEXTAREA = 0;
+        const ASK_VALUE_TYPE_INPUT    = 1;
+        const ASK_VALUE_TYPE_DATALIST = 2;
+        function ask_value(element, in_place, ask_value_type = ASK_VALUE_TYPE_TEXTAREA, datalist_id = null) {
             if (document.getElementById('popup')) {
                 return;
+            }
+            let ASK_VALUE_INPUT_VALUE = '';
+            const INPUT_COMMON_CSS = "width: 100%; font-size: 120%; margin-bottom: 1em; border-right: 1px solid #888; border-radius: 0.2em;";
+            switch (ask_value_type) {
+                case ASK_VALUE_TYPE_INPUT:
+                    ASK_VALUE_INPUT_VALUE = `<input type="text" id="input" autocomplete="off" style="${INPUT_COMMON_CSS}"/>`;
+                    break;
+                case ASK_VALUE_TYPE_DATALIST:
+                    ASK_VALUE_INPUT_VALUE = `<input type="text" id="input" autocomplete="off" style="${INPUT_COMMON_CSS}" list="datalist_${datalist_id}"/>`;
+                    break;
+                case ASK_VALUE_TYPE_TEXTAREA:
+                default:
+                    ASK_VALUE_INPUT_VALUE =   '<p>Précisez le problème :</p>'
+                                            + '<textarea id="input" autocomplete="off"'
+                                            + '    style="width:100%; font-size:120%; height:5em; margin-bottom: 1em;">'
+                                            + '</textarea>';
+                    break;
             }
             popup = document.createElement('DIALOG');
             popup.id = 'popup';
             popup.method = "dialog";
             popup.onclose = close_dialog;
             txt = '<b>' + element.innerHTML + '</b><br>'
-                + '<p>Précisez le problème :</p>'
-                + '<textarea id="input" autocomplete="off"'
-                + '       style="width:100%; font-size:120%; height:5em; margin-bottom: 1em;">'
-                + '</textarea>'
-                + '<button onclick="close_dialog(event)" style="font-size:120%;float:left">Annuler</button>'
-                + '<button onclick="register_incident(this,' + in_place + ');close_dialog(event)" style="font-size:120%;float:right">Envoyer</button>';
+                + ASK_VALUE_INPUT_VALUE
+                + '<div class="button" onclick="close_dialog(event)" style="font-size:120%;float:left">Annuler</div>'
+                + '<div class="button" onclick="register_incident(this,' + in_place + ');close_dialog(event)" style="font-size:120%;float:right">Envoyer</div>';
             popup.innerHTML = txt;
             element.appendChild(popup);
             document.getElementById('input').textContent = element.value;

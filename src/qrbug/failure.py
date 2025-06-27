@@ -22,7 +22,7 @@ class DisplayTypes(enum.Enum):
     datalist = enum.auto()
 
 
-def element(failure: "Failure", thing, in_place=False, destroy=None, datalist_id: str = None, force_value: str = None):
+def element(failure: "Failure", thing, in_place=False, destroy=None, datalist_id: str = None, force_value: str = None, is_popup: bool = False):
     display_type = failure.display_type
     ask_confirm = html.escape(failure.ask_confirm or '')
     common = f'failureid="{html.escape(failure.id)}" thingid="{html.escape(thing.id)}" what="{thing.__class__.__name__.lower()}" ask_confirm="{ask_confirm}"'
@@ -63,8 +63,13 @@ def element(failure: "Failure", thing, in_place=False, destroy=None, datalist_id
         if not in_place:
             element = f'<div class="input">{failure_value} : {element}</div>'
         return element
-    if display_type == DisplayTypes.textarea:
-        return f'<div {common} class="button" value="{value}" onclick="ask_value(this,{in_place})"><BOX>{failure_value}</BOX></div>'
+    if is_popup or display_type == DisplayTypes.textarea:
+        popup_type = "ASK_VALUE_TYPE_TEXTAREA"
+        if display_type == DisplayTypes.input:
+            popup_type = "ASK_VALUE_TYPE_INPUT"
+        elif display_type == DisplayTypes.datalist:
+            popup_type = f"ASK_VALUE_TYPE_DATALIST,{repr(datalist_id)}"
+        return f'<div {common} class="button" value="{value}" onclick="ask_value(this,{in_place},{popup_type})"><BOX>{failure_value}</BOX></div>'
     if display_type == DisplayTypes.checkbox:
         element = f'<input {common} type="checkbox" autocomplete="off" onclick="register_incident(this,{in_place})">'
         if attr:
