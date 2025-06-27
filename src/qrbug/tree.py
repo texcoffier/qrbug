@@ -75,7 +75,7 @@ class Tree(qrbug.Editable):
         """
         if self.id == child_id:
             return False, "Same ID"
-        if not child_id in self.children_ids:
+        if child_id not in self.children_ids:
             return False, f"{repr(child_id)} is not a child of {repr(self.id)}"
         return True, ''
 
