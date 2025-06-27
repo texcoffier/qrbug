@@ -24,9 +24,9 @@ async def get_qr_code_b64_image(url: str) -> bytes:
 
 def get_css_template(force_load: bool = False) -> str:
     template_css_last_modified = TEMPLATE_CSS_PATH.stat().st_mtime
-    if force_load or get_css_template._template_last_modified_timestamp != template_css_last_modified:
+    if force_load or get_css_template._mtimestamp != template_css_last_modified:
         template = TEMPLATE_CSS_PATH.read_text()
-        get_css_template._template_last_modified_timestamp = template_css_last_modified
+        get_css_template._mtimestamp = template_css_last_modified
         get_css_template._template_cached_string = template
     else:
         template = get_css_template._template_cached_string
