@@ -11,6 +11,8 @@ BODY {
     --qr-width: calc((var(--page-size-horizontal) - var(--size-safety-net)) / var(--columns));
     --qr-height: calc((var(--page-size-vertical) - var(--size-safety-net)) / var(--rows));
 
+    --qr-size: calc(min(0.95 * var(--qr-height), 0.7 * var(--qr-width)));
+
     width: var(--page-size-horizontal);
     height: var(--page-size-vertical);
 }
@@ -18,10 +20,6 @@ BODY {
 @media print {
     .qr_infos_block, .qr_config_block, .qr_selection_options, .qr_display_config {
         display: none;
-    }
-
-    body {
-        padding-top: 2mm;
     }
 }
 
@@ -32,7 +30,7 @@ BODY {
 
 html, body {
     margin: 0;
-    padding: 0 0 0 2mm;
+    padding: 0px;
 
     font-family: Helvetica, sans-serif;
 }
@@ -64,7 +62,7 @@ A:hover {
     display: inline-block;
     width: var(--qr-width);
     height: var(--qr-height);
-    font-size: calc(var(--qr-height) / 15);
+    font-size: calc(var(--qr-size) / 13);
     writing-mode: vertical-rl;
     text-orientation: mixed;
     text-align: center;
@@ -78,8 +76,7 @@ A:hover {
 IMG {
     transform: rotate(90deg);
     display: inline-block;
-    max-width: var(--qr-width);
-    max-height: calc(min( var(--qr-height) - 1em , var(--qr-width) - 4.5em));
+    max-width: var(--qr-size);
 }
 
 .qr_report_me {

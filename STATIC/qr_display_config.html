@@ -1,7 +1,7 @@
 <div class="qr_display_config">
-    <label><input type="checkbox" checked onclick="document.body.classList.toggle('hide_root')">Racine</label>
-    <label><input type="checkbox" checked onclick="document.body.classList.toggle('hide_children')">Enfants</label>
-    <label><input type="checkbox" checked onclick="document.body.classList.toggle('hide_descendants')">Descendants</label>
+    <label><input type="checkbox" checked autocomplete="off" onclick="document.body.classList.toggle('hide_root')">Racine</label>
+    <label><input type="checkbox" checked autocomplete="off" onclick="document.body.classList.toggle('hide_children')">Enfants</label>
+    <label><input type="checkbox" checked autocomplete="off" onclick="document.body.classList.toggle('hide_descendants')">Descendants</label>
     <select autocomplete="off" onchange="document.body.style.setProperty('--columns', Number(this.value))">
         <option>1</option><option>2</option><option>3</option><option>4</option><option>5</option>
         <option>6</option><option>7</option><option>8</option><option>9</option></select> colonnes
