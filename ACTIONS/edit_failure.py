@@ -9,20 +9,20 @@ import qrbug
 async def run(incidents, request):
     incident = incidents[0]
     selector = incident.thing_id
-    value = html.escape(request.report.comment)
+    value = request.report.comment
     feedback = f"La valeur de «{selector} . {incident.failure_id}» est inchangé.\n"
     failure = qrbug.Failure[selector]
     if incident.failure_id == 'failure-value':
         if value != failure.value:
             qrbug.append_line_to_journal(
                     f'failure_update({repr(selector)}, value={repr(value)})\n', qrbug.Journals.DB)
-            feedback = f"Le titre de la panne «{selector}» est maintenant «{value}»\n"
+            feedback = f"Le titre de la panne «{selector}» est maintenant «{html.escape(value)}»\n"
     elif incident.failure_id == 'failure-display_type':
         try:
             if qrbug.DisplayTypes[value].value != failure.display_type:
                 qrbug.append_line_to_journal(
                         f'failure_update({repr(selector)}, display_type={value.title()})\n', qrbug.Journals.DB)
-                feedback = f"Le type d'affichage de «{selector}» est maintenant «{value}»\n"
+                feedback = f"Le type d'affichage de «{selector}» est maintenant «{html.escape(value)}»\n"
         except KeyError:
             feedback += "Car invalide."
     elif incident.failure_id == 'failure-ask_confirm':
@@ -45,7 +45,7 @@ async def run(incidents, request):
                 qrbug.append_line_to_journal(
                         f'failure_update({repr(selector)}, allowed={repr(value)})\n', qrbug.Journals.DB)
                 if value:
-                    feedback = f"Le sélecteur «{value}» doit être vrai pour pouvoir déclarer la panne «{selector}»\n"
+                    feedback = f"Le sélecteur «{html.escape(value)}» doit être vrai pour pouvoir déclarer la panne «{selector}»\n"
                 else:
                     feedback = f"Pas besoin de s'authentifier pour indiquer la panne «{selector}»\n"
     else:

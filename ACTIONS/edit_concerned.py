@@ -7,7 +7,7 @@ import qrbug
 async def run(incidents, request):
     incident = incidents[0]
     selector = incident.thing_id
-    user = html.escape(request.report.comment)
+    user = request.report.comment
     if incident.failure_id == 'concerned-add':
         qrbug.append_line_to_journal(
                 f'concerned_add({repr(selector)}, {repr(user)})\n', qrbug.Journals.DB)

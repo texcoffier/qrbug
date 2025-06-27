@@ -8,7 +8,7 @@ import qrbug
 async def run(incidents, request):
     incident = incidents[0]
     selector = incident.thing_id
-    value = html.escape(request.report.comment)
+    value = request.report.comment
     if incident.failure_id == 'action-python_script':
         if Path('ACTIONS', value).exists():
             if value == qrbug.Action[selector].python_script:
@@ -16,9 +16,9 @@ async def run(incidents, request):
             else:
                 qrbug.append_line_to_journal(
                         f'action({repr(selector)}, {repr(value)})\n', qrbug.Journals.DB)
-                feedback = f"L'action «{selector}» lance maintenant le script «{value}»\n"
+                feedback = f"L'action «{selector}» lance maintenant le script «{html.escape(value)}»\n"
         else:
-            feedback = f"Le script Python «{value}» n'existe pas.\n"
+            feedback = f"Le script Python «{html.escape(value)}» n'existe pas.\n"
     else:
         feedback = "Unexpected edit failure for Action\n"
     await request.write('<!DOCTYPE html>\n' + feedback)
