@@ -118,21 +118,22 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
             texts.append(
                 f'<tr><th>ID<th class="vert">{user_del_child.value}<th class="vert">{user_add_child.value}</tr>'
             )
+            parents: list["qrbug.UserId"] = []
             def go_in(user):
-                go_in.parent.append(user.id)
+                parents.append(user.id)
                 texts.append('<tr><td>')
                 go_in.start_text_len = len(texts)
                 texts.append(go_in.indent[::-1].replace('┃', '┣', 1)[::-1])
                 texts.append(html.escape(user.id))
                 texts.append('<td>')
-                has_parent = len(go_in.parent) >= 2
+                has_parent = len(parents) >= 2
                 if has_parent:
                     texts.append(qrbug.element(
                         user_del_child,
                         user,
                         in_place=True,
                         force_value='X',
-                        destroy=go_in.parent[-2]
+                        destroy=parents[-2]
                     ))
                 texts.append('<td>')
                 texts.append(qrbug.element(user_add_child, user, in_place=True, datalist_id='User', is_popup=True, force_value="+"))
@@ -142,10 +143,9 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
                 go_in.indent = go_in.indent[:-2]
                 if texts[go_in.start_text_len].count(' ') != go_in.indent.count(' '):
                     texts[go_in.start_text_len] = texts[go_in.start_text_len].replace('┣', '┗')
-                go_in.parent.pop(-1)
+                parents.pop(-1)
             go_in.indent = ''
             go_in.start_text_len = len(texts)
-            go_in.parent = []
             footer = '</table>'
             datalists_to_load = ('User',)
         elif what is qrbug.Dispatcher:
