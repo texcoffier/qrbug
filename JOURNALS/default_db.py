@@ -305,8 +305,6 @@ dispatcher_update('edit-selector', action_id='edit_selector', selector_id='edit-
 failure_update('user', value="Utilisateur", allowed="admin-user")
 failure_update('user-add-child' , value="Enfant à ajouter", allowed="admin-user", display_type=Datalist)
 failure_update('user-del-child' , value="Enfant à retirer", allowed="admin-user", display_type=Datalist)
-failure_update('user-add-parent', value="Parent à ajouter", allowed="admin-user", display_type=Datalist)
-failure_update('user-del-parent', value="Parent à retirer", allowed="admin-user", display_type=Datalist)
 failure_add('edit', 'user')
 failure_add('user', 'user-add-child')
 failure_add('user', 'user-del-child')
