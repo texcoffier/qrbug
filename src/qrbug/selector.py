@@ -9,7 +9,7 @@ ITEMS = {
     'Incident': 'incident'                      , # The incident sent to dispatcher
     'Thing': 'incident.thing'                   , # Its thing
     'Failure': 'incident.failure'               , # Its failure
-    'User': 'qrbug.User[incident.active[-1].login]', # User triggering the last report
+    'User': 'qrbug.User[report.login]'          , # User triggering the last report
     'Selector': 'qrbug.Selector[%ID%]'          , # Selector from 'id' attr
     # The 3 next values
     'SourceThing': 'source.thing'               , # Its thing

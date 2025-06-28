@@ -9,23 +9,46 @@ action('close'           ,'close.py')             # The failure was fixed
 action('echo'            ,'echo.py')              # Display incidents in user friendly form
 
 # -----------------
+# Default User tree
+# -----------------
+
+# Group for users with all the rights, for developper
+user_update('root')
+
+user_update('admin') # Allowed all administrative rights
+user_add('admin', 'root')
+
+user_update('admin-backtrace') # Concerned by backtraces
+user_add('admin-backtrace', 'root')
+
+user_update('admin-user') # Allowed to edit all users
+user_add('admin-user', 'root')
+user_add('admin-user', 'admin')
+
+user_update('admin-thing') # Allowed to edit things
+user_add('admin-thing', 'root')
+user_add('admin-thing', 'admin')
+
+# -----------------
 # Common selectors
 # -----------------
 
-selector('true'     , '{"class":"Thing"     , "test":"true"}')
-selector('admin'    , '{"class":"User"      , "test":"in"    , "value": "admin"}')
-selector('system'   , '{"class":"SourceUser", "test":"inside", "value": "system"}')
-selector('active'   , '[1, {"test":"active"}, {"class":"Selector", "attr": "is_ok", "test":"false", "id":"backoffice"}]', )
-selector('for-me'   , '[1, {"test": "active"}, {"class":"SourceUser", "test":"is_for_user"}]')
-selector('for-me-all','{"class":"SourceUser", "test":"is_for_user"}')
-selector('for-thing', '{                      "test":"is_for_thing"}')
+selector('true'            , '{"class":"Thing"     , "test":"true"}')
+selector('root'            , '{"class":"User"      , "test":"in"    , "value": "root"}')
+selector('admin'           , '{"class":"User"      , "test":"in"    , "value": "admin"}')
+selector('admin-backtrace' , '{"class":"User"      , "test":"in"    , "value": "admin-backtrace"}')
+selector('admin-user'      , '{"class":"User"      , "test":"in"    , "value": "admin-user"}')
+selector('admin-thing'     , '{"class":"User"      , "test":"in"    , "value": "admin-thing"}')
+selector('system'          , '{"class":"SourceUser", "test":"in"    , "value": "system"}')
+selector('active'          , '[1, {"test":"active"}, {"class":"Selector", "attr": "is_ok", "test":"false", "id":"backoffice"}]', )
+selector('for-me'          , '[1, {"test": "active"}, {"class":"SourceUser", "test":"is_for_user"}]')
+selector('for-me-all'      ,'{"class":"SourceUser", "test":"is_for_user"}')
+selector('for-thing'       , '{                      "test":"is_for_thing"}')
 selector('for-thing-active', '[1, {"test": "active"}, {"test":"is_for_thing"}]')
 
 ###############################################################################
 # General Backoffice
 ###############################################################################
-
-user_update('admin')
 
 failure_update('backoffice', value='')
 selector('backoffice'    ,'{"class":"Failure" ,                  "test":"in"   , "value":"backoffice"}')
@@ -248,11 +271,11 @@ dispatcher_update('edit-dispatcher', action_id='edit_dispatcher', selector_id='e
 # ---------------
 # Edit failure
 # ---------------
-failure_update('failure', value="Les pannes", allowed="admin")
-failure_update('failure-value', value="Intitulé", allowed="admin", display_type=Input)
-failure_update('failure-display_type', value="Type d'affichage", allowed="admin", display_type=Display)
-failure_update('failure-ask_confirm', value="Confirmation avant d'envoyer la panne", allowed="admin", display_type=Checkbox)
-failure_update('failure-allowed', value="Groupe autorisé à déclaré la panne", allowed="admin", display_type=Input)
+failure_update('failure'             , value="Les pannes"                           , allowed="admin")
+failure_update('failure-value'       , value="Intitulé"                             , allowed="admin", display_type=Input)
+failure_update('failure-display_type', value="Type d'affichage"                     , allowed="admin", display_type=Display)
+failure_update('failure-ask_confirm' , value="Confirmation avant d'envoyer la panne", allowed="admin", display_type=Checkbox)
+failure_update('failure-allowed'     , value="Groupe autorisé à déclaré la panne"   , allowed="admin", display_type=Input)
 failure_add('edit', 'failure')
 failure_add('failure', 'failure-value')
 failure_add('failure', 'failure-display_type')
@@ -279,9 +302,11 @@ dispatcher_update('edit-selector', action_id='edit_selector', selector_id='edit-
 # ---------------
 # Edit user
 # ---------------
-failure_update('user', value="Utilisateur", allowed="admin")
-failure_update('user-add-child', value="Enfants à ajouter", allowed="admin", display_type=Datalist)
-failure_update('user-del-child', value="Enfants à retirer", allowed="admin", display_type=Button)
+failure_update('user', value="Utilisateur", allowed="admin-user")
+failure_update('user-add-child' , value="Enfant à ajouter", allowed="admin-user", display_type=Datalist)
+failure_update('user-del-child' , value="Enfant à retirer", allowed="admin-user", display_type=Datalist)
+failure_update('user-add-parent', value="Parent à ajouter", allowed="admin-user", display_type=Datalist)
+failure_update('user-del-parent', value="Parent à retirer", allowed="admin-user", display_type=Datalist)
 failure_add('edit', 'user')
 failure_add('user', 'user-add-child')
 failure_add('user', 'user-del-child')
@@ -293,10 +318,10 @@ dispatcher_update('edit-user', action_id='edit_user', selector_id='edit-user')
 # ---------------
 # Edit thing
 # ---------------
-failure_update('thing', value="Chose", allowed="admin")
-failure_update('thing-comment', value="Commentaire", allowed="admin", display_type=Input)
-failure_update('thing-del-failure', value="Panne à enlever", allowed="admin", display_type=Input)
-failure_update('thing-add-failure', value="Panne à ajouter", allowed="admin", display_type=Datalist)
+failure_update('thing'            , value="Chose"          , allowed="admin-thing")
+failure_update('thing-comment'    , value="Commentaire"    , allowed="admin-thing", display_type=Input)
+failure_update('thing-del-failure', value="Panne à enlever", allowed="admin-thing", display_type=Input)
+failure_update('thing-add-failure', value="Panne à ajouter", allowed="admin-thing", display_type=Datalist)
 failure_add('edit', 'thing')
 failure_add('thing', 'thing-comment')
 failure_add('thing', 'thing-del-failure')
@@ -353,6 +378,7 @@ dispatcher_update('generate-qr', action_id='generate_qrcode', selector_id='gener
 
 failure_update('backtrace', value='QRBug server backtrace')
 selector('backtrace','{"class":"Failure", "test":"is", "value": "backtrace"}')
+concerned_add('backtrace', 'admin-backtrace')
 dispatcher_update('backtrace', action_id='report_mail', selector_id='backtrace')
 
 # ----------------------------------------------
@@ -382,5 +408,3 @@ for message in pathlib.Path(MESSAGES).read_text(encoding='utf-8').split('\n'):
     failure_update(failure_id, value=value)
     failure_add('messages', failure_id)
 
-# selector('nautibus-hard', '[1, {"class":"Thing", "test": "inside", "value": "DOUA:Nautibus"}, [0, {"class":"Failure", "test": "in", "value": "MOUSE"}, {"class":"Failure", "test": "in", "value": "KEYBOARD"}, {"class":"Failure", "test": "in", "value": "SCREEN"}')
-# concerned_add('nautibus-hard', 'admin-Nautibus-hard')
