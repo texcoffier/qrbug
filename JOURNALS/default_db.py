@@ -14,6 +14,7 @@ action('echo'            ,'echo.py')              # Display incidents in user fr
 
 # Group for users with all the rights, for developper
 user_update('root')
+user_update('nobody')
 
 user_update('admin') # Allowed all administrative rights
 user_add('admin', 'root')
@@ -33,12 +34,12 @@ user_add('admin-thing', 'admin')
 # Common selectors
 # -----------------
 
-selector('true'            , '{"class":"Thing"     , "test":"true"}')
+selector('true'            , '{                      "test":"True"}')
 selector('root'            , '{"class":"User"      , "test":"in"    , "value": "root"}')
 selector('admin'           , '{"class":"User"      , "test":"in"    , "value": "admin"}')
 selector('admin-backtrace' , '{"class":"User"      , "test":"in"    , "value": "admin-backtrace"}')
-selector('admin-user'      , '{"class":"User"      , "test":"in"    , "value": "admin-user"}')
-selector('admin-thing'     , '{"class":"User"      , "test":"in"    , "value": "admin-thing"}')
+selector('admin-user'      , '{"class":"User"      , "test":"in_or_equal", "value": "admin-user"}')
+selector('admin-thing'     , '{"class":"User"      , "test":"in_or_equal", "value": "admin-thing"}')
 selector('system'          , '{"class":"SourceUser", "test":"in"    , "value": "system"}')
 selector('active'          , '[1, {"test":"active"}, {"class":"Selector", "attr": "is_ok", "test":"false", "id":"backoffice"}]', )
 selector('for-me'          , '[1, {"test": "active"}, {"class":"SourceUser", "test":"is_for_user"}]')
@@ -185,26 +186,31 @@ failure_update('pending-feedback'     , value="Feedbacks de réparation en atten
 failure_update('send-pending-feedback', value="Envoie le feedback de réparation"  , allowed="admin", display_type=Button)
 failure_update('stats'                , value="Statistiques"                      , allowed="admin", display_type=Button)
 failure_update('report-mail'          , value="Envoie mails de rappel à tous"     , allowed="admin", display_type=Button)
+failure_update('check-selectors'      , value="Vérifie les sélecteurs"            , allowed="admin", display_type=Button)
 
 failure_add('misc', 'pending-feedback')
 failure_add('misc', 'send-pending-feedback')
 failure_add('misc', 'stats')
+failure_add('misc', 'check-selectors')
 failure_add('misc', 'report-mail')
 failure_add('top', 'misc')
 
 action('pending_feedback', 'pending_feedback.py')  # Send user feedback for failure fix
-action('stats'           , 'stats.py'           )  # Send user feedback for failure fix
+action('stats'           , 'stats.py'           )
+action('check-selectors' , 'check_selectors.py' )
 action('report_mail'     , 'report_mail.py'     )  # Send mail to remind every active incident
 
 selector('pending-feedback'     ,'{"class":"Failure", "test":"is", "value": "pending-feedback"}')
 selector('send-pending-feedback','[0, {"class":"Failure", "test":"in", "value": "hours"}, {"class":"Failure", "test":"is", "value": "send-pending-feedback"}]')
 selector('with-pending-feedback', '[1, {"test": "pending_feedback"}, {"class":"Selector", "id": "backoffice", "attr": "is_ok", "test": "false"}]')
 selector('stats'                ,'{"class":"Failure", "test":"is", "value": "stats"}')
+selector('check-selectors'      ,'{"class":"Failure", "test":"is", "value": "check-selectors"}')
 selector('report-mail'          ,'{"class":"Failure", "test":"is", "value": "report-mail"}')
 
 dispatcher_update('pending-feedback'     , action_id='echo'            , selector_id='pending-feedback'     , incidents="with-pending-feedback")
 dispatcher_update('send-pending-feedback', action_id='pending_feedback', selector_id='send-pending-feedback', incidents="with-pending-feedback")
 dispatcher_update('stats'                , action_id='stats'           , selector_id='stats')
+dispatcher_update('check-selectors'      , action_id='check-selectors' , selector_id='check-selectors')
 
 
 dispatcher_update('report_mail', action_id='report_mail', selector_id='report-mail', incidents='active')

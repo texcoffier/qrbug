@@ -107,7 +107,7 @@ class Failure(qrbug.Tree):
     value       : str           = ''
     display_type: DisplayTypes  = DisplayTypes.text
     ask_confirm : bool          = False
-    allowed     : qrbug.UserId  = 'true' # No restriction
+    allowed     : "SelectorId"  = 'true' # No restriction
 
     def init(self):
         self.value = f"VALEUR_NON_DEFINIE POUR «{self.id}»"

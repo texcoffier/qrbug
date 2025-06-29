@@ -65,6 +65,7 @@ TESTS = {
     'contains': '{value} in {attr}',
     'true': '{attr}',
     'false': 'not({attr})',
+    'True': 'True'
 }
 
 def compil_expr(expr):
