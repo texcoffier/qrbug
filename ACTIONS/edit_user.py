@@ -14,6 +14,8 @@ async def run(incidents, request):  # TODO: Force refresh of the page upon edit
         if error_message:
             feedback = f"<b>ERREUR :</b> {error_message}"
         else:
+            if value not in qrbug.User.instances.keys():
+                qrbug.append_line_to_journal(f'user_update({repr(value)})\n', qrbug.Journals.DB)
             qrbug.append_line_to_journal(f'user_add({repr(user_id)}, {repr(value)})\n', qrbug.Journals.DB)
             feedback = f"Ajouté l'enfant «{html.escape(value)}» à «{user_id}»\n"
     elif incident.failure_id == 'user-del-child':
