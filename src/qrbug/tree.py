@@ -61,12 +61,12 @@ class Tree(qrbug.Editable):
         Otherwise, returns an error message.
         """
         if self.id == child_id:
-            return False, "Same ID"
+            return "Same ID"
         if self.inside(child_id):
-            return False, f"{repr(child_id)} is already a parent of {repr(self.id)}"
+            return f"{repr(child_id)} is already a parent of {repr(self.id)}"
         if child_id in self.children_ids:
-            return False, f"{repr(child_id)} is already a child of {repr(self.id)}"
-        return True, ''
+            return f"{repr(child_id)} is already a child of {repr(self.id)}"
+        return ''
 
     def can_remove_child(self, child_id: "TreeId") -> str:
         """
@@ -74,10 +74,10 @@ class Tree(qrbug.Editable):
         Otherwise, returns an error message.
         """
         if self.id == child_id:
-            return False, "Same ID"
+            return "Same ID"
         if child_id not in self.children_ids:
-            return False, f"{repr(child_id)} is not a child of {repr(self.id)}"
-        return True, ''
+            return f"{repr(child_id)} is not a child of {repr(self.id)}"
+        return ''
 
     def add_child(self, child: "Tree") -> None:
         """Assume the child is not present"""
