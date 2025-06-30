@@ -26,12 +26,11 @@ def element(failure: "Failure", thing, in_place=False, destroy=None, datalist_id
     """
     :param destroy: usually sets up the predefined value of an element, in order to facilitate its destruction.
     :param force_value: actually sets the value of the element.
-        WARNING: force_value is not escaped ! It is YOUR job to call html.escape() on it beforehand !
     """
     display_type = failure.display_type
     ask_confirm = html.escape(failure.ask_confirm or '')
     common = f'failureid="{html.escape(failure.id)}" thingid="{html.escape(thing.id)}" what="{thing.__class__.__name__.lower()}" ask_confirm="{ask_confirm}"'
-    failure_value = force_value if force_value else failure.value
+    failure_value = html.escape(force_value) if force_value else failure.value
     if display_type == DisplayTypes.text:
         return  f'<p {common}>{failure_value}</p>'
     if display_type == DisplayTypes.redirect:
