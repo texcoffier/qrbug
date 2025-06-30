@@ -213,7 +213,8 @@
         const ASK_VALUE_TYPE_TEXTAREA = 0;
         const ASK_VALUE_TYPE_INPUT    = 1;
         const ASK_VALUE_TYPE_DATALIST = 2;
-        function ask_value(element, in_place, ask_value_type = ASK_VALUE_TYPE_TEXTAREA, datalist_id = null) {
+        const ASK_VALUE_TYPE_CUSTOM   = 3;
+        function ask_value(element, in_place, ask_value_type = ASK_VALUE_TYPE_TEXTAREA, datalist_id = null, custom_html = '') {
             if (document.getElementById('popup')) {
                 return;
             }
@@ -225,6 +226,9 @@
                     break;
                 case ASK_VALUE_TYPE_DATALIST:
                     ASK_VALUE_INPUT_VALUE = `<input type="text" id="input" autocomplete="off" style="${INPUT_COMMON_CSS}" list="datalist_${datalist_id}"/>`;
+                    break;
+                case ASK_VALUE_TYPE_CUSTOM:
+                    ASK_VALUE_INPUT_VALUE = custom_html;
                     break;
                 case ASK_VALUE_TYPE_TEXTAREA:
                 default:
@@ -244,7 +248,10 @@
                 + '<div class="button" onclick="register_incident(this,' + in_place + ');close_dialog(event)" style="font-size:120%;float:right">Envoyer</div>';
             popup.innerHTML = txt;
             element.appendChild(popup);
-            document.getElementById('input').textContent = element.value;
+            let inputField = document.getElementById('input');
+            if (inputField) {
+                inputField.textContent = element.value;
+            }
             popup.showModal();
         }
 
