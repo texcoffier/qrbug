@@ -131,8 +131,8 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
                         user_del_child,
                         user,
                         in_place=True,
-                        force_value='X',
-                        destroy=parents[-2]
+                        is_popup=True,
+                        force_value='X'
                     ))
                 texts.append('<td>')
                 texts.append(qrbug.element(user_add_child, user, in_place=True, datalist_id='User', is_popup=True, force_value="+"))
