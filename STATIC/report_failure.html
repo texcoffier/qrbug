@@ -210,6 +210,10 @@
             document.getElementById('popup').remove();
             event.stopPropagation();
         }
+        function isValueInDatalist(value, datalist_id) {
+            const options = Array.from(document.querySelectorAll(`#datalist_${datalist_id} option`)).map(e => e.textContent);
+            return options.includes(value);
+        }
         const ASK_VALUE_TYPE_TEXTAREA = 0;
         const ASK_VALUE_TYPE_INPUT    = 1;
         const ASK_VALUE_TYPE_DATALIST = 2;
@@ -219,13 +223,17 @@
                 return;
             }
             let ASK_VALUE_INPUT_VALUE = '';
-            const INPUT_COMMON_CSS = "width: 100%; font-size: 120%; margin-bottom: 1em; border-right: 1px solid #888; border-radius: 0.2em;";
+            const INPUT_COMMON_CSS = "width: 100%; height: 1.2em; font-size: 120%; margin-bottom: 1em; border-right: 1px solid #888; border-radius: 0.2em;";
             switch (ask_value_type) {
                 case ASK_VALUE_TYPE_INPUT:
                     ASK_VALUE_INPUT_VALUE = `<input type="text" id="input" autocomplete="off" style="${INPUT_COMMON_CSS}"/>`;
                     break;
                 case ASK_VALUE_TYPE_DATALIST:
-                    ASK_VALUE_INPUT_VALUE = `<input type="text" id="input" autocomplete="off" style="${INPUT_COMMON_CSS}" list="datalist_${datalist_id}"/>`;
+                    ASK_VALUE_INPUT_VALUE = `<input type="text" id="input" autocomplete="off" style="${INPUT_COMMON_CSS}" list="datalist_${datalist_id}"`
+                                          + `onchange="const warningParagraph = this.parentElement.querySelector('.warning_not_in_datalist');`
+                                          + ` warningParagraph.style.display = (isValueInDatalist(this.value, '${datalist_id}')) ? 'none' : 'block';"/>`
+                                          + `<p class="warning_not_in_datalist" style="display: none; color: rgb(140, 0, 0);">`
+                                          + `ATTENTION : Cette valeur n'est pas dans la liste des valeurs par défaut !</p>`;
                     break;
                 case ASK_VALUE_TYPE_CUSTOM:
                     ASK_VALUE_INPUT_VALUE = custom_html;
