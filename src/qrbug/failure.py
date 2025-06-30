@@ -86,7 +86,7 @@ def element(failure: "Failure", thing, in_place=False, destroy=None, datalist_id
             common += f' predefined_value="{html.escape(destroy)}"'
             return f'''<div {common} class="delete" style="display:inline-block"
                 ><a onclick="javascript:show(this)">{html.escape(destroy)}</a>
-                <button onclick="register_incident(this,1)">×</button></div>'''
+                <div class="button" onclick="register_incident(this,1)">×</div></div>'''
         input_list_id = ''
         if display_type == DisplayTypes.datalist:
             input_list_id = f' list="datalist_{datalist_id}"'
