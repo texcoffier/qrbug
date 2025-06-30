@@ -38,12 +38,12 @@
             color: #666666;
         }
 
-        INPUT, INPUT + BUTTON {
+        INPUT, INPUT + .submit_button {
             border: 1px solid #888;
             height: 24px;
             font-size: 1em;
-            box-sizing: border-box ;
-            vertical-align: bottom;
+            box-sizing: border-box;
+            padding-bottom: 0.1em;
         }
 
         INPUT {
@@ -52,12 +52,20 @@
             border-right: 0px;
         }
 
-        INPUT + BUTTON {
-            border-left: 0px;
-            /*vertical-align: text-top;*/
+        INPUT + .submit_button {
+            display: inline-block;
+            vertical-align: text-bottom;
+            border-left: 0;
+            border-radius: 0;
             border-top-right-radius: 0.2em;
             border-bottom-right-radius: 0.2em;
+            margin: 0 0 1px;
+            padding: 0 0.2em;
+        }
 
+        INPUT + .submit_button:hover {
+            border: 1px solid #888;
+            border-left: 0;
         }
 
         IFRAME {
@@ -83,12 +91,12 @@
             color: #00F;
             cursor: pointer;
         }
-        DIV.delete BUTTON {
+        DIV.delete .button {
             font-size: 1em;
             border: 0px;
             background: #EEE;
         }
-        DIV.delete BUTTON:hover {
+        DIV.delete .button:hover {
             background: #DDD;
         }
 

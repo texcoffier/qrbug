@@ -92,7 +92,7 @@ def element(failure: "Failure", thing, in_place=False, destroy=None, datalist_id
             input_list_id = f' list="datalist_{datalist_id}"'
         return f'''<div class="input">{'' if in_place else failure_value}
         <div><input {common}{input_list_id} value="{value}" autocomplete="off" onkeypress="if (event.key=='Enter') register_incident(this,{in_place})"
-        ><button {common} onclick="register_incident(this, {in_place})">⬆</button></div></div>'''
+        ><div class="button submit_button" {common} onclick="register_incident(this, {in_place})">⬆</div></div></div>'''
     raise ValueError("Unknown display type")
 
 qrbug.element = element
