@@ -113,6 +113,7 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
             user_add_child = qrbug.Failure['user-add-child']
             user_del_child = qrbug.Failure['user-del-child']
             texts.append(VERT_STYLE)
+            texts.append('<div class="button" onclick="location.reload()">RAFRAÎCHIR L\'INTERFACE</div>')
             texts.append('<table>')
             texts.append(
                 f'<tr><th>ID<th class="vert">{user_del_child.value}<th class="vert">{user_add_child.value}</tr>'
@@ -274,7 +275,7 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
             texts.append('<tr><td>')
             texts.append(html.escape(selector.id))
             texts.append('</td><td>')
-            texts.append(qrbug.element(qrbug.Failure['selector-expression'], selector, in_place=True))
+            texts.append(qrbug.selector_editor(qrbug.Failure['selector-expression'], selector))
             # texts.append(html.escape(selector.expression))
             texts.append('</td></tr>')
         texts = [qrbug.get_template(request).replace('%REPRESENTATION%', ''.join(texts))]

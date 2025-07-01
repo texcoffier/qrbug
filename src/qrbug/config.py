@@ -56,6 +56,7 @@ qrbug.INCIDENTS_FILE_PATH     = qrbug.JOURNALS_FILE_PATH / "incidents.py"
 qrbug.STATIC_FILES_PATH       = Path('STATIC')
 qrbug.FAVICON_PATH            = qrbug.STATIC_FILES_PATH / 'favicon.ico'
 qrbug.REPORT_FAILURE_TEMPLATE = qrbug.STATIC_FILES_PATH / 'report_failure.html'
+qrbug.SELECTOR_EDITOR_TEMPLATE= qrbug.STATIC_FILES_PATH / 'selector_editor.html'
 qrbug.LOG_DIRECTORY           = Path('LOGS')
 qrbug.EMAIL_LOG_DIRECTORY     = qrbug.LOG_DIRECTORY / 'MAIL'
 qrbug.ERROR_LOG_DIRECTORY     = qrbug.LOG_DIRECTORY / 'ERROR'
