@@ -34,7 +34,7 @@ def element(failure: "Failure", thing, in_place=False, destroy=None, datalist_id
     if display_type == DisplayTypes.text:
         return  f'<p {common}>{failure_value}</p>'
     if display_type == DisplayTypes.redirect:
-        return  f'<a {common} href="{failure_value}">{failure_value}</a>'
+        return  f'<a {common} href="{failure.value}">{failure_value}</a>'
     if display_type == DisplayTypes.button:
         destroy_val = ''
         if destroy:
