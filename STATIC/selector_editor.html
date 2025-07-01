@@ -25,55 +25,78 @@
             } else {
                 for (const [key, value] of Object.entries(selector)) {
                     if (key === 'test') {
-                        if (value === 'active') {
-                            sentence += 'L\'Incident est actif';
-                        } else if (value === 'contains') {
-                            sentence += ` contient <i>${selector.value}</i>`;
-                        } else if (value === 'true') {
-                            sentence += ' est vrai';
-                        } else if (value === 'false') {
-                            sentence += ' est faux';
-                        } else if (value === 'pending_feedback') {
-                            sentence += ' en attente de retours';
-                        } else if (value === 'is_for_thing') {
-                            sentence += ' est pour l\'objet';
-                        } else if (value === 'is_for_user') {
-                            sentence += ' est pour l\'utilisateur';
-                        } else if (value === 'in') {
-                            if (selector?.class === 'User' || selector?.class === 'Failure') {
-                                sentence += ` est dans le groupe <i>${selector.value}</i>`;
-                            } else {
-                                sentence += ` est dans <i>${selector.value}</i>`;
-                            }
-                        } else if (value === 'in_or_equal') {
-                            sentence += ` est dans/est <i>${selector.value}</i>`;
-                        } else if (value === 'is') {
-                            sentence += ` est <i>${selector.value}</i>`;
-                        } else if (['<','>','<=','>=','='].includes(value)) {
-                            sentence += ` ${value} <i>${selector.value}</i>`;
-                        } else {
-                            throw new Error("Test selector not known");
+                        switch (value) {
+                            case 'active':
+                                sentence += 'L\'Incident est actif';
+                                break;
+                            case 'contains':
+                                sentence += ` contient <i>${selector.value}</i>`;
+                                break;
+                            case 'true':
+                                sentence += ' est vrai';
+                                break;
+                            case 'false':
+                                sentence += ' est faux';
+                                break;
+                            case 'pending_feedback':
+                                sentence += ' en attente de retours';
+                                break;
+                            case 'is_for_thing':
+                                sentence += ' est pour l\'objet';
+                                break;
+                            case 'is_for_user':
+                                sentence += ' est pour l\'utilisateur';
+                                break;
+                            case 'in':
+                                if (selector?.class === 'User' || selector?.class === 'Failure') {
+                                    sentence += ` est dans le groupe <i>${selector.value}</i>`;
+                                } else {
+                                    sentence += ` est dans <i>${selector.value}</i>`;
+                                }
+                                break;
+                            case 'in_or_equal':
+                                sentence += ` est dans/est <i>${selector.value}</i>`;
+                                break;
+                            case 'is':
+                                sentence += ` est <i>${selector.value}</i>`;
+                                break;
+                            default:
+                                if (['<','>','<=','>=','='].includes(value)) {
+                                    sentence += ` ${value} <i>${selector.value}</i>`;
+                                } else {
+                                    throw new Error("Test selector not known");
+                                }
+                                break;
                         }
                     }
                     else if (key === 'class') {
-                        if (value === 'Incident') {
-                            sentence += `l\'Incident`;
-                        } else if (value === 'Thing') {
-                            sentence += `l\'Objet`;
-                        } else if (value === 'Failure') {
-                            sentence += `la Panne`;
-                        } else if (value === 'User') {
-                            sentence += `l\'Utilisateur`;
-                        } else if (value === 'Selector') {
-                            sentence += `le Sélecteur d'ID "${selector.id}"`;
-                        } else if (value === 'SourceThing') {
-                            sentence += `l\'Objet Source`;
-                        } else if (value === 'SourceFailure') {
-                            sentence += `la Panne Source`;
-                        } else if (value === 'SourceUser') {
-                            sentence += `l\'Utilisateur Source`;
-                        } else {
-                            throw new Error("Class selector not known");
+                        switch (value) {
+                            case 'Incident':
+                                sentence += `l\'Incident`;
+                                break;
+                            case 'Thing':
+                                sentence += `l\'Objet`;
+                                break;
+                            case 'Failure':
+                                sentence += `la Panne`;
+                                break;
+                            case 'User':
+                                sentence += `l\'Utilisateur`;
+                                break;
+                            case 'Selector':
+                                sentence += `le Sélecteur d'ID "${selector.id}"`;
+                                break;
+                            case 'SourceThing':
+                                sentence += `l\'Objet Source`;
+                                break;
+                            case 'SourceFailure':
+                                sentence += `la Panne Source`;
+                                break;
+                            case 'SourceUser':
+                                sentence += `l\'Utilisateur Source`;
+                                break;
+                            default:
+                                throw new Error("Class selector not known");
                         }
                     }
                     else if (key === 'attr') {
