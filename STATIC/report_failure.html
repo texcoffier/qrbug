@@ -219,8 +219,10 @@
             event.stopPropagation();
         }
         function isValueInDatalist(value, datalist_id) {
-            const options = Array.from(document.querySelectorAll(`#datalist_${datalist_id} option`)).map(e => e.textContent);
-            return options.includes(value);
+            for (const e of document.querySelectorAll(`#datalist_${datalist_id} option`)) {
+                if (e.textContent === value) return true;
+            }
+            return false;
         }
         const ASK_VALUE_TYPE_TEXTAREA = 0;
         const ASK_VALUE_TYPE_INPUT    = 1;
