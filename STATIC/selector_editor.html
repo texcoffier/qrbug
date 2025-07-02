@@ -14,11 +14,8 @@
            const rawSelector = document.getElementById('raw_selector');
             const renderedSelector = document.getElementById('rendered_selector');
             let selectorRepresentation = JSON.parse(rawSelector.textContent);
-            const transcribedSelector = transcribeSelector(selectorRepresentation);
-            renderedSelector.innerHTML = transcribedSelector[0].toUpperCase() + transcribedSelector.slice(1);
+            renderedSelector.innerHTML = transcribeSelector(selectorRepresentation);
         })();
-
-        %SELECTOR_SCRIPT_FUNCTIONS%
     </script>
     <!-- The script above is not executed until the "image" below injects it into the HTML code above. -->
     <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onload="const scriptCode = this.parentElement.querySelector('script').innerHTML; const scriptNode = document.createElement('script'); scriptNode.innerHTML = scriptCode; this.parentElement.appendChild(scriptNode);">
