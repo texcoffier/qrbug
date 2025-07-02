@@ -269,14 +269,17 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
             prefix = classe
         texts.append('</table>')
     elif what is qrbug.Selector:
+        texts.append(f'<script>{qrbug.SELECTOR_SCRIPT_FUNCTIONS.read_text()}</script>')
         texts.append('<table>')
-        texts.append('<tr><th>ID</th><th>Expression</th></tr>')
+        texts.append('<tr><th>ID<th>Représentation<th>Éditer</tr>')
         for selector in sorted(what.instances.values(), key=lambda e: e.id):
-            texts.append('<tr><td>')
+            texts.append('<tr><td style="padding-right: 10px;">')
             texts.append(html.escape(selector.id))
             texts.append('</td><td>')
-            texts.append(qrbug.selector_editor(qrbug.Failure['selector-expression'], selector))
-            # texts.append(html.escape(selector.expression))
+            texts.append(f'<span class="selector_expression">{selector.expression}</span>')
+            texts.append('<script>document.currentScript.parentElement.innerHTML = transcribeSelector(JSON.parse(document.currentScript.parentElement.querySelector(".selector_expression").textContent));</script>')
+            texts.append('</td><td>')
+            texts.append(qrbug.selector_editor(qrbug.Failure['selector-expression'], selector, 'Éditer'))
             texts.append('</td></tr>')
         texts = [qrbug.get_template(request).replace('%REPRESENTATION%', ''.join(texts))]
     else:
