@@ -38,6 +38,7 @@ function transcribeSelector(selector) {
                     },
                     'in_or_equal': ` est dans/est <i>${selector.value}</i>`,
                     'is': ` est <i>${selector.value}</i>`,
+                    'True': ' est True',
                     'default': () => {
                         if (['<','>','<=','>=','='].includes(value)) {
                             return ` ${value} <i>${selector.value}</i>`;
