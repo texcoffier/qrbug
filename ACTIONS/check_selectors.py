@@ -83,7 +83,7 @@ async def run(_incidents, request):
     * : représente tous les cas. Sinon le cas qui a été testé.""")
     selectors = collections.defaultdict(list)
     for selector_id, selector in sorted(qrbug.Selector.instances.items()):
-        infos = collections.defaultdict(set)
+        infos = {}
         for report.login in LOGINS:
             for incident.thing_id in THINGS:
                 for incident.active in ACTIVES:
@@ -101,55 +101,64 @@ async def run(_incidents, request):
                                     if not qrbug.Selector[incident.failure.allowed
                                             ].is_ok(incident, report=report):
                                         active = '#'
+                            else:
+                                active = ''
                         except: # pylint: disable=bare-except
                             # import traceback
                             # traceback.print_exc()
                             active = '?'
-                        infos[active].add((report.login, incident.thing_id, incident.active, incident.failure_id))
+                        infos[report.login, incident.thing_id, incident.active, incident.failure_id] = active
 
-        def all_here(logins, thing_ids, actives, failure_ids):
+        def all_here(logins, thing_ids, actives, failure_ids, is_ok):
             for login in logins:
                 for thing_id in thing_ids:
                     for active in actives:
                         for failure_id in failure_ids:
-                            if (login, thing_id, active, failure_id) not in items:
+                            if keep[login, thing_id, active, failure_id] != is_ok:
                                 return False
             for login in logins:
                 for thing_id in thing_ids:
                     for active in actives:
                         for failure_id in failure_ids:
-                            items.discard((login, thing_id, active, failure_id))
+                            infos.pop((login, thing_id, active, failure_id), None)
             return True
 
-        for is_ok, items in infos.items():
+        keep = dict(infos)
+        while infos:
+            login, thing_id, active, failure_id = next(iter(infos))
+            is_ok = infos.pop((login, thing_id, active, failure_id))
             if not is_ok:
                 continue
-            while items:
-                login, thing_id, active, failure_id = items.pop()
-                logins = [login]
-                thing_ids = [thing_id]
-                actives = [active]
-                failure_ids = [failure_id]
+            logins = [login]
+            thing_ids = [thing_id]
+            actives = [active]
+            failure_ids = [failure_id]
 
-                for login in LOGINS:
-                    if all_here([login], thing_ids, actives, failure_ids):
+            for login in LOGINS:
+                if login not in logins:
+                    if all_here([login], thing_ids, actives, failure_ids, is_ok):
                         logins.append(login)
 
-                for thing_id in THINGS:
-                    if all_here(logins, [thing_id], actives, failure_ids):
+            for thing_id in THINGS:
+                if thing_id not in thing_ids:
+                    if all_here(logins, [thing_id], actives, failure_ids, is_ok):
                         thing_ids.append(thing_id)
 
-                for active in ACTIVES:
-                    if all_here(logins, thing_ids, [active], failure_ids):
+            for active in ACTIVES:
+                if active not in actives:
+                    if all_here(logins, thing_ids, [active], failure_ids, is_ok):
                         actives.append(active)
 
-                for failure_id in FAILURES:
-                    if all_here(logins, thing_ids, actives, [failure_id]):
+            for failure_id in FAILURES:
+                if failure_id not in failure_ids:
+                    if all_here(logins, thing_ids, actives, [failure_id],
+                                keep[logins[0], thing_ids[0], actives[0], failure_id]):
                         failure_ids.append(failure_id)
 
-                failures = [is_ok if failure in failure_ids else ''
-                            for failure in FAILURES]
-                selectors[selector_id].append([sorted(logins), sorted(thing_ids), sorted(actives), failures])
+            failures = [keep[logins[0],thing_ids[0], actives[0], failure] if failure in failure_ids else ''
+                        for failure in FAILURES]
+            selectors[selector_id].append([sorted(logins), sorted(thing_ids), sorted(actives), failures])
+
         await asyncio.sleep(0)
 
     await request.write("""
@@ -167,25 +176,6 @@ async def run(_incidents, request):
         else:
             tr = '<tr>'
         lines.sort()
-        previous_line = lines[0]
-        merged = []
-        for line in lines[1:]:
-            if line[:3] == previous_line[:3]:
-                merge = []
-                for a, b in zip(line[3], previous_line[3]):
-                    if a and b:
-                        break
-                    if a:
-                        merge.append(a)
-                    else:
-                        merge.append(b)
-                else:
-                    previous_line[3] = merge
-                    continue # Do not add line
-            merged.append(previous_line)
-            previous_line = line
-        merged.append(previous_line)
-        lines = merged
         lasts = ''.join(f'{tr}{create(i)}' for i in lines[1:])
         await request.write(
             f'{tr}<td class="selector" rowspan="{len(lines)}">{selector_id}{create(lines[0])}{lasts}'
