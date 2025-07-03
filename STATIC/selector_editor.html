@@ -39,17 +39,16 @@
                 e => e.style.display = (Array.isArray(selectorRepresentation)) ? 'initial' : 'none'
             );
 
-            const selectorAttributesDiv = document.querySelector('.selector_builder .selector_attributes');
-            selectorAttributesDiv.innerHTML += `<div class="button" onclick="updateRenderedSelector(updateAttribute(''))"><b>X</b></div>`;
-            for (const attribute of attributes) {
-                selectorAttributesDiv.innerHTML += `<div class="button" onclick="updateRenderedSelector(updateAttribute('${attribute}'))">${attribute}</div>`;
+            function listIntoSelectorBuilder(divClass, functionName, elementsList) {
+                const selectorBuilderGivenDiv = document.querySelector(`.selector_builder .${divClass}`);
+                selectorBuilderGivenDiv.innerHTML += `<div class="button" onclick="updateRenderedSelector(${functionName}(''))"><b>X</b></div>`;
+                for (const element of elementsList) {
+                    selectorBuilderGivenDiv.innerHTML += `<div class="button" onclick="updateRenderedSelector(${functionName}('${element}'))">${element}</div>`;
+                }
             }
 
-            const selectorTestsDiv = document.querySelector('.selector_builder .selector_tests');
-            selectorTestsDiv.innerHTML += `<div class="button" onclick="updateRenderedSelector(updateAttribute(''))"><b>X</b></div>`;
-            for (const test of tests) {
-                selectorTestsDiv.innerHTML += `<div class="button" onclick="updateRenderedSelector(updateTest('${test}'))">${test}</div>`;
-            }
+            listIntoSelectorBuilder('selector_attributes', 'updateAttribute', attributes);
+            listIntoSelectorBuilder('selector_tests',      'updateTest',      tests);
         })();
     </script>
     <!-- The script above is not executed until the "image" below injects it into the HTML code above. -->

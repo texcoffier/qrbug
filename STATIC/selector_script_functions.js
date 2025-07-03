@@ -161,7 +161,7 @@ function removeCondition(side_to_keep) {
     return JSON.stringify(selectorRepresentation);
 }
 
-function updateAttribute(attribute) {
+function updatePart(key, value) {
     let selectorRepresentation = getParsedRawSelectorValue();
 
     let editablePart = selectorRepresentation;
@@ -169,26 +169,18 @@ function updateAttribute(attribute) {
         editablePart = selectorRepresentation[sideToEditIndex()];
     }
 
-    if (attribute) {
-        editablePart['attr'] = attribute;
+    if (value) {
+        editablePart[key] = value;
     } else {
-        delete editablePart['attr'];
+        delete editablePart[key];
     }
     return JSON.stringify(selectorRepresentation);
 }
 
+function updateAttribute(attribute) {
+    return updatePart('attr', attribute)
+}
+
 function updateTest(test) {
-    let selectorRepresentation = getParsedRawSelectorValue();
-
-    let editablePart = selectorRepresentation;
-    if (Array.isArray(selectorRepresentation)) {
-        editablePart = selectorRepresentation[sideToEditIndex()];
-    }
-
-    if (test) {
-        editablePart['test'] = test;
-    } else {
-        delete editablePart['test'];
-    }
-    return JSON.stringify(selectorRepresentation);
+    return updatePart('test', test);
 }
