@@ -106,7 +106,16 @@ function transcribeSelector(selector) {
     if (Array.isArray(selector)) {
         sentence = '(' + transcribeSelector(selector[1]) + ')' + ` <b>${operators[selector[0]]}</b> ` + '(' + transcribeSelector(selector[2]) + ')';
     } else {
-        for (const [key, value] of Object.entries(selector)) {
+        for (const [key, value] of Object.entries(selector).sort(([keyA, valA], [keyB, valB]) => {
+            const map = {
+                'class': 4,
+                'attr': 3,
+                'test': 2,
+            }
+            const newA = map[keyA] ?? 1;
+            const newB = map[keyB] ?? 1;
+            return newB - newA;
+        })) {
             if (key === 'test') {
                 sentence += handleTestCases(testCases, value, selector);
             }
