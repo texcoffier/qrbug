@@ -9,6 +9,9 @@
             <div class="button" onclick="updateRenderedSelector(addCondition(0))">OU</div>
             <div class="button" onclick="updateRenderedSelector(addCondition(1))">ET</div>
         </div>
+        <div class="side_selector">
+            <label>Éditer à : <select><option value="1">Gauche</option><option value="2">Droite</option></select></label>
+        </div>
     </div>
     <details class="real_selector"><!-- Add "open" attribute to details tag to open it by default -->
         <summary>Avancé - Sélecteur réel</summary>
@@ -25,6 +28,8 @@
             let selectorRepresentation = JSON.parse(rawSelectorValue);
             renderedSelector.innerHTML = transcribeSelector(selectorRepresentation);
             document.getElementById('input').setAttribute('value', rawSelectorValue);
+
+            document.querySelector('.selector_builder .side_selector').style.display = (Array.isArray(selectorRepresentation)) ? 'block' : 'none';
         })();
     </script>
     <!-- The script above is not executed until the "image" below injects it into the HTML code above. -->

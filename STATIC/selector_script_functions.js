@@ -86,6 +86,10 @@ function updateRenderedSelector(selectorRepresentation) {
     document.getElementById('rendered_selector').innerHTML = transcribeSelector(JSON.parse(selectorRepresentation));
 }
 
+function sideToEditIndex() {
+    return parseInt(document.querySelector('.selector_builder .side_selector select').value);
+}
+
 function addCondition(condition_type) {
     const rawSelector = document.getElementById('raw_selector');
     const rawSelectorValue = rawSelector.textContent;
@@ -98,5 +102,6 @@ function addCondition(condition_type) {
     const stringifiedSelector = JSON.stringify(selectorRepresentation);
     rawSelector.textContent = stringifiedSelector;
     document.getElementById('input').setAttribute('value', stringifiedSelector);
+    document.querySelector('.selector_builder .side_selector').style.display = (Array.isArray(selectorRepresentation)) ? 'block' : 'none';
     return stringifiedSelector;
 }
