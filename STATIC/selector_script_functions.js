@@ -39,6 +39,8 @@ const classCases = {
     }
 }
 
+const operators = ["OU", "ET"];
+
 function handleTestCases(testCases, value, selector) {
     let sentence = '';
     let correctTestCase = testCases[value];
@@ -58,8 +60,7 @@ function handleTestCases(testCases, value, selector) {
 function transcribeSelector(selector) {
     let sentence = '';
     if (Array.isArray(selector)) {
-        const operator = ["OU", "ET"][selector[0]];
-        sentence = '(' + transcribeSelector(selector[1]) + ')' + ` <b>${operator}</b> ` + '(' + transcribeSelector(selector[2]) + ')';
+        sentence = '(' + transcribeSelector(selector[1]) + ')' + ` <b>${operators[selector[0]]}</b> ` + '(' + transcribeSelector(selector[2]) + ')';
     } else {
         for (const [key, value] of Object.entries(selector)) {
             if (key === 'test') {
@@ -74,5 +75,28 @@ function transcribeSelector(selector) {
         }
     }
     sentence = sentence.replaceAll(/^ +/g, '');
-    return sentence[0].toUpperCase() + sentence.slice(1);
+    if (sentence !== '') {
+        return sentence[0].toUpperCase() + sentence.slice(1);
+    } else {
+        return sentence;
+    }
+}
+
+function updateRenderedSelector(selectorRepresentation) {
+    document.getElementById('rendered_selector').innerHTML = transcribeSelector(JSON.parse(selectorRepresentation));
+}
+
+function addCondition(condition_type) {
+    const rawSelector = document.getElementById('raw_selector');
+    const rawSelectorValue = rawSelector.textContent;
+    let selectorRepresentation = JSON.parse(rawSelectorValue);
+    if (Array.isArray(selectorRepresentation)) {
+        selectorRepresentation[0] = condition_type;
+    } else {
+        selectorRepresentation = [condition_type, selectorRepresentation, {}];
+    }
+    const stringifiedSelector = JSON.stringify(selectorRepresentation);
+    rawSelector.textContent = stringifiedSelector;
+    document.getElementById('input').setAttribute('value', stringifiedSelector);
+    return stringifiedSelector;
 }

@@ -3,6 +3,13 @@
         <h3>Sélecteur actuel :</h3>
         <div id="rendered_selector" style="text-align: center; margin-bottom: 1em; font-size: 1.1em;"></div>
     </div>
+    <div class="selector_builder">
+        <h4>Conditions</h4>
+        <div class="selector_conditions">
+            <div class="button" onclick="updateRenderedSelector(addCondition(0))">OU</div>
+            <div class="button" onclick="updateRenderedSelector(addCondition(1))">ET</div>
+        </div>
+    </div>
     <details class="real_selector"><!-- Add "open" attribute to details tag to open it by default -->
         <summary>Avancé - Sélecteur réel</summary>
         <pre id="raw_selector">%RAW_SELECTOR%</pre>
@@ -12,7 +19,7 @@
     <input id="input" value="" />
     <script>
         (function () {
-           const rawSelector = document.getElementById('raw_selector');
+            const rawSelector = document.getElementById('raw_selector');
             const renderedSelector = document.getElementById('rendered_selector');
             const rawSelectorValue = rawSelector.textContent;
             let selectorRepresentation = JSON.parse(rawSelectorValue);
