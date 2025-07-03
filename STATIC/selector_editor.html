@@ -4,7 +4,7 @@
         <div id="rendered_selector" style="text-align: center; margin-bottom: 1em; font-size: 1.1em;"></div>
     </div>
     <div class="selector_builder">
-        <h4>Conditions</h4>
+        <h4>Conditions :</h4>
         <div class="selector_conditions">
             <div class="button" onclick="updateRenderedSelector(addCondition(0))">OU</div>
             <div class="button" onclick="updateRenderedSelector(addCondition(1))">ET</div>
@@ -12,6 +12,8 @@
         <div class="side_selector">
             <label>Éditer à : <select><option value="1">Gauche</option><option value="2">Droite</option></select></label>
         </div>
+        <h4>Attributs :</h4>
+        <div class="selector_attributes"></div>
     </div>
     <details class="real_selector"><!-- Add "open" attribute to details tag to open it by default -->
         <summary>Avancé - Sélecteur réel</summary>
@@ -30,6 +32,12 @@
             document.getElementById('input').setAttribute('value', rawSelectorValue);
 
             document.querySelector('.selector_builder .side_selector').style.display = (Array.isArray(selectorRepresentation)) ? 'block' : 'none';
+
+            const selectorAttributesDiv = document.querySelector('.selector_builder .selector_attributes');
+            selectorAttributesDiv.innerHTML += `<div class="button" onclick="updateRenderedSelector(updateAttribute(''))"><b>X</b></div>`;
+            for (const attribute of attributes) {
+                selectorAttributesDiv.innerHTML += `<div class="button" onclick="updateRenderedSelector(updateAttribute('${attribute}'))">${attribute}</div>`;
+            }
         })();
     </script>
     <!-- The script above is not executed until the "image" below injects it into the HTML code above. -->

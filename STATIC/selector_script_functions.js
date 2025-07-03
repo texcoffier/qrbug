@@ -41,6 +41,17 @@ const classCases = {
 
 const operators = ["OU", "ET"];
 
+const attributes = [
+    'path',
+    'id',
+    'comment',
+    'is_ok',
+    'value',
+    'display_type',
+    'ask_confirm',
+    'allowed'
+]
+
 function handleTestCases(testCases, value, selector) {
     let sentence = '';
     let correctTestCase = testCases[value];
@@ -82,8 +93,22 @@ function transcribeSelector(selector) {
     }
 }
 
+function getRawSelectorValue() {
+    const rawSelector = document.getElementById('raw_selector');
+    return rawSelector.textContent;
+}
+
+function getParsedRawSelectorValue() {
+    return JSON.parse(getRawSelectorValue());
+}
+
 function updateRenderedSelector(selectorRepresentation) {
-    document.getElementById('rendered_selector').innerHTML = transcribeSelector(JSON.parse(selectorRepresentation));
+    const rawSelector = document.getElementById('raw_selector');
+    const parsedSelectorRepresentation = JSON.parse(selectorRepresentation);
+    rawSelector.textContent = selectorRepresentation;
+    document.getElementById('rendered_selector').innerHTML = transcribeSelector(parsedSelectorRepresentation);
+    document.getElementById('input').setAttribute('value', selectorRepresentation);
+    document.querySelector('.selector_builder .side_selector').style.display = (Array.isArray(parsedSelectorRepresentation)) ? 'block' : 'none';
 }
 
 function sideToEditIndex() {
@@ -91,17 +116,29 @@ function sideToEditIndex() {
 }
 
 function addCondition(condition_type) {
-    const rawSelector = document.getElementById('raw_selector');
-    const rawSelectorValue = rawSelector.textContent;
-    let selectorRepresentation = JSON.parse(rawSelectorValue);
+    let selectorRepresentation = getParsedRawSelectorValue();
+
     if (Array.isArray(selectorRepresentation)) {
         selectorRepresentation[0] = condition_type;
     } else {
         selectorRepresentation = [condition_type, selectorRepresentation, {}];
     }
-    const stringifiedSelector = JSON.stringify(selectorRepresentation);
-    rawSelector.textContent = stringifiedSelector;
-    document.getElementById('input').setAttribute('value', stringifiedSelector);
-    document.querySelector('.selector_builder .side_selector').style.display = (Array.isArray(selectorRepresentation)) ? 'block' : 'none';
-    return stringifiedSelector;
+
+    return JSON.stringify(selectorRepresentation);
+}
+
+function updateAttribute(attribute) {
+    let selectorRepresentation = getParsedRawSelectorValue();
+
+    let editablePart = selectorRepresentation;
+    if (Array.isArray(selectorRepresentation)) {
+        editablePart = selectorRepresentation[sideToEditIndex()];
+    }
+
+    if (attribute) {
+        editablePart['attr'] = attribute;
+    } else {
+        delete editablePart['attr'];
+    }
+    return JSON.stringify(selectorRepresentation);
 }
