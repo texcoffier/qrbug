@@ -8,8 +8,10 @@
         <div class="selector_conditions">
             <div class="button" onclick="updateRenderedSelector(addCondition(0))">OU</div>
             <div class="button" onclick="updateRenderedSelector(addCondition(1))">ET</div>
+            <div class="button show_if_condition" onclick="updateRenderedSelector(removeCondition(left))">Garder gauche</div>
+            <div class="button show_if_condition" onclick="updateRenderedSelector(removeCondition(right))">Garder droite</div>
         </div>
-        <div class="side_selector">
+        <div class="side_selector show_if_condition">
             <label>Éditer à : <select><option value="1">Gauche</option><option value="2">Droite</option></select></label>
         </div>
         <h4>Attributs :</h4>
@@ -31,7 +33,9 @@
             renderedSelector.innerHTML = transcribeSelector(selectorRepresentation);
             document.getElementById('input').setAttribute('value', rawSelectorValue);
 
-            document.querySelector('.selector_builder .side_selector').style.display = (Array.isArray(selectorRepresentation)) ? 'block' : 'none';
+            document.querySelectorAll('.selector_builder .show_if_condition').forEach(
+                e => e.style.display = (Array.isArray(selectorRepresentation)) ? 'initial' : 'none'
+            );
 
             const selectorAttributesDiv = document.querySelector('.selector_builder .selector_attributes');
             selectorAttributesDiv.innerHTML += `<div class="button" onclick="updateRenderedSelector(updateAttribute(''))"><b>X</b></div>`;

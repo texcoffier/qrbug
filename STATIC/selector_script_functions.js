@@ -52,6 +52,9 @@ const attributes = [
     'allowed'
 ]
 
+const left = 1;
+const right = 2;
+
 function handleTestCases(testCases, value, selector) {
     let sentence = '';
     let correctTestCase = testCases[value];
@@ -108,7 +111,9 @@ function updateRenderedSelector(selectorRepresentation) {
     rawSelector.textContent = selectorRepresentation;
     document.getElementById('rendered_selector').innerHTML = transcribeSelector(parsedSelectorRepresentation);
     document.getElementById('input').setAttribute('value', selectorRepresentation);
-    document.querySelector('.selector_builder .side_selector').style.display = (Array.isArray(parsedSelectorRepresentation)) ? 'block' : 'none';
+    document.querySelectorAll('.selector_builder .show_if_condition').forEach(
+        e => e.style.display = (Array.isArray(parsedSelectorRepresentation)) ? 'initial' : 'none'
+    );
 }
 
 function sideToEditIndex() {
@@ -122,6 +127,16 @@ function addCondition(condition_type) {
         selectorRepresentation[0] = condition_type;
     } else {
         selectorRepresentation = [condition_type, selectorRepresentation, {}];
+    }
+
+    return JSON.stringify(selectorRepresentation);
+}
+
+function removeCondition(side_to_keep) {
+    let selectorRepresentation = getParsedRawSelectorValue();
+
+    if (Array.isArray(selectorRepresentation)) {
+        selectorRepresentation = selectorRepresentation[side_to_keep];
     }
 
     return JSON.stringify(selectorRepresentation);
