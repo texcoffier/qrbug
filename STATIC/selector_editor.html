@@ -18,6 +18,12 @@
         <div class="selector_tests"></div>
         <h4>Classe :</h4>
         <div class="selector_items"></div>
+        <h4>Valeur :</h4>
+        <div class="selector_value input">
+            <!-- No whitespace/newline otherwise it shows up as whitespace in html, sorry -->
+            <input autocomplete="off" onkeypress="if (event.key=='Enter') updateRenderedSelector(updateValue(this.value))"><div class="button submit_button" onclick="updateRenderedSelector(updateValue(this.parentElement.querySelector('input').value))">⬆</div>
+            <div class="button" onclick="updateRenderedSelector(updateValue(null))">Effacer</div>
+        </div>
         <h4>Attributs :</h4>
         <div class="selector_attributes"></div>
     </div>

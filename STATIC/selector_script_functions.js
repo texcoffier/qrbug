@@ -107,7 +107,7 @@ function transcribeSelector(selector) {
         sentence = '(' + transcribeSelector(selector[1]) + ')' + ` <b>${operators[selector[0]]}</b> ` + '(' + transcribeSelector(selector[2]) + ')';
     } else {
         for (const [key, value] of Object.entries(selector).sort(([keyA, valA], [keyB, valB]) => {
-            const map = {
+            const map = {  // The higher the number, the more to the left of the selector it will appear
                 'class': 4,
                 'attr': 3,
                 'test': 2,
@@ -207,4 +207,8 @@ function updateTest(test) {
 
 function updateItems(item) {
     return updatePart('class', item);
+}
+
+function updateValue(value) {
+    return updatePart('value', value)
 }
