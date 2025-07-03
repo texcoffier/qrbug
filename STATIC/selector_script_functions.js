@@ -209,6 +209,7 @@ function updateItems(item) {
     return updatePart('class', item);
 }
 
-function updateValue(value) {
-    return updatePart('value', value)
+function updateValue(value, key) {
+    // 'key' is either 'id' or 'value'
+    return updatePart(key, value)
 }

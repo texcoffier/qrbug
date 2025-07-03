@@ -28,11 +28,14 @@
         <div class="selector_tests"></div>
         <h4>Classe :</h4>
         <div class="selector_items"></div>
-        <h4>Valeur :</h4>
+        <h4>Valeur/ID :</h4>
         <div class="selector_value input">
             <!-- No whitespace/newline otherwise it shows up as whitespace in html, sorry -->
-            <input autocomplete="off" onkeypress="if (event.key=='Enter') updateRenderedSelector(updateValue(this.value))"><div class="button submit_button" onclick="updateRenderedSelector(updateValue(this.parentElement.querySelector('input').value))">⬆</div>
-            <div class="button" onclick="updateRenderedSelector(updateValue(null))">Effacer</div>
+            <input autocomplete="off" onkeypress="if (event.key=='Enter') updateRenderedSelector(updateValue(this.value, this.parentElement.querySelector('.selector_input_value_or_id').value))"><div class="button submit_button" onclick="updateRenderedSelector(updateValue(this.parentElement.querySelector('input').value, this.parentElement.querySelector('.selector_input_value_or_id').value))">⬆</div>
+            <div class="button" onclick="updateRenderedSelector(updateValue(null, this.parentElement.querySelector('.selector_input_value_or_id').value))">Effacer</div>
+            <div>
+                <label>Édition de <select class="selector_input_value_or_id"><option value="value">la valeur</option><option value="id">l'ID</option></select></label>
+            </div>
         </div>
         <h4>Attributs :</h4>
         <div class="selector_attributes"></div>
