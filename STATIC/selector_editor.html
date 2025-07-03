@@ -60,8 +60,14 @@
             function listIntoSelectorBuilder(divClass, functionName, elementsList) {
                 const selectorBuilderGivenDiv = document.querySelector(`.selector_builder .${divClass}`);
                 selectorBuilderGivenDiv.innerHTML += `<div class="button" onclick="updateRenderedSelector(${functionName}(''))"><b>X</b></div>`;
-                for (const element of elementsList) {
-                    selectorBuilderGivenDiv.innerHTML += `<div class="button" onclick="updateRenderedSelector(${functionName}('${element}'))">${element}</div>`;
+                for (const element of (Array.isArray(elementsList)) ? elementsList : Object.entries(elementsList)) {
+                    let value, humanReadable;
+                    if (Array.isArray(element)) {
+                        [value, humanReadable] = element;
+                    } else {
+                        [value, humanReadable] = [element, element];
+                    }
+                    selectorBuilderGivenDiv.innerHTML += `<div class="button" onclick="updateRenderedSelector(${functionName}('${value}'))">${humanReadable}</div>`;
                 }
             }
 

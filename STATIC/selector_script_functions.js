@@ -52,35 +52,35 @@ const attributes = [
     'allowed'
 ]
 
-const tests = [
-    '<',
-    '>',
-    '<=',
-    '>=',
-    '=',
-    'is',
-    'in',
-    'in_or_equal',
-    'is_for_user',
-    'is_for_thing',
-    'pending_feedback',
-    'active',
-    'contains',
-    'true',
-    'false',
-    'True'
-]
+const tests = {
+    '<': '<',
+    '>': '>',
+    '<=': '<=',
+    '>=': '>=',
+    '=': '=',
+    'is': 'est',
+    'in': 'est dans',
+    'in_or_equal': 'est dans/est',
+    'is_for_user': 'est pour l\'utilisateur',
+    'is_for_thing': 'est pour l\'objet',
+    'pending_feedback': 'en attente de retours',
+    'active': 'est actif',
+    'contains': 'contient',
+    'true': 'est vrai',
+    'false': 'est faux',
+    'True': 'est True'
+}
 
-const items = [
-    'Incident',
-    'Thing',
-    'Failure',
-    'User',
-    'Selector',
-    'SourceThing',
-    'SourceFailure',
-    'SourceUser'
-]
+const items = {
+    'Incident': `l\'Incident`,
+    'Thing': `l\'Objet`,
+    'Failure': `la Panne`,
+    'User': `l\'Utilisateur`,
+    'Selector': `le Sélecteur d'ID`,
+    'SourceThing': `l\'Objet Source`,
+    'SourceFailure': `la Panne Source`,
+    'SourceUser': `l\'Utilisateur Source`
+}
 
 const left = 1;
 const right = 2;
