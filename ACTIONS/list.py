@@ -277,10 +277,19 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
             texts.append(html.escape(selector.id))
             texts.append('</td><td>')
             texts.append(f'<span class="selector_expression">{selector.expression}</span>')
-            texts.append('<script>document.currentScript.parentElement.innerHTML = transcribeSelector(JSON.parse(document.currentScript.parentElement.querySelector(".selector_expression").textContent));</script>')
+            texts.append(
+                '<script>'
+                    'document.currentScript.parentElement.innerHTML = '
+                        'transcribeSelector('
+                            'JSON.parse('
+                                'document.currentScript.parentElement.querySelector(".selector_expression").textContent'
+                            ')'
+                        ');'
+                '</script>')
             texts.append('</td><td>')
             texts.append(qrbug.selector_editor(qrbug.Failure['selector-expression'], selector, 'Éditer'))
             texts.append('</td></tr>')
+        texts.append('</table>')
         texts = [qrbug.get_template(request).replace('%REPRESENTATION%', ''.join(texts))]
     else:
         for node in what.instances.values() if hasattr(what, 'instances') else what.active:
