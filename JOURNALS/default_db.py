@@ -401,6 +401,15 @@ selector('flow.html','{"class":"Failure", "test":"is", "value": "flow.html"}')
 dispatcher_update('flow.html', action_id='get_file', selector_id='flow.html')
 
 # ----------------------------------------------
+# Journals reload
+# ----------------------------------------------
+failure_update('reload_journals', value='Recharger les journaux de configuration', allowed="admin", display_type=Button)
+failure_add('misc', 'reload_journals')
+selector('reload_journals', '{"class":"Failure", "test":"is", "value": "reload_journals"}')
+action('reload_journals', 'reload_journals.py')
+dispatcher_update('reload_journals', action_id='reload_journals', selector_id='reload_journals')
+
+# ----------------------------------------------
 # Messages
 # ----------------------------------------------
 
