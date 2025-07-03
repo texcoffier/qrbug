@@ -71,6 +71,17 @@ const tests = [
     'True'
 ]
 
+const items = [
+    'Incident',
+    'Thing',
+    'Failure',
+    'User',
+    'Selector',
+    'SourceThing',
+    'SourceFailure',
+    'SourceUser'
+]
+
 const left = 1;
 const right = 2;
 
@@ -183,4 +194,8 @@ function updateAttribute(attribute) {
 
 function updateTest(test) {
     return updatePart('test', test);
+}
+
+function updateItems(item) {
+    return updatePart('class', item);
 }
