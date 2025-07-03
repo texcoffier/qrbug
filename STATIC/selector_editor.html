@@ -7,14 +7,17 @@
         <summary>Avancé - Sélecteur réel</summary>
         <pre id="raw_selector">%RAW_SELECTOR%</pre>
     </details>
+    <input id="input" style="display: none;" value="" />
 </div>
 <div style="display: none;">
     <script>
         (function () {
            const rawSelector = document.getElementById('raw_selector');
             const renderedSelector = document.getElementById('rendered_selector');
-            let selectorRepresentation = JSON.parse(rawSelector.textContent);
+            const rawSelectorValue = rawSelector.textContent;
+            let selectorRepresentation = JSON.parse(rawSelectorValue);
             renderedSelector.innerHTML = transcribeSelector(selectorRepresentation);
+            document.getElementById('input').setAttribute('value', rawSelectorValue);
         })();
     </script>
     <!-- The script above is not executed until the "image" below injects it into the HTML code above. -->
