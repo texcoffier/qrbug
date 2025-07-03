@@ -52,6 +52,25 @@ const attributes = [
     'allowed'
 ]
 
+const tests = [
+    '<',
+    '>',
+    '<=',
+    '>=',
+    '=',
+    'is',
+    'in',
+    'in_or_equal',
+    'is_for_user',
+    'is_for_thing',
+    'pending_feedback',
+    'active',
+    'contains',
+    'true',
+    'false',
+    'True'
+]
+
 const left = 1;
 const right = 2;
 
@@ -154,6 +173,22 @@ function updateAttribute(attribute) {
         editablePart['attr'] = attribute;
     } else {
         delete editablePart['attr'];
+    }
+    return JSON.stringify(selectorRepresentation);
+}
+
+function updateTest(test) {
+    let selectorRepresentation = getParsedRawSelectorValue();
+
+    let editablePart = selectorRepresentation;
+    if (Array.isArray(selectorRepresentation)) {
+        editablePart = selectorRepresentation[sideToEditIndex()];
+    }
+
+    if (test) {
+        editablePart['test'] = test;
+    } else {
+        delete editablePart['test'];
     }
     return JSON.stringify(selectorRepresentation);
 }

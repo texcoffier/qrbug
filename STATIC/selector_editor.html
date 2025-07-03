@@ -14,6 +14,8 @@
         <div class="side_selector show_if_condition">
             <label>Éditer à : <select><option value="1">Gauche</option><option value="2">Droite</option></select></label>
         </div>
+        <h4>Tests :</h4>
+        <div class="selector_tests"></div>
         <h4>Attributs :</h4>
         <div class="selector_attributes"></div>
     </div>
@@ -41,6 +43,12 @@
             selectorAttributesDiv.innerHTML += `<div class="button" onclick="updateRenderedSelector(updateAttribute(''))"><b>X</b></div>`;
             for (const attribute of attributes) {
                 selectorAttributesDiv.innerHTML += `<div class="button" onclick="updateRenderedSelector(updateAttribute('${attribute}'))">${attribute}</div>`;
+            }
+
+            const selectorTestsDiv = document.querySelector('.selector_builder .selector_tests');
+            selectorTestsDiv.innerHTML += `<div class="button" onclick="updateRenderedSelector(updateAttribute(''))"><b>X</b></div>`;
+            for (const test of tests) {
+                selectorTestsDiv.innerHTML += `<div class="button" onclick="updateRenderedSelector(updateTest('${test}'))">${test}</div>`;
             }
         })();
     </script>
