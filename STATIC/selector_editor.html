@@ -7,6 +7,10 @@
         margin-top: 1em;
         margin-bottom: 1em;
     }
+
+    select {
+        font-size: 1em;
+    }
 </style>
 <div class="selector_editor">
     <div>
@@ -22,7 +26,7 @@
             <div class="button show_if_condition" onclick="updateRenderedSelector(removeCondition(right))">Garder droite</div>
         </div>
         <div class="side_selector show_if_condition">
-            <label>Éditer à : <select><option value="1">Gauche</option><option value="2">Droite</option></select></label>
+            <label>Éditer à <select><option value="1">Gauche</option><option value="2">Droite</option></select></label>
         </div>
         <h4>Tests :</h4>
         <div class="selector_tests"></div>
