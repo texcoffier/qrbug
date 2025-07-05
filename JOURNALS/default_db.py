@@ -52,7 +52,7 @@ selector('for-thing-active', '[1, {"test": "active"}, {"test":"is_for_thing"}]')
 ###############################################################################
 
 failure_update('backoffice', value='')
-selector('backoffice'    ,'{"class":"Failure" ,                  "test":"in"   , "value":"backoffice"}')
+selector('backoffice'    ,'{"class":"Failure" ,                  "test":"in_or_equal", "value":"backoffice"}')
 selector('not-backoffice','{"class":"Selector", "attr": "is_ok", "test":"false", "id"   :"backoffice"}')
 
 failure_update('top', value='')
@@ -77,7 +77,7 @@ concerned_add('not-backoffice', 'admin')
 # Planified tasks
 ###############################################################################
 
-failure_update('hours', value='')
+failure_update('hours', value='', allowed="system")
 failure_update('00:00', value='', allowed="system")
 failure_update('01:00', value='', allowed="system")
 failure_update('02:00', value='', allowed="system")
@@ -420,4 +420,3 @@ for message in pathlib.Path(MESSAGES).read_text(encoding='utf-8').split('\n'):
     failure_id, value = message.split(' ', 1)
     failure_update(failure_id, value=value)
     failure_add('messages', failure_id)
-

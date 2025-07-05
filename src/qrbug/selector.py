@@ -28,6 +28,7 @@ ITEMS = {
     'Thing': 'incident.thing'                   , # Its thing
     'Failure': 'incident.failure'               , # Its failure
     'User': 'qrbug.User[report.login]'          , # User triggering the last report
+    'ThingUser': 'qrbug.User[incident.thing_id]', # The incident is about a User not a thing
     'Selector': 'qrbug.Selector[%ID%]'          , # Selector from 'id' attr
     # The 3 next values
     'SourceThing': 'source.thing'               , # Its thing

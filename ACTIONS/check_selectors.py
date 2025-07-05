@@ -10,25 +10,23 @@ import collections
 import qrbug
 
 def nice(ids):
-    ids = '+'.join(sorted(str(i).split(".", 1)[0]
-                          for i in ids
-                         )
-                  )
-    if ids == 'admin-thing+admin-user+nobody+root':
+    ids = set(str(i).split(".", 1)[0]
+              for i in ids
+             )
+    if ids == nice.things or ids == nice.logins:
         return '*'
-    if ids == 'admin-thing+admin-user+nobody':
-        return '*-root'
-    if ids == 'admin+b751pc0404+root':
+    for check in (nice.things, nice.logins):
+        diff = check - ids
+        if len(diff) <= 2:
+            return ''.join(f'<MINUS>{html.escape(i)}</MINUS>' for i in sorted(diff))
+    ids = ''.join(f'<PLUS>{html.escape(i)}</PLUS>' for i in sorted(ids))
+    if ids == '<PLUS>()</PLUS><PLUS>(42,)</PLUS>':
         return '*'
-    if ids == 'admin+b751pc0404':
-        return '*-root'
-    if ids == '()+(42,)':
-        return '*'
-    if ids == '()':
+    if ids == '<PLUS>()</PLUS>':
         return 'non'
-    if ids == '(42,)':
+    if ids == '<PLUS>(42,)</PLUS>':
         return 'oui'
-    return html.escape(ids)
+    return ids
 
 IS_OK = {'*': 'ok', '!': 'other', '#': 'rejected', '': ''}
 def create(line):
@@ -41,8 +39,10 @@ def create(line):
 async def run(_incidents, request):
     incident = qrbug.Incident('', '')
     report = qrbug.incident.Report('', 0)
-    LOGINS = ('nobody', 'root', 'admin-user', 'admin-thing')
-    THINGS = ('admin', 'b751pc0404.univ-lyon1.fr', 'root')
+    LOGINS = sorted(qrbug.Failure['check_selector_logins'].value.split(' '))
+    THINGS = sorted(qrbug.Failure['check_selector_things'].value.split(' '))
+    nice.logins = set(i.split('.')[0] for i in LOGINS)
+    nice.things = set(i.split('.')[0] for i in THINGS)
     ACTIVES = ((), (42,))
     FAILURES = sorted(qrbug.Failure.instances, key=lambda x: qrbug.Failure.instances[x].path())
 
@@ -66,6 +66,9 @@ async def run(_incidents, request):
     .rejected { background: #FB8 }
     .bug { background: #FAA }
     .bigbug { background: #000 }
+    PLUS, MINUS { display: inline; margin-left: 0.2em }
+    PLUS { background-color: #8F8 }
+    MINUS { background-color: #FAA }
     </style>
     <style id="style">
     </style>
@@ -80,7 +83,17 @@ async def run(_incidents, request):
     <p>
     Les lignes blanches ne sont pas affichées.
     <p>
-    * : représente tous les cas. Sinon le cas qui a été testé.""")
+    Pour les colonnes Login et Thing
+    </p>
+    <ul>
+    <li> * : représente tous les cas.
+    <li> <PLUS>xxx</PLUS> : Seulement les cas affichés en vert.
+    <li> <MINUS>xxx</MINUS> : Tous les cas sauf ceux affichés en rouge.
+    </ul>
+    <p>
+    La liste des logins et des choses à tester sont modifiable dans
+    les pannes 'check_selector_logins' et 'check_selector_things'
+    """)
     selectors = collections.defaultdict(list)
     for selector_id, selector in sorted(qrbug.Selector.instances.items()):
         infos = {}
@@ -123,6 +136,18 @@ async def run(_incidents, request):
                             infos.pop((login, thing_id, active, failure_id), None)
             return True
 
+        def mergeable_logins(login1, login2, thing_ids, actives, failure_ids):
+            for thing_id in thing_ids:
+                for active in actives:
+                    for failure_id in failure_ids:
+                        if keep[login1, thing_id, active, failure_id] != keep[login2, thing_id, active, failure_id]:
+                            return False
+            for thing_id in thing_ids:
+                for active in actives:
+                    for failure_id in failure_ids:
+                        infos.pop((login2, thing_id, active, failure_id), None)
+            return True
+
         keep = dict(infos)
         while infos:
             login, thing_id, active, failure_id = next(iter(infos))
@@ -133,11 +158,6 @@ async def run(_incidents, request):
             thing_ids = [thing_id]
             actives = [active]
             failure_ids = [failure_id]
-
-            for login in LOGINS:
-                if login not in logins:
-                    if all_here([login], thing_ids, actives, failure_ids, is_ok):
-                        logins.append(login)
 
             for thing_id in THINGS:
                 if thing_id not in thing_ids:
@@ -154,6 +174,11 @@ async def run(_incidents, request):
                     if all_here(logins, thing_ids, actives, [failure_id],
                                 keep[logins[0], thing_ids[0], actives[0], failure_id]):
                         failure_ids.append(failure_id)
+
+            for login in LOGINS:
+                if login not in logins:
+                    if mergeable_logins(logins[0], login, thing_ids, actives, failure_ids):
+                        logins.append(login)
 
             failures = [keep[logins[0],thing_ids[0], actives[0], failure] if failure in failure_ids else ''
                         for failure in FAILURES]
