@@ -58,9 +58,9 @@ selector('not-backoffice','{"class":"Selector", "attr": "is_ok", "test":"false",
 failure_update('top', value='')
 failure_add('backoffice', 'top')
 
-# The 'admin' thing displays the backoffice user interface
-thing_update('admin', comment="Interface d'administration")
-thing_add_failure('admin', "top")
+# The 'GUI' thing displays the backoffice user interface
+thing_update('GUI', comment="Interface d'administration")
+thing_add_failure('GUI', "top")
 
 # Display the reporting (not fix) feedback
 action('report_feedback' ,'report_feedback.py')   # Send the report feedback to users
@@ -242,10 +242,6 @@ dispatcher_update('personnal-for-me-all', action_id='echo', selector_id='personn
 
 failure_update('edit', value="API de l'éditeur de configuration, elle ne permet aucune modification mais affiche seulement les éléments modifiables pour chacun des types d'objet.", allowed="admin")
 failure_add('backoffice', 'edit')
-
-# The 'editor-api' thing displays the editors API
-thing_update('editor-api', comment="Les API des éditeurs")
-thing_add_failure('editor-api', 'edit')
 
 # ---------------
 # Edit concerned

@@ -20,7 +20,7 @@ START=$(date "+%s")
 OK='0'
 for _ in $(seq 10000)
 do
-  if [ "$(curl -s -o TESTS/xxx-page-content -w "%{http_code}" "http://localhost:8080/?what=thing&thing-id=admin&failure-id=stats")" = 200 ]; then
+  if [ "$(curl -s -o TESTS/xxx-page-content -w "%{http_code}" "http://localhost:8080/?what=thing&thing-id=GUI&failure-id=stats")" = 200 ]; then
     OK='1'
     break
   else

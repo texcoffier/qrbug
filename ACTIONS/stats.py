@@ -20,7 +20,7 @@ async def run(_incidents, request):
         else:
             more = ''
         if add_link:
-            txt = f'<a href="?what=thing&thing-id=admin&secret={request.secret.secret}&failure-id=list-{txt}">{txt}</a>'
+            txt = f'<a href="?what=thing&thing-id=GUI&secret={request.secret.secret}&failure-id=list-{txt}">{txt}</a>'
         return f'<tr><td>{txt}<td>{more}'
 
     await request.write(

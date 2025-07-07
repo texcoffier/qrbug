@@ -1,4 +1,4 @@
 qrcode_line_1 Scannez-moi pour
 qrcode_line_2 signaler un problème !
 check_selector_logins nobody root admin-user admin-thing
-check_selector_things admin none
+check_selector_things GUI_admin none
