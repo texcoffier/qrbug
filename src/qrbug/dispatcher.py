@@ -37,7 +37,7 @@ class Dispatcher(qrbug.Tree):
             incidents = [i
                          for j in qrbug.Incident.instances.values()
                          for i in j.values()
-                         if selector.is_ok(i, incident, request.report)
+                         if selector.is_ok(incident, request.report, i)
                         ]
         else:
             incidents = [incident]

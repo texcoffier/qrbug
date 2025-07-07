@@ -10,7 +10,7 @@ class TestEdit(qrbug.TestCase):
 
     def runtest(self, failure, dispatcher, value=''):
         qrbug.selector_update('edit-selector',
-            '{"class":"Failure", "test":"in_or_equal", "value": "%s"}' % failure)
+            '{"class":"SourceFailure", "test":"in_or_equal", "value": "%s"}' % failure)
         trigger = qrbug.Incident.open('a-selector', failure, 'ip2', 'login2', value)
         request = qrbug.Request(trigger)
         asyncio.run(qrbug.Dispatcher[dispatcher].run(trigger, request, []))

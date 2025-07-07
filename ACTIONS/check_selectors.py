@@ -102,7 +102,7 @@ async def run(_incidents, request):
                 for incident.active in ACTIVES:
                     for incident.failure_id in FAILURES:
                         try:
-                            active = selector.is_ok(incident, incident, report)
+                            active = selector.is_ok(incident, report)
                             if active:
                                 if isinstance(active, str):
                                     active = active[0]
@@ -112,7 +112,7 @@ async def run(_incidents, request):
                                     else:
                                         active = '!'
                                     if not qrbug.Selector[incident.failure.allowed
-                                            ].is_ok(incident, report=report):
+                                            ].is_ok(incident, report):
                                         active = '#'
                             else:
                                 active = ''

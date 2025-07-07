@@ -35,15 +35,15 @@ user_add('admin-thing', 'admin')
 # -----------------
 
 selector('true'            , '{                      "test":"True"}')
-selector('root'            , '{"class":"User"      , "test":"in"    , "value": "root"}')
-selector('admin'           , '{"class":"User"      , "test":"in"    , "value": "admin"}')
-selector('admin-backtrace' , '{"class":"User"      , "test":"in"    , "value": "admin-backtrace"}')
-selector('admin-user'      , '{"class":"User"      , "test":"in_or_equal", "value": "admin-user"}')
-selector('admin-thing'     , '{"class":"User"      , "test":"in_or_equal", "value": "admin-thing"}')
+selector('root'            , '{"class":"SourceUser", "test":"in"    , "value": "root"}')
+selector('admin'           , '{"class":"SourceUser", "test":"in"    , "value": "admin"}')
+selector('admin-backtrace' , '{"class":"SourceUser", "test":"in"    , "value": "admin-backtrace"}')
+selector('admin-user'      , '{"class":"SourceUser", "test":"in_or_equal", "value": "admin-user"}')
+selector('admin-thing'     , '{"class":"SourceUser", "test":"in_or_equal", "value": "admin-thing"}')
 selector('system'          , '{"class":"SourceUser", "test":"in"    , "value": "system"}')
 selector('active'          , '[1, {"test":"active"}, {"class":"Selector", "attr": "is_ok", "test":"false", "id":"backoffice"}]', )
 selector('for-me'          , '[1, {"test": "active"}, {"class":"SourceUser", "test":"is_for_user"}]')
-selector('for-me-all'      ,'{"class":"SourceUser", "test":"is_for_user"}')
+selector('for-me-all'      , '{"class":"SourceUser", "test":"is_for_user"}')
 selector('for-thing'       , '{                      "test":"is_for_thing"}')
 selector('for-thing-active', '[1, {"test": "active"}, {"test":"is_for_thing"}]')
 
@@ -52,7 +52,7 @@ selector('for-thing-active', '[1, {"test": "active"}, {"test":"is_for_thing"}]')
 ###############################################################################
 
 failure_update('backoffice', value='')
-selector('backoffice'    ,'{"class":"Failure" ,                  "test":"in_or_equal", "value":"backoffice"}')
+selector('backoffice'    ,'{"class":"SourceFailure",             "test":"in_or_equal", "value":"backoffice"}')
 selector('not-backoffice','{"class":"Selector", "attr": "is_ok", "test":"false", "id"   :"backoffice"}')
 
 failure_update('top', value='')
@@ -156,7 +156,7 @@ failure_add('top', 'list')
 # Use the same selector and dispatcher for all the failure in 'list'
 # The 'list' action will check the failure ID to to the right thing.
 action('list', 'list.py')
-selector('list', '{"class":"Failure", "test":"in", "value": "list"}')
+selector('list', '{"class":"SourceFailure", "test":"in", "value": "list"}')
 dispatcher_update('admin-list', action_id='list', selector_id='list')
 
 #------------------------------------------------------------------------------
@@ -174,7 +174,7 @@ failure_add('top', 'journal')
 # Use the same selector and dispatcher for all the journal in 'journal'
 # The 'journal' action will check the failure ID to to the right thing.
 action('journal', 'show_journals.py')
-selector('journal', '{"class":"Failure", "test":"in", "value": "journal"}')
+selector('journal', '{"class":"SourceFailure", "test":"in", "value": "journal"}')
 dispatcher_update('admin-journal', action_id='journal', selector_id='journal')
 
 #------------------------------------------------------------------------------
@@ -200,12 +200,15 @@ action('stats'           , 'stats.py'           )
 action('check-selectors' , 'check_selectors.py' )
 action('report_mail'     , 'report_mail.py'     )  # Send mail to remind every active incident
 
-selector('pending-feedback'     ,'{"class":"Failure", "test":"is", "value": "pending-feedback"}')
-selector('send-pending-feedback','[0, {"class":"Failure", "test":"in", "value": "hours"}, {"class":"Failure", "test":"is", "value": "send-pending-feedback"}]')
+selector('pending-feedback'     ,'{"class":"SourceFailure", "test":"is", "value": "pending-feedback"}')
+selector('send-pending-feedback','''[0,
+    {"class":"SourceFailure", "test":"in", "value": "hours"},
+    {"class":"SourceFailure", "test":"is", "value": "send-pending-feedback"}
+    ]''')
 selector('with-pending-feedback', '[1, {"test": "pending_feedback"}, {"class":"Selector", "id": "backoffice", "attr": "is_ok", "test": "false"}]')
-selector('stats'                ,'{"class":"Failure", "test":"is", "value": "stats"}')
-selector('check-selectors'      ,'{"class":"Failure", "test":"is", "value": "check-selectors"}')
-selector('report-mail'          ,'{"class":"Failure", "test":"is", "value": "report-mail"}')
+selector('stats'                ,'{"class":"SourceFailure", "test":"is", "value": "stats"}')
+selector('check-selectors'      ,'{"class":"SourceFailure", "test":"is", "value": "check-selectors"}')
+selector('report-mail'          ,'{"class":"SourceFailure", "test":"is", "value": "report-mail"}')
 
 dispatcher_update('pending-feedback'     , action_id='echo'            , selector_id='pending-feedback'     , incidents="with-pending-feedback")
 dispatcher_update('send-pending-feedback', action_id='pending_feedback', selector_id='send-pending-feedback', incidents="with-pending-feedback")
@@ -227,10 +230,10 @@ failure_add('personnal', 'personnal-for-me')
 failure_add('personnal', 'personnal-for-me-all')
 failure_add('top', 'personnal')
 
-selector('personnal-for-me'     ,'{"class":"Failure", "test":"is", "value": "personnal-for-me"}')
-selector('personnal-for-me-all' ,'{"class":"Failure", "test":"is", "value": "personnal-for-me-all"}')
+selector('personnal-for-me'     ,'{"class":"SourceFailure", "test":"is", "value": "personnal-for-me"}')
+selector('personnal-for-me-all' ,'{"class":"SourceFailure", "test":"is", "value": "personnal-for-me-all"}')
 
-dispatcher_update('personnal-for-me', action_id='echo', selector_id='personnal-for-me', incidents="for-me")
+dispatcher_update('personnal-for-me'    , action_id='echo', selector_id='personnal-for-me'    , incidents="for-me")
 dispatcher_update('personnal-for-me-all', action_id='echo', selector_id='personnal-for-me-all', incidents="for-me-all")
 
 ###############################################################################
@@ -255,7 +258,7 @@ failure_add('concerned', 'concerned-del')
 failure_add('edit', 'concerned')
 
 action('edit_concerned', 'edit_concerned.py')
-selector('edit-concerned', '{"class":"Failure", "test":"in_or_equal", "value": "concerned"}')
+selector('edit-concerned', '{"class":"SourceFailure", "test":"in_or_equal", "value": "concerned"}')
 dispatcher_update('edit-concerned', action_id='edit_concerned', selector_id='edit-concerned')
 
 # ---------------
@@ -271,7 +274,7 @@ failure_add('dispatcher', 'dispatcher-selector_id')
 failure_add('dispatcher', 'dispatcher-incidents')
 
 action('edit_dispatcher', 'edit_dispatcher.py')
-selector('edit-dispatcher', '{"class":"Failure", "test":"in_or_equal", "value": "dispatcher"}')
+selector('edit-dispatcher', '{"class":"SourceFailure", "test":"in_or_equal", "value": "dispatcher"}')
 dispatcher_update('edit-dispatcher', action_id='edit_dispatcher', selector_id='edit-dispatcher')
 
 # ---------------
@@ -289,7 +292,7 @@ failure_add('failure', 'failure-ask_confirm')
 failure_add('failure', 'failure-allowed')
 
 action('edit_failure', 'edit_failure.py')
-selector('edit-failure', '{"class":"Failure", "test":"in_or_equal", "value": "failure"}')
+selector('edit-failure', '{"class":"SourceFailure", "test":"in_or_equal", "value": "failure"}')
 dispatcher_update('edit-failure', action_id='edit_failure', selector_id='edit-failure')
 
 # ---------------
@@ -302,7 +305,7 @@ failure_add('selector', 'selector-expression')
 failure_add('edit', 'selector-expression')
 
 action('edit_selector', 'edit_selector.py')
-selector('edit-selector', '{"class":"Failure", "test":"in_or_equal", "value": "selector"}')
+selector('edit-selector', '{"class":"SourceFailure", "test":"in_or_equal", "value": "selector"}')
 dispatcher_update('edit-selector', action_id='edit_selector', selector_id='edit-selector')
 
 # ---------------
@@ -316,7 +319,7 @@ failure_add('user', 'user-add-child')
 failure_add('user', 'user-del-child')
 
 action('edit_user', 'edit_user.py')
-selector('edit-user', '{"class":"Failure", "test":"in_or_equal", "value": "user"}')
+selector('edit-user', '{"class":"SourceFailure", "test":"in_or_equal", "value": "user"}')
 dispatcher_update('edit-user', action_id='edit_user', selector_id='edit-user')
 
 # ---------------
@@ -332,7 +335,7 @@ failure_add('thing', 'thing-del-failure')
 failure_add('thing', 'thing-add-failure')
 
 action('edit_thing', 'edit_thing.py')
-selector('edit-thing', '{"class":"Failure", "test":"in_or_equal", "value": "thing"}')
+selector('edit-thing', '{"class":"SourceFailure", "test":"in_or_equal", "value": "thing"}')
 dispatcher_update('edit-thing', action_id='edit_thing', selector_id='edit-thing')
 
 
@@ -341,9 +344,9 @@ failure_update('thing-incidents-active', value="Incidents actifs", allowed="admi
 failure_add('backoffice', 'thing-incidents')
 failure_add('backoffice', 'thing-incidents-active')
 
-selector('thing-incidents-active', '{"class":"Failure", "test":"is", "value": "thing-incidents-active"}')
+selector('thing-incidents-active', '{"class":"SourceFailure", "test":"is", "value": "thing-incidents-active"}')
 dispatcher_update('incidents-active-for-thing', action_id='echo', selector_id='thing-incidents-active', incidents='for-thing-active')
-selector('thing-incidents', '{"class":"Failure", "test":"is", "value": "thing-incidents"}')
+selector('thing-incidents', '{"class":"SourceFailure", "test":"is", "value": "thing-incidents"}')
 dispatcher_update('incidents-for-thing', action_id='echo', selector_id='thing-incidents', incidents='for-thing')
 
 # ---------------
@@ -355,7 +358,7 @@ failure_add('action', 'action-python_script')
 failure_add('edit', 'action')
 
 action('edit_action', 'edit_action.py')
-selector('edit-action', '{"class":"Failure", "test":"in_or_equal", "value": "action"}')
+selector('edit-action', '{"class":"SourceFailure", "test":"in_or_equal", "value": "action"}')
 dispatcher_update('edit-action', action_id='edit_action', selector_id='edit-action')
 
 ###############################################################################
@@ -373,7 +376,7 @@ for rows in (7, 8):
         failure_add('generate_qr', f'generate_qr_{rows}x{cols}')
 
 action('generate_qrcode', 'generate_qr.py')
-selector('generate_qr','{"class":"Failure", "attr":"id", "test": "contains", "value": "generate_qr"}')
+selector('generate_qr','{"class":"SourceFailure", "attr":"id", "test": "contains", "value": "generate_qr"}')
 dispatcher_update('generate-qr', action_id='generate_qrcode', selector_id='generate_qr')
 
 # ----------------------------------------------
@@ -381,7 +384,7 @@ dispatcher_update('generate-qr', action_id='generate_qrcode', selector_id='gener
 # ----------------------------------------------
 
 failure_update('backtrace', value='QRBug server backtrace')
-selector('backtrace','{"class":"Failure", "test":"is", "value": "backtrace"}')
+selector('backtrace','{"class":"SourceFailure", "test":"is", "value": "backtrace"}')
 concerned_add('backtrace', 'admin-backtrace')
 dispatcher_update('backtrace', action_id='report_mail', selector_id='backtrace')
 
@@ -392,12 +395,12 @@ dispatcher_update('backtrace', action_id='report_mail', selector_id='backtrace')
 action('get_file', 'get_file.py')
 failure_update('get_file', value='QRBug server get_file')
 failure_add('backoffice', 'get_file')
-selector('get_file','{"class":"Failure", "test":"is", "value": "get_file"}')
+selector('get_file','{"class":"SourceFailure", "test":"is", "value": "get_file"}')
 dispatcher_update('get_file', action_id='get_file', selector_id='get_file')
 
 failure_update('flow.html', value='Présentation de QRBug', display_type=Button)
 failure_add('misc', 'flow.html')
-selector('flow.html','{"class":"Failure", "test":"is", "value": "flow.html"}')
+selector('flow.html','{"class":"SourceFailure", "test":"is", "value": "flow.html"}')
 dispatcher_update('flow.html', action_id='get_file', selector_id='flow.html')
 
 # ----------------------------------------------
@@ -405,7 +408,7 @@ dispatcher_update('flow.html', action_id='get_file', selector_id='flow.html')
 # ----------------------------------------------
 failure_update('reload_journals', value='Recharger les journaux de configuration', allowed="admin", display_type=Button)
 failure_add('misc', 'reload_journals')
-selector('reload_journals', '{"class":"Failure", "test":"is", "value": "reload_journals"}')
+selector('reload_journals', '{"class":"SourceFailure", "test":"is", "value": "reload_journals"}')
 action('reload_journals', 'reload_journals.py')
 dispatcher_update('reload_journals', action_id='reload_journals', selector_id='reload_journals')
 

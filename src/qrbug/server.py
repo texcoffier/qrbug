@@ -141,7 +141,7 @@ async def register_incident(request: qrbug.Request) -> web.StreamResponse:
 
     if failure.allowed != 'true':
         # XXX The incident is recorded. It must not be
-        if not qrbug.Selector[failure.allowed].is_ok(current_incident, report=request.report):
+        if not qrbug.Selector[failure.allowed].is_ok(current_incident, request.report):
             await request.write("Vous n'êtes pas autorisé à déclarer cette panne")
             await request.response.write_eof()
             return request.response

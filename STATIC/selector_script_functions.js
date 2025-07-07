@@ -72,10 +72,8 @@ const tests = {
 }
 
 const items = {
-    'Incident': `l\'Incident`,
-    'Thing': `l\'Objet`,
-    'Failure': `la Panne`,
-    'User': `l\'Utilisateur`,
+    'FilterThing': `l\'Objet`,
+    'FilterFailure': `la Panne`,
     'Selector': `le Sélecteur d'ID`,
     'SourceThing': `l\'Objet Source`,
     'SourceFailure': `la Panne Source`,

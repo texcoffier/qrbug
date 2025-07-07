@@ -22,9 +22,9 @@ class TestAction(qrbug.TestCase):
         )
         qrbug.failure_update('07:00', allowed='system')
         qrbug.selector_update('active', '{"test": "active"}')
-        qrbug.selector_update('true', '{"class": "Thing", "test": "true"}')
-        qrbug.selector_update('false', '{"class": "Thing", "test": "false"}')
-        qrbug.selector_update('07:00', '{"class": "Failure", "test": "is", "value": "07:00"}')
+        qrbug.selector_update('true', '{"class": "SourceThing", "test": "true"}')
+        qrbug.selector_update('false', '{"class": "SourceThing", "test": "false"}')
+        qrbug.selector_update('07:00', '{"class": "SourceFailure", "test": "is", "value": "07:00"}')
         qrbug.action_update('echo', 'echo.py')
         qrbug.action_update('close', 'close.py')
 

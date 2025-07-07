@@ -24,26 +24,22 @@ def selector_editor(failure, selector, value: str = "Éditeur de sélecteur") ->
 OPERATORS = [' or ', ' and ']
 
 ITEMS = {
-    'Incident': 'incident'                      , # The incident sent to dispatcher
-    'Thing': 'incident.thing'                   , # Its thing
-    'Failure': 'incident.failure'               , # Its failure
-    'User': 'qrbug.User[report.login]'          , # User triggering the last report
-    'ThingUser': 'qrbug.User[incident.thing_id]', # The incident is about a User not a thing
-    'Selector': 'qrbug.Selector[%ID%]'          , # Selector from 'id' attr
-    # The 3 next values
-    'SourceThing': 'source.thing'               , # Its thing
-    'SourceFailure': 'source.failure'           , # Its failure
-    'SourceUser': 'qrbug.User.get_or_create(report.login)', # User triggering the API incident
-    # TODO :
-    #   * Incident other attributes (IP, date...)
-    #   * Incident closed/open
+    'FilterFailure' : 'incident.failure'              , # Its failure
+    'FilterThing'   : 'incident.thing'                , # Its thing
+
+    'SourceFailure' : 'source.failure'                , # Its failure
+    'SourceUser'    : 'qrbug.User.get_or_create(report.login)', # User triggering the API incident
+    'SourceThing'   : 'source.thing'                  , # Its thing
+    'SourceThingUser':'qrbug.User[incident.thing_id]' , # The incident is about a User not a thing
+
+    'Selector'      : 'qrbug.Selector[%ID%]'          , # Selector from 'id' attr
 }
 
 ATTRIBUTES = {
     'path'        : '.path()'                       , # Tree subclasses
     'id'          : '.id'                           , # Any
     'comment'     : '.comment'                      , # Thing
-    'is_ok'       : '.is_ok(incident,source,report)', # Selector
+    'is_ok'       : '.is_ok(source,report,incident)', # Selector
     'value'       : '.value'                        , # Failure
     'display_type': '.display_type'                 , # Failure
     'ask_confirm' : '.ask_confirm'                  , # Failure
@@ -59,14 +55,16 @@ TESTS = {
     'is': '{attr}.id == {value}',
     'in': '{attr}.inside({value})',
     'in_or_equal': '{attr}.inside_or_equal({value})',
+    'contains': '{value} in {attr}',
+    'true': '{attr}',
+    'false': 'not({attr})',
+    'True': 'True',
+
+    # Filtering tests
     'is_for_user': 'incident.is_for_user({attr})',
     'is_for_thing': 'incident.thing_id == source.thing.id',
     'pending_feedback': 'incident.pending_feedback.get((incident.thing_id, incident.failure_id), ())',
     'active': 'incident.active',
-    'contains': '{value} in {attr}',
-    'true': '{attr}',
-    'false': 'not({attr})',
-    'True': 'True'
 }
 
 def compil_expr(expr):
@@ -94,14 +92,20 @@ class Selector(qrbug.Editable):
         self.expression = expression
         self.instances[selector_id] = self
 
-    def is_ok(self, incident: 'qrbug.Incident', source=None, report=None) -> bool:
+    def is_ok(self, source: 'qrbug.Incident', report=None, incident=None) -> bool:
+        """
+        Arguments :
+            * the incident that raised the dispatch : Thing + Failure
+            * the report that raised the dispatch : Login + Comment + IP + Timestamp...
+            * the incident to check if filtered
+        """
         if not self.compiled:
             self.expr = compil_expr(ast.literal_eval(self.expression)) # For regtests
             self.compiled = compile(self.expr, self.expr, 'eval')
         # There are not Thing for for Edit incident
         # if incident.thing is None:
         #     raise Exception(f'Unknown thing: «{incident.thing_id}»')
-        if incident.failure is None:
+        if source.failure is None:
             raise Exception(f'Unknown failure: «{incident.failure_id}»')
         # print(len(incident.active), source, self.expr)
         # print(eval(self.compiled, {'incident': incident, 'qrbug': qrbug, 'source': source, 'report': report}))
