@@ -158,7 +158,7 @@ function updateRenderedSelector(selectorRepresentation) {
 }
 
 function sideToEditIndex() {
-    return parseInt(document.querySelector('.selector_builder .side_selector select').value);
+    return parseInt(document.querySelector('.selector_builder .side_selector input').value);
 }
 
 function addCondition(condition_type) {

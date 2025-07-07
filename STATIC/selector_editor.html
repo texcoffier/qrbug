@@ -26,7 +26,7 @@
             <div class="button show_if_condition" onclick="updateRenderedSelector(removeCondition(right))">Garder droite</div>
         </div>
         <div class="side_selector show_if_condition">
-            <label>Éditer à <select><option value="1">Gauche</option><option value="2">Droite</option></select></label>
+            <label>Éditer la partie <input type="number" min="1" max="3" value="1" autocomplete="off" onkeypress="console.log('no effect')"><div class="button submit_button" onclick="console.log('no effect')">⬆</div></label>
         </div>
         <h4>Tests :</h4>
         <div class="selector_tests"></div>
@@ -59,6 +59,7 @@
             let selectorRepresentation = JSON.parse(rawSelectorValue);
             renderedSelector.innerHTML = transcribeSelector(selectorRepresentation);
             document.getElementById('input').setAttribute('value', rawSelectorValue);
+            document.querySelector('.selector_builder .side_selector input').setAttribute('max', (Array.isArray(selectorRepresentation) ? selectorRepresentation.length - 1 : 2).toString());
 
             document.querySelectorAll('.selector_builder .show_if_condition').forEach(
                 e => e.style.display = (Array.isArray(selectorRepresentation)) ? 'initial' : 'none'
