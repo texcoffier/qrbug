@@ -158,7 +158,7 @@ failure_add('top', 'list')
 action('list', 'list.py')
 selector('list', '''[1,
     {"class":"SourceFailure", "test":"in", "value": "list"},
-    {"class":"SourceUser"   , "test":"in_or_equal", "value": "admin"},
+    {"class":"SourceUser"   , "test":"in_or_equal", "value": "admin"}
     ]''')
 dispatcher_update('admin-list', action_id='list', selector_id='list')
 
@@ -179,7 +179,7 @@ failure_add('top', 'journal')
 action('journal', 'show_journals.py')
 selector('journal', '''[1,
     {"class":"SourceFailure", "test":"in", "value": "journal"},
-    {"class":"SourceUser"   , "test":"in_or_equal", "value": "admin"},
+    {"class":"SourceUser"   , "test":"in_or_equal", "value": "admin"}
     ]''')
 dispatcher_update('admin-journal', action_id='journal', selector_id='journal')
 
@@ -209,35 +209,35 @@ action('report_mail'     , 'report_mail.py'     )  # Send mail to remind every a
 
 selector('hours', '''[1,
     {"class":"SourceFailure", "test":"in", "value": "hours"},
-    {"class":"SourceUser"   , "test":"is", "value": "system"},
+    {"class":"SourceUser"   , "test":"is", "value": "system"}
     ]''')
 
 selector('send-feedback', '''[1,
     {"class":"SourceFailure", "test":"is"         , "value": "send-pending-feedback"},
-    {"class":"SourceUser"   , "test":"in_or_equal", "value": "root"},
+    {"class":"SourceUser"   , "test":"in_or_equal", "value": "root"}
     ]''')
 
 selector('send-pending-feedback','''[0,
     {"class":"Selector", "id": "hours"        , "attr":"is_ok", "test": "true"},
-    {"class":"Selector", "id": "send-feedback", "attr":"is_ok", "test": "true"},
+    {"class":"Selector", "id": "send-feedback", "attr":"is_ok", "test": "true"}
     ]''')
 selector('with-pending-feedback', '[1, {"test": "pending_feedback"}, {"class":"Selector", "id": "backoffice", "attr": "is_ok", "test": "false"}]')
 
 selector('pending-feedback', '''[1,
     {"class":"SourceFailure", "test":"is", "value": "pending-feedback"},
-    {"class":"SourceUser"   , "test":"in_or_equal", "value": "admin"},
+    {"class":"SourceUser"   , "test":"in_or_equal", "value": "admin"}
     ]''')
 selector('stats', '''[1,
     {"class":"SourceFailure", "test":"is", "value": "stats"},
-    {"class":"SourceUser"   , "test":"in_or_equal", "value": "admin"},
+    {"class":"SourceUser"   , "test":"in_or_equal", "value": "admin"}
     ]''')
 selector('check-selectors', '''[1,
     {"class":"SourceFailure", "test":"is", "value": "check-selectors"},
-    {"class":"SourceUser"   , "test":"in_or_equal", "value": "admin"},
+    {"class":"SourceUser"   , "test":"in_or_equal", "value": "admin"}
     ]''')
 selector('report-mail', '''[1,
     {"class":"SourceFailure", "test":"is", "value": "report-mail"},
-    {"class":"SourceUser"   , "test":"in_or_equal", "value": "admin"},
+    {"class":"SourceUser"   , "test":"in_or_equal", "value": "admin"}
     ]''')
 
 
@@ -289,7 +289,7 @@ failure_add('edit', 'concerned')
 action('edit_concerned', 'edit_concerned.py')
 selector('edit-concerned', '''[1,
     {"class":"SourceFailure", "test":"in_or_equal", "value": "concerned"},
-    {"class":"SourceUser"   , "test":"in_or_equal", "value": "admin"},
+    {"class":"SourceUser"   , "test":"in_or_equal", "value": "admin"}
     ]''')
 dispatcher_update('edit-concerned', action_id='edit_concerned', selector_id='edit-concerned')
 
@@ -308,7 +308,7 @@ failure_add('dispatcher', 'dispatcher-incidents')
 action('edit_dispatcher', 'edit_dispatcher.py')
 selector('edit-dispatcher', '''[1,
     {"class":"SourceFailure", "test":"in_or_equal", "value": "dispatcher"},
-    {"class":"SourceUser"   , "test":"in_or_equal", "value": "admin"},
+    {"class":"SourceUser"   , "test":"in_or_equal", "value": "admin"}
     ]''')
 dispatcher_update('edit-dispatcher', action_id='edit_dispatcher', selector_id='edit-dispatcher')
 
@@ -327,7 +327,7 @@ failure_add('failure', 'failure-ask_confirm')
 action('edit_failure', 'edit_failure.py')
 selector('edit-failure', '''[1,
     {"class":"SourceFailure", "test":"in_or_equal", "value": "failure"},
-    {"class":"SourceUser"   , "test":"in_or_equal", "value": "admin"},
+    {"class":"SourceUser"   , "test":"in_or_equal", "value": "admin"}
     ]''')
 dispatcher_update('edit-failure', action_id='edit_failure', selector_id='edit-failure')
 
@@ -343,7 +343,7 @@ failure_add('edit', 'selector-expression')
 action('edit_selector', 'edit_selector.py')
 selector('edit-selector', '''[1,
     {"class":"SourceFailure", "test":"in_or_equal", "value": "selector"},
-    {"class":"SourceUser"   , "test":"in_or_equal", "value": "admin"},
+    {"class":"SourceUser"   , "test":"in_or_equal", "value": "admin"}
     ]''')
 dispatcher_update('edit-selector', action_id='edit_selector', selector_id='edit-selector')
 
@@ -360,7 +360,7 @@ failure_add('user', 'user-del-child')
 action('edit_user', 'edit_user.py')
 selector('edit-user', '''[1,
     {"class":"SourceFailure", "test":"in_or_equal", "value": "user"},
-    {"class":"SourceUser"   , "test":"in_or_equal", "value": "admin-user"},
+    {"class":"SourceUser"   , "test":"in_or_equal", "value": "admin-user"}
     ]''')
 dispatcher_update('edit-user', action_id='edit_user', selector_id='edit-user')
 
@@ -379,7 +379,7 @@ failure_add('thing', 'thing-add-failure')
 action('edit_thing', 'edit_thing.py')
 selector('edit-thing', '''[1,
     {"class":"SourceFailure", "test":"in_or_equal", "value": "thing"},
-    {"class":"SourceUser"   , "test":"in_or_equal", "value": "admin-thing"},
+    {"class":"SourceUser"   , "test":"in_or_equal", "value": "admin-thing"}
     ]''')
 dispatcher_update('edit-thing', action_id='edit_thing', selector_id='edit-thing')
 
@@ -391,12 +391,12 @@ failure_add('backoffice', 'thing-incidents-active')
 
 selector('thing-incidents-active', '''[1,
     {"class":"SourceFailure", "test":"is", "value": "thing-incidents-active"},
-    {"class":"SourceUser"   , "test":"in_or_equal", "value": "admin-thing"},
+    {"class":"SourceUser"   , "test":"in_or_equal", "value": "admin-thing"}
     ]''')
 dispatcher_update('incidents-active-for-thing', action_id='echo', selector_id='thing-incidents-active', incidents='for-thing-active')
 selector('thing-incidents', '''[1,
     {"class":"SourceFailure", "test":"is", "value": "thing-incidents"},
-    {"class":"SourceUser"   , "test":"in_or_equal", "value": "admin-thing"},
+    {"class":"SourceUser"   , "test":"in_or_equal", "value": "admin-thing"}
     ]''')
 dispatcher_update('incidents-for-thing', action_id='echo', selector_id='thing-incidents', incidents='for-thing')
 
@@ -411,7 +411,7 @@ failure_add('edit', 'action')
 action('edit_action', 'edit_action.py')
 selector('edit-action', '''[1,
     {"class":"SourceFailure", "test":"in_or_equal", "value": "action"},
-    {"class":"SourceUser"   , "test":"in_or_equal", "value": "admin"},
+    {"class":"SourceUser"   , "test":"in_or_equal", "value": "admin"}
     ]''')
 dispatcher_update('edit-action', action_id='edit_action', selector_id='edit-action')
 
@@ -431,7 +431,7 @@ for rows in (7, 8):
 action('generate_qrcode', 'generate_qr.py')
 selector('generate_qr', '''[1,
     {"class":"SourceFailure", "test":"in_or_equal", "value": "generate_qr"},
-    {"class":"SourceUser"   , "test":"in_or_equal", "value": "admin"},
+    {"class":"SourceUser"   , "test":"in_or_equal", "value": "admin"}
     ]''')
 dispatcher_update('generate-qr', action_id='generate_qrcode', selector_id='generate_qr')
 
@@ -442,7 +442,7 @@ dispatcher_update('generate-qr', action_id='generate_qrcode', selector_id='gener
 failure_update('backtrace', value='QRBug server backtrace')
 selector('backtrace', '''[1,
     {"class":"SourceFailure", "test":"is", "value": "backtrace"},
-    {"class":"SourceUser"   , "test":"is", "value": ""},
+    {"class":"SourceUser"   , "test":"is", "value": ""}
     ]''')
 concerned_add('backtrace', 'admin-backtrace')
 dispatcher_update('backtrace', action_id='report_mail', selector_id='backtrace')
@@ -470,7 +470,7 @@ failure_add('misc', 'reload_journals')
 selector('reload_journals', '{"class":"SourceFailure", "test":"is", "value": "reload_journals"}')
 selector('reload_journals', '''[1,
     {"class":"SourceFailure", "test":"is", "value": "reload_journals"},
-    {"class":"SourceUser"   , "test":"in_or_equal", "value": "root"},
+    {"class":"SourceUser"   , "test":"in_or_equal", "value": "root"}
     ]''')
 action('reload_journals', 'reload_journals.py')
 dispatcher_update('reload_journals', action_id='reload_journals', selector_id='reload_journals')
