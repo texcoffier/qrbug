@@ -106,7 +106,7 @@ function handleTestCases(testCases, value, selector) {
 function transcribeSelector(selector) {
     let sentence = '';
     if (Array.isArray(selector)) {
-        sentence = '(' + transcribeSelector(selector[1]) + ')' + ` <b>${operators[selector[0]]}</b> ` + '(' + transcribeSelector(selector[2]) + ')';
+        sentence = selector.slice(1).map(e => '(' + transcribeSelector(e) + ')').join(` <b>${operators[selector[0]]}</b> `);
     } else {
         for (const [key, value] of Object.entries(selector).sort(([keyA, valA], [keyB, valB]) => {
             const map = {  // The higher the number, the more to the left of the selector it will appear
