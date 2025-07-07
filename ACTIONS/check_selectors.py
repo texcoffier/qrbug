@@ -9,42 +9,24 @@ import html
 import collections
 import qrbug
 
-def nice(ids):
-    ids = set(str(i).split(".", 1)[0]
-              for i in ids
-             )
-    if ids == nice.things or ids == nice.logins:
-        return '*'
-    for check in (nice.things, nice.logins):
-        diff = check - ids
-        if len(diff) <= 2:
-            return ''.join(f'<MINUS>{html.escape(i)}</MINUS>' for i in sorted(diff))
-    ids = ''.join(f'<PLUS>{html.escape(i)}</PLUS>' for i in sorted(ids))
-    if ids == '<PLUS>()</PLUS><PLUS>(42,)</PLUS>':
-        return '*'
-    if ids == '<PLUS>()</PLUS>':
-        return 'non'
-    if ids == '<PLUS>(42,)</PLUS>':
-        return 'oui'
-    return ids
-
 IS_OK = {'*': 'ok', '!': 'other', '': ''}
-def create(line):
-    failures = []
-    for j, is_ok in enumerate(line[3]):
-        failures.append(f'<td class="c{j} {IS_OK.get(is_ok, "bug")}">')
-    failures = ''.join(failures)
-    return f'<td>{nice(line[0])}<td>{nice(line[1])}<td>{nice(line[2])}{failures}'
 
 async def run(_incidents, request):
     incident = qrbug.Incident('', '')
     report = qrbug.incident.Report('', 0)
     LOGINS = sorted(qrbug.Failure['check_selector_logins'].value.split(' '))
     THINGS = sorted(qrbug.Failure['check_selector_things'].value.split(' '))
-    nice.logins = set(i.split('.')[0] for i in LOGINS)
-    nice.things = set(i.split('.')[0] for i in THINGS)
     ACTIVES = ((), (42,))
     FAILURES = sorted(qrbug.Failure.instances, key=lambda x: qrbug.Failure.instances[x].path())
+
+    def create(line):
+        values = (
+            *('login yes' if login in line[0] else 'login no' for login in LOGINS),
+            *('thing yes' if thing in line[1] else 'thing no' for thing in THINGS),
+            *('state yes' if state in line[2] else 'state no' for state in ((42,), ())),
+            *(IS_OK.get(is_ok, "bug") for is_ok in line[3])
+        )
+        return ''.join(f'<td class="c{i} {value}">' for i, value in enumerate(values))
 
     await request.write(
         """
@@ -57,8 +39,7 @@ async def run(_incidents, request):
     TR:first-child { position: sticky; top: 0px; background: #FFF }
     TR:nth-child(2) { position: sticky; top: 70px; background: #FFF }
     TR TH { height: 4.5em }
-    TR TD { border: 1px solid #FFF; font-size: 80%; padding-top: 0px; padding-bottom: 0px }
-    TR TD.selector { font-size: 100% }
+    TR TD { border: 1px solid #FFF; font-size: 80%; padding-top: 0px; padding-bottom: 0px; height: 1em; }
     TR.gray { background: #EEE }
     TR:hover TD { border-top-color: #000; border-bottom-color: #000 }
     .ok { background: #8F8 }
@@ -66,6 +47,10 @@ async def run(_incidents, request):
     .rejected { background: #FB8 }
     .bug { background: #FAA }
     .bigbug { background: #000 }
+    .login { background: #88F }
+    .thing { background: #BB0 }
+    .state { background: #0BB }
+    .no { background: #FFF}
     PLUS, MINUS { display: inline; margin-left: 0.2em }
     PLUS { background-color: #8F8 }
     MINUS { background-color: #FAA }
@@ -82,14 +67,6 @@ async def run(_incidents, request):
     </ul>
     <p>
     Les lignes blanches ne sont pas affichées.
-    <p>
-    Pour les colonnes Login et Thing
-    </p>
-    <ul>
-    <li> * : représente tous les cas.
-    <li> <PLUS>xxx</PLUS> : Seulement les cas affichés en vert.
-    <li> <MINUS>xxx</MINUS> : Tous les cas sauf ceux affichés en rouge.
-    </ul>
     <p>
     La liste des logins et des choses à tester sont modifiable dans
     les pannes 'check_selector_logins' et 'check_selector_things'
@@ -185,12 +162,18 @@ async def run(_incidents, request):
 
     await request.write("""
     <table id="table">
-    <tr><th rowspan="2">Selector<th rowspan="2">Login<th rowspan="2">Thing<th rowspan="2">Active<th colspan="%d">Failures
+    <tr><th rowspan="2">Selector<th colspan="%d">Logins<th colspan="%d">Things<th colspan="%d">?<th colspan="%d">Failures
     <tr>
-    """ % (len(FAILURES)+4))
+    """ % (
+        len(LOGINS), len(THINGS), 2, len(FAILURES)+4
+        ))
+
+    values = (*LOGINS, *THINGS, 'Active', 'Fixed', *FAILURES)
+
     await request.write(''.join(
-        f'<th class="c{i} vert"><div>{html.escape(selector_id)}</div>'
-        for i, selector_id in enumerate(FAILURES)))
+        f'<th class="c{i} vert"><div>{html.escape(value)}</div>'
+        for i, value in enumerate(values)))
+
     await request.write('</tr>')
     for i, (selector_id, lines) in enumerate(sorted(selectors.items(), key=lambda x: x[1][0][3], reverse=True)):
         if i % 2:
