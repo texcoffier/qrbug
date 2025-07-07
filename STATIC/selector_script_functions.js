@@ -146,6 +146,13 @@ function getParsedRawSelectorValue() {
     return JSON.parse(getRawSelectorValue());
 }
 
+function updateMaxArrayLength() {
+    let selectorRepresentation = getParsedRawSelectorValue();
+    let maxConditionArrayLength = Array.isArray(selectorRepresentation) ? selectorRepresentation.length - 1 : 2;
+    document.querySelector('.selector_builder .side_selector input').setAttribute('max', maxConditionArrayLength.toString());
+    document.querySelector('.selector_builder .selector_conditions input').setAttribute('max', maxConditionArrayLength.toString());
+}
+
 function updateRenderedSelector(selectorRepresentation) {
     const rawSelector = document.getElementById('raw_selector');
     const parsedSelectorRepresentation = JSON.parse(selectorRepresentation);
@@ -173,7 +180,7 @@ function addCondition(condition_type) {
     return JSON.stringify(selectorRepresentation);
 }
 
-function removeCondition(side_to_keep) {
+function keepCondition(side_to_keep) {
     let selectorRepresentation = getParsedRawSelectorValue();
 
     if (Array.isArray(selectorRepresentation)) {
