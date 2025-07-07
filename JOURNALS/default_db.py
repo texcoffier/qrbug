@@ -480,7 +480,7 @@ dispatcher_update('reload_journals', action_id='reload_journals', selector_id='r
 # ----------------------------------------------
 
 selector('require-login', '''[0,
-    {"class":"SourceFailure", "test":"in_or_equal", "value": "backoffice"},
+    {"class":"SourceFailure", "test":"in_or_equal", "value": "backoffice"}
 ]''')
 
 # ----------------------------------------------
