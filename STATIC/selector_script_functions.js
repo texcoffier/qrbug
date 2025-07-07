@@ -32,8 +32,11 @@ const classCases = {
     'User': `l\'Utilisateur`,
     'Selector': (selector) => `le Sélecteur d'ID "${selector.id}"`,
     'SourceThing': `l\'Objet Source`,
+    'SourceThingUser': `l\'Utilisateur de l\'Objet Source`,
     'SourceFailure': `la Panne Source`,
     'SourceUser': `l\'Utilisateur Source`,
+    'FilterThing': `l\'Objet du Filtre`,
+    'FilterFailure': `la Panne du Filtre`,
     'default': () => {
         throw new Error("Class selector not known");
     }
@@ -76,6 +79,7 @@ const items = {
     'FilterFailure': `la Panne`,
     'Selector': `le Sélecteur d'ID`,
     'SourceThing': `l\'Objet Source`,
+    'SourceThingUser': `l\'Utilisateur de l\'Objet Source`,
     'SourceFailure': `la Panne Source`,
     'SourceUser': `l\'Utilisateur Source`
 }
