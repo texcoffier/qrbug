@@ -105,8 +105,8 @@ class Selector(qrbug.Editable):
         # There are not Thing for for Edit incident
         # if incident.thing is None:
         #     raise Exception(f'Unknown thing: «{incident.thing_id}»')
-        if source.failure is None:
-            raise Exception(f'Unknown failure: «{incident.failure_id}»')
+        # if source.failure is None:
+        #     raise Exception(f'Unknown failure: «{incident.failure_id}»')
         # print(len(incident.active), source, self.expr)
         # print(eval(self.compiled, {'incident': incident, 'qrbug': qrbug, 'source': source, 'report': report}))
         return eval(self.compiled, {'incident': incident, 'qrbug': qrbug, 'source': source, 'report': report})

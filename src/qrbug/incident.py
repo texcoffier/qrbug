@@ -46,7 +46,7 @@ class Incident:
         for concerned in qrbug.Concerned.instances.values():
             for u in concerned.users:
                 if user.inside_or_equal(u):
-                    if qrbug.Selector[concerned.id].is_ok(self):
+                    if qrbug.Selector[concerned.id].is_ok(self, None, self):
                         return True
         return False
 
