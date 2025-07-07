@@ -93,33 +93,33 @@ async def register_incident(request: qrbug.Request) -> web.StreamResponse:
     if not WHAT[what][thing_id]:
         return web.Response(status=404, text=f"{what}[{thing_id}] does not exist")
 
-    # Cas authentication
-    user_login = ''
-    if ENABLE_AUTHENTICATION:
-        if failure.allowed != 'true':  # Only authenticate if failure requires it
-            user_login = await qrbug.get_login(secret.secret, request.query, request.path_qs)
-            if not user_login:
-                query_variables = {
-                    'what': what,
-                    'thing_id': thing_id,
-                    'failure_id': failure_id,
-                    'is_repaired': is_repaired,
-                    'additional_info': additional_info,
-                    'secret': secret.secret
-                }
-                # REDIRECT CAS
-                params = '&'.join(f'{name.replace("_", "-")}={value}'
-                                  for name, value in query_variables.items())
-                qrbug.redirect(f'?{params}')
-                raise Exception("Redirection failed")
-        else:
-            if secret:
-                user_login = secret.login
-    else:
-        user_login = 'ROOT' # For tests
-        secret.login = user_login
-    is_repaired_bool: bool = is_repaired == '1'
     user_ip = request.remote
+    # Cas authentication
+    user_login = secret.login
+    if not user_login:
+        if ENABLE_AUTHENTICATION:
+            incident = qrbug.Incident(thing_id, failure_id)
+            incident.active.append(qrbug.Report(user_ip, 0, additional_info, user_login))
+            if qrbug.Selector['require-login'].is_ok(incident, incident.active[0]):
+                user_login = await qrbug.get_login(secret.secret, request.query, request.path_qs)
+                if not user_login:
+                    query_variables = {
+                        'what': what,
+                        'thing_id': thing_id,
+                        'failure_id': failure_id,
+                        'is_repaired': is_repaired,
+                        'additional_info': additional_info,
+                        'secret': secret.secret
+                    }
+                    # REDIRECT CAS
+                    params = '&'.join(f'{name.replace("_", "-")}={value}'
+                                    for name, value in query_variables.items())
+                    qrbug.redirect(f'?{params}')
+                    raise Exception("Redirection failed")
+        else:
+            user_login = 'ROOT' # For tests
+            secret.login = user_login
+    is_repaired_bool: bool = is_repaired == '1'
 
     if is_repaired_bool:
         current_incident = qrbug.Incident.close(thing_id, failure_id, user_ip, user_login)
@@ -139,13 +139,6 @@ async def register_incident(request: qrbug.Request) -> web.StreamResponse:
     request.write_newline = lambda *text: request.write('\n'.join(text))
     await request.response.prepare(request)
 
-    if failure.allowed != 'true':
-        # XXX The incident is recorded. It must not be
-        if not qrbug.Selector[failure.allowed].is_ok(current_incident, request.report):
-            await request.write("Vous n'êtes pas autorisé à déclarer cette panne")
-            await request.response.write_eof()
-            return request.response
-    
     # Dispatchers
     returned_html: dict[str, Optional[qrbug.action_helpers.ActionReturnValue]] = {}
     trace = ['<!-- ',
@@ -155,7 +148,7 @@ async def register_incident(request: qrbug.Request) -> web.StreamResponse:
         html.escape(request.report.login)]
     if not is_repaired_bool:
         for dispatcher in qrbug.Dispatcher.get_sorted_instances():
-            trace.append(f' --><!-- {dispatcher.id}: ')
+            trace.append(f' -->\n<!-- {dispatcher.id}#{dispatcher.selector_id} {current_incident.thing_id}/{current_incident.failure_id}: {request.report.login}')
             returned_html[dispatcher.id] = await dispatcher.run(current_incident, request, trace)
     trace.append('-->')
     await request.write(''.join(trace))

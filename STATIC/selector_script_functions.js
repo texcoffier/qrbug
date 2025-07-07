@@ -51,8 +51,7 @@ const attributes = [
     'is_ok',
     'value',
     'display_type',
-    'ask_confirm',
-    'allowed'
+    'ask_confirm'
 ]
 
 const tests = {

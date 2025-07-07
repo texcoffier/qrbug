@@ -37,17 +37,6 @@ async def run(incidents, request):
                     feedback = f"On ne demande pas confirmation à l'utilisateur avant d'envoyer la panne «{selector}»\n"
         except ValueError:
             feedback += "Car invalide."
-    elif incident.failure_id == 'failure-allowed':
-        if value != failure.allowed:
-            if value not in qrbug.Selector.instances:
-                feedback = f"Le sélecteur «{value}» est inconnu, la valeur reste inchangée.\n"
-            else:
-                qrbug.append_line_to_journal(
-                        f'failure_update({repr(selector)}, allowed={repr(value)})\n', qrbug.Journals.DB)
-                if value:
-                    feedback = f"Le sélecteur «{html.escape(value)}» doit être vrai pour pouvoir déclarer la panne «{selector}»\n"
-                else:
-                    feedback = f"Pas besoin de s'authentifier pour indiquer la panne «{selector}»\n"
     else:
         feedback = "Unexpected edit failure for Failure\n"
     await request.write('<!DOCTYPE html>\n' + feedback)

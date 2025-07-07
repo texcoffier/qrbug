@@ -28,7 +28,7 @@ def nice(ids):
         return 'oui'
     return ids
 
-IS_OK = {'*': 'ok', '!': 'other', '#': 'rejected', '': ''}
+IS_OK = {'*': 'ok', '!': 'other', '': ''}
 def create(line):
     failures = []
     for j, is_ok in enumerate(line[3]):
@@ -111,9 +111,6 @@ async def run(_incidents, request):
                                         active = '*'
                                     else:
                                         active = '!'
-                                    if not qrbug.Selector[incident.failure.allowed
-                                            ].is_ok(incident, report, incident):
-                                        active = '#'
                             else:
                                 active = ''
                         except: # pylint: disable=bare-except

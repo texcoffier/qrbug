@@ -107,14 +107,13 @@ class Failure(qrbug.Tree):
     value       : str           = ''
     display_type: DisplayTypes  = DisplayTypes.text
     ask_confirm : bool          = False
-    allowed     : "SelectorId"  = 'true' # No restriction
 
     def init(self):
         self.value = f"VALEUR_NON_DEFINIE POUR «{self.id}»"
 
     def _local_dump(self) -> str:
         return f'val:{repr(self.value)} type:{self.display_type.name if self.display_type is not None else None} ' \
-               f'confirm:{self.ask_confirm} allowed:{self.allowed}'
+               f'confirm:{self.ask_confirm}'
 
     def get_hierarchy_representation(self) -> str:
         """
@@ -124,7 +123,6 @@ class Failure(qrbug.Tree):
 
         INDENTATION_SIZE: int = 2
         SHOW_ADDITIONAL_ATTRIBUTES_INFO: bool = True
-        GROUP_JUSTIFICATION: int = 8
         VALUE_JUSTIFICATION: int = 50
         DISPLAY_TYPE_WIDTH: int = 10
         ID_WIDTH: int = max(len(failure_id) for failure_id in self.instances)
@@ -146,9 +144,6 @@ class Failure(qrbug.Tree):
                     f"[{current_failure.display_type.name.center(DISPLAY_TYPE_WIDTH)}]\t"
                     f"[ask_confirm?={'YES' if current_failure.ask_confirm else 'NO '}]\t"
                 )
-                representation.append(
-                        f"[allowed={current_failure.allowed.ljust(GROUP_JUSTIFICATION)}]"
-                    )
             representation.append("\n")
 
             # We sort by display type then by value, so that the text failures are

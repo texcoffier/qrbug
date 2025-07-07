@@ -80,7 +80,6 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
             failure_value = qrbug.Failure['failure-value']
             failure_ask_confirm = qrbug.Failure['failure-ask_confirm']
             failure_display = qrbug.Failure['failure-display_type']
-            failure_allowed = qrbug.Failure['failure-allowed']
             texts.append(VERT_STYLE)
             texts.append('''
             <table>
@@ -89,7 +88,7 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
             <th>Intitulé
             <th class="vert">Confirmation
             <th class="vert">Affichage
-            <th>Déclaration autorisée<br>si la condition est vraie</tr>''')
+            ''')
             def go_in(node):
                 texts.append('<tr><td>')
                 texts.append(go_in.indent)
@@ -100,8 +99,6 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
                 texts.append(qrbug.element(failure_ask_confirm, node, in_place=True))
                 texts.append('<td>')
                 texts.append(qrbug.element(failure_display, node, in_place=True))
-                texts.append('<td>')
-                texts.append(qrbug.element(failure_allowed, node, in_place=True))
                 texts.append('</tr>')
                 go_in.indent += '    '
             def go_out(_node):

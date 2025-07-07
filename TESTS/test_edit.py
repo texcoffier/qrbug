@@ -11,7 +11,7 @@ class TestEdit(qrbug.TestCase):
     def runtest(self, failure, dispatcher, value=''):
         qrbug.selector_update('edit-selector',
             '{"class":"SourceFailure", "test":"in_or_equal", "value": "%s"}' % failure)
-        trigger = qrbug.Incident.open('a-selector', failure, 'ip2', 'login2', value)
+        trigger = qrbug.Incident.open('a-selector', failure, 'ip2', 'admin', value)
         request = qrbug.Request(trigger)
         asyncio.run(qrbug.Dispatcher[dispatcher].run(trigger, request, []))
         return request.lines
@@ -71,21 +71,11 @@ class TestEdit(qrbug.TestCase):
             ["<!DOCTYPE html>\nOn demande confirmation avant d'envoyer la panne «a-selector»\n"])
         self.assertEqual(qrbug.Failure.instances['a-selector'].ask_confirm, True)
 
-        lines = self.runtest('failure-allowed', 'edit-failure', 'BAD')
-        self.assertEqual(lines,
-            ["<!DOCTYPE html>\nLe sélecteur «BAD» est inconnu, la valeur reste inchangée.\n"])
-        self.assertEqual(qrbug.Failure.instances['a-selector'].allowed, 'true')
-
-        lines = self.runtest('failure-allowed', 'edit-failure', 'admin')
-        self.assertEqual(lines,
-            ["<!DOCTYPE html>\nLe sélecteur «admin» doit être vrai pour pouvoir déclarer la panne «a-selector»\n"])
-        self.assertEqual(qrbug.Failure.instances['a-selector'].allowed, 'admin')
-
         lines = self.runtest('failure', 'edit-failure')
         self.assertEqual(lines,
             ["<!DOCTYPE html>\nUnexpected edit failure for Failure\n"])
 
-        self.assertEqual(qrbug.Failure['failure'].get_hierarchy_representation().count('ask_confirm'), 6)
+        self.assertEqual(qrbug.Failure['failure'].get_hierarchy_representation().count('ask_confirm'), 5)
 
     def test_selector(self):
         lines = self.runtest('selector', 'edit-selector')

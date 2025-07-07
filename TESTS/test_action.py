@@ -18,9 +18,8 @@ class TestAction(qrbug.TestCase):
             value='first failure',
             display_type=qrbug.DisplayTypes.text,
             ask_confirm=False,
-            allowed='group'
         )
-        qrbug.failure_update('07:00', allowed='system')
+        qrbug.failure_update('07:00')
         qrbug.selector_update('active', '{"test": "active"}')
         qrbug.selector_update('true', '{"class": "SourceThing", "test": "true"}')
         qrbug.selector_update('false', '{"class": "SourceThing", "test": "false"}')

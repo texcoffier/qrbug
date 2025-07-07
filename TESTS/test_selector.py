@@ -20,7 +20,6 @@ class TestSelector(qrbug.TestCase):
             value='first failure',
             display_type=qrbug.DisplayTypes.text,
             ask_confirm=False,
-            allowed='group'
         )
 
     def check(self, selector, login, thing_id, failure_id, expected):
@@ -95,10 +94,6 @@ class TestSelector(qrbug.TestCase):
         s = qrbug.selector_update('failure ask_confirm',
             '{"class":"SourceFailure", "attr":"ask_confirm", "test":"true"}')
         self.check(s, "user_child", "thing_child" , "fail1", False)
-
-        s = qrbug.selector_update('failure allowed',
-            '{"class":"SourceFailure", "attr":"allowed", "test":"true"}')
-        self.check(s, "user_child", "thing_child" , "fail1", 'group')
 
 
 

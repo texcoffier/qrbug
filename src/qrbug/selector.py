@@ -43,7 +43,6 @@ ATTRIBUTES = {
     'value'       : '.value'                        , # Failure
     'display_type': '.display_type'                 , # Failure
     'ask_confirm' : '.ask_confirm'                  , # Failure
-    'allowed'     : '.allowed'                      , # Failure
 }
 
 TESTS = {

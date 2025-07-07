@@ -150,6 +150,7 @@ def get_incident_email_contents(incident: Incident) -> str:
     return ''.join(email_body)
 
 
+qrbug.Report = Report
 qrbug.Incident = Incident
 qrbug.incident_new = Incident.create
 qrbug.incident_del = incident_del
