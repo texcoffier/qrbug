@@ -32,7 +32,7 @@ async def hourly_task():
         wait_seconds = time.mktime(time.strptime(next_hour, '%Y%m%d%H')) - now
         # wait_seconds = 1
         await asyncio.sleep(wait_seconds)
-        incident = qrbug.Incident.open('backoffice', next_hour[-2:] + ':00', '', 'system', '')
+        incident = qrbug.Incident.open('GUI', next_hour[-2:] + ':00', '', 'system', '')
         request = qrbug.FakeRequest(incident, create_secret=False)
         for dispatcher in qrbug.Dispatcher.get_sorted_instances():
             await dispatcher.run(incident, request, [])

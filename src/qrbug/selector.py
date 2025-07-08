@@ -1,25 +1,7 @@
-import html
 from typing import Optional
 import ast
-import uuid
 
 import qrbug
-
-
-def selector_editor(failure, selector, value: str = "Éditeur de sélecteur") -> str:
-    ask_confirm = html.escape(failure.ask_confirm or '')
-    common = f'failureid="{html.escape(failure.id)}" thingid="{html.escape(selector.id)}" what="{selector.__class__.__name__.lower()}" ask_confirm="{ask_confirm}"'
-    html_value = (
-        qrbug.SELECTOR_EDITOR_TEMPLATE.read_text()
-        .replace('%RAW_SELECTOR%', selector.expression)
-        .replace('%SELECTOR_SCRIPT_FUNCTIONS%', qrbug.SELECTOR_SCRIPT_FUNCTIONS.read_text())
-    )
-    template_id = f"selector_editor_template_{uuid.uuid4()}"
-    return (f'<template id="{template_id}">{html_value}</template>'
-            f'<div {common} class="button" value="{value}" '
-            f'onclick="ask_value(this,true,ASK_VALUE_TYPE_CUSTOM,null,document.getElementById(\'{template_id}\').innerHTML)">'
-            f'<BOX>{value}</BOX>'
-            f'</div>')
 
 OPERATORS = [' or ', ' and ']
 
@@ -123,4 +105,3 @@ def selector(selector_id: str, expression: str) -> Selector:
 
 qrbug.Selector = Selector
 qrbug.selector_update = selector
-qrbug.selector_editor = selector_editor

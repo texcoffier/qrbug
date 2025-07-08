@@ -35,12 +35,12 @@ user_add('admin-thing', 'admin')
 # -----------------
 
 selector('true'            , '{                      "test":"True"}')
-selector('root'            , '{"class":"SourceUser", "test":"in"    , "value": "root"}')
-selector('admin'           , '{"class":"SourceUser", "test":"in"    , "value": "admin"}')
-selector('admin-backtrace' , '{"class":"SourceUser", "test":"in"    , "value": "admin-backtrace"}')
+selector('root'            , '{"class":"SourceUser", "test":"in_or_equal", "value": "root"}')
+selector('admin'           , '{"class":"SourceUser", "test":"in_or_equal", "value": "admin"}')
+selector('admin-backtrace' , '{"class":"SourceUser", "test":"in_or_equal", "value": "admin-backtrace"}')
 selector('admin-user'      , '{"class":"SourceUser", "test":"in_or_equal", "value": "admin-user"}')
 selector('admin-thing'     , '{"class":"SourceUser", "test":"in_or_equal", "value": "admin-thing"}')
-selector('system'          , '{"class":"SourceUser", "test":"in"    , "value": "system"}')
+selector('system'          , '{"class":"SourceUser", "test":"in_or_equal", "value": "system"}')
 selector('active'          , '[1, {"test":"active"}, {"class":"Selector", "attr": "is_ok", "test":"false", "id":"backoffice"}]', )
 selector('for-me'          , '[1, {"test": "active"}, {"class":"SourceUser", "test":"is_for_user"}]')
 selector('for-me-all'      , '{"class":"SourceUser", "test":"is_for_user"}')
@@ -157,7 +157,7 @@ failure_add('top', 'list')
 # The 'list' action will check the failure ID to to the right thing.
 action('list', 'list.py')
 selector('list', '''[1,
-    {"class":"SourceFailure", "test":"in", "value": "list"},
+    {"class":"SourceFailure", "test":"in_or_equal", "value": "list"},
     {"class":"SourceUser"   , "test":"in_or_equal", "value": "admin"}
     ]''')
 dispatcher_update('admin-list', action_id='list', selector_id='list')
@@ -178,7 +178,7 @@ failure_add('top', 'journal')
 # The 'journal' action will check the failure ID to to the right thing.
 action('journal', 'show_journals.py')
 selector('journal', '''[1,
-    {"class":"SourceFailure", "test":"in", "value": "journal"},
+    {"class":"SourceFailure", "test":"in_or_equal", "value": "journal"},
     {"class":"SourceUser"   , "test":"in_or_equal", "value": "admin"}
     ]''')
 dispatcher_update('admin-journal', action_id='journal', selector_id='journal')
@@ -208,7 +208,7 @@ action('report_mail'     , 'report_mail.py'     )  # Send mail to remind every a
 
 
 selector('hours', '''[1,
-    {"class":"SourceFailure", "test":"in", "value": "hours"},
+    {"class":"SourceFailure", "test":"in_or_equal", "value": "hours"},
     {"class":"SourceUser"   , "test":"is", "value": "system"}
     ]''')
 
@@ -442,7 +442,7 @@ dispatcher_update('generate-qr', action_id='generate_qrcode', selector_id='gener
 failure_update('backtrace', value='QRBug server backtrace')
 selector('backtrace', '''[1,
     {"class":"SourceFailure", "test":"is", "value": "backtrace"},
-    {"class":"SourceUser"   , "test":"is", "value": ""}
+    {"class":"SourceUser"   , "test":"is", "value": "system"}
     ]''')
 concerned_add('backtrace', 'admin-backtrace')
 dispatcher_update('backtrace', action_id='report_mail', selector_id='backtrace')

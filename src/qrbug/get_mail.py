@@ -40,7 +40,7 @@ def thread_mail():
                     if i[0]:
                         MAILS[login] = i[1]['mail'][0].decode('utf-8')
         except ValueError:
-            qrbug.Incident.open('admin', 'backtrace', '', '', '\n'.join(traceback.format_exc()))
+            qrbug.Incident.open('GUI', 'backtrace', '', 'system', '\n'.join(traceback.format_exc()))
 
 MAILS_THREAD = threading.Thread(target=thread_mail, daemon=True)
 MAILS_THREAD.start()

@@ -1,4 +1,5 @@
 import html
+import json
 from typing import Optional, List
 
 import qrbug
@@ -266,27 +267,25 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
             prefix = classe
         texts.append('</table>')
     elif what is qrbug.Selector:
-        texts.append(f'<script>{qrbug.SELECTOR_SCRIPT_FUNCTIONS.read_text()}</script>')
-        texts.append('<table>')
-        texts.append('<tr><th>ID<th>Représentation<th>Éditer</tr>')
+        texts.append(f'''
+        <script>
+        var LISTS = {{
+            'Failure': {list(qrbug.Failure.instances)},
+            'User': {list(qrbug.User.instances)},
+            'Selector': {list(qrbug.Selector.instances)},
+            'Thing': {list(qrbug.Thing.instances)}
+            }};
+        {qrbug.SELECTOR_SCRIPT_FUNCTIONS.read_text()}
+        </script>
+        <table><tr><th>ID</tr><script>
+        ''')
         for selector in sorted(what.instances.values(), key=lambda e: e.id):
-            texts.append('<tr><td style="padding-right: 10px;">')
-            texts.append(html.escape(selector.id))
-            texts.append('</td><td>')
-            texts.append(f'<span class="selector_expression">{selector.expression}</span>')
-            texts.append(
-                '<script>'
-                    'document.currentScript.parentElement.innerHTML = '
-                        'transcribeSelector('
-                            'JSON.parse('
-                                'document.currentScript.parentElement.querySelector(".selector_expression").textContent'
-                            ')'
-                        ');'
-                '</script>')
-            texts.append('</td><td>')
-            texts.append(qrbug.selector_editor(qrbug.Failure['selector-expression'], selector, 'Éditer'))
-            texts.append('</td></tr>')
-        texts.append('</table>')
+            texts.append('add_selector(')
+            texts.append(json.dumps(selector.id))
+            texts.append(',')
+            texts.append(selector.expression)
+            texts.append(');\n')
+        texts.append('</script></table>')
         texts = [qrbug.get_template(request).replace('%REPRESENTATION%', ''.join(texts))]
     else:
         for node in what.instances.values() if hasattr(what, 'instances') else what.active:

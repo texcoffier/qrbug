@@ -53,7 +53,7 @@ class Dispatcher(qrbug.Tree):
         except Exception as e: # pylint: disable=bare-except
             trace.append(' failure')
             retrieved_traceback = '\n'.join(traceback.format_exception(e))
-            qrbug.Incident.open('admin', 'backtrace', '', '', retrieved_traceback)
+            qrbug.Incident.open('GUI', 'backtrace', '', 'system', retrieved_traceback)
             return_value = qrbug.action_helpers.ActionReturnValue(
                 error_msg=(
                         '<pre style="background-color: rgba(255, 0, 0, 0.4); padding: 4px; border-radius: 2px;">' +
