@@ -36,11 +36,11 @@ class Tree(qrbug.Editable):
         if value:
             path.append(value)
 
-    def name(self) -> str:
+    def name(self, separator='/') -> str:
         """Return create a human friendly name using 'value' and 'id'"""
         path = []
         self.path_names(path)
-        return '/'.join(path)
+        return separator.join(path)
 
     def inside(self, node: "TreeId"):
         """Consider that a node is not inside itself"""

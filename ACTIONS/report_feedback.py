@@ -17,11 +17,11 @@ async def run(incidents, request):
         <title>Rapport {html.escape(incident.thing_id)} {html.escape(incident.failure_id)}</title>
         Merci d'avoir signalé l'incident :
         <div>
-        {html.escape(incident.failure.value)}
+        {html.escape(incident.failure.name('¤')).replace('¤', '<br>')}
         </div>
         à propos de :
         <div>
-        {html.escape(incident.thing_id)}
+        {html.escape(incident.thing.name('¤')).replace('¤', '<br>')}
         </div>
         {comment}
         <p>Quelqu'un s'en occupera prochainement.""")
