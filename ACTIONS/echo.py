@@ -3,6 +3,7 @@ Display data on browser
 """
 import html
 import urllib
+import time
 from typing import Optional, List
 
 import qrbug
@@ -50,15 +51,14 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
         await request.write(
             f'''<tr class="title">
             <td rowspan="{len(incident.active)+len(pending_feedbacks)+1}">«{escape(incident.thing_id)}»<br>«{escape(incident.failure_id)}»<br>
-            {fix}<td>IP demandeur<td>Commentaire<td>Qui a demandé<td>Réparateur</tr>\n''')
-        for report in incident.active:
+            {fix}<td>IP demandeur<td>Quand<td>Commentaire<td>Qui a demandé<td>Réparateur</tr>\n''')
+        for report in (*incident.active, *pending_feedbacks):
             comment = escape(report.comment).replace("\n", "<br>").replace(' ', ' ')
+            reporter = escape(report.login) if report.login else ''
+            remover = escape(report.remover_login) if report.remover_login else ''
+            ip = escape(report.ip)
+            date = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(report.timestamp))
             await request.write(
-                f'<tr><td>{escape(report.ip)}<td>{comment}<td>{escape(report.login)}</tr>'
-            )
-        for report in pending_feedbacks:
-            comment = escape(report.comment).replace("\n", "<br>").replace(' ', ' ')
-            await request.write(
-                f'<tr><td>{escape(report.ip)}<td>{comment}<td>{escape(report.login)}<td>{escape(report.remover_login)}</tr>'
+                f'<tr><td>{ip}<td>{date}<td>{comment}<td>{reporter}<td>{remover}</tr>'
             )
     await request.write('</table>\n')
