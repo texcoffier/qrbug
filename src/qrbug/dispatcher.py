@@ -28,7 +28,7 @@ class Dispatcher(qrbug.Tree):
         """
         # TODO: ! DOCUMENTATION !
 
-        if not qrbug.Selector[self.selector_id].is_ok(incident, request.report):
+        if not qrbug.Selector[self.selector_id].is_ok(incident, request.report, incident):
             return None
         trace.append(' selected')
 

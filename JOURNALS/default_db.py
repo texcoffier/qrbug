@@ -1,6 +1,10 @@
 import pathlib
 # pylint: disable=undefined-variable,line-too-long
 
+# Selectors :
+#    * If the ID starts with «|» it is an incidents filter
+
+
 # Link the action ID to the filename containing the action.
 # The Python file containing the action is reloaded on any usage.
 # So modification on the file are instantly taken into account.
@@ -41,19 +45,20 @@ selector('admin-backtrace' , '{"class":"SourceUser", "test":"in_or_equal", "valu
 selector('admin-user'      , '{"class":"SourceUser", "test":"in_or_equal", "value": "admin-user"}')
 selector('admin-thing'     , '{"class":"SourceUser", "test":"in_or_equal", "value": "admin-thing"}')
 selector('system'          , '{"class":"SourceUser", "test":"in_or_equal", "value": "system"}')
-selector('active'          , '[1, {"test":"active"}, {"class":"Selector", "attr": "is_ok", "test":"false", "id":"backoffice"}]', )
-selector('for-me'          , '[1, {"test": "active"}, {"class":"SourceUser", "test":"is_for_user"}]')
-selector('for-me-all'      , '{"class":"SourceUser", "test":"is_for_user"}')
-selector('for-thing'       , '{                      "test":"is_for_thing"}')
-selector('for-thing-active', '[1, {"test": "active"}, {"test":"is_for_thing"}]')
+selector('|active'         , '[1, {"test":"active"}, {"class":"Selector", "attr": "is_ok", "test":"false", "id":"|backoffice"}]', )
+selector('|for-me'         , '[1, {"test":"active"}, {"class":"SourceUser", "test":"is_for_user"}]')
+selector('|for-me-all'     , '{"class":"SourceUser", "test":"is_for_user"}')
+selector('|for-thing'      , '{                      "test":"is_for_thing"}')
+selector('|for-thing-active','[1, {"test": "active"}, {"test":"is_for_thing"}]')
 
 ###############################################################################
 # General Backoffice
 ###############################################################################
 
 failure_update('backoffice', value='')
-selector('backoffice'    ,'{"class":"SourceFailure",             "test":"in_or_equal", "value":"backoffice"}')
-selector('not-backoffice','{"class":"Selector", "attr": "is_ok", "test":"false", "id"   :"backoffice"}')
+selector('backoffice'     ,'{"class":"SourceFailure",             "test":"in_or_equal", "value":"backoffice"}')
+selector('|backoffice'    ,'{"class":"FilterFailure",             "test":"in_or_equal", "value":"backoffice"}')
+selector('|not-backoffice','{"class":"Selector", "attr": "is_ok", "test":"false", "id"   :"|backoffice"}')
 
 failure_update('top', value='')
 failure_add('backoffice', 'top')
@@ -64,14 +69,14 @@ thing_add_failure('GUI', "top")
 
 # Display the reporting (not fix) feedback
 action('report_feedback' ,'report_feedback.py')   # Send the report feedback to users
-dispatcher_update('report-feedback', action_id='report_feedback', selector_id='not-backoffice')
+dispatcher_update('report-feedback', action_id='report_feedback', selector_id='|not-backoffice')
 
 # 'z' to be the last dispatched. It closes the API fake incident
 action('close_auto', 'close_auto.py')
 dispatcher_update('z-backoffice-close', action_id='close_auto', selector_id='backoffice')
 
 # 'admin' is concerned by every incident
-concerned_add('not-backoffice', 'admin')
+concerned_add('|not-backoffice', 'admin')
 
 ###############################################################################
 # Planified tasks
@@ -221,7 +226,10 @@ selector('send-pending-feedback','''[0,
     {"class":"Selector", "id": "hours"        , "attr":"is_ok", "test": "true"},
     {"class":"Selector", "id": "send-feedback", "attr":"is_ok", "test": "true"}
     ]''')
-selector('with-pending-feedback', '[1, {"test": "pending_feedback"}, {"class":"Selector", "id": "backoffice", "attr": "is_ok", "test": "false"}]')
+selector('|with-pending-feedback', '''[1,
+    {"test": "pending_feedback"},
+    {"class":"Selector", "id": "|backoffice", "attr": "is_ok", "test": "false"}
+    ]''')
 
 selector('pending-feedback', '''[1,
     {"class":"SourceFailure", "test":"is", "value": "pending-feedback"},
@@ -241,13 +249,13 @@ selector('report-mail', '''[1,
     ]''')
 
 
-dispatcher_update('pending-feedback'     , action_id='echo'            , selector_id='pending-feedback'     , incidents="with-pending-feedback")
-dispatcher_update('send-pending-feedback', action_id='pending_feedback', selector_id='send-pending-feedback', incidents="with-pending-feedback")
+dispatcher_update('pending-feedback'     , action_id='echo'            , selector_id='pending-feedback'     , incidents="|with-pending-feedback")
+dispatcher_update('send-pending-feedback', action_id='pending_feedback', selector_id='send-pending-feedback', incidents="|with-pending-feedback")
 dispatcher_update('stats'                , action_id='stats'           , selector_id='stats')
 dispatcher_update('check-selectors'      , action_id='check-selectors' , selector_id='check-selectors')
 
 
-dispatcher_update('report_mail', action_id='report_mail', selector_id='report-mail', incidents='active')
+dispatcher_update('report_mail', action_id='report_mail', selector_id='report-mail', incidents='|active')
 
 #------------------------------------------------------------------------------
 # Backoffice / personnal
@@ -266,8 +274,8 @@ failure_add('top', 'personnal')
 selector('personnal-for-me'     ,'{"class":"SourceFailure", "test":"is", "value": "personnal-for-me"}')
 selector('personnal-for-me-all' ,'{"class":"SourceFailure", "test":"is", "value": "personnal-for-me-all"}')
 
-dispatcher_update('personnal-for-me'    , action_id='echo', selector_id='personnal-for-me'    , incidents="for-me")
-dispatcher_update('personnal-for-me-all', action_id='echo', selector_id='personnal-for-me-all', incidents="for-me-all")
+dispatcher_update('personnal-for-me'    , action_id='echo', selector_id='personnal-for-me'    , incidents="|for-me")
+dispatcher_update('personnal-for-me-all', action_id='echo', selector_id='personnal-for-me-all', incidents="|for-me-all")
 
 ###############################################################################
 # Edit configuration
@@ -393,12 +401,12 @@ selector('thing-incidents-active', '''[1,
     {"class":"SourceFailure", "test":"is", "value": "thing-incidents-active"},
     {"class":"SourceUser"   , "test":"in_or_equal", "value": "admin-thing"}
     ]''')
-dispatcher_update('incidents-active-for-thing', action_id='echo', selector_id='thing-incidents-active', incidents='for-thing-active')
+dispatcher_update('incidents-active-for-thing', action_id='echo', selector_id='thing-incidents-active', incidents='|for-thing-active')
 selector('thing-incidents', '''[1,
     {"class":"SourceFailure", "test":"is", "value": "thing-incidents"},
     {"class":"SourceUser"   , "test":"in_or_equal", "value": "admin-thing"}
     ]''')
-dispatcher_update('incidents-for-thing', action_id='echo', selector_id='thing-incidents', incidents='for-thing')
+dispatcher_update('incidents-for-thing', action_id='echo', selector_id='thing-incidents', incidents='|for-thing')
 
 # ---------------
 # Edit action
