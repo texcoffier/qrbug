@@ -12,92 +12,81 @@
             margin: var(--body-margin);
             --body-margin: 0.5em;
             --margin: 0px;
-            --button-margin: 0.2em;
-            --button-width: calc(100vw - 2 * var(--button-margin));
-            --button-height: 2.5em;
+            --button-border: 1px solid #000;
+            --button-radius: 0.3em;
+            --button-background: #EEE;
+            --button-background-hover: #CCC;
+            --button-padding: 0.2em;
+            --button-font-size: 20px;
         }
         * {
             box-sizing: border-box ;
         }
+        TR TD {
+            vertical-align: top;
+        }
+        TR:hover {
+            background: #CFC ;
+        }
+        .children {
+            margin-bottom: 0.2em;
+        }
 
         div.button {
             display: inline-block;
-            border: 0.1em outset #888;
-            border-radius: 0.5em;
-            margin: var(--button-margin);
-            padding: 0.2em;
-            background: #EEE;
+            border: var(--button-border);
+            border-radius: var(--button-radius);
+            background: var(--button-background);
+            font-size: var(--button-font-size);
+            padding: var(--button-padding);
         }
 
         div.button:hover {
-            border: 0.1em inset #888;
-            background: #DDD;
-        }
-
-        DIV.button_disabled {
-            color: #666666;
-        }
-
-        INPUT, INPUT + .submit_button {
-            border: 1px solid #888;
-            height: 24px;
-            font-size: 1em;
-            box-sizing: border-box;
-            padding-bottom: 0.1em;
-        }
-
-        INPUT.input {
-            border-top-left-radius: 0.2em;
-            border-bottom-left-radius: 0.2em;
-            border-right: 0px;
-        }
-
-        INPUT + .submit_button {
-            display: inline-block;
-            vertical-align: text-bottom;
-            border-left: 0;
-            border-radius: 0;
-            border-top-right-radius: 0.2em;
-            border-bottom-right-radius: 0.2em;
-            margin: 0 0 1px;
-            padding: 0 0.2em;
-        }
-
-        INPUT + .submit_button:hover {
-            border: 1px solid #888;
-            border-left: 0;
+            background: var(--button-background-hover);
         }
 
         IFRAME {
             display: block;
             border: 0px;
-            border-radius: 0.2em;
-            background: #EEE;
+            border-radius: var(--button-radius);
+            background: #FFD;
             width: 100%;
-            height: 5em;
+            height: 4em;
         }
 
-        DIV.delete {
-            background: #FFF;
-            border: 1px solid #888;
-            border-radius: 0.3em;
-            padding: 0px;
-            padding-left: 0.2em;
-            overflow: hidden;
-            font-size: 1em;
+        /* INPUT + SEND BUTTON */
+        /* A + DELETE BUTTON */
+
+        DIV.delete, DIV.input {
+            font-size: var(--button-font-size);
             white-space: nowrap;
+            height: calc(1.5 * var(--button-font-size));
+        }
+        DIV.delete A, DIV.input INPUT {
+            font-size: var(--button-font-size);
+            border: var(--button-border);
+            border-top-left-radius: var(--button-radius);
+            border-bottom-left-radius: var(--button-radius);
+            border-right: 0px;
+            cursor: pointer;
+            box-sizing: border-box ;
+            padding: 0px;
         }
         DIV.delete A {
             color: #00F;
-            cursor: pointer;
         }
-        DIV.delete .button {
-            font-size: 1em;
-            border: 0px;
-            background: #EEE;
+        DIV.delete DIV, DIV.input DIV {
+            display: inline-block;
+            border: var(--button-border);
+            border-top-right-radius: var(--button-radius);
+            border-bottom-right-radius: var(--button-radius);
+            border-left: 0px;
+            background: var(--button-background);
+            padding-left: 0.1em;
+            padding-right: 0.1em;
         }
-        DIV.delete .button:hover {
-            background: #DDD;
+        DIV.delete DIV:hover, DIV.input DIV:hover {
+            background: var(--button-background-hover);
         }
 
         .changed_and_unsaved {
@@ -116,12 +105,16 @@
 
             DIV.button {
                 display: inline-flex;
-                width: var(--button-width);
-                min-height: var(--button-height);
+                width: calc(99vw);
+                margin-bottom: 0.5em;
                 text-align: center;
                 vertical-align: top;
                 border: 0px;
                 border-radius: 1em;
+                font-size: 5vw;
+            }
+            DIALOG DIV.button {
+                width: auto;
             }
             DIV.button:hover {
                 border: 0px;
@@ -193,7 +186,10 @@
                 iframe = document.createElement('IFRAME');
                 iframe.src = url;
                 iframe.onload = function() { element.classList.remove('changed_and_unsaved'); } ;
-                element.parentNode.appendChild(iframe);
+                var td = element;
+                while(td.tagName != 'TD')
+                    td = td.parentNode;
+                td.appendChild(iframe);
                 element.classList.add('changed_and_unsaved');
             } else {
                 if ( ask_confirm ) {

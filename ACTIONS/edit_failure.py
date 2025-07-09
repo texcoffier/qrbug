@@ -26,17 +26,13 @@ async def run(incidents, request):
         except KeyError:
             feedback += "Car invalide."
     elif incident.failure_id == 'failure-ask_confirm':
-        try:
-            value = ast.literal_eval(value)
-            if value != failure.ask_confirm:
-                qrbug.append_line_to_journal(
-                        f'failure_update({repr(selector)}, ask_confirm={value})\n', qrbug.Journals.DB)
-                if value:
-                    feedback = f"On demande confirmation avant d'envoyer la panne «{selector}»\n"
-                else:
-                    feedback = f"On ne demande pas confirmation à l'utilisateur avant d'envoyer la panne «{selector}»\n"
-        except ValueError:
-            feedback += "Car invalide."
+        if value != failure.ask_confirm:
+            qrbug.append_line_to_journal(
+                    f'failure_update({repr(selector)}, ask_confirm={repr(value)})\n', qrbug.Journals.DB)
+            if value:
+                feedback = f"On demande confirmation avant d'envoyer la panne «{selector}»\n"
+            else:
+                feedback = f"On ne demande pas confirmation à l'utilisateur avant d'envoyer la panne «{selector}»\n"
     else:
         feedback = "Unexpected edit failure for Failure\n"
     await request.write('<!DOCTYPE html>\n' + feedback)

@@ -22,7 +22,7 @@ class DisplayTypes(enum.Enum):
     datalist = enum.auto()
 
 
-def element(failure: "Failure", thing, in_place=False, destroy=None, datalist_id: str = None, force_value: str = None, is_popup: bool = False):
+def element(failure: "Failure", thing, in_place=False, destroy=None, datalist_id: str = None, force_value: str = None):
     """
     :param destroy: usually sets up the predefined value of an element, in order to facilitate its destruction.
     :param force_value: actually sets the value of the element.
@@ -38,8 +38,8 @@ def element(failure: "Failure", thing, in_place=False, destroy=None, datalist_id
     if display_type == DisplayTypes.button:
         destroy_val = ''
         if destroy:
-            destroy_val = f' predefined_value="{html.escape(destroy)}"'
-        return f'<div {common}{destroy_val} class="button" onclick="register_incident(this,{int(in_place)})"><BOX>{failure_value}</BOX></div>'
+            destroy_val = f' predefined_value="{html.escape(destroy)}" style="padding:0px"'
+        return f'<div {common}{destroy_val} class="button" onclick="register_incident(this,{int(in_place)})">{failure_value}</div>'
 
     value = ''
     if failure.inside('edit') and '-' in failure.id:
@@ -67,7 +67,7 @@ def element(failure: "Failure", thing, in_place=False, destroy=None, datalist_id
         if not in_place:
             element = f'<div class="input">{failure_value} : {element}</div>'
         return element
-    if is_popup or display_type == DisplayTypes.textarea:
+    if display_type == DisplayTypes.textarea:
         popup_type = "ASK_VALUE_TYPE_TEXTAREA"
         if display_type == DisplayTypes.input:
             popup_type = "ASK_VALUE_TYPE_INPUT"
@@ -85,14 +85,14 @@ def element(failure: "Failure", thing, in_place=False, destroy=None, datalist_id
         if destroy:
             common += f' predefined_value="{html.escape(destroy)}"'
             return f'''<div {common} class="delete" style="display:inline-block"
-                ><a onclick="javascript:show(this)">{html.escape(destroy)}</a>
-                <div class="button" onclick="register_incident(this,1)">×</div></div>'''
+                ><a onclick="javascript:show(this)">{html.escape(destroy)}</a><div
+                onclick="register_incident(this,1)">×</div></div>'''
         input_list_id = ''
         if display_type == DisplayTypes.datalist:
             input_list_id = f' list="datalist_{datalist_id}"'
         return f'''<div class="input">{'' if in_place else failure_value}
-        <div><input {common}{input_list_id} value="{value}" autocomplete="off" onkeypress="if (event.key=='Enter') register_incident(this,{in_place})"
-        ><div class="button submit_button" {common} onclick="register_incident(this, {in_place})">⬆</div></div></div>'''
+        <input {common}{input_list_id} value="{value}" autocomplete="off" onkeypress="if (event.key=='Enter') register_incident(this,{in_place})"
+        ><div {common} onclick="register_incident(this, {in_place})">⬆</div></div>'''
     raise ValueError("Unknown display type")
 
 qrbug.element = element
@@ -106,7 +106,7 @@ class Failure(qrbug.Tree):
     # Default values
     value       : str           = ''
     display_type: DisplayTypes  = DisplayTypes.text
-    ask_confirm : bool          = False
+    ask_confirm : str           = ''
 
     def init(self):
         self.value = f"VALEUR_NON_DEFINIE POUR «{self.id}»"
@@ -183,7 +183,7 @@ class Failure(qrbug.Tree):
                 return
             done.add(failure_id)
             failure = Failure[failure_id]
-            representation.append(element(failure, thing))
+            representation.append(element(failure, thing) + ' ')
             if failure.children_ids:
                 representation.append(f'<div class="children">')
                 for failure_id in failure.children_ids:

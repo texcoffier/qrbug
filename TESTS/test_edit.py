@@ -61,15 +61,10 @@ class TestEdit(qrbug.TestCase):
             ["<!DOCTYPE html>\nLe type d'affichage de «a-selector» est maintenant «button»\n"])
         self.assertEqual(qrbug.Failure.instances['a-selector'].display_type.name, 'button')
 
-        lines = self.runtest('failure-ask_confirm', 'edit-failure', 'BAD')
-        self.assertEqual(lines,
-            ["<!DOCTYPE html>\nLa valeur de «a-selector . failure-ask_confirm» est inchangé.\nCar invalide."])
-        self.assertEqual(qrbug.Failure.instances['a-selector'].ask_confirm, False)
-
-        lines = self.runtest('failure-ask_confirm', 'edit-failure', 'True')
+        lines = self.runtest('failure-ask_confirm', 'edit-failure', 'Are you sure?')
         self.assertEqual(lines,
             ["<!DOCTYPE html>\nOn demande confirmation avant d'envoyer la panne «a-selector»\n"])
-        self.assertEqual(qrbug.Failure.instances['a-selector'].ask_confirm, True)
+        self.assertEqual(qrbug.Failure.instances['a-selector'].ask_confirm, 'Are you sure?')
 
         lines = self.runtest('failure', 'edit-failure')
         self.assertEqual(lines,

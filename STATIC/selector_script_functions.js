@@ -104,9 +104,6 @@ function init() {
         TR TD:hover REM, TR:hover ADD, TR.changed SAV {
             opacity: 1;
         }
-        TR:hover {
-            background: #CFC ;
-        }
         REM {
             margin-left: -0.4em;
         }

@@ -87,7 +87,7 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
             <tr>
             <th>Panne
             <th>Intitulé
-            <th class="vert">Confirmation
+            <th>Confirmation
             <th class="vert">Affichage
             ''')
             def go_in(node):
@@ -111,17 +111,20 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
             user_add_child = qrbug.Failure['user-add-child']
             user_del_child = qrbug.Failure['user-del-child']
             texts.append(VERT_STYLE)
-            texts.append('<div class="button" onclick="location.reload()">RAFRAÎCHIR L\'INTERFACE</div>')
+            texts.append('''
+            <style>
+
+            </style>
+            ''')
             texts.append('<table>')
             texts.append(
-                f'<tr><th>ID<th class="vert">{user_del_child.value}<th class="vert">{user_add_child.value}</tr>'
+                f'<tr><th>ID<th class="vert">{user_del_child.value}<th>{user_add_child.value}</tr>'
             )
             parents: list["qrbug.UserId"] = []
             def go_in(user):
                 parents.append(user.id)
                 texts.append('<tr><td>')
-                go_in.start_text_len = len(texts)
-                texts.append(go_in.indent[::-1].replace('┃', '┣', 1)[::-1])
+                texts.append(go_in.indent)
                 texts.append(html.escape(user.id))
                 texts.append('<td>')
                 has_parent = len(parents) >= 2
@@ -130,20 +133,18 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
                         user_del_child,
                         user,
                         in_place=True,
-                        force_value='X',
+                        force_value='×',
                         destroy=parents[-2]
                     ))
                 texts.append('<td>')
-                texts.append(qrbug.element(user_add_child, user, in_place=True, datalist_id='User', is_popup=True, force_value="+"))
+                texts.append(qrbug.element(
+                    user_add_child, user, in_place=True, datalist_id='User'))
                 texts.append('</tr>')
-                go_in.indent += '┃ '
+                go_in.indent += '        '
             def go_out(_node):
-                go_in.indent = go_in.indent[:-2]
-                if texts[go_in.start_text_len].count(' ') != go_in.indent.count(' '):
-                    texts[go_in.start_text_len] = texts[go_in.start_text_len].replace('┣', '┗')
+                go_in.indent = go_in.indent[:-8]
                 parents.pop(-1)
             go_in.indent = ''
-            go_in.start_text_len = len(texts)
             footer = '</table>'
             datalists_to_load = ('User',)
         elif what is qrbug.Dispatcher:
@@ -181,7 +182,7 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
         texts.append(footer)
         texts = [qrbug.get_template(request, datalists_to_load).replace('%REPRESENTATION%', ''.join(texts))]
     elif issubclass(what, qrbug.Concerned):
-        texts.append('<table border>')
+        texts.append('<table>')
         concerned_add = qrbug.Failure['concerned-add']
         concerned_del = qrbug.Failure['concerned-del']
         texts.append(f'''<tr>

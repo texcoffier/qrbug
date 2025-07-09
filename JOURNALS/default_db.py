@@ -318,7 +318,7 @@ dispatcher_update('edit-dispatcher', action_id='edit_dispatcher', selector_id='e
 failure_update('failure'             , value="Les pannes"                           )
 failure_update('failure-value'       , value="Intitulé"                             , display_type=Input)
 failure_update('failure-display_type', value="Type d'affichage"                     , display_type=Display)
-failure_update('failure-ask_confirm' , value="Confirmation avant d'envoyer la panne", display_type=Checkbox)
+failure_update('failure-ask_confirm' , value="Confirmation avant d'envoyer la panne", display_type=Input)
 failure_add('edit', 'failure')
 failure_add('failure', 'failure-value')
 failure_add('failure', 'failure-display_type')
