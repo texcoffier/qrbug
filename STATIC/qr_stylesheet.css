@@ -77,6 +77,8 @@ IMG {
     transform: rotate(90deg);
     display: inline-block;
     max-width: var(--qr-size);
+    min-height: var(--qr-size);
+    image-rendering: crisp-edges;
 }
 
 .qr_report_me {

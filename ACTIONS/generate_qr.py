@@ -1,8 +1,15 @@
+import sys
 from typing import Optional
 import base64
 from io import BytesIO
 import qrcode
 import qrbug
+
+if __name__ == '__main__':
+    img = qrcode.make('a', box_size=1, error_correction=qrcode.ERROR_CORRECT_L, border=0)
+    img.save('../STATIC/favicon.ico', format='ICO')
+    print(f'=====> QRCode generated {img.width}×{img.height}: STATIC/favicon.ico')
+    sys.exit(0)
 
 IMAGE_FORMAT = 'PNG'
 
@@ -16,7 +23,7 @@ TEMPLATE_QR_DISPLAY_CONFIG_BLOCK = QR_GEN_STATIC_FILES_PATH / 'qr_display_config
 #    incidents: descendants of the thing
 
 async def get_qr_code_b64_image(url: str) -> bytes:
-    img = qrcode.make(url, border=0)
+    img = qrcode.make(url, box_size=1, border=0)
     buffer = BytesIO()
     img.save(buffer, format=IMAGE_FORMAT)
     img_base64 = base64.b64encode(buffer.getvalue())
