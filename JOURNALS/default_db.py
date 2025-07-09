@@ -76,7 +76,7 @@ action('close_auto', 'close_auto.py')
 dispatcher_update('z-backoffice-close', action_id='close_auto', selector_id='backoffice')
 
 # 'admin' is concerned by every incident
-concerned_add('|not-backoffice', 'admin')
+selector_concerned_add('|not-backoffice', 'admin')
 
 ###############################################################################
 # Planified tasks
@@ -145,7 +145,6 @@ failure_update('list-Thing'     , value="Les objets"        , display_type=Butto
 failure_update('list-Selector'  , value="Les sélecteurs"    , display_type=Button)
 failure_update('list-Dispatcher', value="Les automatismes"  , display_type=Button)
 failure_update('list-Action'    , value="Les actions"       , display_type=Button)
-failure_update('list-Concerned' , value="Qui est concerné"  , display_type=Button)
 failure_update('list-Incident'  , value="Tous les incidents", display_type=Button)
 
 failure_add('list', 'list-User')
@@ -154,7 +153,6 @@ failure_add('list', 'list-Thing')
 failure_add('list', 'list-Selector')
 failure_add('list', 'list-Dispatcher')
 failure_add('list', 'list-Action')
-failure_add('list', 'list-Concerned')
 failure_add('list', 'list-Incident')
 failure_add('top', 'list')
 
@@ -285,23 +283,6 @@ failure_update('edit', value="API de l'éditeur de configuration, elle ne permet
 failure_add('backoffice', 'edit')
 
 # ---------------
-# Edit concerned
-# ---------------
-failure_update('concerned'    , value="Concerned"                    )
-failure_update('concerned-add', value="Ajouter un utilisateur/groupe", display_type=Datalist)
-failure_update('concerned-del', value="Enlever un utilisateur/groupe", display_type=Input)
-failure_add('concerned', 'concerned-add')
-failure_add('concerned', 'concerned-del')
-failure_add('edit', 'concerned')
-
-action('edit_concerned', 'edit_concerned.py')
-selector('edit-concerned', '''[1,
-    {"class":"SourceFailure", "test":"in_or_equal", "value": "concerned"},
-    {"class":"SourceUser"   , "test":"in_or_equal", "value": "admin"}
-    ]''')
-dispatcher_update('edit-concerned', action_id='edit_concerned', selector_id='edit-concerned')
-
-# ---------------
 # Edit dispatcher
 # ---------------
 failure_update('dispatcher', value="Les dispatchers")
@@ -344,9 +325,12 @@ dispatcher_update('edit-failure', action_id='edit_failure', selector_id='edit-fa
 # ---------------
 failure_update('selector', value="Sélecteur d'incident")
 failure_update('selector-expression', value="Expression", display_type=Input)
+failure_update('selector-concerned-add', value="Ajouter un utilisateur/groupe", display_type=Datalist)
+failure_update('selector-concerned-del', value="Enlever un utilisateur/groupe", display_type=Input)
 failure_add('edit', 'selector')
 failure_add('selector', 'selector-expression')
-failure_add('edit', 'selector-expression')
+failure_add('selector', 'selector-concerned-add')
+failure_add('selector', 'selector-concerned-del')
 
 action('edit_selector', 'edit_selector.py')
 selector('edit-selector', '''[1,
@@ -452,7 +436,7 @@ selector('backtrace', '''[1,
     {"class":"SourceFailure", "test":"is", "value": "backtrace"},
     {"class":"SourceUser"   , "test":"is", "value": "system"}
     ]''')
-concerned_add('backtrace', 'admin-backtrace')
+selector_concerned_add('backtrace', 'admin-backtrace')
 dispatcher_update('backtrace', action_id='report_mail', selector_id='backtrace')
 
 # ----------------------------------------------

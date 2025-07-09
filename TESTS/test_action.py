@@ -1,4 +1,5 @@
 import asyncio
+import re
 import qrbug.init
 import qrbug
 
@@ -32,15 +33,15 @@ class TestAction(qrbug.TestCase):
         asyncio.run(dispatcher.run(incident, request, []))
         # print(''.join(request.lines))
         if clean:
-            lines = [line
-                    .split('<td', 1)[1]
-                    .split('>', 1)[1]
-                    .split('</tr>', 1)[0]
-                    .split('\n', 1)[0]
-                    .replace('<td>', ',')
-                    .replace('<br>', ' ')
-                    .replace('\xa0', '')
-                    .strip()
+            lines = [re.sub('[- :0-9]{19},', '', line
+                        .split('<td', 1)[1]
+                        .split('>', 1)[1]
+                        .split('</tr>', 1)[0]
+                        .split('\n', 1)[0]
+                        .replace('<td>', ',')
+                        .replace('<br>', ' ')
+                        .replace('\xa0', '')
+                        .strip())
                     for line in ''.join(request.lines).split('<tr')[1:]
                     ]
         else:
@@ -51,14 +52,14 @@ class TestAction(qrbug.TestCase):
         qrbug.dispatcher_update('simple', action_id='echo', selector_id='true', incidents='')
         d1 = qrbug.Dispatcher['simple']
         i1 = qrbug.Incident.open('thing_child', 'fail1', 'ip1', 'login1')
-        self.check(d1, i1, ['«thing_child» «fail1»', 'ip1,,login1'])
+        self.check(d1, i1, ['«thing_child» «fail1»', 'ip1,,login1,'])
 
         i2 = qrbug.Incident.open('thing_child', 'fail1', 'ip2', 'login2')
-        self.check(d1, i2, ['«thing_child» «fail1»', 'ip1,,login1', 'ip2,,login2'])
+        self.check(d1, i2, ['«thing_child» «fail1»', 'ip1,,login1,', 'ip2,,login2,'])
 
         # The 2 incidents are open,  all incidents to action
         qrbug.dispatcher_update('simple', action_id='echo', selector_id='true', incidents='active')
-        self.check(d1, i2, ['«thing_child» «fail1»', 'ip1,,login1', 'ip2,,login2'])
+        self.check(d1, i2, ['«thing_child» «fail1»', 'ip1,,login1,', 'ip2,,login2,'])
 
         # The 2 incidents are open,  no incidents to action
         qrbug.dispatcher_update('simple', action_id='echo', selector_id='true', incidents='false')
@@ -80,27 +81,27 @@ class TestAction(qrbug.TestCase):
         morning = qrbug.Incident.open('debug', '07:00', '', '')
         self.check(d1, morning, [
             '«thing_child» «fail1»',
-            'ip1,,login1',
-            'ip2,,login2',
+            'ip1,,login1,',
+            'ip2,,login2,',
             '«debug» «07:00»',
-            ',,'])
+            ',,,'])
         self.check(close, morning, ['«Clôture de 07:00» «VALEUR_NON_DEFINIE POUR «07:00»»\n'], clean=False)
 
         # Close '07:00' after dispatching
         morning = qrbug.Incident.open('debug', '07:00', '', '')
         self.check(d1, morning, [
             '«thing_child» «fail1»',
-            'ip1,,login1',
-            'ip2,,login2',
+            'ip1,,login1,',
+            'ip2,,login2,',
             '«debug» «07:00»',
-            ',,',
+            ',,,',
             ',,,'])
         self.check(close, morning, ['«Clôture de 07:00» «VALEUR_NON_DEFINIE POUR «07:00»»\n'], clean=False)
 
         # Close '07:00' before dispatching
         morning = qrbug.Incident.open('debug', '07:00', '', '')
         self.check(close, morning, ['«Clôture de 07:00» «VALEUR_NON_DEFINIE POUR «07:00»»\n'], clean=False)
-        self.check(d1, morning, ['«thing_child» «fail1»', 'ip1,,login1', 'ip2,,login2'])
+        self.check(d1, morning, ['«thing_child» «fail1»', 'ip1,,login1,', 'ip2,,login2,'])
 
     def test_list_incident(self):
         qrbug.action_update('list', 'list.py')
@@ -113,13 +114,13 @@ class TestAction(qrbug.TestCase):
         dispatcher = qrbug.Dispatcher['show_incidents']
         self.check(dispatcher, trigger, [
             '«thing_child» «fail1»',
-            'ip1,,login1',
+            'ip1,,login1,',
             '«debug» «list-Incident»',
-            'ip2,,login2'])
+            'ip2,,login2,'])
 
         # Fix the problem
         qrbug.Incident.close('thing_child', 'fail1', 'ip1', 'fixer_login')
-        self.check(dispatcher, trigger, ['«debug» «list-Incident»', 'ip2,,login2'])
+        self.check(dispatcher, trigger, ['«debug» «list-Incident»', 'ip2,,login2,'])
 
         # Pending user feeback
         qrbug.selector_update('with-pending-feedback', '{"test": "pending_feedback"}')

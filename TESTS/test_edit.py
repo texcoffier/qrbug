@@ -18,23 +18,17 @@ class TestEdit(qrbug.TestCase):
 
     def test_concerned(self):
         qrbug.selector_update('a-selector', '{"test":"true"}')
-        qrbug.concerned_add('a-selector', 'nobody')
+        qrbug.selector_concerned_add('a-selector', 'nobody')
 
-        lines = self.runtest('concerned-add', 'edit-concerned', 'john.doe')
+        lines = self.runtest('selector-concerned-add', 'edit-selector', 'john.doe')
         self.assertEqual(lines,
             ["<!DOCTYPE html>\nL'utilisateur/groupe «john.doe» est maintenant concerné par le sélecteur «a-selector»\n"])
-        self.assertEqual(qrbug.Concerned.instances['a-selector'].users, {'nobody', 'john.doe'})
+        self.assertEqual(qrbug.Selector.instances['a-selector'].concerned, {'nobody', 'john.doe'})
 
-        lines = self.runtest('concerned-del', 'edit-concerned', 'john.doe')
+        lines = self.runtest('selector-concerned-del', 'edit-selector', 'john.doe')
         self.assertEqual(lines,
             ["<!DOCTYPE html>\nL'utilisateur/groupe «john.doe» n'est plus concerné par le sélecteur «a-selector»\n"])
-        self.assertEqual(qrbug.Concerned.instances['a-selector'].users, {'nobody'})
-
-        lines = self.runtest('concerned', 'edit-concerned')
-        self.assertEqual(lines,
-            ["<!DOCTYPE html>\nUnexpected edit failure for Concerned\n"])
-
-        self.assertEqual(qrbug.Failure['concerned'].get_hierarchy_representation().count('ask_confirm'), 3)
+        self.assertEqual(qrbug.Selector.instances['a-selector'].concerned, {'nobody'})
 
     def test_dispatcher(self):
         lines = self.runtest('dispatcher', 'edit-dispatcher')
@@ -76,7 +70,7 @@ class TestEdit(qrbug.TestCase):
         lines = self.runtest('selector', 'edit-selector')
         self.assertEqual(lines,
             ["<!DOCTYPE html>\nUnexpected edit failure for Selector\n"])
-        self.assertEqual(qrbug.Failure['selector'].get_hierarchy_representation().count('ask_confirm'), 2)
+        self.assertEqual(qrbug.Failure['selector'].get_hierarchy_representation().count('ask_confirm'), 4)
 
     def test_thing(self):
         lines = self.runtest('thing', 'edit-thing')

@@ -24,7 +24,6 @@ class TestCase(unittest.TestCase):
         qrbug.Thing.instances.clear()
         qrbug.Incident.instances.clear()
         qrbug.Incident.pending_feedback = {}
-        qrbug.Concerned.instances.clear()
 
     def check(self, cls, value):
         # The parameters are arranged in this order because the EXPECTED value goes first, followed by the

@@ -17,7 +17,6 @@ ENABLE_PROFILE = False
 
 WHAT = {
     'thing': qrbug.Thing,
-    'concerned': qrbug.Concerned,
     'dispatcher': qrbug.Dispatcher,
     'failure': qrbug.Failure,
     'selector': qrbug.Selector,
@@ -261,7 +260,7 @@ def init_server(argv = None) -> tuple[web.Application, str, int]:
     # Creates the server
     app = web.Application()
     app.add_routes([
-        web.get('/{what:thing|concerned|dispatcher|failure|selector|user|action}={thing_id:[^{}?]+}', show_failures_tree_route),
+        web.get('/{what:thing|dispatcher|failure|selector|user|action}={thing_id:[^{}?]+}', show_failures_tree_route),
         web.get('/', register_incident),
         web.get('/favicon.ico', get_favicon)
     ])

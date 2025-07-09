@@ -8,7 +8,7 @@ import qrbug
 
 async def run(_incidents: List[qrbug.Incident], request: qrbug.Request) -> Optional[qrbug.action_helpers.ActionReturnValue]:
     # Deletes all instances from each data structure
-    for data_structure in (qrbug.Action, qrbug.Concerned, qrbug.Dispatcher, qrbug.Failure, qrbug.Incident, qrbug.Selector, qrbug.Thing, qrbug.User):
+    for data_structure in (qrbug.Action, qrbug.Dispatcher, qrbug.Failure, qrbug.Incident, qrbug.Selector, qrbug.Thing, qrbug.User):
         data_structure.instances.clear()
         if hasattr(data_structure, 'sorted_instances') and data_structure.sorted_instances is not None:
             data_structure.sorted_instances.clear()

@@ -10,10 +10,12 @@ import qrbug
 
 async def run(incidents: list[qrbug.Incident], request: qrbug.Request) -> None:
     incidents_per_user = collections.defaultdict(list)
-    for concerned_id, concerned in tuple(qrbug.Concerned.instances.items()):
+    for selector in qrbug.Selector.instances.values():
+        if not selector.concerned:
+            continue
         for incident in incidents:
-            if qrbug.Selector[concerned_id].is_ok(request.incident, request.report, incident):
-                for user in concerned.users:
+            if selector.is_ok(request.incident, request.report, incident):
+                for user in selector.concerned:
                     for child in qrbug.User[user].get_all_children_ids():
                         incidents_per_user[child].append(
                             (qrbug.Thing[incident.thing_id].path(), incident.failure_id, incident)

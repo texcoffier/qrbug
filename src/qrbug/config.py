@@ -103,10 +103,10 @@ qrbug.CONFIGS = {
     "thing_del_failure": qrbug.thing_del_failure,
     "action"           : qrbug.action_update,
     "selector"         : qrbug.selector_update,
+    "selector_concerned_add": qrbug.selector_concerned_add,
+    "selector_concerned_del": qrbug.selector_concerned_del,
     "dispatcher_update": qrbug.dispatcher_update,
     "dispatcher_del"   : qrbug.dispatcher_del,
-    "concerned_add"    : qrbug.concerned_add,
-    "concerned_del"    : qrbug.concerned_del,
     "MESSAGES"         : qrbug.MESSAGES,
 }
 qrbug.INCIDENT_FUNCTIONS = {

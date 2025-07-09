@@ -43,10 +43,10 @@ class Incident:
 
     def is_for_user(self, user: "User") -> bool:
         """The user is concerned by the incident."""
-        for concerned in qrbug.Concerned.instances.values():
-            for u in concerned.users:
+        for selector in qrbug.Selector.instances.values():
+            for u in selector.concerned:
                 if user.inside_or_equal(u):
-                    if qrbug.Selector[concerned.id].is_ok(self, None, self):
+                    if qrbug.Selector[selector.id].is_ok(self, None, self):
                         return True
         return False
 
@@ -125,8 +125,8 @@ class Incident:
         return qrbug.Thing[self.thing_id]
 
     @property
-    def concerned(self):
-        return qrbug.Concerned[self.thing_id]
+    def selector(self):
+        return qrbug.Selector[self.thing_id]
 
 
 # def incident_del(thing_id: qrbug.ThingId, failure_id: qrbug.FailureId, ip: str, timestamp: int, login: str) -> list["Incident"]:

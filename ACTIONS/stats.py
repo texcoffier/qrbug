@@ -27,7 +27,6 @@ async def run(_incidents, request):
         f'''
         <table border>
         {link('Action')}
-        {link('Concerned')}
         {link('Dispatcher')}
         {link('Failure')}
         {link('Selector')}

@@ -127,7 +127,7 @@ class TestSelector(qrbug.TestCase):
         # Record a report
         for_me = qrbug.selector_update('for-me', '{"class":"SourceUser", "test":"is_for_user"}')
         qrbug.selector_update('fail1', '{"class":"SourceFailure", "test": "in_or_equal", "value": "fail1"}')
-        qrbug.concerned_add('fail1', 'user_parent')
+        qrbug.selector_concerned_add('fail1', 'user_parent')
         incident = qrbug.Incident.open(
             'thing_child', 'fail1', login='no-login', ip='no-ip', additional_info='no-comment')
 

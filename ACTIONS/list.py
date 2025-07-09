@@ -181,27 +181,6 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
             tree.walk(go_in, go_out, do_sort=True)
         texts.append(footer)
         texts = [qrbug.get_template(request, datalists_to_load).replace('%REPRESENTATION%', ''.join(texts))]
-    elif issubclass(what, qrbug.Concerned):
-        texts.append('<table>')
-        concerned_add = qrbug.Failure['concerned-add']
-        concerned_del = qrbug.Failure['concerned-del']
-        texts.append(f'''<tr>
-            <th>Le selecteur d'incident
-            <th>Personne/groupe concernés
-            <th>{html.escape(concerned_add.value)}
-            </tr>''')
-        for selector_id, concerned in sorted(what.instances.items(), key=lambda e: e[0]):
-            users = [
-                f'{qrbug.element(concerned_del, concerned, destroy=user)}'
-                for user in concerned.users
-                ]
-            texts.append(f'''<tr>
-            <td><a href="selector={selector_id}?secret={request.secret.secret}">{html.escape(selector_id)}</a>
-            <td>{' '.join(users)}
-            <td>{qrbug.element(concerned_add, concerned, in_place=True, datalist_id="User")}
-            </tr>''')
-        texts.append('</table>')
-        texts = [qrbug.get_template(request, ("User",)).replace('%REPRESENTATION%', ''.join(texts))]
     elif what is qrbug.Action:
         action = qrbug.Failure['action-python_script']
         texts.append('<table>')
@@ -278,13 +257,25 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
             }};
         {qrbug.SELECTOR_SCRIPT_FUNCTIONS.read_text()}
         </script>
-        <table><tr><th>ID</tr><script>
+        <table><tr><th>ID<th><th><th><th>Concernés<th>Ajouter un concerné</tr><script>
         ''')
+        selector_concerned_add = qrbug.Failure['selector-concerned-add']
+        selector_concerned_del = qrbug.Failure['selector-concerned-del']
         for selector in sorted(what.instances.values(), key=lambda e: e.id):
+            users = [
+                f'{qrbug.element(selector_concerned_del, selector, destroy=user)}'
+                for user in selector.concerned
+                ]
+            more = f'''
+            <td>{' '.join(users)}
+            <td>{qrbug.element(selector_concerned_add, selector, in_place=True, datalist_id="User")}
+            '''
             texts.append('add_selector(')
             texts.append(json.dumps(selector.id))
             texts.append(',')
             texts.append(selector.expression)
+            texts.append(',')
+            texts.append(json.dumps(more))
             texts.append(');\n')
         texts.append('</script></table>')
         texts = [qrbug.get_template(request).replace('%REPRESENTATION%', ''.join(texts))]

@@ -3,13 +3,13 @@ function html(txt) {
 }
 
 var TESTS = [
-    ["L'incident concerne l'utilisateur connecté", { test: "is_for_user" }],
-    ["L'incident est actif", { test: "active" }],
-    ["L'incident concerne la panne", { test: "is", class: "FilterFailure" }],
-    ["L'incident concerne une panne du groupe", { test: "in_or_equal", class: "FilterFailure" }],
-    ["L'incident est réparé et l'utilisateur pas prévenu", { test: "pending_feedback" }],
-    ["L'incident concerne une chose du groupe", { test: "in_or_equal", class: "FilterThing" }],
-    ["L'incident concerne une chose (pas API)", { test: "is_for_thing" }],
+    ["Incident concerne l'utilisateur connecté", { test: "is_for_user" }],
+    ["Incident est actif", { test: "active" }],
+    ["Incident concerne la panne", { test: "is", class: "FilterFailure" }],
+    ["Incident concerne une panne du groupe", { test: "in_or_equal", class: "FilterFailure" }],
+    ["Incident réparé et utilisateur non prévenu", { test: "pending_feedback" }],
+    ["Incident concerne une chose du groupe", { test: "in_or_equal", class: "FilterThing" }],
+    ["Incident concerne une chose (pas API)", { test: "is_for_thing" }],
     ["La panne déclenchée est dans le groupe", { test: "in_or_equal", class: "SourceFailure" }],
     ["La panne déclenchée est", { test: "is", class: "SourceFailure" }],
     ["L'utilisateur connecté est dans le groupe", { test: "in_or_equal", class: "SourceUser" }],
@@ -48,8 +48,7 @@ var DATA = {};
 function edit_selector(selector_id, expression) {
     var exprs = expression.slice(1);
     var operator = expression[0];
-    var texts = [`<tr><td style="padding-right: 10px;">${html(selector_id)}<td>
-        <select class="and_or">
+    var texts = [`<tr><td style="padding-right: 10px;">${html(selector_id)}<td><select class="and_or">
         <option ${operator ? '' : 'selected'} value="0">OU</option>
         <option ${operator ? 'selected' : ''} value="1">ET</option>
         </select>
@@ -61,14 +60,14 @@ function edit_selector(selector_id, expression) {
         texts.push(editor(expr));
         texts.push('<BR>');
     }
-    texts.push('<td><SAV>Save</SAV></tr>');
+    texts.push(`<td><SAV>Save</SAV>${DATA[selector_id].more}</tr>`);
     return texts.join('');
 }
 
-function add_selector(selector_id, expression) {
+function add_selector(selector_id, expression, more) {
     if (expression.length === undefined)
         expression = [0, expression];
-    DATA[selector_id] = { current: expression, original: JSON.stringify(expression) };
+    DATA[selector_id] = { current: expression, original: JSON.stringify(expression), more: more };
     document.write(edit_selector(selector_id, expression));
 }
 
@@ -101,7 +100,7 @@ function init() {
             opacity: 0;
             cursor: pointer;
         }
-        TR TD:hover REM, TR:hover ADD, TR.changed SAV {
+        TR:hover REM, TR:hover ADD, TR.changed SAV {
             opacity: 1;
         }
         REM {
