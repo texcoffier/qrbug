@@ -36,7 +36,7 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
     if issubclass(what, qrbug.Tree):
         if what is qrbug.Thing:
             thing_comment = qrbug.Failure['thing-comment']
-            texts.append('<p>Générer une feuille de QR codes (lignes × colonne) : ')
+            texts.append('<p>Cochez les objets puis cliquez sur le bouton pour générer une feuille de QR codes (lignes × colonne) : ')
             texts.append(' '.join(
                 f'<div class="button" style="display: inline;" onclick="qr(this)">{html.escape(failure.split("_")[-1])}</div>'
                 for failure in qrbug.Failure['generate_qr'].children_ids

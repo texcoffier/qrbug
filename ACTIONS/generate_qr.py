@@ -43,7 +43,7 @@ async def run(incidents: list[qrbug.Incident], request: qrbug.Request) -> Option
     incident = incidents[0]
     row_cols_number = incident.failure_id.split('_')[-1]
     if row_cols_number != '':
-        default_rows, default_cols = row_cols_number.split('x')
+        default_rows, default_cols = row_cols_number.split('×')
     else:
         default_rows = '4'
         default_cols = '4'

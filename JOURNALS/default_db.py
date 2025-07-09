@@ -417,8 +417,8 @@ failure_update('generate_qr', value='Générer un QR code de la taille indiquée
 failure_add('backoffice', 'generate_qr')
 for rows in (7, 8):
     for cols in (4, 5, 6):
-        failure_update(f'generate_qr_{rows}x{cols}', value=f'En {rows}x{cols}', display_type=Input)
-        failure_add('generate_qr', f'generate_qr_{rows}x{cols}')
+        failure_update(f'generate_qr_{rows}×{cols}', value=f'En {rows}×{cols}', display_type=Input)
+        failure_add('generate_qr', f'generate_qr_{rows}×{cols}')
 
 action('generate_qrcode', 'generate_qr.py')
 selector('generate_qr', '''[1,
