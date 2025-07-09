@@ -15,8 +15,8 @@ var TESTS = [
     ["L'utilisateur connecté est dans le groupe", { test: "in_or_equal", class: "SourceUser" }],
     ["L'utilisateur connecté est", { test: "is", class: "SourceUser" }],
     ["L'utilisateur modifié est dans le groupe", { test: "in_or_equal", class: "SourceThingUser" }],
-    ["La condition retourne vrai", { test: "true", class: "Selector" }],
-    ["La condition retourne faux", { test: "false", class: "Selector" }],
+    ["Le sélecteur retourne vrai", { test: "true", class: "Selector" }],
+    ["Le sélecteur retourne faux", { test: "false", class: "Selector" }],
     ["L'objet modifié est dans le groupe", { test: "in_or_equal", class: "SourceThing" }],
     ["Toujours vrai", { test: "True" }]
 ];
