@@ -87,7 +87,7 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
             <tr>
             <th>Panne
             <th>Intitulé
-            <th>Confirmation
+            <th>Message de confirmation<div style="font-weight: normal">Laisser vide pour ne pas<br>demander la confirmation</div>
             <th class="vert">Affichage
             ''')
             def go_in(node):
