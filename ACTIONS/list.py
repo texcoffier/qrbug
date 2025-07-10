@@ -81,14 +81,18 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
             failure_value = qrbug.Failure['failure-value']
             failure_ask_confirm = qrbug.Failure['failure-ask_confirm']
             failure_display = qrbug.Failure['failure-display_type']
+            failure_remove = qrbug.Failure['failure-remove']
+            failure_add = qrbug.Failure['failure-add']
             texts.append(VERT_STYLE)
-            texts.append('''
+            texts.append(f'''
             <table>
             <tr>
             <th>Panne
-            <th>Intitulé
-            <th>Message de confirmation<div style="font-weight: normal">Laisser vide pour ne pas<br>demander la confirmation</div>
-            <th class="vert">Affichage
+            <th>{failure_value.value}
+            <th>{failure_ask_confirm.value}
+            <th class="vert">{failure_display.value}
+            <th class="vert">{failure_remove.value}
+            <th>{failure_add.value}
             ''')
             def go_in(node):
                 texts.append('<tr><td>')
@@ -100,13 +104,22 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
                 texts.append(qrbug.element(failure_ask_confirm, node, in_place=True))
                 texts.append('<td>')
                 texts.append(qrbug.element(failure_display, node, in_place=True))
+                texts.append('<td>')
+                if go_in.parents:
+                    texts.append(qrbug.element(failure_remove, node, in_place=True,
+                                               force_value='×', destroy=go_in.parents[-1]))
+                texts.append('<td>')
+                texts.append(qrbug.element(failure_add, node, in_place=True, datalist_id="Failure"))
                 texts.append('</tr>')
                 go_in.indent += '    '
+                go_in.parents.append(node.id)
             def go_out(_node):
                 go_in.indent = go_in.indent[:-4]
+                go_in.parents.pop()
             go_in.indent = ''
+            go_in.parents = []
             footer = '</table>'
-            datalists_to_load = tuple()
+            datalists_to_load = ("Failure",)
         elif what is qrbug.User:
             user_add_child = qrbug.Failure['user-add-child']
             user_del_child = qrbug.Failure['user-del-child']

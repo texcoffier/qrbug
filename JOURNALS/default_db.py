@@ -306,12 +306,16 @@ dispatcher_update('edit-dispatcher', action_id='edit_dispatcher', selector_id='e
 # ---------------
 failure_update('failure'             , value="Les pannes"                           )
 failure_update('failure-value'       , value="Intitulé"                             , display_type=Input)
-failure_update('failure-display_type', value="Type d'affichage"                     , display_type=Display)
-failure_update('failure-ask_confirm' , value="Confirmation avant d'envoyer la panne", display_type=Input)
+failure_update('failure-display_type', value="Affichage"                            , display_type=Display)
+failure_update('failure-ask_confirm' , value='Message de confirmation<div style="font-weight: normal">Laisser vide pour ne pas<br>demander la confirmation</div>', display_type=Input)
+failure_update('failure-add'         , value="Ajouter un enfant"                    , display_type=Datalist)
+failure_update('failure-remove'      , value="Enlever d'ici"                        , display_type=Button)
 failure_add('edit', 'failure')
 failure_add('failure', 'failure-value')
 failure_add('failure', 'failure-display_type')
 failure_add('failure', 'failure-ask_confirm')
+failure_add('failure', 'failure-add')
+failure_add('failure', 'failure-remove')
 
 action('edit_failure', 'edit_failure.py')
 selector('edit-failure', '''[1,

@@ -33,6 +33,22 @@ async def run(incidents, request):
                 feedback = f"On demande confirmation avant d'envoyer la panne «{selector}»\n"
             else:
                 feedback = f"On ne demande pas confirmation à l'utilisateur avant d'envoyer la panne «{selector}»\n"
+    elif incident.failure_id == 'failure-add':
+        error_message = qrbug.Failure[selector].can_add_child(value)
+        if error_message:
+            feedback = f"<b>ERREUR :</b> {error_message}"
+        else:
+            if value not in qrbug.Failure.instances.keys():  # If the user doesn't exist, we create it !
+                qrbug.append_line_to_journal(f'failure_update({repr(value)})\n', qrbug.Journals.DB)
+            qrbug.append_line_to_journal(f'failure_add({repr(selector)}, {repr(value)})\n', qrbug.Journals.DB)
+            feedback = f"Ajouté l'enfant «{html.escape(value)}» à «{selector}»\n"
+    elif incident.failure_id == 'failure-remove':
+        error_message = qrbug.Failure[value].can_remove_child(selector)
+        if error_message:
+            feedback = f"<b>ERREUR :</b> {error_message}"
+        else:
+            qrbug.append_line_to_journal(f'failure_remove({repr(value)}, {repr(selector)})\n', qrbug.Journals.DB)
+            feedback = f"Retiré l'enfant «{selector}» à «{html.escape(value)}»\n"
     else:
         feedback = "Unexpected edit failure for Failure\n"
     await request.write('<!DOCTYPE html>\n' + feedback)
