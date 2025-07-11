@@ -13,7 +13,7 @@ var TESTS = [
     ["La panne déclenchée est dans le groupe", { test: "in_or_equal", class: "SourceFailure" }],
     ["La panne déclenchée est", { test: "is", class: "SourceFailure" }],
     ["L'utilisateur connecté est dans le groupe", { test: "in_or_equal", class: "SourceUser" }],
-    ["L'utilisateur connecté est", { test: "is", class: "SourceUser" }],
+    /* ["L'utilisateur connecté est", { test: "is", class: "SourceUser" }], */
     ["L'utilisateur modifié est dans le groupe", { test: "in_or_equal", class: "SourceThingUser" }],
     ["Le sélecteur retourne vrai", { test: "true", class: "Selector" }],
     ["Le sélecteur retourne faux", { test: "false", class: "Selector" }],

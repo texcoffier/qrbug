@@ -212,7 +212,7 @@ action('report_mail'     , 'report_mail.py'     )  # Send mail to remind every a
 
 selector('hours', '''[1,
     {"class":"SourceFailure", "test":"in_or_equal", "value": "hours"},
-    {"class":"SourceUser"   , "test":"is", "value": "system"}
+    {"class":"SourceUser"   , "test":"in_or_equal", "value": "system"}
     ]''')
 
 selector('send-feedback', '''[1,
@@ -441,8 +441,8 @@ dispatcher_update('generate-qr', action_id='generate_qrcode', selector_id='gener
 
 failure_update('backtrace', value='QRBug server backtrace')
 selector('backtrace', '''[1,
-    {"class":"SourceFailure", "test":"is", "value": "backtrace"},
-    {"class":"SourceUser"   , "test":"is", "value": "system"}
+    {"class":"SourceFailure", "test":"is"         , "value": "backtrace"},
+    {"class":"SourceUser"   , "test":"in_or_equal", "value": "system"}
     ]''')
 selector_concerned_add('backtrace', 'admin-backtrace')
 dispatcher_update('backtrace', action_id='report_mail', selector_id='backtrace')
