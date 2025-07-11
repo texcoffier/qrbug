@@ -17,9 +17,13 @@ async def run(incidents, request):
         except ValueError:
             feedback = f"Valeur invalide : <b><pre>{html.escape(value)}</pre></b>\n"
     elif incident.failure_id == 'selector-concerned-add':
-        qrbug.append_line_to_journal(
-                f'selector_concerned_add({repr(selector)}, {repr(value)})\n', qrbug.Journals.DB)
-        feedback = f"L'utilisateur/groupe «{html.escape(value)}» est maintenant concerné par le sélecteur «{html.escape(selector)}»\n"
+        feedback = None
+        if value not in qrbug.User.instances:
+            feedback = await qrbug.User.try_create_user(value)
+        if not feedback:
+            qrbug.append_line_to_journal(
+                    f'selector_concerned_add({repr(selector)}, {repr(value)})\n', qrbug.Journals.DB)
+            feedback = f"L'utilisateur/groupe «{html.escape(value)}» est maintenant concerné par le sélecteur «{html.escape(selector)}»\n"
     elif incident.failure_id == 'selector-concerned-del':
         if value in incident.selector.concerned:
             qrbug.append_line_to_journal(

@@ -39,6 +39,9 @@ def thread_mail():
                 for i in infos:
                     if i[0]:
                         MAILS[login] = i[1]['mail'][0].decode('utf-8')
+                        break
+                else:
+                    MAILS[login] = qrbug.DEFAULT_EMAIL_TO
         except ValueError:
             qrbug.Incident.open('GUI', 'backtrace', '', 'system', '\n'.join(traceback.format_exc()))
 
