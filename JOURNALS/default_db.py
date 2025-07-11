@@ -452,15 +452,15 @@ dispatcher_update('backtrace', action_id='report_mail', selector_id='backtrace')
 # ----------------------------------------------
 
 action('get_file', 'get_file.py')
-failure_update('get_file', value='QRBug server get_file')
-failure_add('backoffice', 'get_file')
-selector('get_file','{"class":"SourceFailure", "test":"is", "value": "get_file"}')
-dispatcher_update('get_file', action_id='get_file', selector_id='get_file')
 
+failure_update('get_file', value='QRBug server get_file')
 failure_update('flow.html', value='Présentation de QRBug', display_type=Button)
+failure_add('backoffice', 'get_file')
+failure_add('get_file', 'flow.html')
 failure_add('misc', 'flow.html')
-selector('flow.html','{"class":"SourceFailure", "test":"is", "value": "flow.html"}')
-dispatcher_update('flow.html', action_id='get_file', selector_id='flow.html')
+
+selector('get_file','{"class":"SourceFailure", "test":"in_or_equal", "value": "get_file"}')
+dispatcher_update('get_file', action_id='get_file', selector_id='get_file')
 
 # ----------------------------------------------
 # Journals reload
