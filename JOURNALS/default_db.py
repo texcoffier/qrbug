@@ -304,12 +304,12 @@ dispatcher_update('edit-dispatcher', action_id='edit_dispatcher', selector_id='e
 # ---------------
 # Edit failure
 # ---------------
-failure_update('failure'             , value="Les pannes"       )
-failure_update('failure-value'       , value="Intitulé"         , display_type=Input)
-failure_update('failure-display_type', value="Affichage"        , display_type=Display)
+failure_update('failure'             , value="Les pannes")
+failure_update('failure-value'       , value="Intitulé"              , display_type=Input)
+failure_update('failure-display_type', value="Affichage"             , display_type=Display)
 failure_update('failure-ask_confirm' , value='Message de confirmation<div style="font-weight: normal">Laisser vide pour ne pas<br>demander la confirmation</div>', display_type=Input)
-failure_update('failure-add'         , value="Ajouter un enfant", display_type=Datalist)
-failure_update('failure-remove'      , value="Enlever d'ici"    , display_type=Button)
+failure_update('failure-add'         , value="Ajouter une sous-panne", display_type=Datalist)
+failure_update('failure-remove'      , value="Enlever d'ici"         , display_type=Button)
 failure_add('edit', 'failure')
 failure_add('failure', 'failure-value')
 failure_add('failure', 'failure-display_type')
@@ -347,8 +347,8 @@ dispatcher_update('edit-selector', action_id='edit_selector', selector_id='edit-
 # Edit user
 # ---------------
 failure_update('user', value="Utilisateur")
-failure_update('user-add'   , value="Ajouter un enfant", display_type=Datalist)
-failure_update('user-remove', value="Enlever d'ici"    , display_type=Button)
+failure_update('user-add'   , value="Ajouter un utilisateur dans le groupe", display_type=Datalist)
+failure_update('user-remove', value="Enlever d'ici"                        , display_type=Button)
 failure_add('edit', 'user')
 failure_add('user', 'user-add')
 failure_add('user', 'user-remove')
@@ -364,11 +364,11 @@ dispatcher_update('edit-user', action_id='edit_user', selector_id='edit-user')
 # Edit thing
 # ---------------
 failure_update('thing'            , value="Chose"          )
-failure_update('thing-comment'    , value="Commentaire"    , display_type=Input)
-failure_update('thing-del-failure', value="Panne à enlever", display_type=Input)
-failure_update('thing-add-failure', value="Panne à ajouter", display_type=Datalist)
-failure_update('thing-add'        , value="Ajouter un fils", display_type=Datalist)
-failure_update('thing-remove'     , value="Enlever d'ici"  , display_type=Button)
+failure_update('thing-comment'    , value="Commentaire"          , display_type=Input)
+failure_update('thing-del-failure', value="Panne à enlever"      , display_type=Input)
+failure_update('thing-add-failure', value="Panne à ajouter"      , display_type=Datalist)
+failure_update('thing-add'        , value="Ajouter un objet fils", display_type=Datalist)
+failure_update('thing-remove'     , value="Enlever d'ici"        , display_type=Button)
 failure_add('edit', 'thing')
 failure_add('thing', 'thing-comment')
 failure_add('thing', 'thing-del-failure')
