@@ -46,6 +46,7 @@
             font-size: var(--button-font-size);
             padding: var(--button-padding);
             margin-bottom: 0.1em;
+            cursor: pointer;
         }
 
         div.button:hover {
@@ -101,6 +102,11 @@
             background-color: rgba(255, 153, 0, 0.2);
         }
 
+        BOX, LAB {
+            display: inline-block;
+        }
+
+
         @media (orientation: portrait) {
             BODY, BUTTON {
                 font-size: 5vw;
@@ -111,7 +117,6 @@
             }
 
             DIV.button {
-                display: inline-flex;
                 width: calc(99vw);
                 margin-bottom: 0.5em;
                 text-align: center;
@@ -126,18 +131,8 @@
             DIV.button:hover {
                 border: 0px;
             }
-            DIV.input DIV {
-                display: flex;
-            }
-            DIV.input DIV INPUT {
-                flex: 1;
-                margin-right: 0.5em;
-            }
-
             BOX {
-                display: flex;
                 align-items: center;
-                cursor: pointer;
             }
 
             P {

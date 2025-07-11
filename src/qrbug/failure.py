@@ -90,7 +90,7 @@ def element(failure: "Failure", thing, in_place=False, destroy=None, datalist_id
         input_list_id = ''
         if display_type == DisplayTypes.datalist:
             input_list_id = f' list="datalist_{datalist_id}"'
-        return f'''<div class="input">{'' if in_place else failure_value}
+        return f'''<div class="input">{'' if in_place else html.escape(failure_value)}
         <input {common}{input_list_id} value="{value}" autocomplete="off" onkeypress="if (event.key=='Enter') register_incident(this,{in_place})"
         ><div {common} onclick="register_incident(this, {in_place})">⬆</div></div>'''
     raise ValueError("Unknown display type")
