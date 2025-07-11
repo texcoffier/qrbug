@@ -329,8 +329,8 @@ dispatcher_update('edit-failure', action_id='edit_failure', selector_id='edit-fa
 # ---------------
 failure_update('selector', value="Sélecteur d'incident")
 failure_update('selector-expression', value="Expression", display_type=Input)
-failure_update('selector-concerned-add', value="Ajouter un utilisateur/groupe", display_type=Datalist)
-failure_update('selector-concerned-del', value="Enlever un utilisateur/groupe", display_type=Input)
+failure_update('selector-concerned-add', value="Ajouter un utilisateur concerné", display_type=Datalist)
+failure_update('selector-concerned-del', value="Utilisateurs concernés", display_type=Input)
 failure_add('edit', 'selector')
 failure_add('selector', 'selector-expression')
 failure_add('selector', 'selector-concerned-add')
@@ -347,11 +347,11 @@ dispatcher_update('edit-selector', action_id='edit_selector', selector_id='edit-
 # Edit user
 # ---------------
 failure_update('user', value="Utilisateur")
-failure_update('user-add-child' , value="Ajouter un enfant", display_type=Datalist)
-failure_update('user-del-child' , value="Enlever d'ici"    , display_type=Button)
+failure_update('user-add'   , value="Ajouter un enfant", display_type=Datalist)
+failure_update('user-remove', value="Enlever d'ici"    , display_type=Button)
 failure_add('edit', 'user')
-failure_add('user', 'user-add-child')
-failure_add('user', 'user-del-child')
+failure_add('user', 'user-add')
+failure_add('user', 'user-remove')
 
 action('edit_user', 'edit_user.py')
 selector('edit-user', '''[1,

@@ -35,7 +35,7 @@ function editor(expr) {
             texts.push('</SELECT>');
             if (TESTS[i][1].class) {
                 var list = TESTS[i][1].class.replace(/.*(User|Thing|Failure|Selector)$/, '$1');
-                texts.push(` <INPUT autocomplete="off" value="${html(expr.value || expr.id || '')}" list="${list}">`);
+                texts.push(` <INPUT autocomplete="off" value="${html(expr.value || expr.id || '')}" list="datalist_${list}">`);
             }
             return texts.join('');
         }
@@ -48,26 +48,26 @@ var DATA = {};
 function edit_selector(selector_id, expression) {
     var exprs = expression.slice(1);
     var operator = expression[0];
-    var texts = [`<tr><td style="padding-right: 10px;">${html(selector_id)}<td><select class="and_or">
+    var texts = [`<select class="and_or">
         <option ${operator ? '' : 'selected'} value="0">OU</option>
         <option ${operator ? 'selected' : ''} value="1">ET</option>
         </select>
         <ADD>+</ADD>
-        <td>
         `];
+    texts.push('<OPE>');
     for (var expr of exprs) {
         texts.push('<REM>×</REM>');
         texts.push(editor(expr));
         texts.push('<BR>');
     }
-    texts.push(`<td><SAV>Save</SAV>${DATA[selector_id].more}</tr>`);
+    texts.push('</OPE> <SAV>Save</SAV>');
     return texts.join('');
 }
 
-function add_selector(selector_id, expression, more) {
+function add_selector(selector_id, expression) {
     if (expression.length === undefined)
         expression = [0, expression];
-    DATA[selector_id] = { current: expression, original: JSON.stringify(expression), more: more };
+    DATA[selector_id] = { current: expression, original: JSON.stringify(expression) };
     document.write(edit_selector(selector_id, expression));
 }
 
@@ -87,11 +87,6 @@ function init() {
         TD {
             padding: 0.3em;
         }
-        TD:nth-child(3) {
-            border-left: 3px solid #000;
-            border-radius: 0.7em;
-            padding-left: 0.4em;
-        }
         INPUT {
             vertical-align: bottom;
         }
@@ -100,7 +95,14 @@ function init() {
             opacity: 0;
             cursor: pointer;
         }
-        TR:hover REM, TR:hover ADD, TR.changed SAV {
+        OPE {
+            display: inline-block;
+            border-left: 3px solid #000;
+            border-radius: 0.7em;
+            padding-left: 0.4em;
+            vertical-align: middle;
+        }
+        TR:hover REM, TR:hover ADD, TD.changed SAV {
             opacity: 1;
         }
         REM {
@@ -118,10 +120,15 @@ function init() {
 
 window.onchange = window.onclick = window.onkeyup = function (event) {
     var elm = event.target;
-    var tr = elm;
+    var td = elm;
+    while (td && td.tagName != 'TD')
+        td = td.parentNode;
+    var tr = td;
     while (tr && tr.tagName != 'TR')
         tr = tr.parentNode;
     if (!tr)
+        return;
+    if (elm.onclick || elm.onchange || elm.onkeypress)
         return;
     var selector_id = tr.cells[0].textContent;
     var index = 1;
@@ -147,8 +154,8 @@ window.onchange = window.onclick = window.onkeyup = function (event) {
         var iframe = document.createElement('IFRAME');
         iframe.onload = function () {
             DATA[selector_id].original = expr;
-            tr.className = '';
-            tr.innerHTML = edit_selector(selector_id, expr);
+            td.className = '';
+            td.innerHTML = edit_selector(selector_id, expr);
         };
         iframe.onerror = function () {
             iframe.style.display = 'block';
@@ -165,7 +172,7 @@ window.onchange = window.onclick = window.onkeyup = function (event) {
     else if (elm.tagName == 'INPUT' && event.type == 'change') {
         if (elm.className == 'raw') {
             try { expr[index] = JSON.parse(elm.value); }
-            catch(e) { alert("Formule inchangée car invalide"); }
+            catch (e) { alert("Formule inchangée car invalide"); }
         } else {
             if (LISTS[elm.getAttribute('list')].includes(elm.value))
                 if (expr.class == 'Selector')
@@ -177,10 +184,10 @@ window.onchange = window.onclick = window.onkeyup = function (event) {
         }
     } else
         return;
-    tr.innerHTML = edit_selector(selector_id, expr);
+    td.innerHTML = edit_selector(selector_id, expr);
     if (JSON.stringify(expr) != DATA[selector_id].original)
-        tr.className = 'changed';
+        td.className = 'changed';
     else
-        tr.className = '';
+        td.className = '';
 }
 document.write(init());

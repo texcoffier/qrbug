@@ -14,7 +14,7 @@ async def run(incidents, request):  # TODO: Force refresh of the page upon edit
     user_id = incident.thing_id
     value = request.report.comment
     feedback = ''
-    if incident.failure_id == 'user-add-child':
+    if incident.failure_id == 'user-add':
         error_message = qrbug.User[user_id].can_add_child(value)
         if error_message:
             feedback = f"<b>ERREUR :</b> {error_message}"
@@ -27,7 +27,7 @@ async def run(incidents, request):  # TODO: Force refresh of the page upon edit
             if not feedback:
                 qrbug.append_line_to_journal(f'user_add({repr(user_id)}, {repr(value)})\n', qrbug.Journals.DB)
                 feedback = f"Ajouté l'enfant «{html.escape(value)}» à «{user_id}»\n"
-    elif incident.failure_id == 'user-del-child':
+    elif incident.failure_id == 'user-remove':
         error_message = qrbug.User[value].can_remove_child(user_id)
         if error_message:
             feedback = f"<b>ERREUR :</b> {error_message}"

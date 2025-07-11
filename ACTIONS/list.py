@@ -1,13 +1,7 @@
 import html
 import json
 from typing import Optional, List
-
 import qrbug
-
-
-VERT_STYLE = '''<style>
-            .vert { writing-mode: sideways-lr; font-weight: normal; font-size: 60%; }
-            </style>'''
 
 def link_to_object(what, thing_id, request, label=None):
     thing_id = html.escape(thing_id)
@@ -27,36 +21,47 @@ def link_to_finished(thing_id, request):
         return ''
     return f'<a target="_blank" href="?failure-id=thing-incidents&thing-id={thing_id}&secret={request.secret.secret}">{finished}</a>'
 
-async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Optional[qrbug.action_helpers.ActionReturnValue]:
-    incident = incidents[0]
-
-    what = getattr(qrbug, incident.failure_id.split('-')[1])
-    texts = [f'<title>{incident.failure.value}</title><h1>{incident.failure.value}</h1>']
-
-    if issubclass(what, qrbug.Tree):
-        if what is qrbug.Thing:
-            thing_comment = qrbug.Failure['thing-comment']
-            texts.append('<p>Cochez les objets puis cliquez sur le bouton pour générer une feuille de QR codes (lignes × colonne) : ')
-            texts.append(' '.join(
-                f'<div class="button" style="display: inline;" onclick="qr(this)">{html.escape(failure.split("_")[-1])}</div>'
-                for failure in qrbug.Failure['generate_qr'].children_ids
-            ))
-            texts.append('<p id="qr_code_gen_error_field"></p></p>')
-            texts.append('<table>')
-            texts.append('<tr><th> <th>Objet<th>')
-            texts.append(html.escape(thing_comment.value))
-            texts.append('<th colspan="2">Active<br>Finished<th>Pannes<th>Ajouter une panne</tr>')
-            failure_del = qrbug.Failure['thing-del-failure']
-            failure_add = qrbug.Failure['thing-add-failure']
-            def go_in(node):
-                texts.append('<tr><td>')
-                texts.append(f'<input type="checkbox" class="qr_thing_checkboxes" id="qr_thing_checkbox_{node.id}" onclick="qr_select(this.checked, {repr(node.id)});" />')
-                texts.append('<td>')
-                texts.append(go_in.indent)
-                texts.append(link_to_object('thing', node.id, request))
-                texts.append('<td>')
-                texts.append(qrbug.element(thing_comment, node, in_place=True))
-                texts.append('<td>')
+def display_tree(texts, request, what, columns):
+    failures = []
+    for failure_definition in columns:
+        failure = failure_definition.lstrip('|')
+        vertical = (failure != failure_definition)
+        failure, datalist = (failure.split(' datalist=') + [None])[:2]
+        failures.append((qrbug.Failure[failure], vertical, datalist))
+    texts.append('''
+    <style>
+    .vert { writing-mode: sideways-lr; font-weight: normal; font-size: 60%; }
+    </style>
+    <table><tr>
+    ''')
+    what_name = what.__name__.lower()
+    texts.append('<th>')
+    if what_name == 'thing':
+        texts.append('<th>')
+    for failure, vertical, _data_list in failures:
+        if vertical:
+            vertical = ' class="vert"'
+        else:
+            vertical = ''
+        if failure.id == 'thing-del-failure':
+            texts.append('<th colspan="2">Actives<br>Inactives')
+        if failure.id == 'selector-concerned-del':
+            texts.append('<th>Éditeur de sélecteur')
+        texts.append(f'<th{vertical}>{failure.value}')
+    def go_in(node):
+        texts.append('<tr><td>')
+        if what_name == 'thing':
+            texts.append(f'<input type="checkbox" autocomplete="off" class="qr_thing_checkboxes" id="qr_thing_checkbox_{node.id}" onclick="qr_select(this.checked, {repr(node.id)});" /><td>')
+        texts.append(go_in.indent)
+        texts.append(link_to_object(what_name, node.id, request))
+        for failure, _vertical, datalist in failures:
+            texts.append('<td>')
+            if failure.id.endswith('remove'):
+                if go_in.parents:
+                    texts.append(qrbug.element(
+                        failure, node, in_place=True,
+                        force_value='×', destroy=go_in.parents[-1]))
+            elif failure.id == 'thing-del-failure': # Insert multiple columns
                 thing_incident = qrbug.Incident.instances.get(node.id, None)
                 if thing_incident:
                     texts.append(link_to_active(node.id, request))
@@ -67,147 +72,79 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
                 texts.append('<td>')
                 for failure_id in node.failure_ids:
                     texts.append(' ')
-                    texts.append(qrbug.element(failure_del, node, destroy=failure_id))
-                texts.append('<td>')
-                texts.append(qrbug.element(failure_add, node, in_place=True, datalist_id="Failure"))
-                texts.append('</tr>')
-                go_in.indent += '    '
-            def go_out(_node):
-                go_in.indent = go_in.indent[:-4]
-            go_in.indent = ''
-            footer = '</table>'
-            datalists_to_load = ("Failure",)
-        elif what is qrbug.Failure:
-            failure_value = qrbug.Failure['failure-value']
-            failure_ask_confirm = qrbug.Failure['failure-ask_confirm']
-            failure_display = qrbug.Failure['failure-display_type']
-            failure_remove = qrbug.Failure['failure-remove']
-            failure_add = qrbug.Failure['failure-add']
-            texts.append(VERT_STYLE)
-            texts.append(f'''
-            <table>
-            <tr>
-            <th>Panne
-            <th>{failure_value.value}
-            <th>{failure_ask_confirm.value}
-            <th class="vert">{failure_display.value}
-            <th class="vert">{failure_remove.value}
-            <th>{failure_add.value}
-            ''')
-            def go_in(node):
-                texts.append('<tr><td>')
-                texts.append(go_in.indent)
-                texts.append(link_to_object('failure', node.id, request))
-                texts.append('<td>')
-                texts.append(qrbug.element(failure_value, node, in_place=True))
-                texts.append('<td>')
-                texts.append(qrbug.element(failure_ask_confirm, node, in_place=True))
-                texts.append('<td>')
-                texts.append(qrbug.element(failure_display, node, in_place=True))
-                texts.append('<td>')
-                if go_in.parents:
-                    texts.append(qrbug.element(failure_remove, node, in_place=True,
-                                               force_value='×', destroy=go_in.parents[-1]))
-                texts.append('<td>')
-                texts.append(qrbug.element(failure_add, node, in_place=True, datalist_id="Failure"))
-                texts.append('</tr>')
-                go_in.indent += '    '
-                go_in.parents.append(node.id)
-            def go_out(_node):
-                go_in.indent = go_in.indent[:-4]
-                go_in.parents.pop()
-            go_in.indent = ''
-            go_in.parents = []
-            footer = '</table>'
-            datalists_to_load = ("Failure",)
-        elif what is qrbug.User:
-            user_add_child = qrbug.Failure['user-add-child']
-            user_del_child = qrbug.Failure['user-del-child']
-            texts.append(VERT_STYLE)
-            texts.append('''
-            <style>
-
-            </style>
-            ''')
-            texts.append('<table>')
-            texts.append(
-                f'<tr><th>ID<th class="vert">{user_del_child.value}<th>{user_add_child.value}</tr>'
-            )
-            parents: list["qrbug.UserId"] = []
-            def go_in(user):
-                parents.append(user.id)
-                texts.append('<tr><td>')
-                texts.append(go_in.indent)
-                texts.append(html.escape(user.id))
-                texts.append('<td>')
-                has_parent = len(parents) >= 2
-                if has_parent:
-                    texts.append(qrbug.element(
-                        user_del_child,
-                        user,
-                        in_place=True,
-                        force_value='×',
-                        destroy=parents[-2]
-                    ))
-                texts.append('<td>')
-                texts.append(qrbug.element(
-                    user_add_child, user, in_place=True, datalist_id='User'))
-                texts.append('</tr>')
-                go_in.indent += '        '
-            def go_out(_node):
-                go_in.indent = go_in.indent[:-8]
-                parents.pop(-1)
-            go_in.indent = ''
-            footer = '</table>'
-            datalists_to_load = ('User',)
-        elif what is qrbug.Dispatcher:
-            texts.append('<table>')
-            texts.append(
-                f'<tr><th>ID</th>'
-                f'<th>{qrbug.Failure["dispatcher-selector_id"].value}</th>'
-                f'<th>{qrbug.Failure["dispatcher-incidents"].value}</th>'
-                f'<th>{qrbug.Failure["dispatcher-action_id"].value}</th></tr>'
-            )
-            def go_in(dispatcher):
-                texts.append('<tr><td>')
-                texts.append(html.escape(dispatcher.id))
-                texts.append('</td><td>')
-                texts.append(qrbug.element(qrbug.Failure['dispatcher-selector_id'], dispatcher, in_place=True, datalist_id='Selector'))
-                texts.append('</td><td>')
-                texts.append(qrbug.element(qrbug.Failure['dispatcher-incidents'], dispatcher, in_place=True, datalist_id='Selector'))
-                texts.append('</td><td>')
-                texts.append(qrbug.element(qrbug.Failure['dispatcher-action_id'], dispatcher, in_place=True, datalist_id='Action'))
-                texts.append('</td></tr>')
-            def go_out(_node):
-                pass
-            footer = '</table>'
-            datalists_to_load = ('Selector', 'Action')
-        else:
-            def go_in(node):
-                texts.append(html.escape(node.dump()))
-                texts.append('<ul>')
-            def go_out(_node):
-                texts.append('</ul>')
-            footer = ''
-            datalists_to_load = tuple()
+                    texts.append(qrbug.element(failure, node, destroy=failure_id))
+            elif failure.id == 'selector-concerned-del':
+                texts.append('<script>add_selector(')
+                texts.append(json.dumps(node.id))
+                texts.append(',')
+                texts.append(node.expression)
+                texts.append(');\n</script><td>')
+                texts.append(' '.join(qrbug.element(failure, node, destroy=user)
+                                      for user in node.concerned))
+            else:
+                texts.append(qrbug.element(failure, node, in_place=True, datalist_id=datalist))
+        texts.append('</tr>')
+        go_in.indent += '    '
+        go_in.parents.append(node.id)
+    def go_out(_node):
+        go_in.indent = go_in.indent[:-4]
+        go_in.parents.pop()
+    go_in.indent = ''
+    go_in.parents = []
+    if hasattr(what, 'roots'):
         for tree in what.roots():
             tree.walk(go_in, go_out, do_sort=True)
-        texts.append(footer)
-        texts = [qrbug.get_template(request, datalists_to_load).replace('%REPRESENTATION%', ''.join(texts))]
+    else:
+        for node in what.instances.values():
+            go_in(node)
+            go_out(node)
+    texts.append('</table>')
+    return set(datalist for _, _, datalist in failures if datalist)
+
+async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Optional[qrbug.action_helpers.ActionReturnValue]:
+    incident = incidents[0]
+
+    what = getattr(qrbug, incident.failure_id.split('-')[1])
+    texts = [f'<title>{incident.failure.value}</title><h1>{incident.failure.value}</h1>']
+    if what is qrbug.Thing:
+        texts.append('<p>Cochez les objets puis cliquez sur le bouton pour générer une feuille de QR codes (lignes × colonne) : ')
+        texts.append(' '.join(
+            f'<div class="button" style="display: inline;" onclick="qr(this)">{html.escape(failure.split("_")[-1])}</div>'
+            for failure in qrbug.Failure['generate_qr'].children_ids
+        ))
+        texts.append('<p id="qr_code_gen_error_field"></p></p>')
+        datalists_to_load = display_tree(texts, request, what,
+            ('thing-comment', 'thing-del-failure', 'thing-add-failure datalist=Failure'))
+    elif what is qrbug.Failure:
+        datalists_to_load = display_tree(texts, request, what,
+                        ('failure-value', 'failure-ask_confirm',
+                        '|||failure-display_type',
+                        '|||failure-remove', 'failure-add datalist=Failure'))
+    elif what is qrbug.User:
+        datalists_to_load = display_tree(texts, request, what,
+            ('|||user-remove', 'user-add datalist=User'))
+    elif what is qrbug.Dispatcher:
+        datalists_to_load = display_tree(texts, request, what,
+            ('dispatcher-selector_id datalist=Selector',
+                'dispatcher-incidents datalist=Selector',
+                'dispatcher-action_id datalist=Action'))
     elif what is qrbug.Action:
-        action = qrbug.Failure['action-python_script']
-        texts.append('<table>')
-        texts.append('<tr><th>Action</th><th>')
-        texts.append(html.escape(action.value))
-        texts.append('</th></tr>')
-        for node in sorted(what.instances.values(), key=lambda e: e.id):
-            texts.append('<tr><td>')
-            texts.append(link_to_object('action', node.id, request))
-            texts.append('<td>')
-            texts.append(qrbug.element(action, node, in_place=True, datalist_id='ActionScripts'))
-            texts.append('</tr>')
-        texts.append('</table>')
-        texts = [qrbug.get_template(request, ("ActionScripts",)).replace('%REPRESENTATION%', ''.join(texts))]
+        datalists_to_load = display_tree(texts, request, what,
+            ('action-python_script datalist=ActionScripts',))
+    elif what is qrbug.Selector:
+        texts.append(f'''
+        <script>
+        var LISTS = {{
+            'datalist_Failure': {list(qrbug.Failure.instances)},
+            'datalist_User': {list(qrbug.User.instances)},
+            'datalist_Selector': {list(qrbug.Selector.instances)},
+            'datalist_Thing': {list(qrbug.Thing.instances)}
+            }};
+        {qrbug.SELECTOR_SCRIPT_FUNCTIONS.read_text()}
+        </script>
+        ''')
+        datalists_to_load = display_tree(texts, request, what,
+            ('selector-concerned-del', 'selector-concerned-add datalist=User'))
     elif what is qrbug.Incident:
         texts.append('''
         <BODY class="real">
@@ -259,46 +196,14 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
                 ''')
             prefix = classe
         texts.append('</table>')
-    elif what is qrbug.Selector:
-        texts.append(f'''
-        <script>
-        var LISTS = {{
-            'Failure': {list(qrbug.Failure.instances)},
-            'User': {list(qrbug.User.instances)},
-            'Selector': {list(qrbug.Selector.instances)},
-            'Thing': {list(qrbug.Thing.instances)}
-            }};
-        {qrbug.SELECTOR_SCRIPT_FUNCTIONS.read_text()}
-        </script>
-        <table><tr><th>ID<th><th><th><th>Concernés<th>Ajouter un concerné</tr><script>
-        ''')
-        selector_concerned_add = qrbug.Failure['selector-concerned-add']
-        selector_concerned_del = qrbug.Failure['selector-concerned-del']
-        for selector in sorted(what.instances.values(), key=lambda e: e.id):
-            users = [
-                f'{qrbug.element(selector_concerned_del, selector, destroy=user)}'
-                for user in selector.concerned
-                ]
-            more = f'''
-            <td>{' '.join(users)}
-            <td>{qrbug.element(selector_concerned_add, selector, in_place=True, datalist_id="User")}
-            '''
-            texts.append('add_selector(')
-            texts.append(json.dumps(selector.id))
-            texts.append(',')
-            texts.append(selector.expression)
-            texts.append(',')
-            texts.append(json.dumps(more))
-            texts.append(');\n')
-        texts.append('</script></table>')
-        texts = [qrbug.get_template(request).replace('%REPRESENTATION%', ''.join(texts))]
+        datalists_to_load = ()
     else:
         for node in what.instances.values() if hasattr(what, 'instances') else what.active:
             try:
                 texts.append(html.escape(node.dump()) + '<br>')
-            except: # pylint: disabled=bare-except
+            except: # pylint: disable=bare-except
                 texts.append(html.escape(str(node)) + '<br>')
-
+        datalists_to_load = ()
+    texts = [qrbug.get_template(request, datalists_to_load).replace('%REPRESENTATION%', ''.join(texts))]
     await request.write(''.join(texts))
-
     return None

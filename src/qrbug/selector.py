@@ -1,6 +1,6 @@
 from typing import Optional
 import ast
-
+import html
 import qrbug
 
 OPERATORS = [' or ', ' and ']
