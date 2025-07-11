@@ -100,6 +100,13 @@ class Selector(qrbug.Editable):
     def selector_concerned_add(cls, selector_id, user_id):
         cls.instances[selector_id].concerned.add(user_id)
 
+    @classmethod
+    def create_if_needed(cls, selector_id):
+        if selector_id in cls.instances:
+            return ''
+        Selector(selector_id, '{"test":"True"}')
+        return f'Pour le moment le sélecteur «{selector_id}» est toujours vrai'
+
     def path(self):
         return f'Utilisateurs concernés par le sélecteur «{html.escape(self.id)}»'
 
