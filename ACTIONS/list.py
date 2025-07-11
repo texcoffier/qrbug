@@ -114,7 +114,8 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
         ))
         texts.append('<p id="qr_code_gen_error_field"></p></p>')
         datalists_to_load = display_tree(texts, request, what,
-            ('thing-comment', 'thing-del-failure', 'thing-add-failure datalist=Failure'))
+            ('thing-comment', 'thing-del-failure', 'thing-add-failure datalist=Failure',
+            '|||thing-remove', 'thing-add datalist=Thing'))
     elif what is qrbug.Failure:
         datalists_to_load = display_tree(texts, request, what,
                         ('failure-value', 'failure-ask_confirm',

@@ -304,12 +304,12 @@ dispatcher_update('edit-dispatcher', action_id='edit_dispatcher', selector_id='e
 # ---------------
 # Edit failure
 # ---------------
-failure_update('failure'             , value="Les pannes"                           )
-failure_update('failure-value'       , value="Intitulé"                             , display_type=Input)
-failure_update('failure-display_type', value="Affichage"                            , display_type=Display)
+failure_update('failure'             , value="Les pannes"       )
+failure_update('failure-value'       , value="Intitulé"         , display_type=Input)
+failure_update('failure-display_type', value="Affichage"        , display_type=Display)
 failure_update('failure-ask_confirm' , value='Message de confirmation<div style="font-weight: normal">Laisser vide pour ne pas<br>demander la confirmation</div>', display_type=Input)
-failure_update('failure-add'         , value="Ajouter un enfant"                    , display_type=Datalist)
-failure_update('failure-remove'      , value="Enlever d'ici"                        , display_type=Button)
+failure_update('failure-add'         , value="Ajouter un enfant", display_type=Datalist)
+failure_update('failure-remove'      , value="Enlever d'ici"    , display_type=Button)
 failure_add('edit', 'failure')
 failure_add('failure', 'failure-value')
 failure_add('failure', 'failure-display_type')
@@ -367,10 +367,14 @@ failure_update('thing'            , value="Chose"          )
 failure_update('thing-comment'    , value="Commentaire"    , display_type=Input)
 failure_update('thing-del-failure', value="Panne à enlever", display_type=Input)
 failure_update('thing-add-failure', value="Panne à ajouter", display_type=Datalist)
+failure_update('thing-add'        , value="Ajouter un fils", display_type=Datalist)
+failure_update('thing-remove'     , value="Enlever d'ici"  , display_type=Button)
 failure_add('edit', 'thing')
 failure_add('thing', 'thing-comment')
 failure_add('thing', 'thing-del-failure')
 failure_add('thing', 'thing-add-failure')
+failure_add('thing', 'thing-add')
+failure_add('thing', 'thing-remove')
 
 action('edit_thing', 'edit_thing.py')
 selector('edit-thing', '''[1,
