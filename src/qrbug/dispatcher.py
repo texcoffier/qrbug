@@ -64,7 +64,7 @@ class Dispatcher(qrbug.Tree):
             qrbug.log_error(retrieved_traceback)
 
         # 'dispatch' erase 'pending_feedback' and it is needed by the action
-        qrbug.append_line_to_journal(f'dispatch({repr(self.id)}, {repr(incident.failure_id)}, {repr(incident.thing_id)}, {repr(self.action_id)}, {int(time.time())})  # {time.strftime("%Y-%m-%d %H:%M:%S")} {len(incidents)} incidents\n')
+        qrbug.append_line_to_journal(f'dispatch({repr(self.id)}, {repr(incident.failure_id)}, {repr(incident.thing_id)}, {repr(self.action_id)}, {int(time.time())}) # {time.strftime("%Y-%m-%d %H:%M:%S")} {len(incidents)} incidents\n')
 
         return return_value
 

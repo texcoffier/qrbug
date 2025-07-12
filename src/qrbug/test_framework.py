@@ -56,6 +56,9 @@ class FakeRequest:
         self.incident = incident
         if create_secret:
             self.secret = qrbug.update_secret('unittest_secret')
+    @staticmethod
+    def update_configuration(line):
+        qrbug.append_line_to_journal(line, qrbug.Journals.DB)
 
 qrbug.TestCase = TestCase
 qrbug.FakeRequest = FakeRequest

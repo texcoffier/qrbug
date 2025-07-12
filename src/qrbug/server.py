@@ -136,6 +136,9 @@ async def register_incident(request: qrbug.Request) -> web.StreamResponse:
     )
     request.write = lambda text: request.response.write(text.encode('utf-8'))
     request.write_newline = lambda *text: request.write('\n'.join(text))
+    request.update_configuration = lambda line: qrbug.append_line_to_journal(
+        f'{line} # {request.report.login} {time.strftime("%Y-%m-%d %H:%M:%S")} {request.report.ip}\n',
+        qrbug.Journals.DB)
     await request.response.prepare(request)
 
     # Dispatchers

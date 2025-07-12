@@ -14,8 +14,7 @@ async def run(incidents, request):
             if value == qrbug.Action[selector].python_script:
                 feedback = f"Le script Python de l'action «{selector}» est inchangé.\n"
             else:
-                qrbug.append_line_to_journal(
-                        f'action({repr(selector)}, {repr(value)})\n', qrbug.Journals.DB)
+                request.update_configuration(f'action({repr(selector)}, {repr(value)})')
                 feedback = f"L'action «{selector}» lance maintenant le script «{html.escape(value)}»\n"
         else:
             feedback = f"Le script Python «{html.escape(value)}» n'existe pas.\n"

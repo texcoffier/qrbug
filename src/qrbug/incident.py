@@ -56,7 +56,6 @@ class Incident:
         """
         Factory method, creates a new incident and stores it within the incident instances
         """
-        key = (thing_id, failure_id)
         if thing_id not in cls.instances:
             cls.instances[thing_id] = {}
         if failure_id not in cls.instances[thing_id]:

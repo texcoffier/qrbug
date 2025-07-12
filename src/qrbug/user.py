@@ -19,10 +19,10 @@ class User(qrbug.Tree):
         return '()'
 
     @classmethod
-    async def try_create_user(cls, login):
+    async def try_create_user(cls, request, login):
         if CHECK_VALID_LOGIN and (await qrbug.get_mail_from_login(login)) == qrbug.DEFAULT_EMAIL_TO:
             return f"<b>ERREUR :</b> L'utilisateur «{html.escape(login)}» n'a pas d'adresse mail valide, et ne sera donc pas créé."
-        qrbug.append_line_to_journal(f'user_update({repr(login)})\n', qrbug.Journals.DB)
+        request.update_configuration(f'user_update({repr(login)})')
 
 
 qrbug.User = User
