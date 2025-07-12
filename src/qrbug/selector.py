@@ -40,6 +40,7 @@ TESTS = {
     'true': '{attr}',
     'false': 'not({attr})',
     'True': 'True',
+    'False': 'False',
 
     # Filtering tests
     'is_for_user': 'incident.is_for_user({attr})',
@@ -104,8 +105,8 @@ class Selector(qrbug.Editable):
     def create_if_needed(cls, selector_id):
         if selector_id in cls.instances:
             return ''
-        Selector(selector_id, '{"test":"True"}')
-        return f'Pour le moment le sélecteur «{selector_id}» est toujours vrai'
+        Selector(selector_id, '{"test":"False"}')
+        return f'Pour le moment le sélecteur «{selector_id}» est toujours faux'
 
     def path(self):
         return f'Utilisateurs concernés par le sélecteur «{html.escape(self.id)}»'

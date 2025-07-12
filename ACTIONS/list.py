@@ -125,6 +125,11 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
         datalists_to_load = display_tree(texts, request, what,
             ('|||user-remove', 'user-add datalist=User'))
     elif what is qrbug.Dispatcher:
+        dispatcher_new = qrbug.Failure['dispatcher-new']
+        texts.append('<table><tr><td>')
+        texts.append(dispatcher_new.value)
+        texts.append(qrbug.element(dispatcher_new, qrbug.Thing['GUI'], in_place=True))
+        texts.append('</tr></table>')
         datalists_to_load = display_tree(texts, request, what,
             ('dispatcher-selector_id datalist=Selector',
                 'dispatcher-incidents datalist=Selector',

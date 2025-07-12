@@ -12,8 +12,8 @@ class Dispatcher(qrbug.Tree):
     instances: dict[DispatcherId, "Dispatcher"] = {}
 
     # Default values
-    action_id   : str = 'none'  # By default, an action that does nothing
-    selector_id : str = 'true'  # By default, a selector that is always true
+    action_id   : str = 'echo'  # By default, list the selected incidents
+    selector_id : str = 'false' # By default, a selector that is always false
     incidents   : str = ''      # Selector ID to compute incidents list. If empty : current incident
 
     def init(self):

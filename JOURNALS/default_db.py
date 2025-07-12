@@ -8,7 +8,6 @@ import pathlib
 # Link the action ID to the filename containing the action.
 # The Python file containing the action is reloaded on any usage.
 # So modification on the file are instantly taken into account.
-action('none'            ,'none.py')              # Do nothing
 action('close'           ,'close.py')             # The failure was fixed
 action('echo'            ,'echo.py')              # Display incidents in user friendly form
 
@@ -39,6 +38,7 @@ user_add('admin-thing', 'admin')
 # -----------------
 
 selector('true'            , '{                      "test":"True"}')
+selector('false'           , '{                      "test":"False"}')
 selector('root'            , '{"class":"SourceUser", "test":"in_or_equal", "value": "root"}')
 selector('admin'           , '{"class":"SourceUser", "test":"in_or_equal", "value": "admin"}')
 selector('admin-backtrace' , '{"class":"SourceUser", "test":"in_or_equal", "value": "admin-backtrace"}')
@@ -289,10 +289,12 @@ failure_update('dispatcher', value="Les dispatchers")
 failure_update('dispatcher-action_id', value="ID de l'action lancée", display_type=Datalist)
 failure_update('dispatcher-selector_id', value="ID du sélecteur", display_type=Datalist)
 failure_update('dispatcher-incidents', value="ID du sélecteur d'incidents", display_type=Datalist)
+failure_update('dispatcher-new', value="Créer l'automatisme : ", display_type=Input)
 failure_add('edit', 'dispatcher')
 failure_add('dispatcher', 'dispatcher-action_id')
 failure_add('dispatcher', 'dispatcher-selector_id')
 failure_add('dispatcher', 'dispatcher-incidents')
+failure_add('dispatcher', 'dispatcher-new')
 
 action('edit_dispatcher', 'edit_dispatcher.py')
 selector('edit-dispatcher', '''[1,

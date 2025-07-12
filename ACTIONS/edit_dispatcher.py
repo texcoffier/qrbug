@@ -32,6 +32,12 @@ async def run(incidents, request):
         qrbug.append_line_to_journal(
                 f'dispatcher_update({repr(dispatcher_id)}, incidents={repr(value)})\n', qrbug.Journals.DB)
         feedback = f"Le nouveau selecteur d'incidents de «{dispatcher_id}» est «{html.escape(value)}».\n<br>{message}"
+    elif incident.failure_id == 'dispatcher-new':
+        if value in qrbug.Dispatcher.instances:
+            feedback = "Cet automatisme existe déjà"
+        else:
+            qrbug.append_line_to_journal(f'dispatcher_update({repr(value)})\n', qrbug.Journals.DB)
+            feedback = "<script>window.top.location.reload()</script>"
     else:
         feedback = "Unexpected edit failure for Dispatcher\n"
     await request.write('<!DOCTYPE html>\n' + feedback)
