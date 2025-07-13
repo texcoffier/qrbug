@@ -1,4 +1,4 @@
-<meta charset="utf-8"/>
+<meta charset="utf-8" />
 <style>
     BODY {
         font-family: sans-serif
@@ -32,15 +32,25 @@
         width: 30em;
         text-align: justify;
     }
+
     TD:nth-child(2) {
         width: 40em;
         text-align: justify;
+    }
+
+    .doc {
+        width: 40em;
+        text-align: justify;
+    }
+
+    .doc LI {
+        margin-top: 0.5em;
     }
 </style>
 <script>
     function go(url) {
         var secret = location.search.split('secret=')[1];
-        if(secret) {
+        if (secret) {
             secret = secret.split('&')[0];
             console.log('./' + url + (url.includes('?') ? '&' : '?') + 'secret=' + secret);
             window.open('./' + url + (url.includes('?') ? '&' : '?') + 'secret=' + secret);
@@ -49,6 +59,26 @@
             window.open('http://qrbug.univ-lyon1.fr:8080/' + url);
     }
 </script>
+<h1>Présentation de QRBug</h1>
+FAQ administrateur :
+<ul>
+    <li><a href="#print">Imprimer des QRCodes</a>.</li>
+    <li><a href="#format">Format des étiquettes QRCodes</a>.</li>
+    <li><a href="#failure">Gérer les pannes possibles (interface utilisateur)</a>.</li>
+    <li><a href="#thing">Gérer les objets</a>.</li>
+    <li><a href="#authentication">Forcer l'authentification pour déclarer une panne</a>.</li>
+    <li><a href="#edt">Emploi du temps d'une salle</a>.</li>
+    <li><a href="#security">Sécurité</a>.</li>
+</ul>
+<p>
+    FAQ réparateur :
+</p>
+<p>
+    FAQ administrateur serveur :
+</p>
+<p>
+    Architecture globale :
+</p>
 <table>
     <tr>
         <th>
@@ -68,8 +98,7 @@
         <td>
             <p>
                 <a href="javascript:go('?what=thing&thing-id=GUI&failure-id=list-Thing')">
-                    Imprimer les QRCodes.
-                </a>
+                    Imprimer les QRCodes</a>.
             </p>
     </tr>
     <tr>
@@ -125,8 +154,7 @@
         <td>
             <p>
                 <a href="javascript:go('?what=thing&thing-id=GUI&failure-id=list-Failure')">
-                    Indiquer si la confirmation est nécessaire.
-                </a>
+                    Indiquer si la confirmation est nécessaire</a>.
             </p>
     </tr>
     <tr>
@@ -138,13 +166,11 @@
         <td>
             <p>
                 <a href="javascript:go('?what=thing&thing-id=GUI&failure-id=list-Selector')">
-                    Augmenter la sélecteur «require_login».
-                </a>
+                    Augmenter la sélecteur «require_login»</a>.
             </p>
             <p>
                 <a href="javascript:go('?what=thing&thing-id=GUI&failure-id=list-User')">
-                    Modifier les groupes d'utilisateurs.
-                </a>
+                    Modifier les groupes d'utilisateurs</a>.
             </p>
     </tr>
     <tr>
@@ -193,18 +219,15 @@
         <td>
             <p>
                 <a href="javascript:go('?what=thing&thing-id=GUI&failure-id=list-Dispatcher')">
-                    Modifier les automatismes
-                </a>
+                    Modifier les automatismes</a>.
             </p>
             <p>
                 <a href="javascript:go('?what=thing&thing-id=GUI&failure-id=list-Action')">
-                    Modifier les actions
-                </a>
+                    Modifier les actions</a>.
             </p>
             <p>
                 <a href="javascript:go('?what=thing&thing-id=GUI&failure-id=list-Selector')">
-                    Modifier les personnes concernées par un incident
-                </a>
+                    Modifier les personnes concernées par un incident</a>.
             </p>
     </tr>
     <tr>
@@ -215,7 +238,7 @@
         <td>
             <p>
                 <a href="javascript:go('?thing-id=GUI&failure-id=personnal-for-me')">
-                    Les incidents que je dois traiter</a>
+                    Les incidents que je dois traiter</a>.
             </p>
     </tr>
     <tr>
@@ -258,3 +281,226 @@
         <td>
     </tr>
 </table>
+<div class="doc">
+    <h2><a name="print">Imprimer des QRCodes</a></h2>
+    <ul>
+        <li> Vous allez sur la
+            <a href="javascript:go('?what=thing&thing-id=GUI&failure-id=list-Thing')">
+                liste des objets</a>.
+        </li>
+        <li> Vous cocher les objets pour lesquels vous voulez imprimer le QRCode.</li>
+        <li> Les objets contenus sont automatiquement tous sélectionnés.</li>
+        <li> Vous cliquez sur le bouton indiquant le format de la page d'étiquettes.</li>
+        <li> Vous imprimez (sans marge, ni recto verso).</li>
+    </ul>
+    <h2><a name="format">Format des étiquettes QRCodes</a></h2>
+    <ul>
+        <li> Vous allez sur la
+            <a href="javascript:go('?what=thing&thing-id=GUI&failure-id=list-Failure')">
+                liste des pannes</a>.
+        </li>
+        <li> Vous cherchez «generate_qr»</li>
+        <li> Pour enlever un format de page d'étiquettes : vous cliquez sur «×»</li>
+        <li> Pour ajouter un format de page d'étiquettes :
+            <ul>
+                <li> Vous vous mettez sur la ligne «generate_qr»</li>
+                <li> Vous indiquez le nouveau format «generate_qr_LIGNE×COLONNE»<br>
+                    <b>Attention ce n'est pas un «x» mais une croix «×»</b><br>
+                    Actuellement limité à 10 lignes ou colonnes.<br>
+                    Vous n'oubliez pas de valider avec la touche «Entrée».
+                </li>
+            </ul>
+        </li>
+        <li> Les 2 lignes de message affichées au dessus du QRCode
+            peuvent être modifiées avec «qrcode_line_1» et «qrcode_line_2»
+            sur la même page.
+        </li>
+    </ul>
+    <h2><a name="failure">Gérer les pannes possibles<br>(interface utilisateur)</a></h2>
+    <p>
+        Les pannes sont définies sous la forme d'un arbre.
+        L'arbre est parcouru pour générer l'interface utilisateur
+        affichée quand l'utilisateur scan un QRCode.
+    </p>
+    <ul>
+        <li>Vous allez sur la
+            <a href="javascript:go('?what=thing&thing-id=GUI&failure-id=list-Failure')">
+                liste des pannes</a>.
+        </li>
+        <li>
+            Vous modifiez l'arbre :
+            <ul>
+                <li> En cliquant sur «×» pour enlever une panne de l'endroit où elle est
+                    (cela ne la détruit pas).</li>
+                <li> En indiquant un nom de panne à ajouter comme fils.
+                    Si la panne n'existe pas elle est créée.</li>
+                <li> La même panne peut être à plusieurs endroits.</li>
+            </ul>
+        </li>
+        <li>
+            Vous modifiez la façon dans la panne est affichée.
+            <ul>
+                <li> Le texte d'explication associé à la panne.</li>
+                <li> Si un message de confirmation est défini alors
+                    il sera affiché à l'utilisateur avant qu'il ne puisse
+                    valider la panne.
+                </li>
+                <li> Le type d'affichage de la panne.
+                    <ul>
+                        <li> «text» un simple texte informatif ne permettant pas d'indiquer
+                            une panne.
+                            Il est recommandé d'en mettre un sur les noeuds
+                            de l'arbre pour structurer l'affichage de l'utilisateur.
+                        </li>
+                        <li> «HTML» comme le texte, mais cela permet de mettre
+                            des balises HTML pour par exemple faire un lien
+                            vers une documentation.
+                        </li>
+                        <li> «button» un bouton qui envoit un rapport de panne
+                            quand il est cliqué.
+                        </li>
+                        <li>
+                            «textarea» un bouton déclenchant l'affichage d'une zone de saisie
+                            «Précisez le problème :»
+                            qui permet de donner des indications avant
+                            de déclarer la panne.
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </li>
+    </ul>
+    <h2><a name="thing">Gérer les objets</a></h2>
+    <p>
+        Les objets sont définies sous la forme d'un arbre.
+        L'organisation en arbre permet :
+    </p>
+    <ul>
+        <li> D'imprimer facilement les QRCode d'une salle ou d'un bâtiment.</li>
+        <li> D'avoir la localisation géographique des objets.</li>
+        <li> De pouvoir séparer les droits d'aministration géographiquement.</li>
+    </ul>
+    <p>
+        Modification des objets.
+    </p>
+    <ul>
+        <li>Vous allez sur la
+            <a href="javascript:go('?what=thing&thing-id=GUI&failure-id=list-Thing')">
+                liste des pannes</a>.
+        </li>
+        <li>
+            Vous modifiez l'arbre :
+            <ul>
+                <li> En cliquant sur «×» pour enlever l'objet de l'endroit où il est
+                    (cela ne le détruit pas).</li>
+                <li> En indiquant un nom d'objet à ajouter comme fils.
+                    Si l'objet n'existe pas il est créée.</li>
+                <li> Le même objet peut être à plusieurs endroits afin de simplifier
+                    la gestion.
+                </li>
+            </ul>
+        </li>
+        <li>
+            Un commentaire est associé à l'objet,
+            il est pour le moment inutilisé par QRBug.
+        </li>
+        <li>
+            On peut demander à afficher la liste des incidents déclarés
+            et fixés pour un objet.
+        </li>
+        <li>
+            On peut gérer une liste de pannes associées à un objet.
+            Pour les ordinateurs, il y a des hiérarchies de pannes standards.
+            Mais pour les salles, elles sont très variées (tableaux noir, blanc,
+            vidéo projecteur, wifi, boucle audio...) et il est plus simple
+            d'ajouter les pannes particulières une par une à la salle.
+            (l'autre possibilité est de mettre un QRCode par objet de la salle,
+            mais pour le Wifi c'est compliqué).
+        </li>
+    </ul>
+    <h2><a name="authentication">Forcer l'authentification pour déclarer une panne</a></h2>
+    <ul>
+        <li>Vous allez sur la
+            <a href="javascript:go('?what=thing&thing-id=GUI&failure-id=list-Selector')">
+                liste des sélecteurs</a>.
+        </li>
+        <li>
+            Pour le sélecteur «require-login»
+        </li>
+        <li>
+            Vous cliquez sur «+»
+        </li>
+        <li>
+            Pour imposer la connection pour déclarer une panne quelconque
+            sur un objet :<br>
+            Vous remplacez «Toujours vrai» par «L'objet modifié est dans le groupe»
+            et vous indiquez le groupe d'objet.
+        </li>
+        <li>
+            Pour imposer la connection pour déclarer une panne sur un objet quelconque :<br>
+            Vous remplacez «Toujours vrai» par «La panne déclenchée est dans le groupe»
+            et vous indiquez le groupe de pannes (ou la panne).
+        </li>
+        <li>
+            Pour imposer des règles plus complexes,
+            il faut créer de nouveaux sélecteurs spécifiques
+            comme par exemple «panne-souris-nautibus»
+            qui fera un «ET» entre le lieu et la panne.
+        </li>
+    </ul>
+    <h2><a name="edt">Emploi du temps d'une salle</a></h2>
+    <p>
+        Ceci explique tout ce qu'il faut faire
+        pour afficher l'emploi du temps d'une salle.
+    </p>
+    <ul>
+        <li> Mettez le bon script d'affichage d'emploi du temps
+            dans «<tt>ACTIONS/edt.py</tt>»
+            <pre>async def run(_incidents, request):
+    await request.write(f'Emploi du temps de {request.incident.thing_id}')
+</pre>
+            La modification de ce fichier est instantanément prise en compte.
+        </li>
+        <li> <a href="javascript:go('?what=thing&thing-id=GUI&failure-id=list-Dispatcher')">Créer un automatisme</a>
+            «edt» :
+            <ul>
+                <li> Condition déclenchante : «edt» à la place de «false»</li>
+                <li> Action à lancer : «edt» à la place de «echo»</li>
+            </ul>
+        </li>
+        <li> <a href="javascript:go('?what=thing&thing-id=GUI&failure-id=list-Selector')">Mettre à jour le sélecteur
+                d'incident</a> «edt»
+            <ul>
+                <li> Remplacer «Toujours faux» par «La panne déclenchée est»</li>
+                <li> Indiquer «edt» comme panne.</li>
+            </ul>
+        </li>
+        <li> <a href="javascript:go('?what=thing&thing-id=GUI&failure-id=list-Failure')">Créer la panne</a>
+            <ul>
+                <li> Ajouter «edt» au groupe «backoffice-nologin» afin qu'elle
+                    soit immédiatement clôturée car ce n'est pas une vraie panne
+                    et qu'elle ne nécessite pas d'authentification.</li>
+                <li> Réactualiser la page.</li>
+                <li> Mettre le bon intitulé à la panne : «Emploi du temps»,
+                    n'oubliez pas de valider en appuyant sur «Entrée».</li>
+                <li> Indiquer que l'affichage est un bouton.</li>
+                <li> Ajouter la panne «edt» aux pannes associées aux salles.</li>
+            </ul>
+        </li>
+        <li> Vérifier que tout fonctionne en allant sur une salle.</li>
+    </ul>
+    <h2><a name="security">Sécurité</a></h2>
+    <p>
+        Le principe est simple :
+    </p>
+    <ul>
+        <li> N'importe qui peut accéder à
+            la liste des pannes d'un objet sans authentification.</li>
+        <li> Cette action ne déclenche aucune action coté serveur
+            elle est donc sans danger.</li>
+        <li> La déclaration d'une panne (donc d'une action quelconque)
+            nécessite <b>obligatoirement</b> le passage par la liste
+            des pannes.
+            Elle ne peut donc pas être déclenché par la lecture d'un QRCode.
+        </li>
+    </ul>
