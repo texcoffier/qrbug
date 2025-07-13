@@ -13,7 +13,7 @@ FailureId: TypeAlias = str
 class DisplayTypes(enum.Enum):
     text     = enum.auto()
     button   = enum.auto()
-    redirect = enum.auto()
+    html     = enum.auto()
     textarea = enum.auto()
     input    = enum.auto()
     boolean  = enum.auto()
@@ -32,9 +32,9 @@ def element(failure: "Failure", thing, in_place=False, destroy=None, datalist_id
     common = f'failureid="{html.escape(failure.id)}" thingid="{html.escape(thing.id)}" what="{thing.__class__.__name__.lower()}" ask_confirm="{ask_confirm}"'
     failure_value = html.escape(force_value) if force_value else failure.value
     if display_type == DisplayTypes.text:
-        return  f'<p {common}>{failure_value}</p>'
-    if display_type == DisplayTypes.redirect:
-        return  f'<a {common} href="{failure.value}">{failure_value}</a>'
+        return f'<p>{html.escape(failure_value)}</p>'
+    if display_type == DisplayTypes.html:
+        return failure_value
     if display_type == DisplayTypes.button:
         destroy_val = ''
         if destroy:
@@ -145,20 +145,8 @@ class Failure(qrbug.Tree):
                     f"[ask_confirm?={'YES' if current_failure.ask_confirm else 'NO '}]\t"
                 )
             representation.append("\n")
-
-            # We sort by display type then by value, so that the text failures are
-            # always shown first (headers), followed by the buttons, the redirects, and
-            # the input fields (which are usually just the "Other" answer)
-            # We have to sort this instead of just using the loop as-is because sets have no defined order,
-            # which means if we don't sort this, the result is going to come out different every time
-            child_failures_list = [
-                Failure[failure]
-                for failure in current_failure.children_ids
-            ]
-            child_failures_list.sort(key=lambda e: (e.display_type.value, e.value))
-
-            for child_failure in child_failures_list:
-                recursively_build_failures_list(child_failure.id, depth + 1)
+            for failure_id in current_failure.children_ids:
+                recursively_build_failures_list(failure_id, depth + 1)
 
         recursively_build_failures_list(self.id)
         return ''.join(representation)

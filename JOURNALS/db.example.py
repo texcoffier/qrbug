@@ -11,7 +11,7 @@ failure_update("PC_NO_BOOT_NO_POWER",     value="... et la diode sur le PC ne cl
 failure_update("PC_NO_BOOT_OTHER", value="Autre chose ?", display_type=Textarea, ask_confirm=True)
 failure_update("PC_NO_BOOT_BLACK_SCREEN_UNPLUGGED_WIRE", value="... et un câble est débranché", display_type=Button, ask_confirm=True)
 failure_update("PC_NO_BOOT_BLACK_SCREEN_PLUGGED_WIRE", value="... et je ne peux pas voir les câbles", display_type=Button, ask_confirm=True)
-failure_update("UNIV_WEBSITE", value="https://www.univ-lyon1.fr/", display_type=Redirect)
+failure_update("UNIV_WEBSITE", value='<a href="https://example.com">Web site</a>', display_type=HTML)
 failure_add("PC_NO_BOOT", "PC_NO_BOOT_BIOS_ERROR")
 failure_add("PC_NO_BOOT", "PC_NO_BOOT_BLACK_SCREEN")
 failure_add("PC_NO_BOOT_BLACK_SCREEN", "PC_NO_BOOT_BLACK_SCREEN_PLUGGED_WIRE")

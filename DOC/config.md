@@ -28,9 +28,9 @@ Each of these parameters *(besides `failure_id`)* is optional if you want to mod
 
 - **Value** (string) : The written value that will be displayed when presenting the failure.
 - **Display type** (DisplayType) : One of 4 available display types when presenting the failure to the user
-  - `Text` : Just some text ; `value` will be presented as simple raw text. _This failure type cannot be manually triggered by a user._
+  - `Text` : Just some raw text; `value` will be displayed the text itself. _This failure type cannot be manually triggered by a user._
+  - `HTML` : Just some raw HTML; `value` will be displayed as HTML.  _This failure type cannot be manually triggered by a user._
   - `Button` : A button the user can click to report an incident ; `value` will be the text inside the button. 
-  - `Redirect` : A link to something the user might want to know about ; `value` will be the link itself, e.g. https://example.com. _This failure type cannot be manually triggered by a user._
   - `Input` : A one line input box the user can write into to report an incident ;
   - `Textarea` : A multi-line box the user can write into to report an incident ;
 - **Ask confirm** (bool) : Whether to present the user with a confirmation box before submitting the incident report for this failure.
@@ -47,7 +47,7 @@ failure_update("PC_NO_BOOT_NO_POWER",     value="... et la diode sur le PC ne cl
 failure_update("PC_NO_BOOT_OTHER", value="Autre chose ?", display_type=Input, ask_confirm=True)
 failure_update("PC_NO_BOOT_BLACK_SCREEN_UNPLUGGED_WIRE", value="... et un câble est débranché", display_type=Button, ask_confirm=True)
 failure_update("PC_NO_BOOT_BLACK_SCREEN_PLUGGED_WIRE", value="... et je ne peux pas voir les câbles", display_type=Button, ask_confirm=True)
-failure_update("UNIV_WEBSITE", value="https://www.univ-lyon1.fr/", display_type=Redirect)
+failure_update("UNIV_WEBSITE", value='<a href="https://example.com">Web site</a>', display_type=HTML)
 failure_add("PC_NO_BOOT", "PC_NO_BOOT_BIOS_ERROR")
 failure_add("PC_NO_BOOT", "PC_NO_BOOT_BLACK_SCREEN")
 failure_add("PC_NO_BOOT_BLACK_SCREEN", "PC_NO_BOOT_BLACK_SCREEN_PLUGGED_WIRE")

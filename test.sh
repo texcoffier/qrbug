@@ -55,11 +55,14 @@ if [ "$OK" = '0' ]; then
   exit 1
 fi
 echo -n " -> loaded"
-if grep -q 'failureid="test" thingid="test_thing" what="thing"' TESTS/xxx-page-content
+if grep -q '<p>Test</p>' TESTS/xxx-page-content
 then
   echo " -> content OK"
 else
-  echo " -> content is BAD"
+  echo " -> content is BAD (cat TESTS/xxx-page-content)"
+  echo '---------------------'
+  cat TESTS/xxx-page-content
+  echo '---------------------'
   EXIT_CODE=1
 fi
 
@@ -97,6 +100,9 @@ then
       echo "OK"
     else
       echo "FAIL"
+      echo '---------------------'
+      cat TESTS/xxx-page-content
+      echo '---------------------'
       EXIT_CODE=5
     fi
   else

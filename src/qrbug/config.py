@@ -88,7 +88,7 @@ qrbug.CONFIGS = {
     "DisplayTypes"     : qrbug.DisplayTypes, # DEPRECATED
     "Text"             : qrbug.DisplayTypes.text,
     "Button"           : qrbug.DisplayTypes.button,
-    "Redirect"         : qrbug.DisplayTypes.redirect,
+    "HTML"             : qrbug.DisplayTypes.html,
     "Textarea"         : qrbug.DisplayTypes.textarea,
     "Input"            : qrbug.DisplayTypes.input,
     "Boolean"          : qrbug.DisplayTypes.boolean,
