@@ -158,10 +158,11 @@
                 element.getAttribute('what'),
                 element.getAttribute('predefined_value'),
                 element.getAttribute('ask_confirm'),
+                Number(element.getAttribute('in_place'))
             ] ;
         }
-        function register_incident(event_element, in_place) {
-            let [element, thingid, failureid, what, predefined_value, ask_confirm] = get_infos(event_element);
+        function register_incident(event_element) {
+            let [element, thingid, failureid, what, predefined_value, ask_confirm, in_place] = get_infos(event_element);
             let url = './?thing-id=' + thingid
                 + '&failure-id=' + failureid
                 + '&what=' + what
@@ -222,52 +223,27 @@
             }
             return false;
         }
-        const ASK_VALUE_TYPE_TEXTAREA = 0;
-        const ASK_VALUE_TYPE_INPUT    = 1;
-        const ASK_VALUE_TYPE_DATALIST = 2;
-        const ASK_VALUE_TYPE_CUSTOM   = 3;
-        function ask_value(element, in_place, ask_value_type = ASK_VALUE_TYPE_TEXTAREA, datalist_id = null, custom_html = '') {
+        function html(txt) {
+            return txt.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
+        }
+
+        function ask_value(element) {
             if (document.getElementById('popup')) {
                 return;
-            }
-            let ASK_VALUE_INPUT_VALUE = '';
-            const INPUT_COMMON_CSS = "width: 100%; height: 1.2em; font-size: 120%; margin-bottom: 1em; border-right: 1px solid #888; border-radius: 0.2em;";
-            switch (ask_value_type) {
-                case ASK_VALUE_TYPE_INPUT:
-                    ASK_VALUE_INPUT_VALUE = `<input type="text" id="input" autocomplete="off" style="${INPUT_COMMON_CSS}"/>`;
-                    break;
-                case ASK_VALUE_TYPE_DATALIST:
-                    ASK_VALUE_INPUT_VALUE = `<input type="text" id="input" autocomplete="off" style="${INPUT_COMMON_CSS}" list="datalist_${datalist_id}"`
-                                          + `onchange="const warningParagraph = this.parentElement.querySelector('.warning_not_in_datalist');`
-                                          + ` warningParagraph.style.display = (isValueInDatalist(this.value, '${datalist_id}')) ? 'none' : 'block';"/>`
-                                          + `<p class="warning_not_in_datalist" style="display: none; color: rgb(140, 0, 0);">`
-                                          + `ATTENTION : Cette valeur n'est pas dans la liste des valeurs par défaut !</p>`;
-                    break;
-                case ASK_VALUE_TYPE_CUSTOM:
-                    ASK_VALUE_INPUT_VALUE = custom_html;
-                    break;
-                case ASK_VALUE_TYPE_TEXTAREA:
-                default:
-                    ASK_VALUE_INPUT_VALUE =   '<p>Précisez le problème :</p>'
-                                            + '<textarea id="input" autocomplete="off"'
-                                            + '    style="width:100%; font-size:120%; height:5em; margin-bottom: 1em;">'
-                                            + '</textarea>';
-                    break;
             }
             let popup = document.createElement('DIALOG');
             popup.id = 'popup';
             popup.method = "dialog";
             popup.onclose = close_dialog;
-            txt = '<b>' + element.innerHTML + '</b><br>'
-                + ASK_VALUE_INPUT_VALUE
-                + '<div class="button" onclick="close_dialog(event)" style="font-size:120%;float:left">Annuler</div>'
-                + '<div class="button" onclick="register_incident(this,' + in_place + ');close_dialog(event)" style="font-size:120%;float:right">Envoyer</div>';
-            popup.innerHTML = txt;
+            popup.innerHTML = `<b>${element.innerHTML}</b><br>
+                <p>Précisez le problème :</p>
+                <textarea id="input" autocomplete="off"
+                    style="width:100%; font-size:120%; height:5em; margin-bottom: 1em;"
+                ></textarea>
+                <div class="button" onclick="close_dialog(event)" style="font-size:120%;float:left">Annuler</div>
+                <div class="button" onclick="register_incident(this);close_dialog(event)"
+                    style="font-size:120%;float:right">Envoyer</div>`
             element.appendChild(popup);
-            let inputField = document.getElementById('input');
-            if (inputField) {
-                inputField.textContent = element.value;
-            }
             popup.showModal();
         }
 

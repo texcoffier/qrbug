@@ -99,7 +99,3 @@ qrbug.DispatcherId = DispatcherId
 qrbug.dispatcher_update = Dispatcher.update_attributes
 qrbug.dispatcher_del = dispatcher_del
 qrbug.dispatch = dispatch
-
-if __name__ == "__main__":
-    dispatcher_update("0", selector_id="0")
-    print(Dispatcher["0"].dump())

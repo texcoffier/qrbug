@@ -44,53 +44,6 @@ class Thing(qrbug.Tree):
             return qrbug.get_template().replace("%REPRESENTATION%", ''.join(texts))
         return ''.join(texts)
 
-    # @property
-    # def failure(self) -> Optional[qrbug.Failure]:
-    #     return qrbug.Failure[self.failure_id]
-
-    def get_html(self, is_full_page: bool = False) -> str:
-        """
-        Returns an HTML representation of this Thing and its linked Failure.
-        :param is_full_page: If true, will return a full page based on 'STATIC/report_failure.html'
-        :return: The HTML representation of this Thing.
-        """
-        if is_full_page:
-            with qrbug.REPORT_FAILURE_TEMPLATE as template_file:
-                html_template = template_file.read_text()
-
-        done = set()
-        representation: list[str] = [
-            '<div>',
-            '  <ul>',
-            f'    <li>Commentaire : {html.escape(self.comment) if self.comment else "[NON REMPLI]"}</li>',
-            f'    <li>ID : {html.escape(self.id) if self.id is not None else "[NON REMPLI]"}</li>',
-            f'    <li>ID des pannes : {html.escape(repr(self.failure_ids))}</li>',
-            '  </ul>',
-            '</div>',
-            '<div>',
-            *(
-              qrbug.Failure[failure].get_hierarchy_representation_html(
-                    self.id, use_template=False, done=done)
-              for failure_id in self.failures_ids
-             ),
-            '</div>',
-            '<div>',
-        ]
-        if is_full_page:
-            representation.append(
-                f'  <div failureid="generate_qr" thingid="{self.id}" class="button" onclick="register_incident(this)"><BOX>Générer un QR code pour cet objet</BOX></div>'
-            )
-        else:
-            representation.append(
-                f'  <a href="./?thing-id={self.id}&failure-id=generate_qr&additional-info={self.id}">Générer un QR code pour cet objet</a>'
-            )
-        representation.append('</div>')
-
-        if is_full_page:
-            return html_template.replace("%REPRESENTATION%", ''.join(representation))
-        else:
-            return ''.join(representation)
-
     @classmethod
     def add_failure(cls, thing_id, failure_id):
         failures = cls.instances[thing_id].failure_ids
@@ -117,7 +70,3 @@ qrbug.thing_remove = Thing.remove_parenting_link
 qrbug.thing_add = Thing.add_parenting_link
 qrbug.thing_add_failure = Thing.add_failure
 qrbug.thing_del_failure = Thing.del_failure
-
-if __name__ == "__main__":
-    thing_update("0", comment="This is a comment")
-    print(Thing["0"].dump())

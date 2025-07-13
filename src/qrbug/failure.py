@@ -11,14 +11,14 @@ FailureId: TypeAlias = str
 
 
 class DisplayTypes(enum.Enum):
+    # For user report
     text     = enum.auto()
     button   = enum.auto()
     html     = enum.auto()
     textarea = enum.auto()
+    # For object attribute editing
     input    = enum.auto()
-    boolean  = enum.auto()
     display  = enum.auto()
-    checkbox = enum.auto()
     datalist = enum.auto()
 
 
@@ -29,71 +29,67 @@ def element(failure: "Failure", thing, in_place=False, destroy=None, datalist_id
     """
     display_type = failure.display_type
     ask_confirm = html.escape(failure.ask_confirm or '')
-    common = f'failureid="{html.escape(failure.id)}" thingid="{html.escape(thing.id)}" what="{thing.__class__.__name__.lower()}" ask_confirm="{ask_confirm}"'
-    failure_value = html.escape(force_value) if force_value else failure.value
-    if display_type == DisplayTypes.text:
-        return f'<p>{html.escape(failure_value)}</p>'
-    if display_type == DisplayTypes.html:
-        return failure_value
-    if display_type == DisplayTypes.button:
-        destroy_val = ''
-        if destroy:
-            destroy_val = f' predefined_value="{html.escape(destroy)}" style="padding:0px"'
-        return f'<div {common}{destroy_val} class="button" onclick="register_incident(this,{int(in_place)})">{failure_value}</div>'
+    common = f'failureid="{html.escape(failure.id)}"' \
+             f' thingid="{html.escape(thing.id)}"' \
+             f' what="{thing.__class__.__name__.lower()}"' \
+             f' ask_confirm="{ask_confirm}"' \
+             f' in_place="{int(in_place)}"'
 
-    value = ''
-    if failure.inside('edit') and '-' in failure.id:
-        attr = getattr(thing, failure.id.split('-', 1)[1], None)
-        if attr is None:
-            value = ''
-        else:
-            value = html.escape(str(attr))
-    in_place = int(in_place)
-    if display_type == DisplayTypes.boolean:
-        element = f'<select {common} class="button" onchange="register_incident(this,{in_place})"><option value="False">Non</option><option value="True">Oui</option></select></div>'
-        if attr:
-            element = element.replace('value="True"', 'value="True" selected')
-        else:
-            element = element.replace('value="False"', 'value="True" selected')
-        if not in_place:
-            element = f'<div class="input">{failure_value} : {element}</div>'
-        return element
+    ########################################
+    # User interface for reporting failures
+    ########################################
+
+    failure_value = failure.value
+    if not in_place:
+        if display_type == DisplayTypes.text:
+            return f'<p>{html.escape(failure_value)}</p>'
+        if display_type == DisplayTypes.html:
+            return failure_value
+        if display_type == DisplayTypes.button:
+            return f'<div {common} class="button" onclick="register_incident(this)">{failure_value}</div>'
+        if display_type == DisplayTypes.textarea:
+            return f'<div {common} class="button" onclick="ask_value(this)">{failure_value}</div>'
+        before = f'<p style="background: #FFC">{failure_value} '
+    else:
+        before = ''
+    ###########################################
+    # User interface to edit object attributes
+    ###########################################
+
+    # Set the INPUT initial value to the current attribute
+    assert failure.inside('edit') and '-' in failure.id
+    attr = getattr(thing, failure.id.split('-', 1)[1], None)
+    if attr is None:
+        value = ''
+    else:
+        value = html.escape(str(attr))
+
+    # Display type used only for editing object attributes
+
     if display_type == DisplayTypes.display:
-        element = [f'<select {common} class="button" onchange="register_incident(this,{in_place})">']
+        text = [f'<select {common} class="button" onchange="register_incident(this)">']
         for v in DisplayTypes:
-            element.append(f'<option value="{v.name}"{" selected" if attr == v else ""}>{v.name}</option>')
-        element.append('</select>')
-        element = ''.join(element)
-        if not in_place:
-            element = f'<div class="input">{failure_value} : {element}</div>'
-        return element
-    if display_type == DisplayTypes.textarea:
-        popup_type = "ASK_VALUE_TYPE_TEXTAREA"
-        if display_type == DisplayTypes.input:
-            popup_type = "ASK_VALUE_TYPE_INPUT"
-        elif display_type == DisplayTypes.datalist:
-            popup_type = f"ASK_VALUE_TYPE_DATALIST,{repr(datalist_id)}"
-        return f'<div {common} class="button" value="{value}" onclick="ask_value(this,{in_place},{popup_type})"><BOX>{failure_value}</BOX></div>'
-    if display_type == DisplayTypes.checkbox:
-        element = f'<input {common} type="checkbox" autocomplete="off" onclick="register_incident(this,{in_place})">'
-        if attr:
-            element = element.replace('<input', '<input checked')
-        if not in_place:
-            element = f'<div class="input">{failure_value} : {element}</div>'
-        return element
-    if display_type == DisplayTypes.input or display_type == DisplayTypes.datalist:
+            text.append(f'<option value="{v.name}"{" selected" if attr == v else ""}>{v.name}</option>')
+        text.append('</select>')
+        return before + ''.join(text)
+    if display_type in (DisplayTypes.input, DisplayTypes.datalist):
         if destroy:
             common += f' predefined_value="{html.escape(destroy)}"'
-            return f'''<div {common} class="delete" style="display:inline-block"
+            return f'''{before}<div {common} class="delete" style="display:inline-block"
                 ><a onclick="javascript:show(this)">{html.escape(destroy)}</a><div
-                onclick="register_incident(this,1)">×</div></div>'''
+                onclick="register_incident(this)">×</div></div>'''
         input_list_id = ''
         if display_type == DisplayTypes.datalist:
             input_list_id = f' list="datalist_{datalist_id}"'
-        return f'''<div class="input">{'' if in_place else html.escape(failure_value)}
-        <input {common}{input_list_id} value="{value}" autocomplete="off" onkeypress="if (event.key=='Enter') register_incident(this,{in_place})"
-        ><div {common} onclick="register_incident(this, {in_place})">⬆</div></div>'''
-    raise ValueError("Unknown display type")
+        return f'''{before}<div class="input"><input {common}{input_list_id} value="{value}" autocomplete="off"
+            onkeypress="if (event.key=='Enter') register_incident(this)"
+            ><div {common} onclick="register_incident(this)">⬆</div></div>'''
+    if display_type == DisplayTypes.button:
+        assert destroy
+        return f'''{before}<div {common} predefined_value="{html.escape(destroy)}"
+            style="padding:0px" class="button"
+            onclick="register_incident(this)">×</div>'''
+    raise ValueError(f"Unknown display type: {display_type} {common}")
 
 qrbug.element = element
 
@@ -112,8 +108,9 @@ class Failure(qrbug.Tree):
         self.value = f"VALEUR_NON_DEFINIE POUR «{self.id}»"
 
     def _local_dump(self) -> str:
-        return f'val:{repr(self.value)} type:{self.display_type.name if self.display_type is not None else None} ' \
-               f'confirm:{self.ask_confirm}'
+        return f'val:{repr(self.value)}' \
+               f' type:{self.display_type.name if self.display_type is not None else None}' \
+               f' confirm:{self.ask_confirm}'
 
     def get_hierarchy_representation(self) -> str:
         """
@@ -173,10 +170,10 @@ class Failure(qrbug.Tree):
             failure = Failure[failure_id]
             representation.append(element(failure, thing) + ' ')
             if failure.children_ids:
-                representation.append(f'<div class="children">')
+                representation.append('<div class="children">')
                 for failure_id in failure.children_ids:
                     recursively_build_failures_list(failure_id)
-                representation.append(f"</div>\n")
+                representation.append('</div>\n')
 
         recursively_build_failures_list(self.id)
         if use_template:
@@ -191,7 +188,3 @@ qrbug.failure_update = Failure.update_attributes
 qrbug.failure_add = Failure.add_parenting_link
 qrbug.failure_remove = Failure.remove_parenting_link
 qrbug.failure_move = Failure.move_before
-
-if __name__ == "__main__":
-    failure_update("0", value="Testing title", display_type=Text)
-    print(Failure["0"].dump())

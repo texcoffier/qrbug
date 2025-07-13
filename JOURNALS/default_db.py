@@ -286,9 +286,15 @@ failure_add('backoffice', 'edit')
 # Edit dispatcher
 # ---------------
 failure_update('dispatcher', value="Les dispatchers")
-failure_update('dispatcher-action_id', value="ID de l'action lancée", display_type=Datalist)
-failure_update('dispatcher-selector_id', value="ID du sélecteur", display_type=Datalist)
-failure_update('dispatcher-incidents', value="ID du sélecteur d'incidents", display_type=Datalist)
+failure_update('dispatcher-selector_id',
+    value='Condition déclenchante<div style="font-weight:normal">Si le sélecteur est vrai.<br>Ordre lancement alphabétique.</div>',
+    display_type=Datalist)
+failure_update('dispatcher-incidents',
+    value='Sélecteur d\'incidents<div style="font-weight:normal">Si vide : seulement celui<br>qui a déclenché.</div>',
+    display_type=Datalist)
+failure_update('dispatcher-action_id',
+    value='Action à lancer<div style="font-weight:normal">Traite tous les<br>incidents sélectionnés.</div>',
+    display_type=Datalist)
 failure_update('dispatcher-new', value="Créer l'automatisme : ", display_type=Input)
 failure_add('edit', 'dispatcher')
 failure_add('dispatcher', 'dispatcher-action_id')
@@ -332,7 +338,7 @@ dispatcher_update('edit-failure', action_id='edit_failure', selector_id='edit-fa
 failure_update('selector', value="Sélecteur d'incident")
 failure_update('selector-expression', value="Expression", display_type=Input)
 failure_update('selector-concerned-add', value="Ajouter un utilisateur concerné", display_type=Datalist)
-failure_update('selector-concerned-del', value="Utilisateurs concernés", display_type=Input)
+failure_update('selector-concerned-del', value="Détruire un utilisateur concerné", display_type=Input)
 failure_add('edit', 'selector')
 failure_add('selector', 'selector-expression')
 failure_add('selector', 'selector-concerned-add')

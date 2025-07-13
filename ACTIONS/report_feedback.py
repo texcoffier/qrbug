@@ -12,16 +12,12 @@ async def run(incidents, request):
     await request.write(
         f"""
         <style>
-        DIV {{ margin: 2em; font-weight: bold }}
+        DIV {{ margin: 2em; font-weight: bold; white-space: pre }}
         </style>
         <title>Rapport {html.escape(incident.thing_id)} {html.escape(incident.failure_id)}</title>
         Merci d'avoir signalé l'incident :
-        <div>
-        {html.escape(incident.failure.name('¤')).replace('¤', '<br>')}
-        </div>
+        <div>{html.escape(incident.failure.name('¤')).replace('¤', '<br>')}</div>
         à propos de :
-        <div>
-        {html.escape(incident.thing.name('¤')).replace('¤', '<br>')}
-        </div>
+        <div>{html.escape(incident.thing.name('¤')).replace('¤', '<br>')}</div>
         {comment}
         <p>Quelqu'un s'en occupera prochainement.""")

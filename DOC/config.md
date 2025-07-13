@@ -33,7 +33,7 @@ Each of these parameters *(besides `failure_id`)* is optional if you want to mod
   - `Button` : A button the user can click to report an incident ; `value` will be the text inside the button. 
   - `Input` : A one line input box the user can write into to report an incident ;
   - `Textarea` : A multi-line box the user can write into to report an incident ;
-- **Ask confirm** (bool) : Whether to present the user with a confirmation box before submitting the incident report for this failure.
+- **Ask confirm** (string) : If not empty, asks the user with a confirmation box before submitting the incident report for this failure.
 
 You can parent a failure with `failure_add(parent_id, child_id)`.
 Parenting failures allows to create a hierarchy of failures that can be attached to any object, so the users can report exactly what went wrong.
@@ -88,7 +88,7 @@ A selector is a filter that can be used by Dispatchers (see later) to know which
 
 You can create/update a selector with the following method : `selector(selector_id, expression)`
 
-- **Expression** (string) : A Python expression that evaluates to a boolean (whether the dispatcher can run). The following variables are accessible in this expression :
+- **Expression** (string) : An expression that evaluates to a boolean (whether the dispatcher can run). The following variables are accessible in this expression :
   - `incident` : The incident to check, and so the Thing and the Failure.
   - `source` : The incident that triggered the dispatcher.
   - `report` : The report that triggered the dispatcher.

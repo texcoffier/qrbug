@@ -41,14 +41,14 @@ async def run(incidents, request):
             if value not in qrbug.Failure.instances.keys():  # If the user doesn't exist, we create it !
                 request.update_configuration(f'failure_update({repr(value)})')
             request.update_configuration(f'failure_add({repr(selector)}, {repr(value)})')
-            feedback = f"Ajouté l'enfant «{html.escape(value)}» à «{selector}»\n"
+            feedback = f"«{html.escape(value)}» a été ajouté au groupe «{selector}»\n"
     elif incident.failure_id == 'failure-remove':
         error_message = qrbug.Failure[value].can_remove_child(selector)
         if error_message:
             feedback = f"<b>ERREUR :</b> {error_message}"
         else:
             request.update_configuration(f'failure_remove({repr(value)}, {repr(selector)})')
-            feedback = f"Retiré l'enfant «{selector}» à «{html.escape(value)}»\n"
+            feedback = f"«{selector}» a été retiré du groupe «{html.escape(value)}»\n"
     else:
         feedback = "Unexpected edit failure for Failure\n"
     await request.write('<!DOCTYPE html>\n' + feedback)

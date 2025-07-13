@@ -72,14 +72,14 @@ def display_tree(texts, request, what, columns):
                 texts.append('<td>')
                 for failure_id in node.failure_ids:
                     texts.append(' ')
-                    texts.append(qrbug.element(failure, node, destroy=failure_id))
+                    texts.append(qrbug.element(failure, node, destroy=failure_id, in_place=True))
             elif failure.id == 'selector-concerned-del':
                 texts.append('<script>add_selector(')
                 texts.append(json.dumps(node.id))
                 texts.append(',')
                 texts.append(node.expression)
                 texts.append(');\n</script><td>')
-                texts.append(' '.join(qrbug.element(failure, node, destroy=user)
+                texts.append(' '.join(qrbug.element(failure, node, destroy=user, in_place=True)
                                       for user in node.concerned))
             else:
                 texts.append(qrbug.element(failure, node, in_place=True, datalist_id=datalist))

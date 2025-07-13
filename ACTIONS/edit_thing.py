@@ -34,14 +34,14 @@ async def run(incidents, request):
             if value not in qrbug.Thing.instances.keys():  # If the user doesn't exist, we create it !
                 request.update_configuration(f'thing_update({repr(value)})')
             request.update_configuration(f'thing_add({repr(selector)}, {repr(value)})')
-            feedback = f"Ajouté l'enfant «{html.escape(value)}» à «{selector}»\n"
+            feedback = f"«{html.escape(value)}» a été ajouté au conteneur «{selector}»\n"
     elif incident.failure_id == 'thing-remove':
         error_message = qrbug.Thing[value].can_remove_child(selector)
         if error_message:
             feedback = f"<b>ERREUR :</b> {error_message}"
         else:
             request.update_configuration(f'thing_remove({repr(value)}, {repr(selector)})')
-            feedback = f"Retiré l'enfant «{selector}» à «{html.escape(value)}»\n"
+            feedback = f"«{selector}» a été retiré du conteneur «{html.escape(value)}»\n"
     else:
         feedback = "Unexpected edit failure for Thing\n"
     await request.write('<!DOCTYPE html>\n' + feedback)

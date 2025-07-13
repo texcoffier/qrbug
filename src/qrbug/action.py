@@ -31,7 +31,3 @@ def action(action_id: str, python_script: str) -> Action:
 qrbug.Action = Action
 qrbug.action_update = action
 qrbug.ActionId = ActionId
-
-if __name__ == '__main__':
-    action('test', 'test.py')
-    #Action['test'].run()
