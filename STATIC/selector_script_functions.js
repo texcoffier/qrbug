@@ -18,7 +18,8 @@ var TESTS = [
     ["Le sélecteur retourne vrai", { test: "true", class: "Selector" }],
     ["Le sélecteur retourne faux", { test: "false", class: "Selector" }],
     ["L'objet modifié est dans le groupe", { test: "in_or_equal", class: "SourceThing" }],
-    ["Toujours vrai", { test: "True" }]
+    ["Toujours vrai", { test: "True" }],
+    ["Toujours faux", { test: "False" }]
 ];
 function match(expr, test) {
     for (var attr in test)

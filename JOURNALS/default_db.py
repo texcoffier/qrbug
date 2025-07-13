@@ -55,13 +55,18 @@ selector('|for-thing-active','[1, {"test": "active"}, {"test":"is_for_thing"}]')
 # General Backoffice
 ###############################################################################
 
-failure_update('backoffice', value='')
+failure_update('backoffice', value='Actions (not incidents)')
+failure_update('backoffice-login', value='Actions requiring a login')
+failure_add('backoffice', 'backoffice-login')
+failure_update('backoffice-nologin', value='Actions anonymous')
+failure_add('backoffice', 'backoffice-nologin')
+
 selector('backoffice'     ,'{"class":"SourceFailure",             "test":"in_or_equal", "value":"backoffice"}')
 selector('|backoffice'    ,'{"class":"FilterFailure",             "test":"in_or_equal", "value":"backoffice"}')
-selector('|not-backoffice','{"class":"Selector", "attr": "is_ok", "test":"false", "id"   :"|backoffice"}')
+selector('|not-backoffice','{"class":"Selector", "attr": "is_ok", "test":"false", "id":"|backoffice"}')
 
 failure_update('top', value='')
-failure_add('backoffice', 'top')
+failure_add('backoffice-login', 'top')
 
 # The 'GUI' thing displays the backoffice user interface
 thing_update('GUI', comment="Interface d'administration")
@@ -132,7 +137,7 @@ failure_add('hours', '20:00')
 failure_add('hours', '21:00')
 failure_add('hours', '22:00')
 failure_add('hours', '23:00')
-failure_add('backoffice', 'hours') # To receive auto-close
+failure_add('backoffice-login', 'hours') # To receive auto-close
 
 #------------------------------------------------------------------------------
 # Backoffice / lists
@@ -488,7 +493,7 @@ dispatcher_update('reload_journals', action_id='reload_journals', selector_id='r
 # ----------------------------------------------
 
 selector('require-login', '''[0,
-    {"class":"SourceFailure", "test":"in_or_equal", "value": "backoffice"}
+    {"class":"SourceFailure", "test":"in_or_equal", "value": "backoffice-login"}
 ]''')
 
 # ----------------------------------------------
