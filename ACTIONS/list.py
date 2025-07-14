@@ -138,7 +138,12 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
         datalists_to_load = display_tree(texts, request, what,
             ('action-python_script datalist=ActionScripts',))
     elif what is qrbug.Selector:
+        selector_new = qrbug.Failure['selector-new']
         texts.append(f'''
+        <table><tr><td>
+        {selector_new.value}
+        {qrbug.element(selector_new, qrbug.Thing['GUI'], in_place=True)}
+        </tr></table>
         <script>
         var LISTS = {{
             'datalist_Failure': {list(qrbug.Failure.instances)},

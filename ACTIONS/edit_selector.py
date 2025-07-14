@@ -31,6 +31,12 @@ async def run(incidents, request):
             feedback = f"L'utilisateur/groupe «{html.escape(value)}» n'est plus concerné par le sélecteur «{html.escape(selector)}»\n"
         else:
             feedback = f"L'utilisateur/groupe «{html.escape(value)}» <b>n'était pas</b> concerné par le sélecteur «{html.escape(selector)}»\n"
+    elif incident.failure_id == 'selector-new':
+        if value in qrbug.Selector.instances:
+            feedback = "Ce sélecteur existe déjà"
+        else:
+            request.update_configuration(f'selector({repr(value)},\'{{"test": "False"}}\')')
+            feedback = "<script>window.top.location.reload()</script>"
     else:
         feedback = "Unexpected edit failure for Selector\n"
     await request.write('<!DOCTYPE html>\n' + feedback)

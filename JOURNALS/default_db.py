@@ -344,10 +344,12 @@ failure_update('selector', value="Sélecteur d'incident")
 failure_update('selector-expression', value="Expression", display_type=Input)
 failure_update('selector-concerned-add', value="Ajouter un utilisateur concerné", display_type=Datalist)
 failure_update('selector-concerned-del', value="Détruire un utilisateur concerné", display_type=Input)
+failure_update('selector-new', value="Créer le sélecteur", display_type=Input)
 failure_add('edit', 'selector')
 failure_add('selector', 'selector-expression')
 failure_add('selector', 'selector-concerned-add')
 failure_add('selector', 'selector-concerned-del')
+failure_add('selector', 'selector-new')
 
 action('edit_selector', 'edit_selector.py')
 selector('edit-selector', '''[1,
@@ -507,3 +509,12 @@ for message in pathlib.Path(MESSAGES).read_text(encoding='utf-8').split('\n'):
     failure_id, value = message.split(' ', 1)
     failure_update(failure_id, value=value)
     failure_add('messages', failure_id)
+
+# ----------------------------------------------
+# User interface for fixers
+# ----------------------------------------------
+
+thing_update('GUI-fixer', comment="Interface du réparateur de panne")
+thing_add_failure('GUI-fixer', 'list-Thing')
+thing_add_failure('GUI-fixer', 'personnal')
+
