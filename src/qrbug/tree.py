@@ -119,8 +119,10 @@ class Tree(qrbug.Editable):
         yield self.id, 0
         yield from add_child_to_list(self)
 
-    def walk(self, go_in: Callable[["Tree"], None], go_out: Callable[["Tree"], None], do_sort: bool = False):
-        done = set()
+    def walk(self, go_in: Callable[["Tree"], None], go_out: Callable[["Tree"], None],
+             do_sort: bool = False, done = None):
+        if done is None:
+            done = set()
         def walk_(node):
             go_in(node)
             if node.id not in done:

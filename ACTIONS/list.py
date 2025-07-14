@@ -48,6 +48,7 @@ def display_tree(texts, request, what, columns):
         if failure.id == '$selector-concerned-del':
             texts.append('<th>Éditeur de sélecteur')
         texts.append(f'<th{vertical}>{failure.value}')
+    done = set()
     def go_in(node):
         texts.append('<tr><td>')
         if what_name == 'thing':
@@ -92,8 +93,9 @@ def display_tree(texts, request, what, columns):
     go_in.indent = ''
     go_in.parents = []
     if hasattr(what, 'roots'):
+        done = set()
         for tree in what.roots():
-            tree.walk(go_in, go_out, do_sort = what_name != 'failure')
+            tree.walk(go_in, go_out, do_sort = what_name != 'failure', done=done)
     else:
         for _node_id, node in sorted(what.instances.items()):
             go_in(node)
