@@ -457,7 +457,7 @@ for rows in (7, 8):
 action('generate_qrcode', 'generate_qr.py')
 selector('?generate_qr', '''[1,
     {"class":"SourceFailure", "test":"in_or_equal", "value": "$generate_qr"},
-    {"class":"SourceUser"   , "test":"in_or_equal", "value": "@admin"}
+    {"class":"SourceUser"   , "test":"in_or_equal", "value": "@admin-or-fixer"}
     ]''')
 dispatcher_update('!generate-qr', action_id='generate_qrcode', selector_id='?generate_qr')
 
