@@ -8,25 +8,25 @@ async def run(incidents, request):
     incident = incidents[0]
     selector = incident.thing_id
     value = request.report.comment
-    if incident.failure_id == 'thing-comment':
+    if incident.failure_id == '$thing-comment':
         request.update_configuration(
                 f'thing_update({repr(selector)}, comment={repr(value)})')
         feedback = f"Le commentaire est maintenant «{html.escape(value)}»\n"
-    elif incident.failure_id == 'thing-del-failure':
+    elif incident.failure_id == '$thing-del-failure':
         if value in incident.thing.failure_ids:
             request.update_configuration(
                 f'thing_del_failure({repr(selector)}, {repr(value)})')
             feedback = f"La panne «{html.escape(value)}» a été enlevée.\n"
         else:
             feedback = "La panne n'était pas présente"
-    elif incident.failure_id == 'thing-add-failure':
+    elif incident.failure_id == '$thing-add-failure':
         if value in qrbug.Failure.instances:
             request.update_configuration(
                 f'thing_add_failure({repr(selector)}, {repr(value)})')
             feedback = f"La panne «{html.escape(value)}» a été ajoutée.\n"
         else:
             feedback = "Cette panne n'existe pas"
-    elif incident.failure_id == 'thing-add':
+    elif incident.failure_id == '$thing-add':
         error_message = qrbug.Thing[selector].can_add_child(value)
         if error_message:
             feedback = f"<b>ERREUR :</b> {error_message}"
@@ -35,7 +35,7 @@ async def run(incidents, request):
                 request.update_configuration(f'thing_update({repr(value)})')
             request.update_configuration(f'thing_add({repr(selector)}, {repr(value)})')
             feedback = f"«{html.escape(value)}» a été ajouté au conteneur «{selector}»\n"
-    elif incident.failure_id == 'thing-remove':
+    elif incident.failure_id == '$thing-remove':
         error_message = qrbug.Thing[value].can_remove_child(selector)
         if error_message:
             feedback = f"<b>ERREUR :</b> {error_message}"

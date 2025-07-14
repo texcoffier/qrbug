@@ -57,7 +57,7 @@ def element(failure: "Failure", thing, in_place=False, destroy=None, datalist_id
     ###########################################
 
     # Set the INPUT initial value to the current attribute
-    assert failure.inside('edit') and '-' in failure.id
+    assert failure.inside('$edit') and '-' in failure.id
     attr = getattr(thing, failure.id.split('-', 1)[1], None)
     if attr is None:
         value = ''

@@ -38,6 +38,9 @@ class Incident:
                            for report in self.finished)
         return f'thing: «{self.thing_id}» failure: «{self.failure_id}»\n{active}{finished}'
 
+    def __str__(self):
+        return f'{self.thing_id} {self.failure_id} {len(self.active)} {len(self.finished)}'
+
     def is_equal(self, other_thing_id, other_failure_id) -> bool:
         return self.thing_id == other_thing_id and self.failure_id == other_failure_id
 

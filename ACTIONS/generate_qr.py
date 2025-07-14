@@ -90,8 +90,8 @@ async def run(incidents: list[qrbug.Incident], request: qrbug.Request) -> Option
                 img_format  = IMAGE_FORMAT.lower(),
                 img_b64     = (await get_qr_code_b64_image(url)).decode(),
                 depth_class = depth_class,
-                line_1      = qrbug.message('qrcode_line_1'),
-                line_2      = qrbug.message('qrcode_line_2'),
+                line_1      = qrbug.message('$qrcode_line_1'),
+                line_2      = qrbug.message('$qrcode_line_2'),
             ))
     return None
 

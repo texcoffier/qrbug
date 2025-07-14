@@ -43,9 +43,9 @@ def display_tree(texts, request, what, columns):
             vertical = ' class="vert"'
         else:
             vertical = ''
-        if failure.id == 'thing-del-failure':
+        if failure.id == '$thing-del-failure':
             texts.append('<th colspan="2">Actives<br>Inactives')
-        if failure.id == 'selector-concerned-del':
+        if failure.id == '$selector-concerned-del':
             texts.append('<th>Éditeur de sélecteur')
         texts.append(f'<th{vertical}>{failure.value}')
     def go_in(node):
@@ -61,7 +61,7 @@ def display_tree(texts, request, what, columns):
                     texts.append(qrbug.element(
                         failure, node, in_place=True,
                         force_value='×', destroy=go_in.parents[-1]))
-            elif failure.id == 'thing-del-failure': # Insert multiple columns
+            elif failure.id == '$thing-del-failure': # Insert multiple columns
                 thing_incident = qrbug.Incident.instances.get(node.id, None)
                 if thing_incident:
                     texts.append(link_to_active(node.id, request))
@@ -73,7 +73,7 @@ def display_tree(texts, request, what, columns):
                 for failure_id in node.failure_ids:
                     texts.append(' ')
                     texts.append(qrbug.element(failure, node, destroy=failure_id, in_place=True))
-            elif failure.id == 'selector-concerned-del':
+            elif failure.id == '$selector-concerned-del':
                 texts.append('<script>add_selector(')
                 texts.append(json.dumps(node.id))
                 texts.append(',')
@@ -110,35 +110,35 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
         texts.append('<p>Cochez les objets puis cliquez sur le bouton pour générer une feuille de QR codes (lignes × colonne) : ')
         texts.append(' '.join(
             f'<div class="button" style="display: inline;" onclick="qr(this)">{html.escape(failure.split("_")[-1])}</div>'
-            for failure in qrbug.Failure['generate_qr'].children_ids
+            for failure in qrbug.Failure['$generate_qr'].children_ids
         ))
         texts.append('<p id="qr_code_gen_error_field"></p></p>')
         datalists_to_load = display_tree(texts, request, what,
-            ('thing-comment', 'thing-del-failure', 'thing-add-failure datalist=Failure',
-            '|||thing-remove', 'thing-add datalist=Thing'))
+            ('$thing-comment', '$thing-del-failure', '$thing-add-failure datalist=Failure',
+            '|||$thing-remove', '$thing-add datalist=Thing'))
     elif what is qrbug.Failure:
         datalists_to_load = display_tree(texts, request, what,
-                        ('failure-value', 'failure-ask_confirm',
-                        '|||failure-display_type',
-                        '|||failure-remove', 'failure-add datalist=Failure'))
+                        ('$failure-value', '$failure-ask_confirm',
+                        '|||$failure-display_type',
+                        '|||$failure-remove', '$failure-add datalist=Failure'))
     elif what is qrbug.User:
         datalists_to_load = display_tree(texts, request, what,
-            ('|||user-remove', 'user-add datalist=User'))
+            ('|||$user-remove', '$user-add datalist=User'))
     elif what is qrbug.Dispatcher:
-        dispatcher_new = qrbug.Failure['dispatcher-new']
+        dispatcher_new = qrbug.Failure['$dispatcher-new']
         texts.append('<table><tr><td>')
         texts.append(dispatcher_new.value)
         texts.append(qrbug.element(dispatcher_new, qrbug.Thing['GUI'], in_place=True))
         texts.append('</tr></table>')
         datalists_to_load = display_tree(texts, request, what,
-            ('dispatcher-selector_id datalist=Selector',
-                'dispatcher-incidents datalist=Selector',
-                'dispatcher-action_id datalist=Action'))
+            ('$dispatcher-selector_id datalist=Selector',
+                '$dispatcher-incidents datalist=Selector',
+                '$dispatcher-action_id datalist=Action'))
     elif what is qrbug.Action:
         datalists_to_load = display_tree(texts, request, what,
-            ('action-python_script datalist=ActionScripts',))
+            ('$action-python_script datalist=ActionScripts',))
     elif what is qrbug.Selector:
-        selector_new = qrbug.Failure['selector-new']
+        selector_new = qrbug.Failure['$selector-new']
         texts.append(f'''
         <table><tr><td>
         {selector_new.value}
@@ -155,7 +155,7 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
         </script>
         ''')
         datalists_to_load = display_tree(texts, request, what,
-            ('selector-concerned-del', 'selector-concerned-add datalist=User'))
+            ('$selector-concerned-del', '$selector-concerned-add datalist=User'))
     elif what is qrbug.Incident:
         texts.append('''
         <BODY class="real">

@@ -43,7 +43,7 @@ def thread_mail():
                 else:
                     MAILS[login] = qrbug.DEFAULT_EMAIL_TO
         except ValueError:
-            qrbug.Incident.open('GUI', 'backtrace', '', 'system', '\n'.join(traceback.format_exc()))
+            qrbug.Incident.open('GUI', '$backtrace', '', '@system', '\n'.join(traceback.format_exc()))
 
 MAILS_THREAD = threading.Thread(target=thread_mail, daemon=True)
 MAILS_THREAD.start()

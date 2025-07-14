@@ -12,12 +12,12 @@ async def run(incidents, request):
     value = request.report.comment
     feedback = f"La valeur de «{selector} . {incident.failure_id}» est inchangé.\n"
     failure = qrbug.Failure[selector]
-    if incident.failure_id == 'failure-value':
+    if incident.failure_id == '$failure-value':
         if value != failure.value:
             request.update_configuration(
                     f'failure_update({repr(selector)}, value={repr(value)})')
             feedback = f"Le titre de la panne «{selector}» est maintenant «{html.escape(value)}»\n"
-    elif incident.failure_id == 'failure-display_type':
+    elif incident.failure_id == '$failure-display_type':
         try:
             if qrbug.DisplayTypes[value].value != failure.display_type:
                 request.update_configuration(
@@ -25,7 +25,7 @@ async def run(incidents, request):
                 feedback = f"Le type d'affichage de «{selector}» est maintenant «{html.escape(value)}»\n"
         except KeyError:
             feedback += "Car invalide."
-    elif incident.failure_id == 'failure-ask_confirm':
+    elif incident.failure_id == '$failure-ask_confirm':
         if value != failure.ask_confirm:
             request.update_configuration(
                     f'failure_update({repr(selector)}, ask_confirm={repr(value)})')
@@ -33,7 +33,7 @@ async def run(incidents, request):
                 feedback = f"On demande confirmation avant d'envoyer la panne «{selector}»\n"
             else:
                 feedback = f"On ne demande pas confirmation à l'utilisateur avant d'envoyer la panne «{selector}»\n"
-    elif incident.failure_id == 'failure-add':
+    elif incident.failure_id == '$failure-add':
         error_message = qrbug.Failure[selector].can_add_child(value)
         if error_message:
             feedback = f"<b>ERREUR :</b> {error_message}"
@@ -42,7 +42,7 @@ async def run(incidents, request):
                 request.update_configuration(f'failure_update({repr(value)})')
             request.update_configuration(f'failure_add({repr(selector)}, {repr(value)})')
             feedback = f"«{html.escape(value)}» a été ajouté au groupe «{selector}»\n"
-    elif incident.failure_id == 'failure-remove':
+    elif incident.failure_id == '$failure-remove':
         error_message = qrbug.Failure[value].can_remove_child(selector)
         if error_message:
             feedback = f"<b>ERREUR :</b> {error_message}"

@@ -148,7 +148,7 @@ window.onchange = window.onclick = window.onkeyup = function (event) {
     else if (elm.tagName == 'SAV' && event.type == 'click') {
         var url = [
             `${location.origin}${location.pathname}?thing-id=${encodeURIComponent(selector_id)}`,
-            'failure-id=selector-expression',
+            'failure-id=$selector-expression',
             'what=selector',
             'additional-info=' + encodeURIComponent(JSON.stringify(expr)),
             'secret=' + secret];

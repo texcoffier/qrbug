@@ -67,11 +67,12 @@ FAQ administrateur :
     <li><a href="#failure">Gérer les pannes possibles (interface utilisateur)</a>.</li>
     <li><a href="#thing">Gérer les objets</a>.</li>
     <li><a href="#authentication">Forcer l'authentification pour déclarer une panne</a>.</li>
+    <li><a href="#work">Définir qui doit réparer les pannes</a>.</li>
     <li><a href="#edt">Emploi du temps d'une salle</a>.</li>
     <li><a href="#security">Sécurité</a>.</li>
 </ul>
 <p>
-    FAQ réparateur :
+    <a href="#fixer">FAQ réparateur</a>
 </p>
 <p>
     FAQ administrateur serveur :
@@ -97,7 +98,7 @@ FAQ administrateur :
             </p>
         <td>
             <p>
-                <a href="javascript:go('?what=thing&thing-id=GUI&failure-id=list-Thing')">
+                <a href="javascript:go('?what=thing&thing-id=GUI&failure-id=$list-Thing')">
                     Imprimer les QRCodes</a>.
             </p>
     </tr>
@@ -117,12 +118,12 @@ FAQ administrateur :
             </p>
         <td>
             <p>
-                <a href="javascript:go('?what=thing&thing-id=GUI&failure-id=list-Failure')">
+                <a href="javascript:go('?what=thing&thing-id=GUI&failure-id=$list-Failure')">
                     Création de l'arbre des "pannes"
                 </a> (il peut y avoir des "pannes" communes).
             </p>
             <p>
-                <a href="javascript:go('?what=thing&thing-id=GUI&failure-id=list-Thing')">
+                <a href="javascript:go('?what=thing&thing-id=GUI&failure-id=$list-Thing')">
                     Ajouter/enlever des arbres de "pannes" à l'objet.
                 </a>
             </p>
@@ -153,7 +154,7 @@ FAQ administrateur :
             </p>
         <td>
             <p>
-                <a href="javascript:go('?what=thing&thing-id=GUI&failure-id=list-Failure')">
+                <a href="javascript:go('?what=thing&thing-id=GUI&failure-id=$list-Failure')">
                     Indiquer si la confirmation est nécessaire</a>.
             </p>
     </tr>
@@ -165,11 +166,11 @@ FAQ administrateur :
             </p>
         <td>
             <p>
-                <a href="javascript:go('?what=thing&thing-id=GUI&failure-id=list-Selector')">
-                    Augmenter la sélecteur «require_login»</a>.
+                <a href="javascript:go('?what=thing&thing-id=GUI&failure-id=$list-Selector')">
+                    Augmenter la sélecteur «?require_login»</a>.
             </p>
             <p>
-                <a href="javascript:go('?what=thing&thing-id=GUI&failure-id=list-User')">
+                <a href="javascript:go('?what=thing&thing-id=GUI&failure-id=$list-User')">
                     Modifier les groupes d'utilisateurs</a>.
             </p>
     </tr>
@@ -211,22 +212,22 @@ FAQ administrateur :
                 </li>
             </ul>
             <p>
-                L'automatismes «report-feedback» fait le feedback de l'enregistrement de l'incident
+                L'automatismes «!report-feedback» fait le feedback de l'enregistrement de l'incident
                 sur le téléphone de la personne qui a flashé le QRCode
                 avec l'action «report_feedback.py»
             </p>
 
         <td>
             <p>
-                <a href="javascript:go('?what=thing&thing-id=GUI&failure-id=list-Dispatcher')">
+                <a href="javascript:go('?what=thing&thing-id=GUI&failure-id=$list-Dispatcher')">
                     Modifier les automatismes</a>.
             </p>
             <p>
-                <a href="javascript:go('?what=thing&thing-id=GUI&failure-id=list-Action')">
+                <a href="javascript:go('?what=thing&thing-id=GUI&failure-id=$list-Action')">
                     Modifier les actions</a>.
             </p>
             <p>
-                <a href="javascript:go('?what=thing&thing-id=GUI&failure-id=list-Selector')">
+                <a href="javascript:go('?what=thing&thing-id=GUI&failure-id=$list-Selector')">
                     Modifier les personnes concernées par un incident</a>.
             </p>
     </tr>
@@ -237,7 +238,7 @@ FAQ administrateur :
             </p>
         <td>
             <p>
-                <a href="javascript:go('?thing-id=GUI&failure-id=personnal-for-me')">
+                <a href="javascript:go('?thing-id=GUI&failure-id=$personnal-for-me')">
                     Les incidents que je dois traiter</a>.
             </p>
     </tr>
@@ -270,12 +271,12 @@ FAQ administrateur :
     <tr>
         <td>
             <p>
-                Toutes les heures un incident «Heure» est déclenché.
+                Toutes les heures un incident contenu dans «$hours» est déclenché.
                 Cela déclenche un automatisme qui prévient les utilisateurs
                 en leur indiquant les pannes qui ont été réparées.
             </p>
             <p>
-                On peut utiliser l'incident «Heure» si les réparateurs veulent recevoir
+                On peut utiliser l'incident «$hours» si les réparateurs veulent recevoir
                 la liste des incidents à traiter chaque matin.
             </p>
         <td>
@@ -285,10 +286,10 @@ FAQ administrateur :
     <h2><a name="print">Imprimer des QRCodes</a></h2>
     <ul>
         <li> Vous allez sur la
-            <a href="javascript:go('?what=thing&thing-id=GUI&failure-id=list-Thing')">
+            <a href="javascript:go('?what=thing&thing-id=GUI&failure-id=$list-Thing')">
                 liste des objets</a>.
         </li>
-        <li> Vous cocher les objets pour lesquels vous voulez imprimer le QRCode.</li>
+        <li> Vous cochez les objets pour lesquels vous voulez imprimer le QRCode.</li>
         <li> Les objets contenus sont automatiquement tous sélectionnés.</li>
         <li> Vous cliquez sur le bouton indiquant le format de la page d'étiquettes.</li>
         <li> Vous imprimez (sans marge, ni recto verso).</li>
@@ -296,15 +297,15 @@ FAQ administrateur :
     <h2><a name="format">Format des étiquettes QRCodes</a></h2>
     <ul>
         <li> Vous allez sur la
-            <a href="javascript:go('?what=thing&thing-id=GUI&failure-id=list-Failure')">
+            <a href="javascript:go('?what=thing&thing-id=GUI&failure-id=$list-Failure')">
                 liste des pannes</a>.
         </li>
-        <li> Vous cherchez «generate_qr»</li>
+        <li> Vous cherchez «$generate_qr»</li>
         <li> Pour enlever un format de page d'étiquettes : vous cliquez sur «×»</li>
         <li> Pour ajouter un format de page d'étiquettes :
             <ul>
-                <li> Vous vous mettez sur la ligne «generate_qr»</li>
-                <li> Vous indiquez le nouveau format «generate_qr_LIGNE×COLONNE»<br>
+                <li> Vous vous mettez sur la ligne «$generate_qr»</li>
+                <li> Vous indiquez le nouveau format «$generate_qr_LIGNE×COLONNE»<br>
                     <b>Attention ce n'est pas un «x» mais une croix «×»</b><br>
                     Actuellement limité à 10 lignes ou colonnes.<br>
                     Vous n'oubliez pas de valider avec la touche «Entrée».
@@ -312,7 +313,7 @@ FAQ administrateur :
             </ul>
         </li>
         <li> Les 2 lignes de message affichées au dessus du QRCode
-            peuvent être modifiées avec «qrcode_line_1» et «qrcode_line_2»
+            peuvent être modifiées avec «$qrcode_line_1» et «$qrcode_line_2»
             sur la même page.
         </li>
     </ul>
@@ -324,7 +325,7 @@ FAQ administrateur :
     </p>
     <ul>
         <li>Vous allez sur la
-            <a href="javascript:go('?what=thing&thing-id=GUI&failure-id=list-Failure')">
+            <a href="javascript:go('?what=thing&thing-id=GUI&failure-id=$list-Failure')">
                 liste des pannes</a>.
         </li>
         <li>
@@ -385,7 +386,7 @@ FAQ administrateur :
     </p>
     <ul>
         <li>Vous allez sur la
-            <a href="javascript:go('?what=thing&thing-id=GUI&failure-id=list-Thing')">
+            <a href="javascript:go('?what=thing&thing-id=GUI&failure-id=$list-Thing')">
                 liste des pannes</a>.
         </li>
         <li>
@@ -421,11 +422,11 @@ FAQ administrateur :
     <h2><a name="authentication">Forcer l'authentification pour déclarer une panne</a></h2>
     <ul>
         <li>Vous allez sur la
-            <a href="javascript:go('?what=thing&thing-id=GUI&failure-id=list-Selector')">
+            <a href="javascript:go('?what=thing&thing-id=GUI&failure-id=$list-Selector')">
                 liste des sélecteurs</a>.
         </li>
         <li>
-            Pour le sélecteur «require-login»
+            Pour le sélecteur «?require-login»
         </li>
         <li>
             Vous cliquez sur «+»
@@ -448,6 +449,29 @@ FAQ administrateur :
             qui fera un «ET» entre le lieu et la panne.
         </li>
     </ul>
+    <h2><a name="work">Définir qui doit réparer.</a></h2>
+    <p>
+        Les utilisateurs du groupe «@admin» sont concernés par toutes les pannes.
+    </p>
+    <p>
+        Pour définir qui doit réparer quoi :
+    </p>
+    <ul>
+        <li> Vous allez sur la
+            <a href="javascript:go('?what=thing&thing-id=GUI&failure-id=$list-Selector')">
+                liste des sélecteurs</a>.
+        </li>
+        <li> Créez un nouveau sélecteur du genre : «panne-souris-nautibus».</li>
+        <li> Modifiez la formule pour sélectionne les objets+pannes à réparer.</li>
+        <li> Ajoutez un ou des utilisateurs ou groupes concernés.</li>
+    </ul>
+    <p>
+        Les personnes concernées par les incidents les verront
+        sur leur interface et éventuellement recevront un mail
+        si des automatismes sont mis en place ou si l'administrateur
+        relance tout le monde.
+    </p>
+
     <h2><a name="edt">Emploi du temps d'une salle</a></h2>
     <p>
         Ceci explique tout ce qu'il faut faire
@@ -461,33 +485,33 @@ FAQ administrateur :
 </pre>
             La modification de ce fichier est instantanément prise en compte.
         </li>
-        <li> <a href="javascript:go('?what=thing&thing-id=GUI&failure-id=list-Dispatcher')">Créer un automatisme</a>
-            «edt» :
+        <li> <a href="javascript:go('?what=thing&thing-id=GUI&failure-id=$list-Dispatcher')">Créer un automatisme</a>
+            «!edt» :
             <ul>
-                <li> Condition déclenchante : «edt» à la place de «false»</li>
+                <li> Condition déclenchante : «?edt» à la place de «false»</li>
                 <li> Action à lancer : «edt» à la place de «echo»</li>
             </ul>
         </li>
-        <li> <a href="javascript:go('?what=thing&thing-id=GUI&failure-id=list-Selector')">Mettre à jour le sélecteur
-                d'incident</a> «edt»
+        <li> <a href="javascript:go('?what=thing&thing-id=GUI&failure-id=$list-Selector')">Mettre à jour le sélecteur
+                d'incident</a> «?edt»
             <ul>
-                <li> Remplacer «Toujours faux» par «La panne déclenchée est»</li>
-                <li> Indiquer «edt» comme panne.</li>
+                <li> Remplacez «Toujours faux» par «La panne déclenchée est»</li>
+                <li> Indiquez «$edt» comme panne.</li>
             </ul>
         </li>
-        <li> <a href="javascript:go('?what=thing&thing-id=GUI&failure-id=list-Failure')">Créer la panne</a>
+        <li> <a href="javascript:go('?what=thing&thing-id=GUI&failure-id=$list-Failure')">Créer la panne</a>
             <ul>
-                <li> Ajouter «edt» au groupe «backoffice-nologin» afin qu'elle
+                <li> Ajoutez «$edt» au groupe «$backoffice-nologin» afin qu'elle
                     soit immédiatement clôturée car ce n'est pas une vraie panne
                     et qu'elle ne nécessite pas d'authentification.</li>
-                <li> Réactualiser la page.</li>
+                <li> Réactualisez la page.</li>
                 <li> Mettre le bon intitulé à la panne : «Emploi du temps»,
                     n'oubliez pas de valider en appuyant sur «Entrée».</li>
-                <li> Indiquer que l'affichage est un bouton.</li>
-                <li> Ajouter la panne «edt» aux pannes associées aux salles.</li>
+                <li> Indiquez que l'affichage est un bouton.</li>
+                <li> Ajoutez la panne «$edt» aux pannes associées aux salles.</li>
             </ul>
         </li>
-        <li> Vérifier que tout fonctionne en allant sur une salle.</li>
+        <li> Vérifiez que tout fonctionne en allant sur une salle.</li>
     </ul>
     <h2><a name="security">Sécurité</a></h2>
     <p>
@@ -501,6 +525,21 @@ FAQ administrateur :
         <li> La déclaration d'une panne (donc d'une action quelconque)
             nécessite <b>obligatoirement</b> le passage par la liste
             des pannes.
-            Elle ne peut donc pas être déclenché par la lecture d'un QRCode.
+            Elle ne peut donc pas être déclenchée par la lecture d'un QRCode
+            ou en cliquant sur un lien.
         </li>
     </ul>
+    <h2><a name="fixer">Réparateur</a></h2>
+    <p>
+        Il va sur la
+        <a href="javascript:go('thing=GUI-fixer')">page du réparateur</a>
+        pour avoir la liste des objets et des pannes dont il doit s'occuper.
+    </p>
+    <p>
+        On complète son interface utilisateur en ajoutant des pannes
+        à «$fixer»
+    </p>
+    <p>
+        On complète la liste des réparateurs du groupe «@fixer» pour leur donner
+        les droits nécessaires.
+    </p>

@@ -27,7 +27,8 @@ class Dispatcher(qrbug.Tree):
         Returns a dict with keys being the thing_id and failure_id of an incident, and values being the returned HTML.
         """
         # TODO: ! DOCUMENTATION !
-
+        # if self.selector_id == '!edit_user':
+        #     print('*'*999,incident, request.report, qrbug.Selector[self.selector_id].is_ok(incident, request.report, incident))
         if not qrbug.Selector[self.selector_id].is_ok(incident, request.report, incident):
             return None
         trace.append(' selected')
@@ -53,7 +54,7 @@ class Dispatcher(qrbug.Tree):
         except Exception as e: # pylint: disable=bare-except
             trace.append(' failure')
             retrieved_traceback = '\n'.join(traceback.format_exception(e))
-            qrbug.Incident.open('GUI', 'backtrace', '', 'system', retrieved_traceback)
+            qrbug.Incident.open('GUI', '$backtrace', '', '@system', retrieved_traceback)
             return_value = qrbug.action_helpers.ActionReturnValue(
                 error_msg=(
                         '<pre style="background-color: rgba(255, 0, 0, 0.4); padding: 4px; border-radius: 2px;">' +

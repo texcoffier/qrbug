@@ -5,9 +5,9 @@ from typing import Optional, List
 import qrbug
 
 FILENAME = {
-    'journal-config': qrbug.DB_FILE_PATH,
-    'journal-default': qrbug.DEFAULT_DB_PATH,
-    'journal-incident': qrbug.INCIDENTS_FILE_PATH,
+    '$journal-config': qrbug.DB_FILE_PATH,
+    '$journal-default': qrbug.DEFAULT_DB_PATH,
+    '$journal-incident': qrbug.INCIDENTS_FILE_PATH,
 }
 
 async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Optional[qrbug.action_helpers.ActionReturnValue]:

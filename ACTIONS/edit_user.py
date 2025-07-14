@@ -10,7 +10,7 @@ async def run(incidents, request):  # TODO: Force refresh of the page upon edit
     user_id = incident.thing_id
     value = request.report.comment
     feedback = ''
-    if incident.failure_id == 'user-add':
+    if incident.failure_id == '$user-add':
         error_message = qrbug.User[user_id].can_add_child(value)
         if error_message:
             feedback = f"<b>ERREUR :</b> {error_message}"
@@ -20,7 +20,7 @@ async def run(incidents, request):  # TODO: Force refresh of the page upon edit
             if not feedback:
                 request.update_configuration(f'user_add({repr(user_id)}, {repr(value)})')
                 feedback = f"Utilisateur «{html.escape(value)}» a été ajouté au groupe «{user_id}»\n"
-    elif incident.failure_id == 'user-remove':
+    elif incident.failure_id == '$user-remove':
         error_message = qrbug.User[value].can_remove_child(user_id)
         if error_message:
             feedback = f"<b>ERREUR :</b> {error_message}"

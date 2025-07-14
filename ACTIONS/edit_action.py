@@ -9,7 +9,7 @@ async def run(incidents, request):
     incident = incidents[0]
     selector = incident.thing_id
     value = request.report.comment
-    if incident.failure_id == 'action-python_script':
+    if incident.failure_id == '$action-python_script':
         if Path('ACTIONS', value).exists():
             if value == qrbug.Action[selector].python_script:
                 feedback = f"Le script Python de l'action «{selector}» est inchangé.\n"

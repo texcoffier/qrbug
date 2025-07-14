@@ -31,7 +31,7 @@ async def hourly_task():
         wait_seconds = time.mktime(time.strptime(next_hour, '%Y%m%d%H')) - now
         # wait_seconds = 1
         await asyncio.sleep(wait_seconds)
-        incident = qrbug.Incident.open('GUI', next_hour[-2:] + ':00', '', 'system', '')
+        incident = qrbug.Incident.open('GUI', next_hour[-2:] + ':00', '', '@system', '')
         request = qrbug.FakeRequest(incident, create_secret=False)
         for dispatcher in qrbug.Dispatcher.get_sorted_instances():
             await dispatcher.run(incident, request, [])
@@ -99,7 +99,7 @@ async def register_incident(request: qrbug.Request) -> web.StreamResponse:
         if ENABLE_AUTHENTICATION:
             incident = qrbug.Incident(thing_id, failure_id)
             incident.active.append(qrbug.Report(user_ip, 0, additional_info, user_login))
-            if qrbug.Selector['require-login'].is_ok(incident, incident.active[0]):
+            if qrbug.Selector['?require-login'].is_ok(incident, incident.active[0]):
                 user_login = await qrbug.get_login(secret.secret, request.query, request.path_qs)
                 if not user_login:
                     query_variables = {

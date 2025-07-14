@@ -67,13 +67,13 @@ Path(qrbug.GENERATED_DB_PATH).write_text(
     +
     ''.join(
         f'user_update({repr(login)})\n'
-        f'user_add("admin", {repr(login)})\n'
+        f'user_add("@admin", {repr(login)})\n'
         for login in qrbug.QRBUG_ADMINS
     )
     +
     ''.join(
         f'user_update({repr(login)})\n'
-        f'user_add("admin-backtrace", {repr(login)})\n'
+        f'user_add("@admin-backtrace", {repr(login)})\n'
         for login in qrbug.QRBUG_BACKTRACE
     ), encoding='utf-8'
 )
