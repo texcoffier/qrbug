@@ -125,7 +125,7 @@ class Tree(qrbug.Editable):
             go_in(node)
             if node.id not in done:
                 done.add(node.id)
-                for child_id in (node.children_ids if not do_sort else sorted(node.children_ids)):
+                for child_id in (sorted(node.children_ids) if do_sort else node.children_ids):
                     walk_(node.instances[child_id])
             go_out(node)
         walk_(self)

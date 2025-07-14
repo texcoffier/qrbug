@@ -93,9 +93,9 @@ def display_tree(texts, request, what, columns):
     go_in.parents = []
     if hasattr(what, 'roots'):
         for tree in what.roots():
-            tree.walk(go_in, go_out, do_sort=True)
+            tree.walk(go_in, go_out, do_sort = what_name != 'failure')
     else:
-        for node in what.instances.values():
+        for _node_id, node in sorted(what.instances.items()):
             go_in(node)
             go_out(node)
     texts.append('</table>')
