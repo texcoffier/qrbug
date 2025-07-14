@@ -10,6 +10,7 @@ var TESTS = [
     ["Incident réparé et utilisateur non prévenu", { test: "pending_feedback" }],
     ["Incident concerne une chose du groupe", { test: "in_or_equal", class: "FilterThing" }],
     ["Incident concerne une chose (pas API)", { test: "is_for_thing" }],
+    ["Incident non fixé (nombre de jours)", { test: "older_than" }],
     ["La panne déclenchée est dans le groupe", { test: "in_or_equal", class: "SourceFailure" }],
     ["La panne déclenchée est", { test: "is", class: "SourceFailure" }],
     ["L'utilisateur connecté est dans le groupe", { test: "in_or_equal", class: "SourceUser" }],
@@ -38,6 +39,8 @@ function editor(expr) {
                 var list = TESTS[i][1].class.replace(/.*(User|Thing|Failure|Selector)$/, '$1');
                 texts.push(` <INPUT autocomplete="off" value="${html(expr.value || expr.id || '')}" list="datalist_${list}">`);
             }
+            if (TESTS[i][1].test == 'older_than')
+                texts.push(` <INPUT autocomplete="off" value="${html(expr.value || '')}">`);
             return texts.join('');
         }
     }
@@ -175,13 +178,21 @@ window.onchange = window.onclick = window.onkeyup = function (event) {
             try { expr[index] = JSON.parse(elm.value); }
             catch (e) { alert("Formule inchangée car invalide"); }
         } else {
-            if (LISTS[elm.getAttribute('list')].includes(elm.value))
-                if (expr.class == 'Selector')
-                    expr[index].id = elm.value;
+            if (elm.getAttribute('list')) {
+                if (LISTS[elm.getAttribute('list')].includes(elm.value))
+                    if (expr.class == 'Selector')
+                        expr[index].id = elm.value;
+                    else
+                        expr[index].value = elm.value;
+                else
+                    alert("Valeur inchangée car cela n'existe pas");
+            }
+            else {
+                if (isNaN(elm.value))
+                    alert("Valeur inchangée car non flottante");
                 else
                     expr[index].value = elm.value;
-            else
-                alert("Valeur inchangée car cela n'existe pas");
+            }
         }
     } else
         return;

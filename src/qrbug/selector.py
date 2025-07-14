@@ -1,5 +1,6 @@
 from typing import Optional
 import ast
+import time
 import html
 import qrbug
 
@@ -47,6 +48,7 @@ TESTS = {
     'is_for_thing': 'incident.thing_id == source.thing.id',
     'pending_feedback': 'incident.pending_feedback.get((incident.thing_id, incident.failure_id), ())',
     'active': 'incident.active',
+    'older_than': '((now - incident.active[0].timestamp) if incident.active else -1) > 86400*{value}'
 }
 
 def compil_expr(expr):
@@ -61,8 +63,12 @@ def compil_expr(expr):
             item += ATTRIBUTES[expr['attr']]
     else:
         item = 'BUG'
-
-    test = TESTS[expr['test']].format(attr=item, value=repr(expr.get('value', '')))
+    value = expr.get('value', '')
+    try:
+        value = float(value)
+    except ValueError:
+        value = repr(value)
+    test = TESTS[expr['test']].format(attr=item, value=value)
     return f'({test})'
 
 class Selector(qrbug.Editable):
@@ -85,7 +91,8 @@ class Selector(qrbug.Editable):
         if not self.compiled:
             self.expr = compil_expr(ast.literal_eval(self.expression)) # For regtests
             self.compiled = compile(self.expr, self.expr, 'eval')
-        return eval(self.compiled, {'incident': incident, 'qrbug': qrbug, 'source': source, 'report': report})
+        return eval(self.compiled,
+            {'incident': incident, 'qrbug': qrbug, 'source': source, 'report': report, 'now': time.time()})
 
     def __class_getitem__(cls, selector_id: str) -> Optional["Selector"]:
         return cls.instances.get(selector_id, None)

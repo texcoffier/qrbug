@@ -531,3 +531,17 @@ failure_add('$fixer', '$personnal')
 
 thing_update('GUI-fixer', comment="Interface du réparateur de panne")
 thing_add_failure('GUI-fixer', '$fixer')
+
+# ----------------------------------------------
+# Old incidents
+# ----------------------------------------------
+
+failure_update('$older-than-a-week', value="Incidents non réparés depuis 7 jours", display_type=Button)
+selector('|older-than-a-week', '{"test": "older_than", "value": "7"}')
+selector('?older-than-a-week', '''[1,
+    {"class":"SourceFailure", "test":"is", "value": "$older-than-a-week"},
+    {"class":"SourceUser"   , "test":"in_or_equal", "value": "@admin-or-fixer"}
+    ]''')
+failure_add('$misc', '$older-than-a-week')
+dispatcher_update('!older-than-a-week', action_id='echo', selector_id='?older-than-a-week', incidents='|older-than-a-week')
+
