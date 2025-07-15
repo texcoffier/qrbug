@@ -7,6 +7,7 @@ Display if selectors are True or False
 import asyncio
 import html
 import collections
+import traceback
 import qrbug
 
 IS_OK = {'*': 'ok', '!': 'other', '': ''}
@@ -14,19 +15,19 @@ IS_OK = {'*': 'ok', '!': 'other', '': ''}
 async def run(_incidents, request):
     incident = qrbug.Incident('', '')
     report = qrbug.incident.Report('', 0)
-    LOGINS = sorted(qrbug.Failure['check_selector_logins'].value.split(' '))
-    THINGS = sorted(qrbug.Failure['check_selector_things'].value.split(' '))
+    LOGINS = sorted(qrbug.Failure['$check_selector_logins'].value.split(' '))
+    THINGS = sorted(qrbug.Failure['$check_selector_things'].value.split(' '))
     ACTIVES = ((), (42,))
     FAILURES = sorted(qrbug.Failure.instances, key=lambda x: qrbug.Failure.instances[x].path())
 
     def create(line):
         values = (
-            *('login yes' if login in line[0] else 'login no' for login in LOGINS),
-            *('thing yes' if thing in line[1] else 'thing no' for thing in THINGS),
-            *('state yes' if state in line[2] else 'state no' for state in ((42,), ())),
-            *(IS_OK.get(is_ok, "bug") for is_ok in line[3])
+            *(('login yes', '') if login in line[0] else ('login no', '') for login in LOGINS),
+            *(('thing yes', '') if thing in line[1] else ('thing no', '') for thing in THINGS),
+            *(('state yes', '') if state in line[2] else ('state no', '') for state in ((42,), ())),
+            *((IS_OK.get(is_ok, 'bug'), f'<PRE>{html.escape(is_ok)}</PRE>' if is_ok not in IS_OK else '') for is_ok in line[3])
         )
-        return ''.join(f'<td class="c{i} {value}">' for i, value in enumerate(values))
+        return ''.join(f'<td class="c{i} {classe}">{value}' for i, (classe, value) in enumerate(values))
 
     await request.write(
         """
@@ -34,14 +35,17 @@ async def run(_incidents, request):
     BODY { font-family: sans-serif }
     TABLE { border-spacing: 0px }
     .vert DIV {
-        transform: rotate(-45deg); margin-top: 40px; width: 8px;
-        font-weight: normal; white-space: nowrap; font-size: 50% }
-    TR:first-child { position: sticky; top: 0px; background: #FFF }
-    TR:nth-child(2) { position: sticky; top: 70px; background: #FFF }
+        transform: rotate(-45deg); margin-top: 40px; width: 14px;
+        font-weight: normal; white-space: nowrap; font-size: 70% }
+    TR:first-child { position: sticky; top: 0px; background: #FFF; z-index: 100 }
+    TR:nth-child(2) { position: sticky; top: 70px; background: #FFF; z-index: 100 }
+    TR TD.selector { position: sticky; left: 0px; background: inherit; white-space: nowrap }
     TR TH { height: 4.5em }
-    TR TD { border: 1px solid #FFF; font-size: 80%; padding-top: 0px; padding-bottom: 0px; height: 1em; }
-    TR.gray { background: #EEE }
+    TR TD { border: 1px solid #FFF; padding-top: 0px; padding-bottom: 0px; height: 1em; }
+    TR.gray, TR TD.selector { background: #EEE }
     TR:hover TD { border-top-color: #000; border-bottom-color: #000 }
+    TD PRE { display: none ; position: absolute; background: #FDD }
+    TD:hover PRE { display: block ; }
     .ok { background: #8F8 }
     .other { background: #DFD }
     .rejected { background: #FB8 }
@@ -59,7 +63,7 @@ async def run(_incidents, request):
     </style>
     <h1>Conditions activant un sélecteur</h1>
     <ul>
-    <li> Rouge: bug.
+    <li> Rouge: bug (mettre le curseur dessus pour voir l'exception).
     <li> Vert: Actif (True).
     <li> Vert clair: Actif (!=True).
     <li> Orange: sélecteur actif, mais la panne ne l'accepte pas.
@@ -69,11 +73,12 @@ async def run(_incidents, request):
     Les lignes blanches ne sont pas affichées.
     <p>
     La liste des logins et des choses à tester sont modifiable dans
-    les pannes 'check_selector_logins' et 'check_selector_things'
+    les pannes '$check_selector_logins' et '$check_selector_things'
     """)
     selectors = collections.defaultdict(list)
     for selector_id, selector in sorted(qrbug.Selector.instances.items()):
         infos = {}
+        errors = {}
         for report.login in LOGINS:
             for incident.thing_id in THINGS:
                 for incident.active in ACTIVES:
@@ -93,7 +98,7 @@ async def run(_incidents, request):
                         except: # pylint: disable=bare-except
                             # import traceback
                             # traceback.print_exc()
-                            active = '?'
+                            active = traceback.format_exc()
                         infos[report.login, incident.thing_id, incident.active, incident.failure_id] = active
 
         def all_here(logins, thing_ids, actives, failure_ids, is_ok):

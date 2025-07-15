@@ -254,11 +254,11 @@ selector('?stats', '''[1,
     {"class":"SourceUser"   , "test":"in_or_equal", "value": "@admin"}
     ]''')
 selector('?check-selectors', '''[1,
-    {"class":"SourceFailure", "test":"is", "value": "?check-selectors"},
+    {"class":"SourceFailure", "test":"is", "value": "$check-selectors"},
     {"class":"SourceUser"   , "test":"in_or_equal", "value": "@admin"}
     ]''')
 selector('?report-mail', '''[1,
-    {"class":"SourceFailure", "test":"is", "value": "?report-mail"},
+    {"class":"SourceFailure", "test":"is", "value": "$report-mail"},
     {"class":"SourceUser"   , "test":"in_or_equal", "value": "@admin"}
     ]''')
 
