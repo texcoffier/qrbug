@@ -27,6 +27,11 @@ def nice():
     return ''.join(
         f'{key:19}= {repr(value):35} # {comment}\n'
         for key, (value, comment) in sorted(SETTINGS.items()))
+
+if __name__ == "__main__": # For install-remote.sh
+    print(nice())
+    sys.exit(0)
+
 try:
     import qrbug.settings
     for key in SETTINGS:

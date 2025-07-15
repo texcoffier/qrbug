@@ -13,6 +13,7 @@ async def run(incidents, request):
         f"""
         <style>
         DIV {{ margin: 2em; font-weight: bold; white-space: pre }}
+        @media (orientation: portrait) {{ BODY {{ font-size: 5vw }} }}
         </style>
         <title>Rapport {html.escape(incident.thing_id)} {html.escape(incident.failure_id)}</title>
         Merci d'avoir signalé l'incident :
