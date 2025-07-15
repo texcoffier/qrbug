@@ -190,7 +190,7 @@
                 iframe.src = url;
                 iframe.onload = function() { element.classList.remove('changed_and_unsaved'); } ;
                 var td = element;
-                while(td.tagName != 'TD')
+                while(td.tagName != 'TD' && td.tagName != 'TH')
                     td = td.parentNode;
                 td.appendChild(iframe);
                 element.classList.add('changed_and_unsaved');

@@ -296,7 +296,7 @@ dispatcher_update('!personnal-for-me-all', action_id='echo', selector_id='?perso
 ###############################################################################
 
 failure_update('$edit', value="API de l'éditeur de configuration, elle ne permet aucune modification mais affiche seulement les éléments modifiables pour chacun des types d'objet.")
-failure_add('$backoffice', '$edit')
+failure_add('$backoffice-login', '$edit')
 
 # ---------------
 # Edit dispatcher
@@ -353,8 +353,8 @@ dispatcher_update('!edit-failure', action_id='edit_failure', selector_id='?edit-
 # ---------------
 failure_update('$selector', value="Sélecteur d'incident")
 failure_update('$selector-expression', value="Expression", display_type=Input)
-failure_update('$selector-concerned-add', value="Ajouter un utilisateur concerné", display_type=Datalist)
-failure_update('$selector-concerned-del', value="Détruire un utilisateur concerné", display_type=Input)
+failure_update('$selector-concerned-add', value="Ajouter un<br>utilisateur concerné", display_type=Datalist)
+failure_update('$selector-concerned-del', value="Détruire un<br>utilisateur concerné", display_type=Input)
 failure_update('$selector-new', value="Créer le sélecteur", display_type=Input)
 failure_add('$edit', '$selector')
 failure_add('$selector', '$selector-expression')
@@ -412,8 +412,8 @@ dispatcher_update('!edit-thing', action_id='edit_thing', selector_id='?edit-thin
 
 failure_update('$thing-incidents'       , value="Tous les incidents")
 failure_update('$thing-incidents-active', value="Incidents actifs")
-failure_add('$backoffice', '$thing-incidents')
-failure_add('$backoffice', '$thing-incidents-active')
+failure_add('$backoffice-login', '$thing-incidents')
+failure_add('$backoffice-login', '$thing-incidents-active')
 
 selector('?thing-incidents-active', '''[1,
     {"class":"SourceFailure", "test":"is", "value": "$thing-incidents-active"},
@@ -448,7 +448,7 @@ dispatcher_update('!edit-action', action_id='edit_action', selector_id='?edit-ac
 # ---------------
 
 failure_update('$generate_qr', value='Générer un QR code de la taille indiquée')
-failure_add('$backoffice', '$generate_qr')
+failure_add('$backoffice-login', '$generate_qr')
 for rows in (7, 8):
     for cols in (4, 5, 6):
         failure_update(f'$generate_qr_{rows}×{cols}', value=f'En {rows}×{cols}', display_type=Input)
@@ -481,7 +481,7 @@ action('get_file', 'get_file.py')
 
 failure_update('$get_file', value='QRBug server get_file')
 failure_update('flow.html', value='Présentation de QRBug', display_type=Button)
-failure_add('$backoffice', '$get_file')
+failure_add('$backoffice-nologin', '$get_file')
 failure_add('$get_file', 'flow.html')
 failure_add('$misc', 'flow.html')
 
@@ -513,7 +513,7 @@ selector('?require-login', '''[0,
 # ----------------------------------------------
 
 failure_update('$messages', value='Modifiez les messages affichés')
-failure_add('$backoffice', '$messages')
+failure_add('$backoffice-login', '$messages')
 
 for message in pathlib.Path(MESSAGES).read_text(encoding='utf-8').strip().split('\n'):
     failure_id, value = message.split(' ', 1)

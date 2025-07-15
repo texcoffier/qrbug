@@ -21,7 +21,7 @@ def link_to_finished(thing_id, request):
         return ''
     return f'<a target="_blank" href="?failure-id=thing-incidents&thing-id={thing_id}&secret={request.secret.secret}">{finished}</a>'
 
-def display_tree(texts, request, what, columns):
+def display_tree(texts, request, what, columns, first_title=''):
     failures = []
     for failure_definition in columns:
         failure = failure_definition.lstrip('|')
@@ -36,6 +36,7 @@ def display_tree(texts, request, what, columns):
     ''')
     what_name = what.__name__.lower()
     texts.append('<th>')
+    texts.append(first_title)
     if what_name == 'thing':
         texts.append('<th>')
     for failure, vertical, _data_list in failures:
@@ -128,25 +129,17 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
             ('|||$user-remove', '$user-add datalist=User'))
     elif what is qrbug.Dispatcher:
         dispatcher_new = qrbug.Failure['$dispatcher-new']
-        texts.append('<table><tr><td>')
-        texts.append(dispatcher_new.value)
-        texts.append(qrbug.element(dispatcher_new, qrbug.Thing['GUI'], in_place=True))
-        texts.append('</tr></table>')
         datalists_to_load = display_tree(texts, request, what,
             ('$dispatcher-selector_id datalist=Selector',
                 '$dispatcher-incidents datalist=Selector',
-                '$dispatcher-action_id datalist=Action'))
+                '$dispatcher-action_id datalist=Action'),
+            first_title=f'{dispatcher_new.value}<br>{qrbug.element(dispatcher_new, qrbug.Thing["GUI"], in_place=True)}')
     elif what is qrbug.Action:
         datalists_to_load = display_tree(texts, request, what,
             ('$action-python_script datalist=ActionScripts',))
     elif what is qrbug.Selector:
         selector_new = qrbug.Failure['$selector-new']
-        texts.append(f'''
-        <table><tr><td>
-        {selector_new.value}
-        {qrbug.element(selector_new, qrbug.Thing['GUI'], in_place=True)}
-        </tr></table>
-        <script>
+        texts.append(f'''<script>
         var LISTS = {{
             'datalist_Failure': {list(qrbug.Failure.instances)},
             'datalist_User': {list(qrbug.User.instances)},
@@ -157,7 +150,8 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
         </script>
         ''')
         datalists_to_load = display_tree(texts, request, what,
-            ('$selector-concerned-del', '$selector-concerned-add datalist=User'))
+            ('$selector-concerned-del', '$selector-concerned-add datalist=User'),
+            first_title=f'{selector_new.value}<br>{qrbug.element(selector_new, qrbug.Thing["GUI"], in_place=True)}')
     elif what is qrbug.Incident:
         texts.append('''
         <BODY class="real">
