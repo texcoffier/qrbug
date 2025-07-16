@@ -95,7 +95,7 @@ def display_tree(texts, request, what, columns, first_title=''):
     go_in.parents = []
     if hasattr(what, 'roots'):
         done = set()
-        for tree in what.roots():
+        for tree in sorted(what.roots(), key=lambda x: x.id):
             tree.walk(go_in, go_out, do_sort = what_name != 'failure', done=done)
     else:
         for _node_id, node in sorted(what.instances.items()):
