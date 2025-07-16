@@ -27,6 +27,13 @@ async def run(incidents, request):  # TODO: Force refresh of the page upon edit
         else:
             request.update_configuration(f'user_remove({repr(value)}, {repr(user_id)})')
             feedback = f"Utilisateur «{user_id}» a été retiré du groupe «{html.escape(value)}»\n"
+    elif incident.failure_id == '$user-new':
+        if value in qrbug.User.instances.keys():  # If the user doesn't exist, we create it !
+            feedback = f'Utilisateur «{value} existe déjà»'
+        else:
+            feedback = await qrbug.User.try_create_user(request, value)
+            if not feedback:
+                feedback = f"L'Utilisateur «{html.escape(value)}» a été créé\n"
     else:
         feedback = "Unexpected edit failure for User\n"
     await request.write('<!DOCTYPE html>\n' + feedback)

@@ -373,11 +373,13 @@ dispatcher_update('!edit-selector', action_id='edit_selector', selector_id='?edi
 # Edit user
 # ---------------
 failure_update('$user', value="Utilisateur")
-failure_update('$user-add'   , value="Ajouter un utilisateur dans le groupe", display_type=Datalist)
-failure_update('$user-remove', value="Enlever d'ici"                        , display_type=Button)
+failure_update('$user-add'   , value="Ajouter un utilisateur<br>dans le groupe", display_type=Datalist)
+failure_update('$user-remove', value="Enlever d'ici"                           , display_type=Button)
+failure_update('$user-new'   , value="Créer l'utilisateur"                     , display_type=Input)
 failure_add('$edit', '$user')
 failure_add('$user', '$user-add')
 failure_add('$user', '$user-remove')
+failure_add('$user', '$user-new')
 
 action('edit_user', 'edit_user.py')
 selector('?edit-user', '''[1,

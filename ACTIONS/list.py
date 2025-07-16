@@ -125,8 +125,10 @@ async def run(incidents: List[qrbug.Incident], request: qrbug.Request) -> Option
                         '|||$failure-display_type',
                         '|||$failure-remove', '$failure-add datalist=Failure'))
     elif what is qrbug.User:
+        user_new = qrbug.Failure['$user-new']
         datalists_to_load = display_tree(texts, request, what,
-            ('|||$user-remove', '$user-add datalist=User'))
+            ('|||$user-remove', '$user-add datalist=User'),
+            first_title=f'{user_new.value}<br>{qrbug.element(user_new, qrbug.Thing["GUI"], in_place=True)}')
     elif what is qrbug.Dispatcher:
         dispatcher_new = qrbug.Failure['$dispatcher-new']
         datalists_to_load = display_tree(texts, request, what,
