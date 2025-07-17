@@ -83,6 +83,7 @@ def element(failure: "Failure", thing, in_place=False, destroy=None, datalist_id
             input_list_id = f' list="datalist_{datalist_id}"'
         return f'''{before}<div class="input"><input {common}{input_list_id} value="{value}" autocomplete="off"
             onkeypress="if (event.key=='Enter') register_incident(this)"
+            onfocus="enlarge(this)" onblur="reduce(this)"
             ><div {common} onclick="register_incident(this)">⬆</div></div>'''
     if display_type == DisplayTypes.button:
         assert destroy

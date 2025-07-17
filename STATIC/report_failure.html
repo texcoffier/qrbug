@@ -80,6 +80,10 @@
             cursor: pointer;
             box-sizing: border-box ;
             padding: 0px;
+            width: 15em;
+        }
+        DIV.input INPUT:focus {
+            transition: width 1s;
         }
         DIV.delete A {
             color: #00F;
@@ -106,7 +110,6 @@
         BOX, LAB {
             display: inline-block;
         }
-
 
         @media (orientation: portrait) {
             BODY, BUTTON {
@@ -204,6 +207,22 @@
                 else
                     window.location = url;
             }
+        }
+        function enlarge(input) {
+            var div = input.parentNode;
+            var td = div.parentNode;
+            if(td.tagName != 'TD')
+                return;
+            div.style.position = 'absolute';
+            input.style.width = `calc(${document.body.offsetWidth - td.offsetLeft}px - 1.5em)`;
+        }
+        function reduce(input) {
+            var div = input.parentNode;
+            var td = div.parentNode;
+            if(td.tagName != 'TD')
+                return;
+            div.removeAttribute('style');
+            input.removeAttribute('style');
         }
         function show(event_element) {
             let [_element, _thingid, failureid, _what, value, _ask_confirm] = get_infos(event_element);
