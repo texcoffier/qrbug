@@ -118,6 +118,8 @@ class Selector(qrbug.Editable):
     def path(self):
         return f'Utilisateurs concernés par le sélecteur «{html.escape(self.id)}»'
 
+    def __str__(self):
+        return f'{self.id} {self.expression}'
 
 def selector(selector_id: str, expression: str) -> Selector:
     return Selector(selector_id, expression)

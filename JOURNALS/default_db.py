@@ -94,6 +94,21 @@ dispatcher_update('!z-backoffice-close', action_id='close_auto', selector_id='?b
 # 'admin' is concerned by every incident
 selector_concerned_add('|not-backoffice', '@admin')
 
+# ----------------------------------------------
+# Define a STATIC file getter
+# ----------------------------------------------
+
+action('get_file', 'get_file.py')
+
+failure_update('$get_file', value='QRBug server get_file')
+failure_update('flow.html', value='Présentation de QRBug', display_type=Button)
+failure_add('$backoffice-nologin', '$get_file')
+failure_add('$get_file', 'flow.html')
+failure_add('$top', 'flow.html')
+
+selector('?get_file','{"class":"SourceFailure", "test":"in_or_equal", "value": "$get_file"}')
+dispatcher_update('!get_file', action_id='get_file', selector_id='?get_file')
+
 ###############################################################################
 # Planified tasks
 ###############################################################################
@@ -354,7 +369,7 @@ dispatcher_update('!edit-failure', action_id='edit_failure', selector_id='?edit-
 failure_update('$selector', value="Sélecteur d'incident")
 failure_update('$selector-expression', value="Expression", display_type=Input)
 failure_update('$selector-concerned-add', value="Ajouter un<br>utilisateur concerné", display_type=Datalist)
-failure_update('$selector-concerned-del', value="Détruire un<br>utilisateur concerné", display_type=Input)
+failure_update('$selector-concerned-del', value="Utilisateurs concernés", display_type=Input)
 failure_update('$selector-new', value="Créer le sélecteur", display_type=Input)
 failure_add('$edit', '$selector')
 failure_add('$selector', '$selector-expression')
@@ -393,7 +408,7 @@ dispatcher_update('!edit-user', action_id='edit_user', selector_id='?edit-user')
 # ---------------
 failure_update('$thing'            , value="Chose"          )
 failure_update('$thing-comment'    , value="Commentaire"          , display_type=Input)
-failure_update('$thing-del-failure', value="Panne à enlever"      , display_type=Input)
+failure_update('$thing-del-failure', value="Pannes"               , display_type=Input)
 failure_update('$thing-add-failure', value="Panne à ajouter"      , display_type=Datalist)
 failure_update('$thing-add'        , value="Ajouter un objet fils", display_type=Datalist)
 failure_update('$thing-remove'     , value="Enlever d'ici"        , display_type=Button)
@@ -474,21 +489,6 @@ selector('?backtrace', '''[1,
     ]''')
 selector_concerned_add('?backtrace', '@admin-backtrace')
 dispatcher_update('!backtrace', action_id='report_mail', selector_id='?backtrace')
-
-# ----------------------------------------------
-# Define a STATIC file getter
-# ----------------------------------------------
-
-action('get_file', 'get_file.py')
-
-failure_update('$get_file', value='QRBug server get_file')
-failure_update('flow.html', value='Présentation de QRBug', display_type=Button)
-failure_add('$backoffice-nologin', '$get_file')
-failure_add('$get_file', 'flow.html')
-failure_add('$misc', 'flow.html')
-
-selector('?get_file','{"class":"SourceFailure", "test":"in_or_equal", "value": "$get_file"}')
-dispatcher_update('!get_file', action_id='get_file', selector_id='?get_file')
 
 # ----------------------------------------------
 # Journals reload

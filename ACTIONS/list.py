@@ -13,13 +13,13 @@ def link_to_active(thing_id, request):
     active = sum(len(i.active) for i in qrbug.Incident.instances[thing_id].values())
     if not active:
         return ''
-    return f'<a target="_blank" href="?failure-id=thing-incidents-active&thing-id={thing_id}&secret={request.secret.secret}">{active}</a>'
+    return f'<a target="_blank" href="?failure-id=$thing-incidents-active&thing-id={thing_id}&secret={request.secret.secret}">{active}</a>'
 
 def link_to_finished(thing_id, request):
     finished = sum(len(i.finished) for i in qrbug.Incident.instances[thing_id].values())
     if not finished:
         return ''
-    return f'<a target="_blank" href="?failure-id=thing-incidents&thing-id={thing_id}&secret={request.secret.secret}">{finished}</a>'
+    return f'<a target="_blank" href="?failure-id=$thing-incidents&thing-id={thing_id}&secret={request.secret.secret}">{finished}</a>'
 
 def display_tree(texts, request, what, columns, first_title=''):
     failures = []

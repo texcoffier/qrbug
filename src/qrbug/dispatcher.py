@@ -35,11 +35,20 @@ class Dispatcher(qrbug.Tree):
 
         if self.incidents:
             selector = qrbug.Selector[self.incidents]
-            incidents = [i
-                         for j in qrbug.Incident.instances.values()
-                         for i in j.values()
-                         if selector.is_ok(incident, request.report, i)
-                        ]
+            try:
+                incidents = [i
+                            for j in qrbug.Incident.instances.values()
+                            for i in j.values()
+                            if selector.is_ok(incident, request.report, i)
+                            ]
+            except: # pylint: disable=bare-except
+                # Only for debugging
+                for j in qrbug.Incident.instances.values():
+                    for i in j.values():
+                        try:
+                            selector.is_ok(incident, request.report, i)
+                        except: # pylint: disable=bare-except
+                            raise ValueError(f'dispatcher=«{self.id}» selector=«{selector.id}» thing=«{i.thing_id}» failure=«{i.failure_id}»')
         else:
             incidents = [incident]
         trace.append(f' incidents={len(incidents)}')
